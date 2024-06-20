@@ -1,0 +1,1 @@
+﻿Scaffold-DbContext "data source=F-147;database=ConstrcutionTracking;Integrated Security=SSPI;persist security info=True;" Microsoft.EntityFrameWorkCore.SqlServer -outputdir Data -context ContructionTrackingDbContext -contextdir Data -DataAnnotations -UseDatabaseNames -Force

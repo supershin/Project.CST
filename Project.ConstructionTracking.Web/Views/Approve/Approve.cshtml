@@ -1,0 +1,1080 @@
+﻿@{
+    ViewData["Title"] = "Approve";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+}
+
+<!-- Content Header (Page header) -->
+<script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="~/lib/core-ui/dist/libs/dropzone.css?1692870487" rel="stylesheet" />
+
+<div class="page-wrapper">
+    <!-- Page header -->
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+            <h2 class="page-title">
+                <button class="btn" style="background-color: #c5d700 ; color: #000000;" type="button" disabled>
+                    <h2>
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        งาน วางผัง ฐานราก คานคอดินและเสาชั้นล่าง แล้วเสร็จ
+                    </h2>
+                </button> 
+            </h2>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- Page body -->
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">ผู้บันทึกการตรวจ<i class="material-icons"></i></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-12 p-1">
+                                    <div class="container mt-1">
+                                        <label class="form-label align-center">
+                                            <i class="material-icons">account_circle</i> นาย ตรวจงาน ตรงเวลา
+                                        </label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 p-1">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">วันที่บันทึก</label>
+                                                <label class="form-label align-center">
+                                                     12/06/2024
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 p-1">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">วันที่ขออนุมัติ</label>
+                                                <label class="form-label align-center">
+                                                    15/06/2024
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <style>
+                                    .align-center {
+                                        display: flex;
+                                        align-items: center;
+                                    }
+                                    .align-center .material-icons {
+                                        margin-right: 8px; /* Adjust the spacing between the icon and text */
+                                    }
+                                </style>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">ผู้อนุมัติ<i class="material-icons"></i></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-12 p-1">
+                                    <div class="container mt-1">
+                                        <label class="form-label align-center">
+                                            <i class="material-icons">account_circle</i> นาย ตรวจงาน ตรงเวลา
+                                        </label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 p-1">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">วันที่บันทึก</label>
+                                                <label class="form-label align-center">
+                                                     12/06/2024
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 p-1">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">วันที่ขออนุมัติ</label>
+                                                <label class="form-label align-center">
+                                                    15/06/2024
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <style>
+                                    .align-center {
+                                        display: flex;
+                                        align-items: center;
+                                    }
+                                    .align-center .material-icons {
+                                        margin-right: 8px; /* Adjust the spacing between the icon and text */
+                                    }
+                                </style>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">QC<i class="material-icons"></i></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-12 p-1">
+                                    <div class="container mt-1">
+                                        <label class="form-label align-center">
+                                            <i class="material-icons">account_circle</i> นาย ตรวจงาน ตรงเวลา
+                                        </label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 p-1">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">วันที่บันทึก</label>
+                                                <label class="form-label align-center">
+                                                     12/06/2024
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 p-1">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">วันที่ขออนุมัติ</label>
+                                                <label class="form-label align-center">
+                                                    15/06/2024
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <style>
+                                    .align-center {
+                                        display: flex;
+                                        align-items: center;
+                                    }
+                                    .align-center .material-icons {
+                                        margin-right: 8px; /* Adjust the spacing between the icon and text */
+                                    }
+                                </style>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-12">
+                <div class="container-fluid d-flex justify-content-center">
+                    <!-- Center the container horizontally -->
+                    <div class="row g-1">
+                        <!-- g-2 class adds spacing between rows -->
+                        <div class="col-12">
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                    <form class="card">
+                                        <div class="card-body">
+                                            <ol class="list-group list-group-numbered">
+                                                    <div class="row">
+                                                        <div class="ms-2 me-auto">
+                                                        <div class="p-1 mb-2 bg-info text-white"><h2>&nbsp; ส่วนที่ 1 รายงานขออนุมัติทำการงาน</h2></div>
+                                                            <h3 class="text-decoration-underline"> ฐานราก</h3>
+                                                            <div class="row">
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                        <h4>- ตัดเสาเข็ม</h4> 
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch1">
+                                                                                        <label for="switch1">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- pile deviate</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch2">
+                                                                                        <label for="switch2">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- Seismic test</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch3">
+                                                                                        <label for="switch3">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- ระยะ-ขนาด-ระดับ</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch4">
+                                                                                        <label for="switch4">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        <h3 class="text-decoration-underline">คานชั้นล่าง</h3>
+                                                            <div class="row">
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>-  เหล็กเสริม-ลูกปูน</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch5">
+                                                                                        <label for="switch5">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>-  หูช้างรับพื้นสําเร็จ (ถ้ามี)</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch6">
+                                                                                        <label for="switch6">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- ระยะ-ขนาด-ระดับ</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch7">
+                                                                                        <label for="switch7">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- เหล็กบันได+พื้น+ครีบ</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch8">
+                                                                                        <label for="switch8">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        <h3 class="text-decoration-underline">เสาชั้นล่าง</h3>
+                                                            <div class="row">
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>-  เหล็กเสริม-ลูกปูน</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch9">
+                                                                                        <label for="switch9">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>-  ขนาด</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch10">
+                                                                                        <label for="switch10">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- ระดับ</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch11">
+                                                                                        <label for="switch11">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- ดิ่ง</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch12">
+                                                                                        <label for="switch12">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        <div class="p-1 mb-2 bg-info text-white"><h2>&nbsp; ส่วนที 2 รายการตรวจสอบ</h2></div>
+                                                            <h3 class="text-decoration-underline">ฐานราก</h3>
+                                                            <div class="row">
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- ระดับหลังฐานราก</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch13">
+                                                                                        <label for="switch13">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- ผิวคอนกรีต</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch14">
+                                                                                        <label for="switch14">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- ความแข็งแรงคอนกรีต (ตาม strength ผู้ออกแบบ)</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch15">
+                                                                                        <label for="switch15">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <h3 class="text-decoration-underline">คานชั้นล่าง</h3>
+                                                            <div class="row">
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>-  ระดับหลัง-แนวข้างคาน</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch16">
+                                                                                        <label for="switch16">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>-  ผิวคอนกรีต</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch17">
+                                                                                        <label for="switch17">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- เหล็กบันได+พื้น+ครีบ</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch18">
+                                                                                        <label for="switch18">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- ความแข็งแรงคอนกรีต (ตาม strength ผู้ออกแบบ)</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch19">
+                                                                                        <label for="switch19">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <h3 class="text-decoration-underline">เสาชั้นล่าง</h3>
+                                                            <div class="row">
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>-  ดิ่ง-ระดับหัวเสา</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch20">
+                                                                                        <label for="switch20">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>-  ผิวคอนกรีต</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch21">
+                                                                                        <label for="switch21">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- เหล็กบันได+ทับหลัง</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch22">
+                                                                                        <label for="switch22">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 shadow p-3 mb-2 rounded">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <h4>- ความแข็งแรงคอนกรีต (ตาม strength ผู้ออกแบบ)</h4>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <div class="row">
+                                                                                <div class="col-12 col-sm-4">
+                                                                                    <div class="switchToggle">
+                                                                                        <input type="checkbox" id="switch23">
+                                                                                        <label for="switch23">Toggle</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 col-sm-8">
+                                                                                    <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <!-- Repeat list items as needed -->
+                                            </ol>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="page-body">
+                                                <div class="container-xl">
+                                                    <div class="row row-cards">
+                                                        <div class="col-12 col-sm-6">
+                                                            <label class="form-label">วันที่ตรวจ</label>
+                                                            <div class="input-icon">
+                                                                <span class="input-icon-addon">
+                                                                    <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M11 15h1" /><path d="M12 15v3" /></svg>
+                                                                </span>
+                                                                <input class="form-control" placeholder="Select a date" id="datepicker-icon-prepend" value="2020-06-20" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-6">
+                                                            <label class="form-label">ผู้ตรวจ</label>
+                                                            <input type="text" class="form-control" name="unit-name" placeholder="" value="Pawel Kuna" disabled>
+                                                        </div>
+                                                        <div class="col-12 col-sm-6">
+                                                            <label class="form-label">ความคิดเห็น</label>
+                                                            <textarea rows="5" class="form-control" placeholder=""
+                                                                        value="Mike">Oh so, your weak rhyme
+                                                                        You doubt I'll bother, reading into it
+                                                                        I'll probably won't, left to my own devices
+                                                                        But that's the difference in our opinions.
+                                                            </textarea>
+                                                        </div>
+                                                        <div class="col-12 col-sm-6">
+                                                            <label class="form-label">อัปโหลดรูปภาพ</label>
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <form class="dropzone" id="dropzone-multiple" action="./" autocomplete="off" novalidate>
+                                                                        <div class="fallback">
+                                                                            <input name="file" type="file" multiple />
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                            <br>
+                                                            <div class="row">
+                                                                <div class="row">
+                                                                    <div class="col-6">
+                                                                        <label class="form-label">&nbsp; แก้ไขล่าสุด 13/06/2024</label>
+                                                                    </div>
+                                                                    <div class="col-6">
+                                                                        <div class="btn-list justify-content-end">
+                                                                            <a href="#" class="btn">
+                                                                                บันทึก
+                                                                            </a>
+                                                                            <a href="#" class="btn btn-primary">
+                                                                                Submit
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                                                     
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <style>
+                                .outerDivFull {
+                                    margin: 50px;
+                                }
+
+                                .switchToggle input[type=checkbox] {
+                                    height: 0;
+                                    width: 0;
+                                    visibility: hidden;
+                                    position: absolute;
+                                }
+
+                                .switchToggle label {
+                                    cursor: pointer;
+                                    text-indent: -9999px;
+                                    width: 90px;
+                                    max-width: 90px;
+                                    height: 30px;
+                                    background: #ff0000;
+                                    display: block;
+                                    border-radius: 100px;
+                                    position: relative;
+                                }
+
+                                .switchToggle label:after {
+                                    content: '';
+                                    position: absolute;
+                                    top: 2px;
+                                    left: 2px;
+                                    width: 26px;
+                                    height: 26px;
+                                    background: #fff;
+                                    border-radius: 90px;
+                                    transition: 0.3s;
+                                }
+
+                                .switchToggle input:checked + label, .switchToggle input:checked + input + label {
+                                    background: #3e98d3;
+                                }
+
+                                .switchToggle input + label:before, .switchToggle input + input + label:before {
+                                    content: 'ไม่ผ่าน';
+                                    position: absolute;
+                                    top: 5px;
+                                    left: 35px;
+                                    width: 46px;
+                                    height: 26px;
+                                    border-radius: 90px;
+                                    transition: 0.3s;
+                                    text-indent: 0;
+                                    color: #fff;
+                                }
+
+                                .switchToggle input:checked + label:before, .switchToggle input:checked + input + label:before {
+                                    content: 'ผ่าน';
+                                    position: absolute;
+                                    top: 5px;
+                                    left: 10px;
+                                    width: 46px;
+                                    height: 26px;
+                                    border-radius: 90px;
+                                    transition: 0.3s;
+                                    text-indent: 0;
+                                    color: #fff;
+                                }
+
+                                .switchToggle input:checked + label:after, .switchToggle input:checked + input + label:after {
+                                    left: calc(100% - 2px);
+                                    transform: translateX(-100%);
+                                }
+
+                                .switchToggle label:active:after {
+                                    width: 60px;
+                                }
+
+                                .toggle-switchArea {
+                                    margin: 10px 0 10px 0;
+                                }
+                            </style>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-12">
+                <form class="card">
+                <div class="card-body">
+                    <div class="page-header d-print-none">
+                        <div class="container-xl">
+                        <div class="row g-2 align-items-center">
+                            <div class="col">
+                            <h2 class="page-title">
+                                PM ตรวจความเรียบร้อย
+                            </h2>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="page-body">
+                        <div class="container-xl">
+                            <div class="row row-cards">
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label">วันที่ตรวจ</label>
+                                    <div class="input-icon">
+                                        <span class="input-icon-addon">
+                                            <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M11 15h1" /><path d="M12 15v3" /></svg>
+                                        </span>
+                                        <input class="form-control" placeholder="Select a date" id="datepicker-icon-prepend" value="2020-06-20" />
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label">ผู้ตรวจ</label>
+                                    <input type="text" class="form-control" name="unit-name" placeholder="" value="Pawel Kuna" disabled>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="col-12">
+                                        <label class="form-check">
+                                        <input class="form-check-input" type="radio"name="radios"  checked>
+                                        <span class="form-check-label">ผ่าน</span>
+                                        </label>
+                                        <label class="form-check">
+                                        <input class="form-check-input" type="radio" name="radios" >
+                                        <span class="form-check-label">ไม่ผ่าน</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                        <label class="form-label">สาเหตุปฏิเสธ</label>
+                                    <select type="text" class="form-select" id="select-users" value="">
+                                        <option value="1">งานไม่เรียบร้อย</option>
+                                        <option value="2">พังเสียหาย</option>
+                                        <option value="3">พื้นเอียง</option>
+                                        <option value="4">หลังคา</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label">ความคิดเห็น</label>
+                                    <textarea rows="5" class="form-control" placeholder=""
+                                                value="Mike">Oh so, your weak rhyme
+                                                                    You doubt I'll bother, reading into it
+                                                                    I'll probably won't, left to my own devices
+                                                                    But that's the difference in our opinions.
+                                                        </textarea>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label">อัปโหลดรูปภาพ</label>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <form class="dropzone" id="dropzone-multiple" action="./" autocomplete="off" novalidate>
+                                                <div class="fallback">
+                                                    <input name="file" type="file" multiple />
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <label class="form-label">&nbsp; แก้ไขล่าสุด 13/06/2024</label>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="btn-list justify-content-end">
+                                                    <a href="#" class="btn">
+                                                        Clear
+                                                    </a>
+                                                    <a href="#" class="btn btn-primary">
+                                                        บันทึก
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+            <br>
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12 col-sm-6">
+                        <form class="card">
+                            <div class="card-body">
+                                <h2 class="page-title">
+                                    กล่องใส่ข้อความ
+                                </h2>
+                                <div class="page-body">
+                                    <div class="container-xl">
+                                        <div class="row row-cols-12 g-3">
+                                            <div class="col-12">
+                                                <label class="form-label">ความคิดเห็น</label>
+                                                <textarea rows="5" class="form-control" placeholder=""
+                                                            value="Mike">Oh so, your weak rhyme
+                                                                                    You doubt I'll bother, reading into it
+                                                                                    I'll probably won't, left to my own devices
+                                                                                    But that's the difference in our opinions.
+                                                                        </textarea>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">อัปโหลดรูปภาพ</label>
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <form class="dropzone" id="dropzone-multiple" action="./" autocomplete="off" novalidate>
+                                                            <div class="fallback">
+                                                                <input name="file" type="file" multiple />
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="btn-list justify-content-end">
+                                                    <a href="#" class="btn">
+                                                        Clear
+                                                    </a>
+                                                    <a href="#" class="btn btn-primary">
+                                                        ส่ง
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <form action="https://httpbin.org/post" method="post" class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Reply</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-5">
+                                    <div class="col-12 d-flex flex-column">
+                                      <div class="card-body scrollable" style="height: 18.3rem">
+                                        <div class="chat">
+                                          <div class="chat-bubbles">
+                                            <div class="chat-item">
+                                              <div class="row align-items-end">
+                                                <div class="col-12">
+                                                  <div class="chat-bubble">
+                                                    <div class="chat-bubble-title">
+                                                      <div class="row">
+                                                        <div class="col chat-bubble-author">(PM) Mallory Hulme</div>
+                                                        <div class="col-auto chat-bubble-date">09:34</div>
+                                                      </div>
+                                                    </div>
+                                                    <div class="chat-bubble-body">
+                                                      <p>PE ตรวจเป็นไงบ้างติดอะไรตรงไหนไหม ?</p>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+
+                                            <div class="chat-item">
+                                                <div class="row align-items-end">
+                                                    <div class="col-12">
+                                                        <div class="chat-bubble">
+                                                            <div class="chat-bubble-title">
+                                                                <div class="row">
+                                                                    <div class="col chat-bubble-author">(PE) Pawel kuna</div>
+                                                                    <div class="col-auto chat-bubble-date">09:35</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="chat-bubble-body">
+                                                                <p>งานเรียบร้อยดีครับ</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="chat-item">
+                                                <div class="row align-items-end">
+                                                    <div class="col-12">
+                                                        <div class="chat-bubble">
+                                                            <div class="chat-bubble-title">
+                                                                <div class="row">
+                                                                            <div class="col chat-bubble-author">(PE) Pawel kuna</div>
+                                                                    <div class="col-auto chat-bubble-date">09:35</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="chat-bubble-body">
+                                                                <div class="mt-2">
+                                                                    <img src="./img/img13.jpg" alt="" class="rounded img-fluid" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="chat-item">
+                                                <div class="row align-items-end">
+                                                    <div class="col-12">
+                                                        <div class="chat-bubble">
+                                                            <div class="chat-bubble-title">
+                                                                <div class="row">
+                                                                    <div class="col chat-bubble-author">(PM) Mallory Hulme</div>
+                                                                    <div class="col-auto chat-bubble-date">09:35</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="chat-bubble-body">
+                                                                <p>OK</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+    
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+<!-- Libs JS -->
+<script src="~/lib/core-ui/dist/libs/dropzone/dist/dropzone-min.js?1692870487" defer></script>
+<!-- Libs JS -->
+<script src="~/lib/core-ui/dist/libs/fslightbox/index.js?1692870487" defer></script>
+<!-- Tabler Core -->
+<script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>
+<script src="~/lib/core-ui/dist/js/demo.min.js?1692870487" defer></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        new Dropzone("#dropzone-default")
+      })
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        new Dropzone("#dropzone-multiple")
+      })
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        new Dropzone("#dropzone-custom")
+      })
+    </script>
