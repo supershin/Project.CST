@@ -23,6 +23,9 @@ namespace Project.ConstructionTracking.Web.Data
         [StringLength(100)]
         [Unicode(false)]
         public string? Name { get; set; }
+        [StringLength(500)]
+        [Unicode(false)]
+        public string? Description { get; set; }
         public int? FormRefID { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         public decimal? Progress { get; set; }

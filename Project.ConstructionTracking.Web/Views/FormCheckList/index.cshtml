@@ -1,0 +1,660 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+}
+
+@model Project.ConstructionTracking.Web.Models.FormCheckListUnitView
+
+<div class="page-wrapper">
+    <!-- Page header -->
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row g-1 align-items-center">
+                <div class="col-12">
+                    <h2><span class="badge bg-yellow text-white">กำลังตรวจ</span> งาน วางผัง ฐานราก คานคอดินและเสาชั้นล่าง แล้วเสร็จ </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page body -->
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="container mt-1">
+                                    <label class="form-label align-center">
+                                        <span class="material-icons"> fact_check </span> ผู้บันทึกการตรวจ : นาย ตรวจงาน ตรงเวลา
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">วันที่บันทึก</label>
+                                                <label class="form-label align-center">
+                                                    12/06/2024
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">วันที่ขออนุมัติ</label>
+                                                <label class="form-label align-center">
+                                                    15/06/2024
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">สถานะ</label>
+                                                <span class="badge bg-yellow text-white">กำลังตรวจ</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="container mt-1">
+                                    <label class="form-label align-center">
+                                        <span class="material-icons">assignment_turned_in</span> ผู้อนุมัติ : นาย ตรวจงาน ตรงเวลา
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">วันที่บันทึก</label>
+                                                <label class="form-label align-center">
+                                                    12/06/2024
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">วันที่อนุมัติ</label>
+                                                <label class="form-label align-center">
+                                                    15/06/2024
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">สถานะ</label>
+                                                <span class="badge bg-secondary text-white">รอตรวจ</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="container mt-1">
+                                    <label class="form-label align-center">
+                                        <span class="material-icons">verified</span> QC : นาย ตรวจงาน ตรงเวลา
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">วันที่บันทึก</label>
+                                                <label class="form-label align-center">
+                                                    12/06/2024
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">วันที่ขออนุมัติ</label>
+                                                <label class="form-label align-center">
+                                                    15/06/2024
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">สถานะ</label>
+                                                <span class="badge bg-secondary text-white">รอตรวจ</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <style>
+                                    .align-center {
+                                        display: flex;
+                                        align-items: center;
+                                    }
+
+                                        .align-center .material-icons {
+                                            margin-right: 8px; /* Adjust the spacing between the icon and text */
+                                        }
+                                </style>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-12">
+                <form class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach (var item in Model.FormCheckListUnitList)
+                            {
+                                @foreach(var item2 in item.ListGroups)
+                                {
+                                    <div class="card bg-primary text-primary-fg">
+                                        <div class="card-stamp">
+                                            <div class="card-stamp-icon bg-white text-primary">
+                                                <!-- Download SVG icon from http://tabler-icons.io/i/star -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <h3 class="card-title align-center">
+                                                <span class="material-icons"> maps_home_work </span> @item2.GroupName
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    @foreach (var item3 in item2.ListPackages)
+                                    {
+                                        <div class="card-body">
+                                            <div class="card card-link card-link-pop col-12">
+                                                <div class="card bg-yellow text-primary-fg">
+                                                    <div class="card-stamp">
+                                                        <div class="card-stamp-icon bg-yellow">
+                                                            <!-- Download SVG icon from http://tabler-icons.io/i/bell -->
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body align-center">
+                                                        <span class="material-icons"> checklist </span> @item3.PackagesName
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    @foreach (var item4 in item3.ListCheckLists)
+                                                    {
+                                                        <div class="col-12 shadow p-5 mb-2 rounded">
+                                                            <div class="row">
+                                                                <div class="col-12 col-sm-3">
+                                                                    <h4>- @item4.CheckListName</h4>
+                                                                </div>
+                                                                <div class="col-12 col-sm-9">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-4">
+                                                                            <div>
+                                                                                <label class="form-check form-check-inline">
+                                                                                    <input class="form-check-input" type="checkbox">
+                                                                                    <span class="form-check-label">ผ่าน</span>
+                                                                                </label>
+                                                                                <label class="form-check form-check-inline">
+                                                                                    <input class="form-check-input" type="checkbox" >
+                                                                                    <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
+                                                                                </label>
+                                                                                <label class="form-check form-check-inline">
+                                                                                    <input class="form-check-input" type="checkbox">
+                                                                                    <span class="form-check-label">ไม่ผ่าน</span>
+                                                                                </label>
+                                                                                <label class="form-check form-check-inline">
+                                                                                    <input class="form-check-input" type="checkbox">
+                                                                                    <span class="form-check-label">ไม่มีงาน</span>
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-8">
+                                                                            <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <div class="card-footer">
+                                                    <label class="form-label">อัปโหลดรูปภาพ</label>
+                                                    <form class="dropzone" id="dropzone-multiple" action="./" autocomplete="off" novalidate>
+                                                        <div class="fallback">
+                                                            <input name="file" type="file" multiple />
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+
+                            }
+                            <div class="card bg-primary text-primary-fg">
+                                <div class="card-stamp">
+                                    <div class="card-stamp-icon bg-white text-primary">
+                                        <!-- Download SVG icon from http://tabler-icons.io/i/star -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-user-edit">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                                            <path d="M6 21v-2a4 4 0 0 1 4 -4h3.5" />
+                                            <path d="M18.42 15.61a2.1 2.1 0 0 1 2.97 2.97l-3.39 3.42h-3v-3l3.42 -3.39z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="card-title align-center">
+                                        <span class="material-icons"> account_circle </span> บันทึกการตรวจ
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="page-body">
+                                    <div class="container-xl">
+                                        <div class="row row-cards">
+                                            <div class="col-12 col-sm-6">
+                                                <label class="form-label">วันที่ตรวจ</label>
+                                                <div class="input-icon">
+                                                    <span class="input-icon-addon">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                            <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
+                                                            <path d="M16 3v4" />
+                                                            <path d="M8 3v4" />
+                                                            <path d="M4 11h16" />
+                                                            <path d="M11 15h1" />
+                                                            <path d="M12 15v3" />
+                                                        </svg>
+                                                    </span>
+                                                    <input class="form-control" type="date" id="start-datepicker" value="2020-06-20" onchange="calculateDays()" />
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-sm-6">
+                                                <label class="form-label">ผู้ตรวจ</label>
+                                                <input type="text" class="form-control" name="unit-name" placeholder="" value="Pawel Kuna" disabled>
+                                            </div>
+                                            <div class="col-12 col-sm-6">
+                                                <label class="form-label">ความคิดเห็น</label>
+                                                <textarea rows="5" class="form-control" placeholder=""
+                                                          value="Mike">Oh so, your weak rhyme
+                                                            You doubt I'll bother, reading into it
+                                                            I'll probably won't, left to my own devices
+                                                            But that's the difference in our opinions.
+                                                </textarea>
+                                            </div>
+                                            <div class="col-12 col-sm-6">
+                                                <label class="form-label">อัปโหลดรูปภาพ</label>
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <form class="dropzone" id="dropzone-multiple" action="./" autocomplete="off" novalidate>
+                                                            <div class="fallback">
+                                                                <input name="file" type="file" multiple />
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="row">
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <label class="form-label align-center">&nbsp; แก้ไขล่าสุด 13/06/2024</label>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <div class="btn-list justify-content-end">
+                                                                <a href="#" class="btn">
+                                                                    บันทึก
+                                                                </a>
+                                                                <a href="#" class="btn btn-primary">
+                                                                    ขอการอนุมัติ
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <br>
+            <div class="col-12">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card bg-primary text-primary-fg">
+                                <div class="card-stamp">
+                                    <div class="card-stamp-icon bg-white text-primary">
+                                        <!-- Download SVG icon from http://tabler-icons.io/i/star -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-user-edit">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                                            <path d="M6 21v-2a4 4 0 0 1 4 -4h3.5" />
+                                            <path d="M18.42 15.61a2.1 2.1 0 0 1 2.97 2.97l-3.39 3.42h-3v-3l3.42 -3.39z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="card-title align-center">
+                                        <span class="material-icons"> account_circle </span>บันทึกการอนุมัติ
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label">วันที่ตรวจ</label>
+                                        <div class="input-icon">
+                                            <span class="input-icon-addon">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
+                                                    <path d="M16 3v4" />
+                                                    <path d="M8 3v4" />
+                                                    <path d="M4 11h16" />
+                                                    <path d="M11 15h1" />
+                                                    <path d="M12 15v3" />
+                                                </svg>
+                                            </span>
+                                            <input class="form-control" type="date" id="start-datepicker" value="2020-06-20" onchange="calculateDays()" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label">ผู้ตรวจ</label>
+                                        <input type="text" class="form-control" name="unit-name" placeholder="" value="Pawel Kuna" disabled>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label">ความคิดเห็น</label>
+                                        <textarea rows="5"
+                                                  class="form-control"
+                                                  placeholder=""
+                                                  value="Mike">Oh so, your weak rhyme
+                                                                        You doubt I'll bother, reading into it
+                                                                        I'll probably won't, left to my own devices
+                                                                        But that's the difference in our opinions.
+                                        </textarea>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label">อัปโหลดรูปภาพ</label>
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <form class="dropzone" id="dropzone-multiple" action="./" autocomplete="off" novalidate>
+                                                    <div class="fallback">
+                                                        <input name="file" type="file" multiple />
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">&nbsp; แก้ไขล่าสุด 13/06/2024</label>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="btn-list justify-content-end">
+                                            <a href="#" class="btn">
+                                                Clear
+                                            </a>
+                                            <a href="#" class="btn btn-primary">
+                                                บันทึก
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-status-top bg-blue"></div>
+                                <div class="ribbon ribbon-top bg-yellow">
+                                    <!-- Download SVG icon from http://tabler-icons.io/i/star -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="card-title align-center">
+                                        <span class="material-icons"> account_circle </span>ผลการอนุมัติ
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label">เลือกผล</label>
+                                        <label class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                   name="radios-inline">
+                                            <span class="form-check-label">ผ่าน</span>
+                                        </label>
+                                        <label class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                   name="radios-inline">
+                                            <span class="form-check-label">ไม่ผ่าน</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label">สาเหตุปฏิเสธ</label>
+                                        <select type="text" class="form-select" id="select-users" value="">
+                                            <option value="1">งานไม่เรียบร้อย</option>
+                                            <option value="2">พังเสียหาย</option>
+                                            <option value="3">พื้นเอียง</option>
+                                            <option value="4">หลังคา</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">&nbsp; แก้ไขล่าสุด 13/06/2024</label>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="btn-list justify-content-end">
+                                            <a href="#" class="btn">
+                                                Clear
+                                            </a>
+                                            <a href="#" class="btn btn-primary">
+                                                อนุมัติ
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12 col-sm-6">
+                        <form class="card">
+                            <div class="card-body">
+                                <h2 class="page-title">
+                                    กล่องใส่ข้อความ
+                                </h2>
+                                <div class="page-body">
+                                    <div class="container-xl">
+                                        <div class="row row-cols-12 g-3">
+                                            <div class="col-12">
+                                                <label class="form-label">ความคิดเห็น</label>
+                                                <textarea rows="5" class="form-control" placeholder=""
+                                                          value="Mike">Oh so, your weak rhyme
+                                                                                    You doubt I'll bother, reading into it
+                                                                                    I'll probably won't, left to my own devices
+                                                                                    But that's the difference in our opinions.
+                                                                        </textarea>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">อัปโหลดรูปภาพ</label>
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <form class="dropzone" id="dropzone-multiple" action="./" autocomplete="off" novalidate>
+                                                            <div class="fallback">
+                                                                <input name="file" type="file" multiple />
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="btn-list justify-content-end">
+                                                    <a href="#" class="btn">
+                                                        Clear
+                                                    </a>
+                                                    <a href="#" class="btn btn-primary">
+                                                        ส่ง
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <form action="https://httpbin.org/post" method="post" class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Reply</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-5">
+                                    <div class="col-12 d-flex flex-column">
+                                        <div class="card-body scrollable" style="height: 18.3rem">
+                                            <div class="chat">
+                                                <div class="chat-bubbles">
+                                                    <div class="chat-item">
+                                                        <div class="row align-items-end">
+                                                            <div class="col-12">
+                                                                <div class="chat-bubble">
+                                                                    <div class="chat-bubble-title">
+                                                                        <div class="row">
+                                                                            <div class="col chat-bubble-author">(PM) Mallory Hulme</div>
+                                                                            <div class="col-auto chat-bubble-date">09:34</div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="chat-bubble-body">
+                                                                        <p>PE ตรวจเป็นไงบ้างติดอะไรตรงไหนไหม ?</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="chat-item">
+                                                        <div class="row align-items-end">
+                                                            <div class="col-12">
+                                                                <div class="chat-bubble">
+                                                                    <div class="chat-bubble-title">
+                                                                        <div class="row">
+                                                                            <div class="col chat-bubble-author">(PE) Pawel kuna</div>
+                                                                            <div class="col-auto chat-bubble-date">09:35</div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="chat-bubble-body">
+                                                                        <p>งานเรียบร้อยดีครับ</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="chat-item">
+                                                        <div class="row align-items-end">
+                                                            <div class="col-12">
+                                                                <div class="chat-bubble">
+                                                                    <div class="chat-bubble-title">
+                                                                        <div class="row">
+                                                                            <div class="col chat-bubble-author">(PE) Pawel kuna</div>
+                                                                            <div class="col-auto chat-bubble-date">09:35</div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="chat-bubble-body">
+                                                                        <div class="mt-2">
+                                                                            <img src="./img/img13.jpg" alt="" class="rounded img-fluid" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="chat-item">
+                                                        <div class="row align-items-end">
+                                                            <div class="col-12">
+                                                                <div class="chat-bubble">
+                                                                    <div class="chat-bubble-title">
+                                                                        <div class="row">
+                                                                            <div class="col chat-bubble-author">(PM) Mallory Hulme</div>
+                                                                            <div class="col-auto chat-bubble-date">09:35</div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="chat-bubble-body">
+                                                                        <p>OK</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <style>
+        .status-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .status-dot-animated {
+            margin-right: 10px;
+            margin-bottom: 10px;
+            animation: blink 1.5s infinite;
+        }
+
+        .align-center {
+            display: flex;
+            align-items: center;
+        }
+
+        .align-center .material-icons {
+            margin-right: 8px; 
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px
+        }
+
+        .c-details span {
+            font-weight: 300;
+            font-size: 13px
+        }
+    </style>
+
+<script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>

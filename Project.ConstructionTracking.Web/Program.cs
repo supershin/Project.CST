@@ -15,14 +15,16 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("ContructionTrack
 builder.Services.AddControllers().AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);
 //scope
 builder.Services.AddScoped<IUnitService, UnitService>();
-builder.Services.AddScoped<IUnitRepo,UnitRepo>();
+builder.Services.AddScoped<IUnitRepo, UnitRepo>();
 
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IProjectRepo, ProjectRepo>();
 
-
 builder.Services.AddScoped<ITrackingService, TrackingService>();
 builder.Services.AddScoped<ITrackingRepo, TrackingRepo>();
+
+builder.Services.AddScoped<IProjectFormService, ProjectFormService>();
+builder.Services.AddScoped<IProjectFormRepo, ProjectFormRepo>();
 
 var app = builder.Build();
 

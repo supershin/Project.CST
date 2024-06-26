@@ -9,6 +9,7 @@ namespace Project.ConstructionTracking.Web.Models
     {
         public Guid UnitID { get; set; }
         public Guid? ProjectID { get; set; }
+        public string? ProjectName { get; set; }
         public int? UnitTypeID { get; set; }
         public string? UnitTypeName { get; set; }
         public string? UnitCode { get; set; }
@@ -19,8 +20,8 @@ namespace Project.ConstructionTracking.Web.Models
        
         public decimal? Area { get; set; }
      
-        public DateTime? StartDate { get; set; }
+        public string? StartDate { get; set; }
      
-        public DateTime? EndDate { get; set; }
+        public string? EndDate { get; set; }
     }
 }

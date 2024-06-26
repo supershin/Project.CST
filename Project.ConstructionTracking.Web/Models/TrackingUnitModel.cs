@@ -7,8 +7,8 @@
         public Guid? UnitID { get; set; }
         public int? FormID { get; set; }
         public string FormName { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
         public decimal? Progress { get; set; }
         public int? Duration { get; set; }
         public int? StatusID { get; set; }

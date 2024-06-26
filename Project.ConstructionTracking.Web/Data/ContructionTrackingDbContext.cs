@@ -36,7 +36,15 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tr_UnitForm_Action_Log> tr_UnitForm_Action_Log { get; set; } = null!;
         public virtual DbSet<tr_UnitForm_Detail> tr_UnitForm_Detail { get; set; } = null!;
 
-   
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("data source=F-147;database=ConstrcutionTracking;Integrated Security=SSPI;persist security info=True;");
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Thai_CI_AS");

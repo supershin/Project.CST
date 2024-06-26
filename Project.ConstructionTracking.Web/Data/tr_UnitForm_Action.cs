@@ -39,6 +39,14 @@ namespace Project.ConstructionTracking.Web.Data
         [Unicode(false)]
         public string? Remark_PM { get; set; }
         [Column(TypeName = "datetime")]
+        public DateTime? ApproveDate_VP { get; set; }
+        public Guid? ApproveBy_VP { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? RejectDate_VP { get; set; }
+        public Guid? RejectBy_VP { get; set; }
+        [Unicode(false)]
+        public string? Remark_VP { get; set; }
+        [Column(TypeName = "datetime")]
         public DateTime? CalcelDate { get; set; }
         public Guid? CancelBy { get; set; }
         [Column(TypeName = "datetime")]
