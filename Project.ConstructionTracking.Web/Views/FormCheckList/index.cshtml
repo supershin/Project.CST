@@ -11,7 +11,48 @@
         <div class="container-xl">
             <div class="row g-1 align-items-center">
                 <div class="col-12">
-                    <h2><span class="badge bg-yellow text-white">กำลังตรวจ</span> งาน วางผัง ฐานราก คานคอดินและเสาชั้นล่าง แล้วเสร็จ </h2>
+                    @foreach (var item in Model.FormCheckListUnitList)
+                    {
+                        <h2>
+                            @if(item.StatusID == 9)
+                            {
+                                <span class="badge bg-green text-white">
+                                    ผ่าน
+                                </span>
+                            }
+                            else if (item.StatusID == 10)
+                            {
+                                <span class="badge bg-yellow text-white">
+                                    กำลังตรวจ
+                                </span>
+                            }
+                            else if (item.StatusID == 11)
+                            {
+                                <span class="badge bg-orange text-white">
+                                    รอตรวจ
+                                </span>
+                            }
+                            else if (item.StatusID == 12)
+                            {
+                                <span class="badge bg-red text-white">
+                                    ไม่ผ่าน
+                                </span>
+                            }
+                            else if (item.StatusID == 14)
+                            {
+                                <span class="badge bg-green text-white">
+                                    ผ่าน <span class="material-icons"> error </span>
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary text-white">
+                                    ตรวจ
+                                </span>
+                            }
+                            @item.Desc 
+                        </h2>
+                    }
                 </div>
             </div>
         </div>
@@ -199,32 +240,35 @@
                                                                     <div class="row">
                                                                         <div class="col-12 col-sm-4">
                                                                             <div>
-                                                                                <label class="form-check form-check-inline">
-                                                                                    <input class="form-check-input" type="checkbox">
-                                                                                    <span class="form-check-label">ผ่าน</span>
-                                                                                </label>
-                                                                                <label class="form-check form-check-inline">
-                                                                                    <input class="form-check-input" type="checkbox" >
-                                                                                    <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
-                                                                                </label>
-                                                                                <label class="form-check form-check-inline">
-                                                                                    <input class="form-check-input" type="checkbox">
-                                                                                    <span class="form-check-label">ไม่ผ่าน</span>
-                                                                                </label>
-                                                                                <label class="form-check form-check-inline">
-                                                                                    <input class="form-check-input" type="checkbox">
-                                                                                    <span class="form-check-label">ไม่มีงาน</span>
-                                                                                </label>
+                                                                                <div>
+                                                                                    <label class="form-check form-check-inline @item4.CheckListID">
+                                                                                        <input class="form-check-input @item4.CheckListID" type="radio" name="radios-inline-@item4.CheckListID" value="5" @(item4.StatusID == 5 ? "checked" : "")>
+                                                                                        <span class="form-check-label">ผ่าน</span>
+                                                                                    </label>
+                                                                                    <label class="form-check form-check-inline @item4.CheckListID">
+                                                                                        <input class="form-check-input @item4.CheckListID" type="radio" name="radios-inline-@item4.CheckListID" value="8" @(item4.StatusID == 8 ? "checked" : "")>
+                                                                                        <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
+                                                                                    </label>
+                                                                                    <label class="form-check form-check-inline @item4.CheckListID">
+                                                                                        <input class="form-check-input @item4.CheckListID" type="radio" name="radios-inline-@item4.CheckListID" value="7" @(item4.StatusID == 7 ? "checked" : "")>
+                                                                                        <span class="form-check-label">ไม่มีงาน</span>
+                                                                                    </label>
+                                                                                    <label class="form-check form-check-inline @item4.CheckListID">
+                                                                                        <input class="form-check-input @item4.CheckListID" type="radio" name="radios-inline-@item4.CheckListID" value="6" @(item4.StatusID == 6 ? "checked" : "")>
+                                                                                        <span class="form-check-label">ไม่ผ่าน</span>
+                                                                                    </label>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-12 col-sm-8">
-                                                                            <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="">
+                                                                            <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" value="@item4.Remark">
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     }
+
                                                 </div>
                                                 <div class="card-footer">
                                                     <label class="form-label">อัปโหลดรูปภาพ</label>
@@ -238,7 +282,6 @@
                                         </div>
                                     }
                                 }
-
                             }
                             <div class="card bg-primary text-primary-fg">
                                 <div class="card-stamp">

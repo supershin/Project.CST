@@ -12,7 +12,8 @@ namespace Project.ConstructionTracking.Web.Models
             public Guid? UnitID { get; set; }
             public int? FormID { get; set; }
             public string FormName { get; set; }
-
+            public string Desc { get; set; }
+            public int? StatusID { get; set; }
             public List<ProjectForm_getListGroups> ListGroups { get; set; }
 
         }
@@ -39,6 +40,8 @@ namespace Project.ConstructionTracking.Web.Models
             public int CheckListID { get; set; }
             public int? PackageID { get; set; }
             public string? CheckListName { get; set; }
+            public int? StatusID { get; set; }
+            public string? Remark { get; set; }
             public int? Sort { get; set; }
             public bool? FlagActive { get; set; }
 

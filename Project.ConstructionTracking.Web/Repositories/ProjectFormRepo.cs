@@ -17,20 +17,26 @@ namespace Project.ConstructionTracking.Web.Repositories
         }
         public List<ProjectFormModel.ProjectForm_getForm> GetFormCheckUnitList(int formID)
         {
-            var query = from t1 in _context.tr_ProjectForm
-                        where t1.ID == formID && t1.FormTypeID == SystemConstant.Ext.FORM_TYPE_PE && t1.FormRefID == null
+            var query = from t1 in _context.tr_ProjectForm                      
                         join t2 in _context.tr_ProjectFormGroup on t1.ID equals t2.FormID into _t2Group
                         from t2Group in _t2Group.DefaultIfEmpty()
                         join t3 in _context.tr_ProjectFormPackage on t2Group.ID equals t3.GroupID into _t3Group
                         from t3Group in _t3Group.DefaultIfEmpty()
                         join t4 in _context.tr_ProjectFormCheckList on t3Group.ID equals t4.PackageID into _t4Group
                         from t4Group in _t4Group.DefaultIfEmpty()
+                        join t5 in _context.tr_UnitForm on t1.ID equals t5.FormID into _t5Group
+                        from t5Group in _t5Group.DefaultIfEmpty()
+                        join t6 in _context.tr_UnitForm_Detail on t5Group.ID equals t6.UnitFormID into _t6Group
+                        from t6Group in _t6Group.DefaultIfEmpty()
+                        where t1.ID == formID && t1.FormTypeID == SystemConstant.Ext.FORM_TYPE_PE && t1.FormRefID == null && t6Group.CheckListID == t4Group.ID
                         select new
                         {
                             t1,
                             t2Group,
                             t3Group,
-                            t4Group
+                            t4Group,
+                            t5Group,
+                            t6Group
                         };
 
             var queryResult = query.ToList();
@@ -46,6 +52,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                     {
                         FormID = item.t1.ID,
                         FormName = item.t1.Name,
+                        Desc = item.t1.Description,
+                        StatusID = item.t5Group.StatusID,
                         ListGroups = new List<ProjectFormModel.ProjectForm_getListGroups>()
                     };
                     results.Add(existingForm);
@@ -87,7 +95,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 existingCheckList = new ProjectFormModel.ProjectForm_getListCheckLists
                                 {
                                     CheckListID = item.t4Group.ID,
-                                    CheckListName = item.t4Group.Name
+                                    CheckListName = item.t4Group.Name,
+                                    StatusID = item.t6Group.CheckListStatusID,
+                                    Remark = item.t6Group.Remark
                                 };
                                 existingPackage.ListCheckLists.Add(existingCheckList);
                             }
