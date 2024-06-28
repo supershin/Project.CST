@@ -173,7 +173,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     FormName = item.t1.Name,
                     Duration = item.t1.Duration,
                     Progress = item.t1.Progress,
-                    StatusID = (t4Group?.t1.StatusID == null) ? 14 : t4Group.t1.StatusID,
+                    StatusID = (t4Group?.t1.StatusID == null) ? 13 : t4Group.t1.StatusID,
                     StartDate = startDate.ToStringDate(), // Handle null case
                     EndDate = endDate.ToStringDate(), // Handle null case   
                     FormRef = (item.t2Group != null) ? new TrackingUnitRef

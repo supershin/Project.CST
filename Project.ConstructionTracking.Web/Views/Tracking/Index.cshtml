@@ -195,7 +195,7 @@
                                             <div class="row d-block d-sm-none">
                                                 <div class="row">
                                                     <div class="col-12">
-                                                        @if (item.StatusID == 8)
+                                                        @if (item.StatusID == 9)
                                                         {
                                                             <form action="@Url.Action("index","FormCheckList")" method="post">
                                                                 <button type="submit" class="btn btn-success fixed-size-btn">
@@ -203,7 +203,7 @@
                                                                 </button>
                                                             </form>
                                                         }
-                                                        else if (item.StatusID == 9)
+                                                        else if (item.StatusID == 14)
                                                         {
                                                             <form action="@Url.Action("index","FormCheckList")" method="post">
                                                                 <button type="submit" class="btn btn-success fixed-size-btn">
@@ -211,7 +211,7 @@
                                                                 </button>
                                                             </form>
                                                         }
-                                                        else if (item.StatusID == 10)
+                                                        else if (item.StatusID == 12)
                                                         {
                                                             <form action="@Url.Action("index","FormCheckList")" method="post">
                                                                 <button class="btn btn-danger fixed-size-btn">
@@ -219,7 +219,7 @@
                                                                 </button>
                                                             </form>
                                                         }
-                                                        else if (item.StatusID == 11)
+                                                        else if (item.StatusID == 10)
                                                         {
                                                             <form action="@Url.Action("index","FormCheckList")" method="post">
                                                                 <button class="btn fixed-size-btn" style="background-color: #CCCC00; color: white;">
@@ -227,7 +227,7 @@
                                                                 </button>
                                                             </form>
                                                         }
-                                                        else if (item.StatusID == 12)
+                                                        else if (item.StatusID == 11)
                                                         {
                                                             <form action="@Url.Action("index","FormCheckList")" method="post">
                                                                 <button class="btn fixed-size-btn" style="background-color: orange; color: white;">
@@ -265,18 +265,15 @@
                                             </div>
                                         </div>
                                         <div class="d-none d-sm-block col-sm-2 text-left">
-                                            @if (item.StatusID == 8)
+                                            @if (item.StatusID == 9)
                                             {
-@*                                                <a href="FormCheckList/index/' + @item.UnitID + '" class="btn btn-success fixed-size-btn">
-                                                    ผ่าน
-                                                 </a>*@
-                                                <form action="@Url.Action("index","FormCheckList",@item.UnitID)" method="post">
+                                                <form action="@Url.Action("index","FormCheckList")" method="post">
                                                     <button type="submit" class="btn btn-success fixed-size-btn">
                                                         ผ่าน
                                                     </button>
                                                 </form>
                                             }
-                                            else if (item.StatusID == 9)
+                                            else if (item.StatusID == 14)
                                             {
                                                 <form action="@Url.Action("index","FormCheckList")" method="post">
                                                     <button type="submit" class="btn btn-success fixed-size-btn">
@@ -284,7 +281,7 @@
                                                     </button>
                                                 </form>
                                             }
-                                            else if (item.StatusID == 10)
+                                            else if (item.StatusID == 12)
                                             {
                                                 <form action="@Url.Action("index","FormCheckList")" method="post">
                                                     <button class="btn btn-danger fixed-size-btn">
@@ -292,15 +289,15 @@
                                                     </button>
                                                 </form>
                                             }
-                                            else if (item.StatusID == 11)
+                                            else if (item.StatusID == 10)
                                             {
                                                 <form action="@Url.Action("index","FormCheckList")" method="post">
                                                     <button class="btn fixed-size-btn" style="background-color: #CCCC00; color: white;">
                                                         กำลังตรวจ
                                                     </button>
-                                                 </form>
+                                                </form>
                                             }
-                                            else if (item.StatusID == 12)
+                                            else if (item.StatusID == 11)
                                             {
                                                 <form action="@Url.Action("index","FormCheckList")" method="post">
                                                     <button class="btn fixed-size-btn" style="background-color: orange; color: white;">

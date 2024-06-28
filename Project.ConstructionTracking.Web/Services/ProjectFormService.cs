@@ -6,17 +6,28 @@ namespace Project.ConstructionTracking.Web.Services
 {
     public class ProjectFormService : IProjectFormService
     {
-        private readonly IProjectFormRepo _ProjectFormRepo;
+        private readonly IProjectFormRepo _projectFormRepo;
 
-        public ProjectFormService(IProjectFormRepo ProjectFormRepo)
+        public ProjectFormService(IProjectFormRepo projectFormRepo)
         {
-            _ProjectFormRepo = ProjectFormRepo;
+            _projectFormRepo = projectFormRepo;
         }
-        public FormCheckListUnitView GetFormCheckListUnit(int formID)
+
+        public FormCheckListUnitView GetFormCheckListUnit(int formID, int unitID)
         {
-            var formCheckListUnitView = new FormCheckListUnitView();
-            formCheckListUnitView.FormCheckListUnitList = _ProjectFormRepo.GetFormCheckUnitList(formID);
+            var formCheckListUnitView = new FormCheckListUnitView
+            {
+                Detail = _projectFormRepo.GetDetail(unitID),
+                FormCheckListUnitList = _projectFormRepo.GetFormCheckUnitList(formID)
+            };
             return formCheckListUnitView;
         }
+
+        public void InsertFormCheckListUnit(FormCheckListUnitView model)
+        {
+            _projectFormRepo.InsertFormCheckListUnit(model);
+        }
+
+
     }
 }
