@@ -70,5 +70,23 @@ namespace Project.ConstructionTracking.Web.Repositories
          
             return data;
         }
+        public dynamic GetUnitTypeList()
+        {
+            var query = from u in _context.tm_UnitType.Where(e => e.FlagActive == true)
+                        select new
+                        {
+                            u.ID,
+                            u.Name
+                        };
+
+            var data = query.AsEnumerable().Select(e => new
+            {
+                e.ID,
+                e.Name
+
+            }).ToList();
+
+            return data;
+        }
     }
 }

@@ -16,5 +16,11 @@ namespace Project.ConstructionTracking.Web.Services
             var units = _unitRepo.GetUnitList(criteria, param);
             return units;
         }
+
+        public dynamic GetUnitTypeList()
+        {
+            var units = _unitRepo.GetUnitTypeList();
+            return units;
+        }
     }
 }
