@@ -59,6 +59,7 @@
     </div>
     <!-- Page body -->
     <div class="page-body">
+
         <div class="container-xl">
             <div class="col-12">
                 <div class="row">
@@ -192,74 +193,117 @@
                 </div>
             </div>
             <br>
-            <div class="col-12">
-
+@*            <div class="col-12 sticky-top">
+                <div class="card">
                     <div class="card-body">
-                        <div class="row">
-                            <form asp-action="Create" method="post">
-                                @foreach (var item in Model.FormCheckListUnitList)
-                                {
-                                    @foreach (var item2 in item.ListGroups)
-                                    {
-                                        <div class="card bg-primary text-primary-fg">
-                                            <div class="card-stamp">
-                                                <div class="card-stamp-icon bg-white text-primary">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
-                                                </div>
-                                            </div>
-                                            <div class="card-body">
-                                                <h3 class="card-title align-center">
-                                                    <span class="material-icons"> maps_home_work </span> @item2.GroupName
-                                                </h3>
-                                            </div>
-                                        </div>
-                                        @foreach (var item3 in item2.ListPackages)
-                                        {
-                                            <div class="card-body">
-                                                <div class="card card-link card-link-pop col-12">
-                                                    <div class="card bg-yellow text-primary-fg">
-                                                        <div class="card-stamp">
-                                                            <div class="card-stamp-icon bg-yellow">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
-                                                            </div>
-                                                        </div>
-                                                        <div class="card-body align-center">
-                                                            <span class="material-icons"> checklist </span> @item3.PackagesName
-                                                        </div>
+                        <a class="btn" data-bs-toggle="offcanvas" href="#offcanvasEnd" role="button" aria-controls="offcanvasEnd">
+                            Toggle end offcanvas
+                        </a>
+                    </div>
+                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEnd" aria-labelledby="offcanvasEndLabel">
+                        <div class="offcanvas-header">
+                            <h2 class="offcanvas-title" id="offcanvasEndLabel">End offcanvas</h2>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <div>
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab assumenda ea est, eum exercitationem fugiat illum itaque laboriosam magni necessitatibus, nemo nisi numquam quae reiciendis repellat sit soluta unde. Aut!
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-primary" type="button" data-bs-dismiss="offcanvas">
+                                    Close offcanvas
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>*@
+            <div class="col-12">
+                <div class="card-tabs">
+                    <!-- Cards navigation -->
+                    <ul class="nav nav-tabs custom-tabs">
+                        @* Initialize a counter *@
+                        @foreach (var itemt1 in Model.FormCheckListUnitList)
+                        {
+                            var counter = 1;
+                            foreach (var itemt2 in itemt1.ListGroups)
+                            {
+                                <li class="nav-item">
+                                    <a href="#tab-top-@itemt2.GroupID" class="nav-link @(itemt1 == Model.FormCheckListUnitList.First() && itemt2 == itemt1.ListGroups.First() ? "active" : "")" data-bs-toggle="tab">
+                                        <h3 class="card-title align-center">
+                                            <span class="material-icons">maps_home_work</span> สวนที่ @counter
+                                        </h3>
+                                    </a>
+                                </li>
+                                @* Increment the counter *@
+                                counter++;
+                            }
+                        }
+                    </ul>
+@*                    <div class="position-fixed top-50 start-100 translate-middle">
+                        <span class="badge bg-green text-white">
+                            ผ่าน
+                        </span>
+                    </div>*@
+                    <div class="tab-content">
+                        <!-- Content of card #1 -->
+                        @foreach (var itemt1 in Model.FormCheckListUnitList)
+                        {
+                            foreach (var itemt2 in itemt1.ListGroups)
+                            {
+                                <div id="tab-top-@itemt2.GroupID" class="card tab-pane @(itemt1 == Model.FormCheckListUnitList.First() && itemt2 == itemt1.ListGroups.First() ? "active show" : "")">
+                                    <div class="card-body">
+                                        <div class="card-title">@itemt2.GroupName</div>
+                                        <br>
+                                        <div id="accordion-@itemt2.GroupID">
+                                            @foreach (var itemt3 in itemt2.ListPackages)
+                                            {
+                                                var isActive = itemt3 == itemt2.ListPackages.First(); // Check if this is the first item
+                                                var collapseId = $"collapse-{itemt3.PackagesID}";
+                                                var headingId = $"heading-{itemt3.PackagesID}";
+
+                                                <div class="card">
+                                                    <div class="card-header" id="@headingId">
+                                                        <h5 class="mb-0">
+                                                            <button class="btn btn-link @(isActive ? "" : "collapsed")" data-bs-toggle="collapse" data-bs-target="#@collapseId" aria-expanded="@(isActive ? "true" : "false")" aria-controls="@collapseId">
+                                                                @itemt3.PackagesName
+                                                            </button>
+                                                        </h5>
                                                     </div>
-                                                    <div class="row">
-                                                        @foreach (var item4 in item3.ListCheckLists)
+
+                                                    <div id="@collapseId" class="collapse @(isActive ? "show" : "")" aria-labelledby="@headingId" data-bs-parent="#accordion-@itemt2.GroupID">
+                                                        @foreach (var itemt4 in itemt3.ListCheckLists)
                                                         {
                                                             <div class="col-12 shadow p-5 mb-2 rounded">
                                                                 <div class="row">
                                                                     <div class="col-12 col-sm-3">
-                                                                        <h4>- @item4.CheckListName</h4>
+                                                                        <h4>- @itemt4.CheckListName</h4>
                                                                     </div>
                                                                     <div class="col-12 col-sm-9">
                                                                         <div class="row">
                                                                             <div class="col-12 col-sm-4">
                                                                                 <div>
-                                                                                    <label class="form-check form-check-inline @item4.CheckListID">
-                                                                                        @*<input class="form-check-input @item4.CheckListID" type="radio" name="FormCheckListUnitList[@Model.FormCheckListUnitList.IndexOf(item)].ListGroups[@item.ListGroups.IndexOf(item2)].ListPackages[@item2.ListPackages.IndexOf(item3)].ListCheckLists[@item3.ListCheckLists.IndexOf(item4)].StatusID" value="5" @(item4.StatusID == 5 ? "checked" : "") onclick="toggleRadio(this)">*@
-                                                                                    <input class="form-check-input" type="radio" data-action="chk-check-list" form-id="@item.FormID"  group-id="@item2.GroupID" package-id="@item3.PackagesID" check-list-id="@item4.CheckListID"  onclick="toggleRadio(this)" value="5" >
+                                                                                    <label class="form-check form-check-inline @itemt4.CheckListID">
+                                                                                        <input class="form-check-input" type="radio" data-action="chk-check-list" form-id="@itemt1.FormID" group-id="@itemt2.GroupID" package-id="@itemt3.PackagesID" check-list-id="@itemt4.CheckListID" onclick="toggleRadio(this)" value="5" @(itemt4.StatusID == 5 ? "checked" : "")>
                                                                                         <span class="form-check-label">ผ่าน</span>
                                                                                     </label>
-                                                                                    <label class="form-check form-check-inline @item4.CheckListID">
-                                                                                    <input class="form-check-input" type="radio" data-action="chk-check-list"  form-id="@item.FormID" group-id="@item2.GroupID" package-id="@item3.PackagesID" check-list-id="@item4.CheckListID" onclick="toggleRadio(this)" value="8">
+                                                                                    <label class="form-check form-check-inline @itemt4.CheckListID">
+                                                                                        <input class="form-check-input" type="radio" data-action="chk-check-list" form-id="@itemt1.FormID" group-id="@itemt2.GroupID" package-id="@itemt3.PackagesID" check-list-id="@itemt4.CheckListID" onclick="toggleRadio(this)" value="8" @(itemt4.StatusID == 8 ? "checked" : "")>
                                                                                         <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
                                                                                     </label>
-                                                                                    <label class="form-check form-check-inline @item4.CheckListID">
-                                                                                    <input class="form-check-input" type="radio" data-action="chk-check-list"  form-id="@item.FormID" group-id="@item2.GroupID" package-id="@item3.PackagesID" check-list-id="@item4.CheckListID" onclick="toggleRadio(this)" value="7">
+                                                                                    <label class="form-check form-check-inline @itemt4.CheckListID">
+                                                                                        <input class="form-check-input" type="radio" data-action="chk-check-list" form-id="@itemt1.FormID" group-id="@itemt2.GroupID" package-id="@itemt3.PackagesID" check-list-id="@itemt4.CheckListID" onclick="toggleRadio(this)" value="7" @(itemt4.StatusID == 7 ? "checked" : "")>
                                                                                         <span class="form-check-label">ไม่มีงาน</span>
                                                                                     </label>
-                                                                                    <label class="form-check form-check-inline @item4.CheckListID">
-                                                                                    <input class="form-check-input" type="radio" data-action="chk-check-list"  form-id="@item.FormID" group-id="@item2.GroupID" package-id="@item3.PackagesID" check-list-id="@item4.CheckListID" onclick="toggleRadio(this)" value="6">
+                                                                                    <label class="form-check form-check-inline @itemt4.CheckListID">
+                                                                                        <input class="form-check-input" type="radio" data-action="chk-check-list" form-id="@itemt1.FormID" group-id="@itemt2.GroupID" package-id="@itemt3.PackagesID" check-list-id="@itemt4.CheckListID" onclick="toggleRadio(this)" value="6" @(itemt4.StatusID == 6 ? "checked" : "")>
                                                                                         <span class="form-check-label">ไม่ผ่าน</span>
                                                                                     </label>
-                                                                                </div>                                                                               
+                                                                                </div>
                                                                             </div>
                                                                             <div class="col-12 col-sm-8">
-                                                                                <input type="text" id="input-remark-@item4.CheckListID" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" name="FormCheckListUnitList[@Model.FormCheckListUnitList.IndexOf(item)].ListGroups[@item.ListGroups.IndexOf(item2)].ListPackages[@item2.ListPackages.IndexOf(item3)].ListCheckLists[@item3.ListCheckLists.IndexOf(item4)].Remark" value="@item4.Remark">
+                                                                                <input type="text" id="input-remark-@itemt4.CheckListID" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" name="FormCheckListUnitList[@Model.FormCheckListUnitList.IndexOf(itemt1)].ListGroups[@itemt1.ListGroups.IndexOf(itemt2)].ListPackages[@itemt2.ListPackages.IndexOf(itemt3)].ListCheckLists[@itemt3.ListCheckLists.IndexOf(itemt4)].Remark" value="@itemt4.Remark">
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -267,97 +311,70 @@
                                                             </div>
                                                         }
                                                     </div>
-                                                    <div class="card-footer">
-                                                        <label class="form-label">อัปโหลดรูปภาพ</label>
-                                                        <form class="dropzone" id="dropzone-multiple" action="./" autocomplete="off" novalidate>
-                                                            <div class="fallback">
-                                                                <input name="file" type="file" multiple />
-                                                            </div>
-                                                        </form>
-                                                    </div>
                                                 </div>
-                                            </div>           
-                                        }
-                                    }
-                                }
-                            <div class="card bg-primary text-primary-fg">
-                                <div class="card-stamp">
-                                    <div class="card-stamp-icon bg-white text-primary">
-                                        <!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-user-edit">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-                                            <path d="M6 21v-2a4 4 0 0 1 4 -4h3.5" />
-                                            <path d="M18.42 15.61a2.1 2.1 0 0 1 2.97 2.97l-3.39 3.42h-3v-3l3.42 -3.39z" />
-                                        </svg>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                    <h3 class="card-title align-center">
-                                        <span class="material-icons"> account_circle </span> บันทึกการตรวจ
-                                    </h3>
+                            }
+                        }
+                    </div>
+                </div>
+                <br>
+                <div class="card-body bg-white">
+                        <div class="container-xl">
+                            <div class="row row-cards">
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label">วันที่ตรวจ</label>
+                                    <div class="input-icon">
+                                        <span class="input-icon-addon">
+                                            <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M11 15h1" /><path d="M12 15v3" /></svg>
+                                        </span>
+                                        <input class="form-control" placeholder="Select a date" id="datepicker-icon-prepend" value="@Model.Detail.SaveDate_PE" />
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="page-body">
-                                    <div class="container-xl">
-                                        <div class="row row-cards">
-                                            <div class="col-12 col-sm-6">
-                                                <label class="form-label">วันที่ตรวจ</label>
-                                                <div class="input-icon">
-                                                    <span class="input-icon-addon">
-                                                        <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M11 15h1" /><path d="M12 15v3" /></svg>
-                                                    </span>
-                                                    <input class="form-control" placeholder="Select a date" id="datepicker-icon-prepend" value="@Model.Detail.SaveDate_PE" />
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-sm-6">
-                                                <label class="form-label">ผู้ตรวจ</label>
-                                                <input type="text" class="form-control" name="unit-name" placeholder="" value="@Model.Detail.SaveBy_PE_Name" disabled>
-                                            </div>
-                                            <div class="col-12 col-sm-6">
-                                                <label class="form-label">ความคิดเห็น</label>
-                                                <textarea rows="5" class="form-control" placeholder=""
-                                                          value="@Model.Detail.Remark_PE">
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label">ผู้ตรวจ</label>
+                                    <input type="text" class="form-control" name="unit-name" placeholder="" value="@Model.Detail.SaveBy_PE_Name" disabled>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label">ความคิดเห็น</label>
+                                    <textarea rows="5" class="form-control" placeholder=""
+                                              value="@Model.Detail.Remark_PE">
                                                 </textarea>
-                                            </div>
-                                            <div class="col-12 col-sm-6">
-                                                <label class="form-label">อัปโหลดรูปภาพ</label>
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <form class="dropzone" id="dropzone-multiple" action="./" autocomplete="off" novalidate>
-                                                            <div class="fallback">
-                                                                <input name="file" type="file" multiple />
-                                                            </div>
-                                                        </form>
-                                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label">อัปโหลดรูปภาพ</label>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <form class="dropzone" id="dropzone-multiple" action="./" autocomplete="off" novalidate>
+                                                <div class="fallback">
+                                                    <input name="file" type="file" multiple />
                                                 </div>
-                                                <br>
-                                                <div class="row">
-                                                    <div class="row">
-                                                        <div class="col-6">
-                                                            <label class="form-label align-center">&nbsp; แก้ไขล่าสุด 13/06/2024</label>
-                                                        </div>
-                                                        <div class="col-6">
-                                                            <div class="btn-list justify-content-end">
-                                                                <button id="btn-save-pe" type="button" class="btn" >บันทึก</button>
-                                                                <a href="#" class="btn btn-primary">
-                                                                    ขอการอนุมัติ
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <label class="form-label align-center">&nbsp; แก้ไขล่าสุด 13/06/2024</label>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="btn-list justify-content-end">
+                                                    <button id="btn-save-pe" type="button" class="btn">บันทึก</button>
+                                                    <a href="#" class="btn btn-primary">
+                                                        ขอการอนุมัติ
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            </form>
-                        </div>
-                    </div>
-  
+                        </div>       
+                </div>
             </div>
             <br>
             <div class="col-12">
@@ -650,6 +667,20 @@
 </div>
 
     <style>
+
+        .custom-tabs .nav-link {
+            font-size: 1.25rem; /* Custom font size */
+            padding: 0.75rem 1.25rem; /* Custom padding */
+        }
+
+        .custom-tabs .nav-link h3.card-title {
+            margin: 0; /* Remove default margin */
+        }
+
+        .custom-tabs .nav-item {
+            margin-bottom: -1px; /* Adjust for active border */
+        }
+
         .status-container {
             display: flex;
             align-items: center;
@@ -685,6 +716,7 @@
     
 <script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>
 <script src="~/js/pages/FormCheckList.js?ver=@DateTime.Now.Ticks.ToString()"></script>
+
 <script>
         $(document).ready(function () {
            form_check_list.init();
