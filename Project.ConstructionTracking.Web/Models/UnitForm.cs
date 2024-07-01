@@ -13,5 +13,6 @@
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public int? UpdateBy { get; set; }
+        public List<UnitFormDetail> CheckList { get; set; } = new List<UnitFormDetail>();
     }
 }

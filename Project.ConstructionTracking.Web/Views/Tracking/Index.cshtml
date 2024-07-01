@@ -197,11 +197,16 @@
                                                     <div class="col-12">
                                                         @if (item.StatusID == 9)
                                                         {
-                                                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                                                <button type="submit" class="btn btn-success fixed-size-btn">
-                                                                    ผ่าน
-                                                                </button>
-                                                            </form>
+@*                                                            <a href="FormCheckList/index/@item." class="btn btn-success fixed-size-btn">
+                                                                ผ่าน
+                                                            </a>*@
+                                                                <form asp-action="Index" asp-controller="FormCheckList" method="post">
+           
+                                                                <input type="hidden" name="ProjectID" value="@item.ID" />
+                                                                    <button type="submit" class="btn btn-success fixed-size-btn">
+                                                                        XXX
+                                                                    </button>
+                                                                </form>
                                                         }
                                                         else if (item.StatusID == 14)
                                                         {
@@ -250,9 +255,9 @@
                                                     }
                                                     else
                                                     {
-                                                        <div class="col-12">
+@*                                                        <div class="col-12">
                                                             <a href="#" class="text-reset" tabindex="-1" data-bs-toggle="tooltip" data-bs-placement="right" title="">@item.FormRef.FormName </a>
-                                                        </div>
+                                                        </div>*@
                                                         <div class="col-12">
                                                             <form action="@Url.Action("index","FormCheckList")">
                                                                 <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">

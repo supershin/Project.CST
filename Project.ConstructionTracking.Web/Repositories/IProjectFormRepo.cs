@@ -7,6 +7,6 @@ namespace Project.ConstructionTracking.Web.Repositories
     {
         List<ProjectFormModel.ProjectForm_getForm> GetFormCheckUnitList(int formID);
         ProjectFormDetail GetDetail(int unitID);
-        void InsertFormCheckListUnit(FormCheckListUnitView model);
+        void InsertFormCheckListUnit(UnitForm model);
     }
 }

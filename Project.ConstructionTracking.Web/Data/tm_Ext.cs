@@ -18,6 +18,7 @@ namespace Project.ConstructionTracking.Web.Data
             tm_UserDepartment = new HashSet<tm_User>();
             tm_UserRole = new HashSet<tm_User>();
             tr_ProjectForm = new HashSet<tr_ProjectForm>();
+            tr_UnitForm_Resource = new HashSet<tr_UnitForm_Resource>();
         }
 
         [Key]
@@ -53,5 +54,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual ICollection<tm_User> tm_UserRole { get; set; }
         [InverseProperty("FormType")]
         public virtual ICollection<tr_ProjectForm> tr_ProjectForm { get; set; }
+        [InverseProperty("Role")]
+        public virtual ICollection<tr_UnitForm_Resource> tr_UnitForm_Resource { get; set; }
     }
 }

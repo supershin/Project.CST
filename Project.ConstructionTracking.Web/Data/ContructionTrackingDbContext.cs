@@ -24,6 +24,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tm_FormGroup> tm_FormGroup { get; set; } = null!;
         public virtual DbSet<tm_FormPackage> tm_FormPackage { get; set; } = null!;
         public virtual DbSet<tm_Project> tm_Project { get; set; } = null!;
+        public virtual DbSet<tm_Resource> tm_Resource { get; set; } = null!;
         public virtual DbSet<tm_Unit> tm_Unit { get; set; } = null!;
         public virtual DbSet<tm_UnitType> tm_UnitType { get; set; } = null!;
         public virtual DbSet<tm_User> tm_User { get; set; } = null!;
@@ -35,6 +36,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tr_UnitForm_Action> tr_UnitForm_Action { get; set; } = null!;
         public virtual DbSet<tr_UnitForm_Action_Log> tr_UnitForm_Action_Log { get; set; } = null!;
         public virtual DbSet<tr_UnitForm_Detail> tr_UnitForm_Detail { get; set; } = null!;
+        public virtual DbSet<tr_UnitForm_Resource> tr_UnitForm_Resource { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -178,6 +180,15 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tm_Project)
                     .HasForeignKey(d => d.ProjectTypeID)
                     .HasConstraintName("FK_tm_Project_tm_Project");
+            });
+
+            modelBuilder.Entity<tm_Resource>(entity =>
+            {
+                entity.Property(e => e.ID).ValueGeneratedNever();
+
+                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
             });
 
             modelBuilder.Entity<tm_Unit>(entity =>
@@ -355,8 +366,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_UnitForm_Detail>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
@@ -387,6 +396,30 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tr_UnitForm_Detail)
                     .HasForeignKey(d => d.UnitFormID)
                     .HasConstraintName("FK_tr_UnitForm_Detail_tr_UnitForm");
+            });
+
+            modelBuilder.Entity<tr_UnitForm_Resource>(entity =>
+            {
+                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.Resource)
+                    .WithMany(p => p.tr_UnitForm_Resource)
+                    .HasForeignKey(d => d.ResourceID)
+                    .HasConstraintName("FK_tr_UnitForm_Resource_tm_Resource");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.tr_UnitForm_Resource)
+                    .HasForeignKey(d => d.RoleID)
+                    .HasConstraintName("FK_tr_UnitForm_Resource_tm_Ext");
+
+                entity.HasOne(d => d.UnitForm)
+                    .WithMany(p => p.tr_UnitForm_Resource)
+                    .HasForeignKey(d => d.UnitFormID)
+                    .HasConstraintName("FK_tr_UnitForm_Resource_tr_UnitForm");
             });
 
             OnModelCreatingPartial(modelBuilder);

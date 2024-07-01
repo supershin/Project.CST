@@ -13,6 +13,7 @@ namespace Project.ConstructionTracking.Web.Data
             tr_UnitForm_Action = new HashSet<tr_UnitForm_Action>();
             tr_UnitForm_Action_Log = new HashSet<tr_UnitForm_Action_Log>();
             tr_UnitForm_Detail = new HashSet<tr_UnitForm_Detail>();
+            tr_UnitForm_Resource = new HashSet<tr_UnitForm_Resource>();
         }
 
         [Key]
@@ -47,5 +48,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual ICollection<tr_UnitForm_Action_Log> tr_UnitForm_Action_Log { get; set; }
         [InverseProperty("UnitForm")]
         public virtual ICollection<tr_UnitForm_Detail> tr_UnitForm_Detail { get; set; }
+        [InverseProperty("UnitForm")]
+        public virtual ICollection<tr_UnitForm_Resource> tr_UnitForm_Resource { get; set; }
     }
 }

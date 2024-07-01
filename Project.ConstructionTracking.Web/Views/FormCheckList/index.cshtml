@@ -240,25 +240,26 @@
                                                                             <div class="col-12 col-sm-4">
                                                                                 <div>
                                                                                     <label class="form-check form-check-inline @item4.CheckListID">
-                                                                                        <input class="form-check-input @item4.CheckListID" type="radio" name="FormCheckListUnitList[@Model.FormCheckListUnitList.IndexOf(item)].ListGroups[@item.ListGroups.IndexOf(item2)].ListPackages[@item2.ListPackages.IndexOf(item3)].ListCheckLists[@item3.ListCheckLists.IndexOf(item4)].StatusID" value="5" @(item4.StatusID == 5 ? "checked" : "") onclick="toggleRadio(this)">
+                                                                                        @*<input class="form-check-input @item4.CheckListID" type="radio" name="FormCheckListUnitList[@Model.FormCheckListUnitList.IndexOf(item)].ListGroups[@item.ListGroups.IndexOf(item2)].ListPackages[@item2.ListPackages.IndexOf(item3)].ListCheckLists[@item3.ListCheckLists.IndexOf(item4)].StatusID" value="5" @(item4.StatusID == 5 ? "checked" : "") onclick="toggleRadio(this)">*@
+                                                                                    <input class="form-check-input" type="radio" data-action="chk-check-list" form-id="@item.FormID"  group-id="@item2.GroupID" package-id="@item3.PackagesID" check-list-id="@item4.CheckListID"  onclick="toggleRadio(this)" value="5" >
                                                                                         <span class="form-check-label">ผ่าน</span>
                                                                                     </label>
                                                                                     <label class="form-check form-check-inline @item4.CheckListID">
-                                                                                        <input class="form-check-input @item4.CheckListID" type="radio" name="FormCheckListUnitList[@Model.FormCheckListUnitList.IndexOf(item)].ListGroups[@item.ListGroups.IndexOf(item2)].ListPackages[@item2.ListPackages.IndexOf(item3)].ListCheckLists[@item3.ListCheckLists.IndexOf(item4)].StatusID" value="8" @(item4.StatusID == 8 ? "checked" : "") onclick="toggleRadio(this)">
+                                                                                    <input class="form-check-input" type="radio" data-action="chk-check-list"  form-id="@item.FormID" group-id="@item2.GroupID" package-id="@item3.PackagesID" check-list-id="@item4.CheckListID" onclick="toggleRadio(this)" value="8">
                                                                                         <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
                                                                                     </label>
                                                                                     <label class="form-check form-check-inline @item4.CheckListID">
-                                                                                        <input class="form-check-input @item4.CheckListID" type="radio" name="FormCheckListUnitList[@Model.FormCheckListUnitList.IndexOf(item)].ListGroups[@item.ListGroups.IndexOf(item2)].ListPackages[@item2.ListPackages.IndexOf(item3)].ListCheckLists[@item3.ListCheckLists.IndexOf(item4)].StatusID" value="7" @(item4.StatusID == 7 ? "checked" : "") onclick="toggleRadio(this)">
+                                                                                    <input class="form-check-input" type="radio" data-action="chk-check-list"  form-id="@item.FormID" group-id="@item2.GroupID" package-id="@item3.PackagesID" check-list-id="@item4.CheckListID" onclick="toggleRadio(this)" value="7">
                                                                                         <span class="form-check-label">ไม่มีงาน</span>
                                                                                     </label>
                                                                                     <label class="form-check form-check-inline @item4.CheckListID">
-                                                                                        <input class="form-check-input @item4.CheckListID" type="radio" name="FormCheckListUnitList[@Model.FormCheckListUnitList.IndexOf(item)].ListGroups[@item.ListGroups.IndexOf(item2)].ListPackages[@item2.ListPackages.IndexOf(item3)].ListCheckLists[@item3.ListCheckLists.IndexOf(item4)].StatusID" value="6" @(item4.StatusID == 6 ? "checked" : "") onclick="toggleRadio(this)">
+                                                                                    <input class="form-check-input" type="radio" data-action="chk-check-list"  form-id="@item.FormID" group-id="@item2.GroupID" package-id="@item3.PackagesID" check-list-id="@item4.CheckListID" onclick="toggleRadio(this)" value="6">
                                                                                         <span class="form-check-label">ไม่ผ่าน</span>
                                                                                     </label>
                                                                                 </div>                                                                               
                                                                             </div>
                                                                             <div class="col-12 col-sm-8">
-                                                                                <input type="text" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" name="FormCheckListUnitList[@Model.FormCheckListUnitList.IndexOf(item)].ListGroups[@item.ListGroups.IndexOf(item2)].ListPackages[@item2.ListPackages.IndexOf(item3)].ListCheckLists[@item3.ListCheckLists.IndexOf(item4)].Remark" value="@item4.Remark">
+                                                                                <input type="text" id="input-remark-@item4.CheckListID" class="form-control mt-2 mt-sm-0" placeholder="ระบุคำอธิบาย" name="FormCheckListUnitList[@Model.FormCheckListUnitList.IndexOf(item)].ListGroups[@item.ListGroups.IndexOf(item2)].ListPackages[@item2.ListPackages.IndexOf(item3)].ListCheckLists[@item3.ListCheckLists.IndexOf(item4)].Remark" value="@item4.Remark">
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -340,7 +341,7 @@
                                                         </div>
                                                         <div class="col-6">
                                                             <div class="btn-list justify-content-end">
-                                                                <button type="button" class="btn" onclick="submitForm()">บันทึก</button>
+                                                                <button id="btn-save-pe" type="button" class="btn" >บันทึก</button>
                                                                 <a href="#" class="btn btn-primary">
                                                                     ขอการอนุมัติ
                                                                 </a>
@@ -644,27 +645,7 @@
             </div>
         </div>
     </div>
-    <script>
-
-        function toggleRadio(radio) {
-            if (radio.checked && radio.dataset.wasChecked) {
-                radio.checked = false;
-                radio.dataset.wasChecked = "";
-            } else {
-                var radios = document.getElementsByName(radio.name);
-                for (var i = 0; i < radios.length; i++) {
-                    radios[i].dataset.wasChecked = "";
-                }
-                radio.dataset.wasChecked = "true";
-            }
-        }
-
-        function submitForm() {
-            console.log('test')
-        }
-
-    </script>
-
+    
 
 </div>
 
@@ -700,4 +681,13 @@
         }
     </style>
 
+@section scripts{
+    
 <script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>
+<script src="~/js/pages/FormCheckList.js?ver=@DateTime.Now.Ticks.ToString()"></script>
+<script>
+        $(document).ready(function () {
+           form_check_list.init();
+        });
+</script>
+}

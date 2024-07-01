@@ -23,7 +23,7 @@ namespace Project.ConstructionTracking.Web.Services
             return formCheckListUnitView;
         }
 
-        public void InsertFormCheckListUnit(FormCheckListUnitView model)
+        public void InsertFormCheckListUnit(UnitForm model)
         {
             _projectFormRepo.InsertFormCheckListUnit(model);
         }

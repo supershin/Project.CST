@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient.Server;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.Data.SqlClient.Server;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
@@ -143,117 +144,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             }).FirstOrDefault() ?? new ProjectFormDetail();
         }
 
-        //public ProjectFormDetail GetDetail(int unitID)
-        //{
-        //    var query1 = from t1 in _context.tr_UnitForm_Action
-        //                 select new
-        //                 {
-        //                     t1.SaveBy_PE,
-        //                     t1.SaveDate_PE,
-        //                     t1.SubmitBy_PE,
-        //                     t1.SubmitDate_PE,
-        //                     t1.Remark_PE,
-
-        //                     t1.SaveBy_QC,
-        //                     t1.SaveDate_QC,
-        //                     t1.SubmitBy_QC,
-        //                     t1.SubmitDate_QC,
-        //                     t1.Remark_QC,
-
-        //                     t1.SaveBy_PM,
-        //                     t1.SaveDate_PM,
-        //                     t1.ApproveBy_PM,
-        //                     t1.ApproveDate_PM,
-        //                     t1.RejectBy_PM,
-        //                     t1.RejectDate_PM,
-        //                     t1.Remark_PM,
-
-
-        //                     t1.ApproveBy_VP,
-        //                     t1.ApproveDate_VP,
-        //                     t1.RejectBy_VP,
-        //                     t1.RejectDate_VP,
-        //                     t1.Remark_VP
-
-        //                 };
-
-        //    var queryResult = query1.ToList();
-
-        //    var query2 = from t2 in _context.tm_User
-        //                 select new
-        //                 {
-        //                     t2.ID,
-        //                     t2.FirstName, 
-        //                     t2.LastName
-        //                 };
-
-        //    var queryResult2 = query2.ToList();
-
-        //    var result = from action in queryResult
-        //                 join PE_SAVE in queryResult2 on action.SaveBy_PE equals PE_SAVE.ID
-        //                 join PE_SUBMIT in queryResult2 on action.SubmitBy_PE equals PE_SUBMIT.ID
-        //                 join QC_SAVE in queryResult2 on action.SaveBy_QC equals QC_SAVE.ID
-        //                 join QC_SUBMIT in queryResult2 on action.SubmitBy_QC equals QC_SUBMIT.ID
-        //                 join PM_SAVE in queryResult2 on action.SaveBy_PM equals PM_SAVE.ID
-        //                 join PM_APPROVE in queryResult2 on action.ApproveBy_PM equals PM_APPROVE.ID
-        //                 join PM_REJECT in queryResult2 on action.RejectBy_PM equals PM_REJECT.ID
-        //                 join VP_APPROVE in queryResult2 on action.ApproveBy_VP equals VP_APPROVE.ID
-        //                 join VP_REJECT in queryResult2 on action.RejectBy_VP equals VP_REJECT.ID
-        //                 select new
-        //                 {
-        //                     action,
-        //                     PE_SAVE,
-        //                     PE_SUBMIT,
-        //                     QC_SAVE,
-        //                     QC_SUBMIT,
-        //                     PM_SAVE,
-        //                     PM_APPROVE,
-        //                     PM_REJECT,
-        //                     VP_APPROVE,
-        //                     VP_REJECT
-        //                 };
-
-        //    return result.AsEnumerable().Select(e => new ProjectFormDetail
-        //    {
-        //        SaveBy_PE = e.action.SaveBy_PE,
-        //        SaveBy_PE_Name = e.PE_SAVE.FirstName + " " + e.PE_SAVE.LastName,
-        //        SaveDate_PE = e.action.SaveDate_PE.ToStringDate(),
-        //        SubmitBy_PE = e.action.SubmitBy_PE,
-        //        SubmitBy_PE_Name = e.PE_SUBMIT.FirstName + " " + e.PE_SUBMIT.LastName,
-        //        SubmitDate_PE = e.action.SubmitDate_PE.ToStringDate(),
-        //        Remark_PE = e.action.Remark_PE,
-
-        //        SaveBy_QC = e.action.SaveBy_QC,
-        //        SaveBy_QC_Name = e.QC_SAVE.FirstName + " " + e.QC_SAVE.LastName,
-        //        SaveDate_QC = e.action.SaveDate_QC.ToStringDate(),
-        //        SubmitBy_QC = e.action.SubmitBy_QC,
-        //        SubmitBy_QC_Name = e.QC_SUBMIT.FirstName + " " + e.QC_SUBMIT.LastName,
-        //        SubmitDate_QC = e.action.SubmitDate_QC.ToStringDate(),
-        //        Remark_QC = e.action.Remark_QC,
-
-        //        SaveBy_PM = e.action.SaveBy_PM,
-        //        SaveBy_PM_Name = e.PM_SAVE.FirstName + " " + e.PM_SAVE.LastName,
-        //        SaveDate_PM = e.action.SaveDate_PM.ToStringDate(),
-        //        ApproveBy_PM = e.action.ApproveBy_PM,
-        //        ApproveBy_PM_Name = e.PM_APPROVE.FirstName + " " + e.PM_APPROVE.LastName,
-        //        ApproveDate_PM = e.action.ApproveDate_PM.ToStringDate(),
-        //        RejectBy_PM = e.action.RejectBy_PM,
-        //        RejectBy_PM_Name = e.PM_REJECT.FirstName + " " + e.PM_REJECT.LastName,
-        //        RejectDate_PM = e.action.RejectDate_PM.ToStringDate(),
-        //        Remark_PM = e.action.Remark_PM,
-
-        //        ApproveBy_VP = e.action.ApproveBy_VP,
-        //        ApproveBy_VP_Name = e.VP_APPROVE.FirstName + " " + e.VP_APPROVE.LastName,
-        //        ApproveDate_VP = e.action.ApproveDate_VP.ToStringDate(),
-        //        RejectBy_VP = e.action.RejectBy_VP,
-        //        RejectBy_VP_Name = e.VP_REJECT.FirstName + " " + e.VP_REJECT.LastName,
-        //        RejectDate_VP = e.action.RejectDate_VP.ToStringDate(),
-        //        Remark_VP = e.action.Remark_VP,
-
-        //    }).FirstOrDefault() ?? new ProjectFormDetail();
-
-        //}
-
         public List<ProjectFormModel.ProjectForm_getForm> GetFormCheckUnitList(int formID)
         {
             var query = from t1 in _context.tr_ProjectForm                      
@@ -291,6 +181,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                     {
                         FormID = item.t1.ID,
                         FormName = item.t1.Name,
+                        ProjectID = item.t1.ProjectID,
+                        //UnitID = item.t1.U
                         Desc = item.t1.Description,
                         StatusID = item.t5Group.StatusID,
                         ListGroups = new List<ProjectFormModel.ProjectForm_getListGroups>()
@@ -348,51 +240,61 @@ namespace Project.ConstructionTracking.Web.Repositories
             return results;
         }
 
-        public void InsertFormCheckListUnit(FormCheckListUnitView model)
+        public void InsertFormCheckListUnit(UnitForm model)
         {
-            foreach (var form in model.FormCheckListUnitList)
+            var newForm = new tr_UnitForm
             {
-                var newForm = new ProjectForm
-                {
-                    ProjectID = form.ProjectID,
-                    UnitID = form.UnitID,
-                    FormID = form.FormID,
-                    Name = form.FormName,
-                    Description = form.Desc,
-                    StatusID = form.StatusID
-                };
+                ID = Guid.NewGuid(),
+                ProjectID = model.ProjectID,
+                UnitID = model.UnitID,
+                FormID = model.FormID
+            };
+            _context.tr_UnitForm.Add(newForm);
+            _context.SaveChanges();
 
-                foreach (var group in form.ListGroups)
-                {
-                    var newGroup = new ProjectFormGroup
-                    {
-                        FormID = newForm.ID,
-                        Name = group.GroupName
-                    };
+            //foreach (var form in UnitForm)
+            //{
+            //    var newForm = new ProjectForm
+            //    {
+            //        ProjectID = form.ProjectID,
+            //        UnitID = form.UnitID,
+            //        FormID = form.FormID,
+            //        Name = form.FormName,
+            //        Description = form.Desc,
+            //        StatusID = form.StatusID
+            //    };
 
-                    foreach (var package in group.ListPackages)
-                    {
-                        var newPackage = new ProjectFormPackage
-                        {
-                            GroupID = newGroup.ID,
-                            Name = package.PackagesName
-                        };
+            //    foreach (var group in form.ListGroups)
+            //    {
+            //        var newGroup = new ProjectFormGroup
+            //        {
+            //            FormID = newForm.ID,
+            //            Name = group.GroupName
+            //        };
 
-                        foreach (var checklist in package.ListCheckLists)
-                        {
-                            var newCheckList = new ProjectFormCheckList
-                            {
-                                //PackageID = newPackage.ID,
-                                CheckListID = checklist.CheckListID,
-                                //StatusID = checklist.StatusID,
-                                //Remark = checklist.Remark
-                            };
-                            //_context.tr_UnitForm_Detail.Add(newCheckList);
-                            //_context.SaveChanges();
-                        }
-                    }
-                }
-            }
+            //        foreach (var package in group.ListPackages)
+            //        {
+            //            var newPackage = new ProjectFormPackage
+            //            {
+            //                GroupID = newGroup.ID,
+            //                Name = package.PackagesName
+            //            };
+
+            //            foreach (var checklist in package.ListCheckLists)
+            //            {
+            //                var newCheckList = new ProjectFormCheckList
+            //                {
+            //                    //PackageID = newPackage.ID,
+            //                    CheckListID = checklist.CheckListID,
+            //                    //StatusID = checklist.StatusID,
+            //                    //Remark = checklist.Remark
+            //                };
+            //                //_context.tr_UnitForm_Detail.Add(newCheckList);
+            //                //_context.SaveChanges();
+            //            }
+            //        }
+            //    }
+            //}
         }
     }
 }

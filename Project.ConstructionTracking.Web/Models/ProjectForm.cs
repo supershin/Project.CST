@@ -39,9 +39,12 @@
     {
         public int ID { get; set; }
         public int UnitFormID { get; set; }
+        public int FormID { get; set; }
+        public int GroupID { get; set; }
+        public int PackageID { get; set; }
         public int CheckListID { get; set; }
         public int? CheckListStatusID { get; set; }
-        public string Remark { get; set; }
+        public string? Remark { get; set; }
     }
 
 }
