@@ -67,9 +67,11 @@ namespace Project.ConstructionTracking.Web.Controllers
             return selectLists;
         }
 
-        public JsonResult ProjectFromList(Guid formID, int typeId)
+        [HttpPost]
+        public JsonResult ProjectFromList([FromBody] ProjectFormListReq req)
         {
-            ProjectFormListView form = _formOverallService.GetProjectFormList(formID, typeId);
+            ProjectFormListView form = _formOverallService.GetProjectFormList(req.formId, req.typeId);
+
             return Json(
                 new
                 {

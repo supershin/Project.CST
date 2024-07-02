@@ -10,6 +10,7 @@
     <Folder Include="Data\" />
     <Folder Include="wwwroot\lib\datatable\" />
     <Folder Include="Views\FormOverall\" />
+    <Folder Include="Views\MasterForm\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,5 +34,9 @@
 
   <ItemGroup>
     <None Remove="Views\FormOverall\" />
+    <None Remove="Views\MasterForm\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Views\FormOverall\PartialFormList.cshtml" />
   </ItemGroup>
 </Project>

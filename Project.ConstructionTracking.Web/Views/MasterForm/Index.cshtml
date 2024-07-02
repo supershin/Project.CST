@@ -8,8 +8,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <!-- Content Header (Page header) -->
 
-@model Project.ConstructionTracking.Web.Models.FormOverallView
-
 <div class="page-wrapper">
 
     <!-- Page header -->
@@ -18,7 +16,7 @@
             <div class="row g-2 align-items-center">
                 <div class="col">
                     <h2 class="page-title">
-                        Project Form Overall
+                        Master Form
                     </h2>
                 </div>
             </div>
@@ -27,42 +25,6 @@
     <!-- Page body -->
     <div class="page-body">
         <div class="container-xl">
-            <div class="col-12">
-                <div class="card-body">
-                    <form id="form-select" method="post">
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <label class="form-label"><h3>โครงการ</h3></label>
-                                    <select type="text" class="form-select" name="ProjectID" id="select-project-id" value="">
-                                        @if (Model.SelectProjectList != null)
-                                        {
-                                            @foreach (var item in Model.SelectProjectList)
-                                            {
-                                                <option value="@item.Value">@item.Text</option>
-                                            }
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <label class="form-label"> <h3>ประเภท UNIT</h3></label>
-                                    <select type="text" class="form-select" name="UnitID" id="select-unit-type" value="">
-                                        @if (Model.SelectUnitTypeList != null)
-                                        {
-                                            @foreach (var item in Model.SelectUnitTypeList)
-                                            {
-                                                <option value="@item.Value">@item.Text</option>
-                                            }
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
             <div class="col-12">
                 <div class="card-body">
                     <div class="row">
@@ -204,7 +166,7 @@
                                         Add
                                     </a>
                                 </div>
-                                <div class="content-cl" style="display:none">
+                                <div class="content-cl" style="display:block">
                                     <table class="table card-table table-vcenter text-nowrap datatable" id="tbl-list-fg">
                                         <thead>
                                             <tr>
@@ -274,7 +236,7 @@
                                         Add
                                     </a>
                                 </div>
-                                <div class="content-cl" style="display:none">
+                                <div class="content-cl" style="display:block">
                                     <table class="table card-table table-vcenter text-nowrap datatable" id="tbl-list-fp">
                                         <thead>
                                             <tr>
@@ -354,7 +316,7 @@
                                         Add
                                     </a>
                                 </div>
-                                <div class="content-cl" style="display:none">
+                                <div class="content-cl" style="display:block">
                                     <table class="table card-table table-vcenter text-nowrap datatable" id="tbl-list-fcl">
                                         <thead>
                                             <tr>
@@ -493,10 +455,10 @@
             </div>
         </div>
     </div>
-    <partial name="Partial_ModalForm" />
-    <partial name="Partial_ModalGroup" />
-    <partial name="Partial_ModalPackage" />
-    <partial name="Partial_Modal_CheckList" />
+    <partial name="Partial_MasterForm" />
+    <partial name="Partial_MasterGroup" />
+    <partial name="Partial_MasterPackage" />
+    <partial name="Partial_MasterCheckList" />
 </div>
 <style>
     .status-dot-animated {
@@ -565,10 +527,10 @@
 </style>
 
 @section scripts{
-    <script src="~/js/pages/formoverall.js?ver=@DateTime.Now.Ticks.ToString()"></script>
+    <script src="~/js/pages/masterform.js?ver=@DateTime.Now.Ticks.ToString()"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>$(document).ready(function () {
-            formOverall.init();
+            //formOverall.init();
         });</script>
 }

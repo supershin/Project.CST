@@ -1,4 +1,5 @@
-﻿function fetchData(selectedValue, selectedValue2) {
+﻿
+function fetchData(selectedValue, selectedValue2) {
     console.log('Fetching data with:', selectedValue, selectedValue2);
 
     var formId = selectedValue;
@@ -113,19 +114,19 @@ const formOverall = {
 document.getElementById('modal-form').addEventListener('click', function (event) {
     event.stopPropagation();
 
-        this.setAttribute('data-bs-toggle', 'modal');
-        this.setAttribute('data-bs-target', '#partial-modal-form');
+    this.setAttribute('data-bs-toggle', 'modal');
+    this.setAttribute('data-bs-target', '#partial-modal-form');
 
-        // Manually trigger the modal
-        var modal = new bootstrap.Modal(document.getElementById('partial-modal-form'));
-        modal.show();
+    // Manually trigger the modal
+    var modal = new bootstrap.Modal(document.getElementById('partial-modal-form'));
+    modal.show();
 
-        isModalOpen = true; // Set the flag to true when modal is shown
+    isModalOpen = true; // Set the flag to true when modal is shown
 
-        // Reset the flag when the modal is hidden
-        document.getElementById('partial-modal-form').addEventListener('hidden.bs.modal', function () {
-            isModalOpen = false;
-        });
+    // Reset the flag when the modal is hidden
+    document.getElementById('partial-modal-form').addEventListener('hidden.bs.modal', function () {
+        isModalOpen = false;
+    });
 });
 
 // Listen for clicks on the entire document
