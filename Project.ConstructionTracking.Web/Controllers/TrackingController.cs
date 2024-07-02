@@ -14,10 +14,11 @@ namespace Project.ConstructionTracking.Web.Controllers
             _TrackingService = trackingService;
         }
 
+
         public IActionResult Index(Guid ID)
         {
             TrackingUnitView viewModel = _TrackingService.GetTrackingUnit(ID);
-            return View(viewModel);
+                return View(viewModel);
         }
     }
 }
