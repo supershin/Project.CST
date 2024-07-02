@@ -26,6 +26,9 @@ builder.Services.AddScoped<ITrackingRepo, TrackingRepo>();
 builder.Services.AddScoped<IProjectFormService, ProjectFormService>();
 builder.Services.AddScoped<IProjectFormRepo, ProjectFormRepo>();
 
+builder.Services.AddScoped<IFormOverallService, FormOverallService>();
+builder.Services.AddScoped<IFormOverallRepo, FormOverallRepo>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
