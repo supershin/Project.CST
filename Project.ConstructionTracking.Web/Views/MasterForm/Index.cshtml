@@ -1,0 +1,539 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+}
+
+<link href="~/lib/datatable/jquery.datatables.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Content Header (Page header) -->
+
+<div class="page-wrapper">
+
+    <!-- Page header -->
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row g-2 align-items-center">
+                <div class="col">
+                    <h2 class="page-title">
+                        Master Form
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page body -->
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="col-12">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div>
+                                <div class="collapsible active" style="display: flex; align-items: center;">
+                                    <i class="bi bi-card-checklist" style="flex: 1;"> <span>Lv.1 - Form</span> </i>
+                                    <a href="#" class="btn" id="modal-form" style="margin-left: auto;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                                        </svg>
+                                        Add
+                                    </a>
+                                </div>
+                                <div class="content-cl" style="display:block">
+                                    <table class="table card-table table-vcenter text-nowrap datatable" id="tbl-list-f">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>
+                                                    <h3>ชื่อ</h3>
+                                                </th>
+                                                <th>
+                                                    <h3>Progress</h3>
+                                                </th>
+                                                <th>
+                                                    <h3>ระยะเวลา</h3>
+                                                </th>
+                                                <th>
+                                                    <h3>สถานะ</h3>
+                                                </th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="row1">
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>งวดที่ 1</td>
+                                                <td>20%</td>
+                                                <td>2 months</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary" onclick="editButtonAction()">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr id="row2">
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>งวดที่ 2</td>
+                                                <td>20%</td>
+                                                <td>2 months</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary" onclick="editButtonAction()">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr id="row3">
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>งวดที่ 3</td>
+                                                <td>20%</td>
+                                                <td>2 months</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary" onclick="editButtonAction()">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr id="row4">
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>งวดที่ 4</td>
+                                                <td>20%</td>
+                                                <td>2 months</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary" onclick="editButtonAction()">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr id="row5">
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>งวดที่ 5</td>
+                                                <td>20%</td>
+                                                <td>2 months</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary" onclick="editButtonAction()">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div>
+                                <div class="collapsible active" style="display: flex; align-items: center;">
+                                    <i class="bi bi-card-checklist" style="flex: 1;"> <span>Lv.2 - FormGroup</span> </i>
+                                    <a href="#" class="btn " id="modal-group" style="margin-left: auto;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                                        </svg>
+                                        Add
+                                    </a>
+                                </div>
+                                <div class="content-cl" style="display:block">
+                                    <table class="table card-table table-vcenter text-nowrap datatable" id="tbl-list-fg">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>
+                                                    <h3>ชื่อ</h3>
+                                                </th>
+                                                <th>
+                                                    <h3>สถานะ</h3>
+                                                </th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>ส่วนที่ 1 รายงานขออนุมัติการทำงาน</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>ส่วนที 2 รายการตรวจสอบ</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div>
+                                <div class="collapsible active" style="display: flex; align-items: center;">
+                                    <i class="bi bi-card-checklist" style="flex: 1;"> <span>Lv.3 - FormPackage</span> </i>
+                                    <a href="#" class="btn " id="modal-package" style="margin-left: auto;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                                        </svg>
+                                        Add
+                                    </a>
+                                </div>
+                                <div class="content-cl" style="display:block">
+                                    <table class="table card-table table-vcenter text-nowrap datatable" id="tbl-list-fp">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>
+                                                    <h3>ชื่อ</h3>
+                                                </th>
+                                                <th>
+                                                    <h3>สถานะ</h3>
+                                                </th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>ฐานราก</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>คานชั้นล่าง</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>เสาชั้นล่าง</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div>
+                                <div class="collapsible active" style="display: flex; align-items: center;">
+                                    <i class="bi bi-card-checklist" style="flex: 1;"> <span>Lv.4 - FormCheckList</span> </i>
+                                    <a href="#" class="btn " id="modal-checklist" style="margin-left: auto;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                                        </svg>
+                                        Add
+                                    </a>
+                                </div>
+                                <div class="content-cl" style="display:block">
+                                    <table class="table card-table table-vcenter text-nowrap datatable" id="tbl-list-fcl">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>
+                                                    <h3>ชื่อ</h3>
+                                                </th>
+                                                <th>
+                                                    <h3>สถานะ</h3>
+                                                </th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>ตัดเสาเข็ม</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>pile deviate</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>Seismic test</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>คอนกรีตหยาบ</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>หัวเข็ม</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>เหล็กเสริม-ลูกปูน </td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><input class="checkbox1" type="checkbox"></td>
+                                                <td>ระยะ-ขนาด-ระดับ</td>
+                                                <td>
+                                                    <label class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" checked="">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-secondary">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <partial name="Partial_MasterForm" />
+    <partial name="Partial_MasterGroup" />
+    <partial name="Partial_MasterPackage" />
+    <partial name="Partial_MasterCheckList" />
+</div>
+<style>
+    .status-dot-animated {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        border-radius: 50%;
+        margin-right: 8px;
+        animation: blink 1.5s infinite;
+    }
+
+    .collapsible {
+        background-color: #777;
+        color: white;
+        cursor: pointer;
+        padding: 10px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 25px;
+        margin-top: 10px;
+        /* add new  */
+        cursor: pointer;
+        position: relative;
+    }
+
+        .collapsible:hover {
+            background-color: #686D76;
+        }
+
+    .inner-button {
+        display: inline-block;
+        padding: 7px 7px;
+        margin-left: auto;
+        border-width: 0;
+        background-color: #888;
+        color: white;
+    }
+
+    .btn {
+        --tblr-btn-bg: #45474B;
+        --tblr-btn-color: #fff;
+        --tblr-btn-hover-bg: #45474B;
+        --tblr-btn-border-color: #45474B;
+    }
+
+    .collapsible i {
+        font-size: 24px; /* Increase icon size inside the collapsible */
+    }
+
+    .inner-button i {
+        font-size: 24px; /* Increase icon size inside the inner button */
+    }
+
+    .center-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Adjust as needed */
+    }
+
+    .highlight {
+        background-color: #EADBC8; /* Highlight color */
+    }
+</style>
+
+@section scripts{
+    <script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>
+    <script src="~/lib/core-ui/dist/js/demo.min.js?1692870487" defer></script>
+    <script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>
+    <script src="~/js/pages/masterform.js?ver=@DateTime.Now.Ticks.ToString()"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>$(document).ready(function () {
+            //formOverall.init();
+        });</script>
+}
