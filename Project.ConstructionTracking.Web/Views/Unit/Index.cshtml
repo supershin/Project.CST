@@ -29,7 +29,7 @@
                 <div class="card-body">
                     <form id="form-search" method="post">
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-3">
                                 <div class="mb-3">
                                     <label class="form-label"><h3>โครงการ</h3></label>
                                     <select type="text" class="form-select" name="ProjectID" id="select-users" value="">
@@ -41,6 +41,17 @@
                                             }
                                         }
                                     </select>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="mb-3">
+                                  <label class="form-label"><h3>สถานะ</h3></label>
+                                  <select class="form-select">
+                                    <option value="1">ว่าง</option>
+                                    <option value="2">จอง</option>
+                                    <option value="3">สัญญา</option>
+                                    <option value="4">โอน</option>
+                                  </select>
                                 </div>
                             </div>
                             <div class="col-6">
@@ -56,12 +67,57 @@
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
                                             </button>
                                         </div>
+                                        <div class="col-auto">
+                                            <button class="btn btn-icon" type="button" onclick="toggleCollapse()">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-filter">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z" />
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </form>
-
+                    <div class="collapse" id="collapseExample">
+                      <div class="card card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">ตัวอย่างค้นหา</label>
+                                        <select class="form-select">
+                                            <option value="1">ค้นหา 1 </option>
+                                            <option value="2">ค้นหา 2</option>
+                                            <option value="3">ค้นหา 3</option>
+                                            <option value="4">ค้นหา 4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">ตัวอย่างค้นหา</label>
+                                        <select class="form-select">
+                                            <option value="1">ว่าง</option>
+                                            <option value="2">จอง</option>
+                                            <option value="3">สัญญา</option>
+                                            <option value="4">โอน</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">ตัวอย่างค้นหา</label>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <input type="text" name="Search" class="form-control" placeholder="Search for…">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                      </div>
+                    </div>
                 </div>
             </div>
             <br>
@@ -84,6 +140,7 @@
         margin-right: 8px;
         animation: blink 1.5s infinite;
     }
+
 </style>
 
 @section scripts{
@@ -125,7 +182,19 @@
             }).catch(function (error) {
                 console.error('Initialization failed due to error : ผิดพลาด', error);
             });
-        });      
+        });
+
+        function toggleCollapse() {
+            var collapseElement = document.getElementById('collapseExample');
+            var bsCollapse = new bootstrap.Collapse(collapseElement, {
+                toggle: false
+            });
+            if (collapseElement.classList.contains('show')) {
+                bsCollapse.hide();
+            } else {
+                bsCollapse.show();
+            }
+        }
     </script>
 
 }

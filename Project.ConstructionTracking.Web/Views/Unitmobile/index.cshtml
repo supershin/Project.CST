@@ -1,0 +1,374 @@
+﻿@{
+    ViewData["Title"] = "index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+}
+<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+<style>
+    .profile-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin: 0 auto;
+    }
+
+    .card {
+        width: 100%;
+    }
+
+    .swiper-container {
+        padding: 20px 0;
+    }
+
+    .swiper-slide {
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+<div class="page-wrapper">
+
+    <!-- Page header -->
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row g-2 align-items-center">
+                <div class="col">
+                    <h2 class="page-title">
+                        หน้าค้นหา Unit
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page body -->
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="col-12">
+                <div class="card-body">
+                    <form id="form-search" method="post">
+                        <div class="row">
+                            <div class="col-12 col-sm-3">
+                                <div class="mb-3">
+                                    <label class="form-label"><h3>สถานะ</h3></label>
+                                    <select class="form-select">
+                                        <option value="1">โครงการ 1 </option>
+                                        <option value="2">โครงการ 2 </option>
+                                        <option value="3">โครงการ 3 </option>
+                                        <option value="4">โครงการ 4</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label"><h3>รายการค้นหา</h3></label>
+                                    <div class="row g-2">
+                                        <div class="col">
+                                            <input type="text" name="Search" class="form-control" placeholder="Search for…">
+                                        </div>
+                                        <div class="col-auto">
+                                            <button type="submit" class="btn btn-icon" aria-label="Button">
+                                                <!-- Download SVG icon from http://tabler-icons.io/i/search -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <div class="col-12">
+                <div class="container mt-5">
+                    <div id="profileCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card">
+                                            <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Unit : AA008</h5>
+                                                <p class="card-text">
+                                                    เลขที่บ้าน : 231/11
+                                                </p>
+                                                <a href="#" class="btn btn-primary btn-sm">งวดที่ 1</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Add more slides with similar structure -->
+                        </div>
+                        <!-- Carousel controls -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#profileCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#profileCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

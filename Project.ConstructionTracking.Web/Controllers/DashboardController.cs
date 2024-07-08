@@ -8,9 +8,5 @@ namespace Project.ConstructionTracking.Web.Controllers
 		{
 			return View();
 		}
-		public IActionResult Dashboard()
-		{
-			return View();
-		}
 	}
 }
