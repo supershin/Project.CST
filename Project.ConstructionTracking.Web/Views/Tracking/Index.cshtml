@@ -4,11 +4,48 @@
 }
 
 @model Project.ConstructionTracking.Web.Models.TrackingUnitView
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 
+<style>
+    #carddata {
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+
+    .fixed-size-btn {
+        width: 80px; /* Adjust the width as needed */
+        height: 30px;
+    }
+
+    .card {
+        border: none;
+        margin: 0 10px;
+    }
+
+    .carousel-item {
+        flex: 1 0 auto;
+        text-align: center;
+    }
+
+    .card img {
+        width: 285px;
+        height: 235px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: #000;
+        border-radius: 50%;
+    }
+
+</style>
 <!-- Content Header (Page header) -->
 <div class="page-wrapper">
     <!-- Page header -->
-    <div class="page-header d-print-none">
+    <div class="page-header d-print-none" type="button" onclick="openCollapse()">
         <div class="card bg-primary text-primary-fg">
             <div class="card-stamp">
                 <div class="card-stamp-icon bg-white text-primary">
@@ -24,147 +61,165 @@
                 <h1>
                     ข้อมูลรายการ Unit (@Model.Unit.UnitCode)
                     <small class="text-yellow">@Model.Unit.ProjectName</small>
+                    <small class="text-yellow">(สถานะ : สัญญา)</small>
                 </h1>
             </div>
         </div>
     </div>
     <!-- Page body -->
     <div class="page-body">
-        <div class="col-12">
+        <div class="col-12 collapse" id="collapseUnitdetail">
             <form action="https://httpbin.org/post" method="post" class="card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-xl-4">
                             <div class="position-relative">
-                            <div class="container">
-                                <div id="cardCarousel" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner">
-                                        <div class="carousel-item active">
-                                            
+                                <div class="container">
+                                    <div id="cardCarousel" class="carousel slide" data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            <div class="carousel-item active">
                                                 <img src="~/img/img23.jpg" class="card-img-top" alt="">
                                                 <div class="card-body text-center">
                                                     <a data-fslightbox="gallery" href="~/img/img23.jpg">
-                                                            <p class="card-text">ขยายภาพ</p>
+                                                        <p class="card-text">ขยายภาพ</p>
                                                     </a>
                                                 </div>
-                                          
-                                        </div>
-                                        <div class="carousel-item">
-                                          
+                                            </div>
+                                            <div class="carousel-item">
                                                 <img src="~/img/img13.jpg" class="card-img-top" alt="Summer (Man)">
                                                 <div class="card-body text-center">
-                                                        <a data-fslightbox="gallery" href="~/img/img13.jpg">
-                                                            <p class="card-text">ขยายภาพ</p>
-                                                        </a>
+                                                    <a data-fslightbox="gallery" href="~/img/img13.jpg">
+                                                        <p class="card-text">ขยายภาพ</p>
+                                                    </a>
                                                 </div>
-                                        
-                                        </div>
-                                        <div class="carousel-item">
-                                        
+                                            </div>
+                                            <div class="carousel-item">
                                                 <img src="~/img/img4.jpg" class="card-img-top" alt="Style 3">
                                                 <div class="card-body text-center">
-                                                        <a data-fslightbox="gallery" href="~/img/img4.jpg">
-                                                            <p class="card-text">ขยายภาพ</p>
-                                                        </a>
+                                                    <a data-fslightbox="gallery" href="~/img/img4.jpg">
+                                                        <p class="card-text">ขยายภาพ</p>
+                                                    </a>
                                                 </div>
-                                      
+                                            </div>
                                         </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#cardCarousel" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#cardCarousel" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
                                     </div>
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#cardCarousel" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#cardCarousel" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
                                 </div>
-                            </div>
                             </div>
                         </div>
                         <div class="col-xl-8">
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">ประเภท Unit</label>
-                                    <input type="text" readonly class="form-control" name="unit-name" placeholder="" value="@Model.Unit.UnitTypeName">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">รหัสแบบบ้าน (HOME-0001)</h3>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">ขนาดพื้นที่ Unit</label>
-                                    <div class="input-group mb-2">
-                                        <input readonly type="number" value="@Model.Unit.Area" class="form-control" placeholder="กรุณาระบุเป็นตัวเลข" step="0.01">
-                                        <button class="btn" type="button">ตร.ม.</button>
+                                <div class="card-body">
+                                    <div class="mb-3 row">
+                                        <label class="col-6 col-sm-3 col-form-label">ชื่อแบบบ้าน</label>
+                                        <div class="col">
+                                            <input type="text" class="form-control" placeholder="" disabled value="บ้านเดี่ยว 3 ชั้น">
+                                        </div>
+                                        <label class="col-6 col-sm-3 col-form-label">ประเภทแบบบ้าน</label>
+                                        <div class="col">
+                                            <input type="text" class="form-control" placeholder="" disabled value="M">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-3 col-form-label">แผนวันที่</label>
+                                        <div class="col-8 col-sm-3">
+                                            <div class="input-icon">
+                                                <span class="input-icon-addon">
+                                                    <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M11 15h1" /><path d="M12 15v3" /></svg>
+                                                </span>
+                                                <input class="form-control" placeholder="Select a date" id="datepicker-icon-prepend" value="2024-06-20" />
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-sm-3 d-none d-sm-block">
+                                            <div class="input-icon">
+                                                <span class="input-icon-addon">
+                                                    <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M11 15h1" /><path d="M12 15v3" /></svg>
+                                                </span>
+                                                <input type="text" class="form-control" placeholder="" disabled value="2024-09-20">
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-sm-3 d-none d-sm-block">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" disabled placeholder="" value="120">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">วัน</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row d-block d-sm-none">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-icon">
+                                                    <span class="input-icon-addon">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M11 15h1" /><path d="M12 15v3" /></svg>
+                                                    </span>
+                                                    <input type="text" class="form-control" placeholder="" disabled value="2024-09-20">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" disabled placeholder="" value="120">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">วัน</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-3 col-form-label pt-0">Process</label>
+                                        <div class="col-12 col-sm-3">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" disabled placeholder="" value="80%">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">ตามแผน</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-sm-3">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" disabled placeholder="" value="90%">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">ล่าสุด</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-sm-3">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" disabled placeholder="" value="on time 100%">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">ตามจริง</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <label class="form-label">กำหนดวันที่เริ่มต้น Unit</label>
-                                    <div class="input-icon">
-                                        <span class="input-icon-addon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
-                                                <path d="M16 3v4" />
-                                                <path d="M8 3v4" />
-                                                <path d="M4 11h16" />
-                                                <path d="M11 15h1" />
-                                                <path d="M12 15v3" />
-                                            </svg>
-                                        </span>
-                                        <input type="text" readonly class="form-control" id="start-datepicker" name="start-date" placeholder="" value="@Model.Unit.StartDate">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">กำหนดวันที่สิ้นสุด Unit</label>
-                                    <div class="input-icon">
-                                        <span class="input-icon-addon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
-                                                <path d="M16 3v4" />
-                                                <path d="M8 3v4" />
-                                                <path d="M4 11h16" />
-                                                <path d="M11 15h1" />
-                                                <path d="M12 15v3" />
-                                            </svg>
-                                        </span>
-                                        <input type="text" readonly class="form-control" id="end-datepicker" name="end-date" placeholder="" value="@Model.Unit.EndDate">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">จำนวนวัน</label>
-                                    <div class="input-group mb-2">
-                                        <input class="form-control" readonly value="10" type="text" id="days-between">
-                                        <button class="btn" type="button">วัน</button>
-                                    </div>
+                                <div class="card-footer text-end">
+                                    <button type="submit" class="btn btn-primary">บันทึก</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
-        </div>
-        <br>
-        <div class="col-12">
+            <br>
+        </div>      
+        <div class="col-12 d-none d-sm-block">
             <div class="card">
                 <div class="container-xl">
-                    <div class="card bg-yellow text-primary-fg">
-                        <div class="card-stamp">
-                            <div class="card-stamp-icon bg-yellow">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-antenna-bars-5">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M6 18l0 -3" />
-                                    <path d="M10 18l0 -6" />
-                                    <path d="M14 18l0 -9" />
-                                    <path d="M18 18l0 -12" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="card-body align-center">
-                            <h2><span class="material-icons"> home_work </span> Unit process 30%</h2>
-                        </div>
-                    </div>
-                    <br>
                     <div class="row row-cards">
                         @foreach (var item in Model.TrackingUnitList)
                         {
@@ -197,14 +252,10 @@
                                                     <div class="col-12">
                                                         @if (item.StatusID == 9)
                                                         {
-@*                                                            <a href="FormCheckList/index/@item." class="btn btn-success fixed-size-btn">
-                                                                ผ่าน
-                                                            </a>*@
-                                                                <form asp-action="Index" asp-controller="FormCheckList" method="post">
-           
+                                                                <form asp-action="Index" asp-controller="FormCheckList" method="post">         
                                                                 <input type="hidden" name="ProjectID" value="@item.ID" />
                                                                     <button type="submit" class="btn btn-success fixed-size-btn">
-                                                                        XXX
+                                                                    ผ่าน
                                                                     </button>
                                                                 </form>
                                                         }
@@ -272,7 +323,7 @@
                                         <div class="d-none d-sm-block col-sm-2 text-left">
                                             @if (item.StatusID == 9)
                                             {
-                                                <form action="@Url.Action("index","FormCheckList")" method="post">
+                                                <form action="@Url.Action("index","FormGroup")" method="post">
                                                     <button type="submit" class="btn btn-success fixed-size-btn">
                                                         ผ่าน
                                                     </button>
@@ -370,72 +421,261 @@
                 </div>
             </div>
         </div>
+        <div class="col-12 d-block d-sm-none">
+            <div class="card">
+                <div class="container-xl">
+                    <div class="row row-cards">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-4"></div>
+                                <div class="col"><h3>EN</h3></div>
+                                <div class="col"><h3>QC</h3></div>
+                                <div class="col"><h3>PM</h3></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card card-link card-link-pop">
+                                    <div class="row justify-content-center">
+                                        <div class="col-12 mb-2">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <form action="@Url.Action("index","FormGroup")" method="post">
+                                                        <button type="submit" class="btn btn-success fixed-size-btn">
+                                                            งวดที่ 1
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-2">
+                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content.."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card card-link card-link-pop">
+                                    <div class="row justify-content-center">
+                                        <div class="col-12 mb-2">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <form action="@Url.Action("index","FormGroup")" method="post">
+                                                        <button type="submit" class="btn btn-success fixed-size-btn">
+                                                            งวดที่ 2
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                                <div class="col">
+
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-2">
+                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content.."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card card-link card-link-pop">
+                                    <div class="row justify-content-center">
+                                        <div class="col-12 mb-2">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <form action="@Url.Action("index","FormGroup")" method="post">
+                                                        <button type="submit" class="btn btn-primary fixed-size-btn">
+                                                           งวดที่ 3 (PC)
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                                <div class="col">
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-2">
+                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content..">ขออนุญาติให้ผ่านแบบมีเงื่อนไขเนื่องจาก supplier ส่งวัสดุล่าช้า</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card card-link card-link-pop">
+                                    <div class="row justify-content-center">
+                                        <div class="col-12 mb-2">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <form action="@Url.Action("index","FormGroup")" method="post">
+                                                        <button class="btn btn-danger fixed-size-btn">
+                                                            งวดที่ 4
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                                <div class="col">
+
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot status-dot-animated bg-red d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-2">
+                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content..">(PM) : ไม่อนุญาติให้ผ่านเนื่งจากงานไม่เรียบร้อย</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card card-link card-link-pop">
+                                    <div class="row justify-content-center">
+                                        <div class="col-12 mb-2">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <form action="@Url.Action("index","FormGroup")" method="post">
+                                                        <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
+                                                            งวดที่ 5
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <div class="col">
+                                                     <span class="status-dot d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                                <div class="col">
+
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-2">
+                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content.."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card card-link card-link-pop">
+                                    <div class="row justify-content-center">
+                                        <div class="col-12 mb-2">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <form action="@Url.Action("index","FormGroup")" method="post">
+                                                        <button class="btn fixed-size-btn" style="background-color: orange; color: white;">
+                                                            งวดที่ 6
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot status-dot-animated bg-yellow d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                                <div class="col">
+
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-2">
+                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content.."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card card-link card-link-pop">
+                                    <div class="row justify-content-center">
+                                        <div class="col-12 mb-2">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <form action="@Url.Action("index","FormGroup")" method="post">
+                                                        <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
+                                                            งวดที่ 7
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                                <div class="col">
+                                                    <span class="status-dot d-block" style="width: 16px; height: 16px;"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-2">
+                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content.."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <style>
-        #carddata{
-            padding: 1rem;
-            border-radius: 0.5rem;
+    <script>
+
+        function openCollapse() {
+            var collapseElement = document.getElementById('collapseUnitdetail');
+            var bsCollapse = new bootstrap.Collapse(collapseElement, {
+                toggle: false
+            });
+            if (collapseElement.classList.contains('show')) {
+                bsCollapse.hide();
+            } else {
+                bsCollapse.show();
+            }
         }
 
-        .fixed-size-btn {
-            width: 75px; /* Adjust the width as needed */
-            height: 30px;
-        }
+    </script>
 
-        .card {
-            border: none;
-            margin: 0 10px;
-        }
-
-        .card img {
-            width: 285px;
-            height: 235px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .carousel-item {
-            flex: 1 0 auto;
-            text-align: center;
-        }
-
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            background-color: #000;
-            border-radius: 50%;
-        }
-
-    </style>
 </div>
 
-
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 <script src="~/lib/core-ui/dist/libs/fslightbox/index.js?1692870487" defer></script>
 <script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>
 <script src="~/lib/core-ui/dist/js/demo.min.js?1692870487" defer></script>
 <script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>
-<script>
-
-    function calculateDays() {
-        const startDateString = document.getElementById('start-datepicker').value;
-        const endDateString = document.getElementById('end-datepicker').value;
-
-        if (startDateString && endDateString) {
-            const startDate = new Date(startDateString);
-            const endDate = new Date(endDateString);
-            const diffTime = Math.abs(endDate - startDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            document.getElementById('days-between').value = diffDays;
-        }
-    }
-
-    // Call calculateDays to set initial value on page load
-    document.addEventListener('DOMContentLoaded', calculateDays);
-
-
-</script>
-
-
 
 
 
