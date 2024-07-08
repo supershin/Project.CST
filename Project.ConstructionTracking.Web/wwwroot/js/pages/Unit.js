@@ -53,23 +53,39 @@ const unit = {
             "order": [[0, "desc"]],
             "columns": [
                 { 'data': 'UnitCode', "className": "text-center" },
-                { 'data': 'UnitTypeName', "className": "text-center" },
-                { 'data': 'StartDate', "className": "text-center" },
-                { 'data': 'EndDate', "className": "text-center" },
+                { 'data': 'UnitCode', "className": "text-center" },
                 {
                     'data': 'FlagActive',
                     "className": "text-center",
                     "render": function (data) {
                         if (data) {
-                            return '<span class="badge bg-success me-1" style="width: 16px; height: 16px;"></span> เสร็จสิ้น';
+                            return 'งวดที่ 3';
                         } else {
-                            return '<span class="badge bg-danger me-1" style="width: 16px; height: 16px;"></span> ไม่เสร็จสิ้น';
+                            return 'ว่าง';
+                        }
+                    }
+                },
+                {
+                    'data': 'FlagActive',
+                    "className": "text-center",
+                    "render": function (data) {
+                        if (data) {
+                            return 'ว่าง';
+                        } else {
+                            return 'จอง';
                         }
                     }
                 },
                 {
                     'data': 'UnitID',
-                    "render": function (data) {              
+                    "render": function (data) {
+                        let html = '<i class="fa-solid fa-calendar-xmark"></i>' + ' 2024-01-01' + ' - ' + '<i class="fa-solid fa-calendar-xmark"></i>' + ' 2024-01-01';
+                        return html;
+                    }
+                },
+                {
+                    'data': 'UnitID',
+                    "render": function (data) {
                         let html = '';
                         html += '<a href="Tracking/Index/' + data + '" class="btn fixed-size-btn" style="background-color: orange; color: white;">';
                         html += '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-building-up" viewBox="0 0 16 16">';
