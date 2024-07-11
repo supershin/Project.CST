@@ -1,0 +1,275 @@
+﻿<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
+<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+
+<style>
+        #custom-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .dataTables_wrapper .dataTables_length, 
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 5px;
+        }
+        .dataTables_wrapper .dataTables_length select {
+            border: 5px solid #dee2e6;
+            border-radius: 8px;
+            padding: 10px;
+            margin-left: 10px;
+        }
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 5px;
+            margin-left: 5px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            font-size: 12px; /* Smaller text size */
+        }
+
+        .custom-table td {
+            padding: 6px 8px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+
+        .custom-table th {
+            background-color: #f8f9fa;
+            font-size: 12px;
+            border: 1px solid #050505;
+            text-align: center;
+        }
+
+        .custom-table tbody tr:hover {
+            background-color: #eff584;
+        }
+
+</style>
+<div class="card" id="custom-card">
+    <div class="card-header">
+        <h2>
+            Unit A001
+        </h2>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="example" class="custom-table">
+                <thead>
+                    <tr>
+                        <th>
+                            งวดที่
+                        </th>
+                        <th>
+                            ผู้รับ เหมา
+                        </th>
+                        <th>
+                            งวด QC
+                        </th>
+                        <th>
+                            % Progress/payment
+                        </th>
+                        <th>
+                            วันที่แผนเริ่ม
+                        </th>
+                        <th>
+                            วันที่แผนเสร็จ
+                        </th>
+                        <th>
+                            วันที่เริ่มจริง
+                        </th>
+                        <th>
+                            วันที่เสร็จจริง(PMอนุมัติ)
+                        </th>
+                        <th>
+                            ผ่านแบบมีเงื่อนไข
+                        </th>
+                        <th>
+                            สถานะเบิกจ่ายงวดงาน
+                        </th>
+                        <th>
+                            ปลดล็อค ผ่านแบบมีเงื่อนไข
+                        </th>
+                        <th>
+                            ใบตรวจงวดงาน
+                        </th>
+                        <th>
+                            Checklist QC
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>ทวีชัยการช่าง</td>
+                        <td>QC1</td>
+                        <td>10%</td>
+                        <td>1/1/2567</td>
+                        <td>10/1/2567</td>
+                        <td>2/1/2567</td>
+                        <td>11/1/2567</td>
+                        <td></td>
+                        <td class="text-success">เบิกแล้ว</td>
+                        <td></td>
+                        <td><a href="#"><i class="fa-solid fa-file-pdf fa-2xl"></i></a></td>
+                        <td><a href="#"><i class="fa-solid fa-file-pdf fa-2xl"></i></a></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>สมชายการช่าง</td>
+                        <td></td>
+                        <td>10%</td>
+                        <td>12/1/2567</td>
+                        <td>22/1/2567</td>
+                        <td>13/1/2567</td>
+                        <td>23/1/2567</td>
+                        <td class="text-success">มี/ปลดล็อคแล้ว</td>
+                        <td class="text-success">เบิกแล้ว</td>
+                        <td></td>
+                        <td><a href="#"><i class="fa-solid fa-file-pdf fa-2xl"></i></a></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>วีรชัยการช่าง</td>
+                        <td>QC2</td>
+                        <td>10%</td>
+                        <td>24/1/2567</td>
+                        <td>3/2/2567</td>
+                        <td>25/1/2567</td>
+                        <td>4/2/2567</td>
+                        <td class="text-warning">
+                            มี/ยังไม่ปลดล็อค PC
+                        </td>
+                        <td class="text-primary">พร้อมเบิก</td>
+                        <td></td>
+                        <td><a href="#"><i class="fa-solid fa-file-pdf fa-2xl"></i></a></td>
+                        <td><a href="#"><i class="fa-solid fa-file-pdf fa-2xl"></i></a></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>วรรณชัยการช่าง</td>
+                        <td></td>
+                        <td>10%</td>
+                        <td>5/2/2567</td>
+                        <td>15/2/2567</td>
+                        <td>6/2/2567</td>
+                        <td>16/2/2567</td>
+                        <td></td>
+                        <td class="text-warning">
+                            พร้อมเบิก/ติดล็อค PC
+                        </td>
+                        <td><button type="button" class="btn btn-primary">Unlock PC</button></td>
+                        <td><a href="#"><i class="fa-solid fa-file-pdf fa-2xl"></i></a></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>อาคมการช่าง</td>
+                        <td>QC3</td>
+                        <td>10%</td>
+                        <td>17/2/2567</td>
+                        <td>27/2/2567</td>
+                        <td>18/2/2567</td>
+                        <td>28/2/2567</td>
+                        <td></td>
+                        <td>อยู่ระหว่างการตรวจ</td>
+                        <td></td>
+                        <td><a href="#"><i class="fa-solid fa-file-pdf fa-2xl"></i></a></td>
+                        <td><a href="#"><i class="fa-solid fa-file-pdf fa-2xl"></i></a></td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>พงศ์ชัยการช่าง</td>
+                        <td></td>
+                        <td>10%</td>
+                        <td>1/3/2567</td>
+                        <td>11/3/2567</td>
+                        <td>2/3/2567</td>
+                        <td>12/3/2567</td>
+                        <td></td>
+                        <td>ยังไม่ตรวจ</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>กิตติชัยการช่าง</td>
+                        <td></td>
+                        <td>10%</td>
+                        <td>13/3/2567</td>
+                        <td>23/3/2567</td>
+                        <td>14/3/2567</td>
+                        <td>24/3/2567</td>
+                        <td></td>
+                        <td>ยังไม่ตรวจ</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>สุรชัยการช่าง</td>
+                        <td>QC4</td>
+                        <td>10%</td>
+                        <td>25/3/2567</td>
+                        <td>4/4/2567</td>
+                        <td>26/3/2567</td>
+                        <td>5/4/2567</td>
+                        <td></td>
+                        <td>ยังไม่ตรวจ</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>ชัยชนะการช่าง</td>
+                        <td></td>
+                        <td>10%</td>
+                        <td>6/4/2567</td>
+                        <td>16/4/2567</td>
+                        <td>7/4/2567</td>
+                        <td>17/4/2567</td>
+                        <td></td>
+                        <td>ยังไม่ตรวจ</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>วรชัยการช่าง</td>
+                        <td>QC5</td>
+                        <td>10%</td>
+                        <td>18/4/2567</td>
+                        <td>28/4/2567</td>
+                        <td>19/4/2567</td>
+                        <td>29/4/2567</td>
+                        <td></td>
+                        <td>ยังไม่ตรวจ</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

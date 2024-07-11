@@ -1,0 +1,179 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+<script src="~/lib/core-ui/dist/libs/fslightbox/index.js?1692870487" defer></script>
+
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-home-heart">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M21 12l-9 -9l-9 9h2v7a2 2 0 0 0 2 2h6" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.39 0 .754 .112 1.061 .304" />
+                        <path d="M19 21.5l2.518 -2.58a1.74 1.74 0 0 0 0 -2.413a1.627 1.627 0 0 0 -2.346 0l-.168 .172l-.168 -.172a1.627 1.627 0 0 0 -2.346 0a1.74 1.74 0 0 0 0 2.412l2.51 2.59z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="card-body">
+                <h1>
+                    รายการขออนุมัติผ่านงานแบบมีเงื่อนไข
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="page-body">
+        <div class="container mt-1 mb-3">
+            <div class="row">
+                <div class="col-12 col-sm-5 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">โครงการ : เอสต้า รังสิต</a></li>
+                                <li class="breadcrumb-item" aria-current="page">Unit : A05</li>
+                                <li class="breadcrumb-item" aria-current="page">ผู้รับเหมา : อมรรัตน์ คอนฯ </li>
+                            </ol>
+                        </div>
+                        <div class="card-body">
+                            <label class="form-label mb-0">
+                                <i class="fas fa-user-tie"></i> วิศวกรผู้ควบคุมงาน : นายสมชาย ใจดี
+                            </label>
+                            <br>
+                            <label class="form-label mb-0">
+                                <i class="fas fa-project-diagram"></i> PM โครงการ : นายสุทธิชัย วงค์ใหญ่
+                            </label>
+                            <br>
+                            <label class="form-label mb-0">
+                                <i class="fas fa-calendar-alt"></i> วันที่ส่งงาน : 12/06/2567
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-2 row">
+                                <h2>
+                                    งวดที่ 4
+                                    <small class="text-yellow">
+                                            : งานติดตั้งฝ้าชายคา
+                                    </small>
+                                </h2>
+                            </div>
+                            <div class="mb-3 row">
+                                    <label class="col-12 col-lg-3 col-form-label">
+                                    <a href="#" onclick="openModal()"><i class="fa-regular fa-image"></i></a> ความเห็นจากวิศวกร : 1/6/2567
+                                    <br>
+                                    นายสมชาย ใจดี
+                                </label>
+                                <div class="col">
+                                    <textarea class="form-control" placeholder="ความคิดเห็น" disabled rows="2">ขออนุโลมจ่ายในงวดที่ 7 เนื่องจาก supplier ส่งวัสดุล่าช้า โดยจะจบงานให้ภายใน 10/6/67</textarea>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-12 col-lg-3 col-form-label">
+                                    <a href="#" onclick="openModal()"><i class="fa-regular fa-image"></i></a> ความเห็นจาก PM : 3/6/2567
+                                    <br>
+                                    นายสุทธิชัย วงค์ใหญ่
+                                </label>
+                                <div class="col">
+                                    <textarea class="form-control" placeholder="ความคิดเห็น" disabled>ผู้รับเหมาก่อสร้างล่าช้าจากปัญหาขาดแคลนวัสดุ และผู้รับเหมาได้ทำงานในงวด 8 ไปล่วงหน้าเร็วกว่าแผน 15%</textarea>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="radios-inline-12">
+                                    <span class="form-check-label">อนุมัติ</span>
+                                </label>
+                                <label class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="radios-inline-12">
+                                    <span class="form-check-label">ไม่อนุมัติ</span>
+                                </label>
+                            </div>
+                            <div class="mb-3 row">
+                                <textarea class="form-control" placeholder="ความคิดเห็น">เห็นควรให้เบิก แต่ให้ติดตามแก้ไขงานให้เสร็จตามที่แจ้ง</textarea>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="row align-items-center">
+                              <div class="col-auto">
+                                <a href="#">VP : นายพรชัย แสวงการ</a>
+                              </div>
+                              <div class="col-auto ms-auto">
+                                    <button type="submit" class="btn btn-primary">บันทึก</button>
+                              </div>
+                            </div>
+                        </div>
+                    </div>               
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">รูปภาพ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2 g-md-3">
+                        <div class="col-6">
+                            <a data-fslightbox="gallery" href="~/img/img11.jpg">
+                                <img src="~/img/img11.jpg" alt="..." class="img-thumbnail">
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a data-fslightbox="gallery" href="~/img/img12.jpg">
+                                <img src="~/img/img12.jpg" alt="..." class="img-thumbnail">
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a data-fslightbox="gallery" href="~/img/img13.jpg">
+                                <img src="~/img/img13.jpg" alt="..." class="img-thumbnail">
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a data-fslightbox="gallery" href="~/img/img8.png">
+                                <img src="~/img/img8.png" alt="..." class="img-thumbnail">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .card {
+        border: none;
+        border-radius: 10px
+    }
+
+</style>
+
+<script>
+    $(document).ready(function () {
+        function adjustTextareaRows() {
+            if ($(window).width() <= 576) {
+                $('textarea.form-control').attr('rows', 4);
+            } else {
+                $('textarea.form-control').attr('rows', 2);
+            }
+        }
+
+        adjustTextareaRows(); // Initial call
+        $(window).resize(adjustTextareaRows); // Call on window resize
+    });
+
+    function openModal() {
+        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+        myModal.show();
+    }
+</script>
