@@ -21,152 +21,45 @@
             </div>
             <div class="card-body">
                 <h1>
-                    ก่ออิฐ
-                    <small class="text-yellow"> ส่วนที 2 รายการตรวจสอบ </small>
+                    งานท่อไฟฟ้า+ประปา
                 </h1>
             </div>
         </div>
     </div>
     <!-- Page body -->
     <div class="page-body">
-        <div class="open sticky-top">
-            <span class="cls"></span>
-            <span>
-                <ul class="sub-menu ">
-                    <li>
-                        <a data-bs-toggle="offcanvas" href="#offcanvasEnd" role="button" aria-controls="offcanvasEnd" title="about">
-                            เช็คลิสต์
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#save-pe" title="PE">กล่อง PE</a>
-                    </li>
-                    <li>
-                        <a href="#save-pm" title="PM">กล่อง PM</a>
-                    </li>
-                    <li>
-                        <a href="#save-vp" title="VP">กล่อง VP</a>
-                    </li>
-                    <li>
-                        <a href="#save-reply" title="reply">กล่อง Reply</a>
-                    </li>
-                </ul>
-            </span>
-            <span class="cls"></span>
-        </div>
         <div class="container-xl mb-3">
-            <div class="col-12">
-                <div class="row">
-                    <div class="col-12 col-sm-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="container mt-1">
-                                    <label class="form-label align-center">
-                                        <span class="material-icons"> fact_check </span> ผู้บันทึกการตรวจ : @Model.Detail.SubmitBy_PE_Name
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-4">
-                                            <div class="container mt-1">
-                                                <label class="form-label align-center">วันที่บันทึก</label>
-                                                <label class="form-label align-center">
-                                                    @Model.Detail.SaveDate_PE
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="container mt-1">
-                                                <label class="form-label align-center">วันที่ขออนุมัติ</label>
-                                                <label class="form-label align-center">
-                                                    @Model.Detail.SubmitDate_PE
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="container mt-1">
-                                                <label class="form-label align-center">สถานะ</label>
-                                                <span class="badge bg-yellow text-white">กำลังตรวจ</span>
-                                            </div>
-                                        </div>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">ส่วนที่ 1</a></li>
+                <li class="breadcrumb-item active" aria-current="page">รายงานขออนุมัติการทำงาน</li>
+            </ol>
+            <br>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>ฝ้าภายนอกชั้นบน</h3>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="container mt-1">
-                                    <label class="form-label align-center">
-                                        <span class="material-icons">assignment_turned_in</span> ผู้อนุมัติ : @Model.Detail.ApproveBy_PM_Name
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-4">
-                                            <div class="container mt-1">
-                                                <label class="form-label align-center">วันที่บันทึก</label>
-                                                <label class="form-label align-center">
-                                                    @Model.Detail.SaveDate_PM
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="switch-radio-container">
+                                                    <div class="three-state-switch state-na" id="threeStateSwitch">
+                                                        <div class="switch-handle"></div>
+                                                        <div class="switch-label">On</div>
+                                                        <div class="switch-label">N/A</div>
+                                                        <div class="switch-label">Off</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                    <span class="form-check-label">ไม่มีรายการนี้</span>
                                                 </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="container mt-1">
-                                                <label class="form-label align-center">วันที่อนุมัติ</label>
-                                                <label class="form-label align-center">
-                                                    @Model.Detail.ApproveDate_PM
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="container mt-1">
-                                                <label class="form-label align-center">สถานะ</label>
-                                                <span class="badge bg-secondary text-white">รอตรวจ</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="container mt-1">
-                                    <label class="form-label align-center">
-                                        <span class="material-icons">verified</span> QC : @Model.Detail.SaveBy_QC_Name
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-4">
-                                            <div class="container mt-1">
-                                                <label class="form-label align-center">วันที่บันทึก</label>
-                                                <label class="form-label align-center">
-                                                    @Model.Detail.SaveDate_QC
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="container mt-1">
-                                                <label class="form-label align-center">วันที่ขออนุมัติ</label>
-                                                <label class="form-label align-center">
-                                                    @Model.Detail.SubmitDate_QC
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="container mt-1">
-                                                <label class="form-label align-center">สถานะ</label>
-                                                <span class="badge bg-secondary text-white">รอตรวจ</span>
                                             </div>
                                         </div>
                                     </div>
@@ -175,289 +68,444 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>ฝ้าภายนอกชั้นบน</h3>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="switch-radio-container">
+                                                    <div class="three-state-switch state-na" id="threeStateSwitch">
+                                                        <div class="switch-handle"></div>
+                                                        <div class="switch-label">On</div>
+                                                        <div class="switch-label">N/A</div>
+                                                        <div class="switch-label">Off</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                    <span class="form-check-label">ไม่มีรายการนี้</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>ฝ้าภายนอกชั้นบน</h3>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="switch-radio-container">
+                                                    <div class="three-state-switch state-na" id="threeStateSwitch">
+                                                        <div class="switch-handle"></div>
+                                                        <div class="switch-label">On</div>
+                                                        <div class="switch-label">N/A</div>
+                                                        <div class="switch-label">Off</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                    <span class="form-check-label">ไม่มีรายการนี้</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>ฝ้าภายนอกชั้นบน</h3>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="switch-radio-container">
+                                                    <div class="three-state-switch state-na" id="threeStateSwitch">
+                                                        <div class="switch-handle"></div>
+                                                        <div class="switch-label">On</div>
+                                                        <div class="switch-label">N/A</div>
+                                                        <div class="switch-label">Off</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                    <span class="form-check-label">ไม่มีรายการนี้</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>ฝ้าภายนอกชั้นบน</h3>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="switch-radio-container">
+                                                    <div class="three-state-switch state-na" id="threeStateSwitch">
+                                                        <div class="switch-handle"></div>
+                                                        <div class="switch-label">On</div>
+                                                        <div class="switch-label">N/A</div>
+                                                        <div class="switch-label">Off</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                    <span class="form-check-label">ไม่มีรายการนี้</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">ความคิดเห็น</label>
+                    <textarea rows="1" class="form-control" placeholder="ความคิดเห็น" value=""></textarea>
+                </div>
             </div>
         </div>
         <div class="container-xl mb-3">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 mb-2">
-                        <div class="card card-link">
-                            <div class="card-body">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">ส่วนที่ 1</a></li>
+                <li class="breadcrumb-item active" aria-current="page">รายงานขออนุมัติการทำงาน</li>
+            </ol>
+            <br>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
                                 <div class="row">
-                                    <div class="col-12 col-sm-2">
-                                        <h3 class="card-title">ดิ่ง-ฉาก</h3>
+                                    <div class="col-12">
+                                        <h3>ฝ้าภายนอกชั้นบน</h3>
                                     </div>
-                                    <div class="col-12 col-sm-4">
-                                        <div>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-1" checked>
-                                                <span class="form-check-label">ผ่าน</span>
-                                            </label>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-1">
-                                                <span class="form-check-label">ไม่ผ่าน</span>
-                                            </label>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-1">
-                                                <span class="form-check-label">ไม่มีงาน</span>
-                                            </label>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="switch-radio-container">
+                                                    <div class="three-state-switch state-na" id="threeStateSwitch">
+                                                        <div class="switch-handle"></div>
+                                                        <div class="switch-label">On</div>
+                                                        <div class="switch-label">N/A</div>
+                                                        <div class="switch-label">Off</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                    <span class="form-check-label">ไม่มีรายการนี้</span>
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-12 col-sm-6">
-                                        <textarea class="form-control" name="example-textarea-input-1" rows="1" placeholder="หมายเหตุ"></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-12 mb-2">
-                        <div class="card card-link">
-                            <div class="card-body">
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
                                 <div class="row">
-                                    <div class="col-12 col-sm-2">
-                                        <h3 class="card-title">รอยต่อ</h3>
+                                    <div class="col-12">
+                                        <h3>ฝ้าภายนอกชั้นบน</h3>
                                     </div>
-                                    <div class="col-12 col-sm-4">
-                                        <div>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-2">
-                                                <span class="form-check-label">ผ่าน</span>
-                                            </label>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-2">
-                                                <span class="form-check-label">ไม่ผ่าน</span>
-                                            </label>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-2" checked>
-                                                <span class="form-check-label">ไม่มีงาน</span>
-                                            </label>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="switch-radio-container">
+                                                    <div class="three-state-switch state-na" id="threeStateSwitch">
+                                                        <div class="switch-handle"></div>
+                                                        <div class="switch-label">On</div>
+                                                        <div class="switch-label">N/A</div>
+                                                        <div class="switch-label">Off</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                    <span class="form-check-label">ไม่มีรายการนี้</span>
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-12 col-sm-6">
-                                        <textarea class="form-control" name="example-textarea-input-2" rows="1" placeholder="หมายเหตุ"></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-12 mb-2">
-                        <div class="card card-link">
-                            <div class="card-body">
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
                                 <div class="row">
-                                    <div class="col-12 col-sm-2">
-                                        <h3 class="card-title">จากพื้น, ท้อง-หลังวงกบเป็นเต็มก้อน</h3>
+                                    <div class="col-12">
+                                        <h3>ฝ้าภายนอกชั้นบน</h3>
                                     </div>
-                                    <div class="col-12 col-sm-4">
-                                        <div>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-3" checked>
-                                                <span class="form-check-label">ผ่าน</span>
-                                            </label>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-3">
-                                                <span class="form-check-label">ไม่ผ่าน</span>
-                                            </label>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-3">
-                                                <span class="form-check-label">ไม่มีงาน</span>
-                                            </label>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="switch-radio-container">
+                                                    <div class="three-state-switch state-na" id="threeStateSwitch">
+                                                        <div class="switch-handle"></div>
+                                                        <div class="switch-label">On</div>
+                                                        <div class="switch-label">N/A</div>
+                                                        <div class="switch-label">Off</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                    <span class="form-check-label">ไม่มีรายการนี้</span>
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-12 col-sm-6">
-                                        <textarea class="form-control" name="example-textarea-input-3" rows="1" placeholder="หมายเหตุ"></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-12 mb-2">
-                        <div class="card card-link">
-                            <div class="card-body">
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
                                 <div class="row">
-                                    <div class="col-12 col-sm-2">
-                                        <h3 class="card-title">LINTEL หรือเสาเอ็นทับหลัง</h3>
+                                    <div class="col-12">
+                                        <h3>ฝ้าภายนอกชั้นบน</h3>
                                     </div>
-                                    <div class="col-12 col-sm-4">
-                                        <div>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-4">
-                                                <span class="form-check-label">ผ่าน</span>
-                                            </label>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-4">
-                                                <span class="form-check-label">ไม่ผ่าน</span>
-                                            </label>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-4">
-                                                <span class="form-check-label">ไม่มีงาน</span>
-                                            </label>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="switch-radio-container">
+                                                    <div class="three-state-switch state-na" id="threeStateSwitch">
+                                                        <div class="switch-handle"></div>
+                                                        <div class="switch-label">On</div>
+                                                        <div class="switch-label">N/A</div>
+                                                        <div class="switch-label">Off</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                    <span class="form-check-label">ไม่มีรายการนี้</span>
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-12 col-sm-6">
-                                        <textarea class="form-control" name="example-textarea-input-4" rows="1" placeholder="หมายเหตุ"></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-12 mb-2">
-                        <div class="card card-link">
-                            <div class="card-body">
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
                                 <div class="row">
-                                    <div class="col-12 col-sm-2">
-                                        <h3 class="card-title">ทำระดับ + 1.00 ม.</h3>
+                                    <div class="col-12">
+                                        <h3>ฝ้าภายนอกชั้นบน</h3>
                                     </div>
-                                    <div class="col-12 col-sm-4">
-                                        <div>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-5">
-                                                <span class="form-check-label">ผ่าน</span>
-                                            </label>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-5">
-                                                <span class="form-check-label">ไม่ผ่าน</span>
-                                            </label>
-                                            <label class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="radios-inline-5">
-                                                <span class="form-check-label">ไม่มีงาน</span>
-                                            </label>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="switch-radio-container">
+                                                    <div class="three-state-switch state-na" id="threeStateSwitch">
+                                                        <div class="switch-handle"></div>
+                                                        <div class="switch-label">On</div>
+                                                        <div class="switch-label">N/A</div>
+                                                        <div class="switch-label">Off</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                    <span class="form-check-label">ไม่มีรายการนี้</span>
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-12 col-sm-6">
-                                        <textarea class="form-control" name="example-textarea-input-5" rows="1" placeholder="หมายเหตุ"></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">ความคิดเห็น</label>
+                    <textarea rows="1" class="form-control" placeholder="ความคิดเห็น" value=""></textarea>
                 </div>
             </div>
         </div>
         <div class="container-xl mb-3">
             <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title">Custom Dropzone</h3>
-                    <form class="dropzone" id="dropzone-custom" action="./" autocomplete="off" novalidate>
-                        <div class="fallback">
-                            <input name="file" type="file" />
-                        </div>
-                        <div class="dz-message">
-                            <h3 class="dropzone-msg-title">Your text here</h3>
-                            <span class="dropzone-msg-desc">Your custom description here</span>
-                        </div>
-                    </form>
+                <div class="card-header">
+                    <div class="ribbon ribbon-top bg-yellow">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
+                    </div>
+                    <h3 class="card-title align-center">
+                        <span class="material-icons"> account_circle </span>บันทึกผู้ตรวจ
+                    </h3>
                 </div>
-            </div>
-        </div>
-        <div class="container-xl mb-3">
-            <div class="col-12">
-                <div class="card">
+                <div class="card-body">
                     <div class="row">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="ribbon ribbon-top bg-yellow">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
-                                </div>
-                                <div class="card-body">
-                                    <h3 class="card-title align-center">
-                                        <span class="material-icons"> account_circle </span>บันทึกผู้ตรวจ
-                                    </h3>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-12 col-sm-6">
-                                        <div class="row">
-                                            <div class="col-12 col-sm-6 mb-2">
-                                                <label class="form-label">วันที่ตรวจ</label>
-                                                <div class="input-icon">
-                                                    <span class="input-icon-addon">
-                                                        <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M11 15h1" /><path d="M12 15v3" /></svg>
-                                                    </span>
-                                                    <input class="form-control" placeholder="Select a date" id="datepicker-icon-prepend" value="@Model.Detail.SaveDate_PM" />
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-sm-6 mb-2">
-                                                <label class="form-label">ผู้ตรวจ</label>
-                                                <input type="text" class="form-control" name="unit-name" placeholder="" value="Pawel Kuna" disabled>
-                                            </div>
-                                            <div class="col-12 col-sm-6 mb-2">
-                                                <label class="form-label">ความคิดเห็น</label>
-                                                <textarea rows="5"
-                                                          class="form-control"
-                                                          placeholder=""
-                                                          value="Mike">Oh so, your weak rhyme
-                                                                        You doubt I'll bother, reading into it
-                                                                        I'll probably won't, left to my own devices
-                                                                        But that's the difference in our opinions.
-                                        </textarea>
-                                            </div>
-                                            <div class="col-12 col-sm-6 mb-2">
-                                                <label class="form-label">อัปโหลดรูปภาพ</label>
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <form class="dropzone" id="dropzone-multiple" action="./" autocomplete="off" novalidate>
-                                                            <div class="fallback">
-                                                                <input name="file" type="file" multiple />
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-sm-6">
-                                        <div class="row">
-                                            <div class="col-12 mb-2">
-                                                <label class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="radios-inline-2">
-                                                    <span class="form-check-label">ผ่านแบบมีเงื่อนไข (PC)</span>
-                                                </label>
-                                                <div class="col-12 mb-2">
-                                                    <label class="form-label">ความคิดเห็น</label>
-                                                    <textarea rows="5"
-                                                              class="form-control"
-                                                              placeholder=""
-                                                              value="Mike">Oh so, your weak rhyme
-                                                                        You doubt I'll bother, reading into it
-                                                                        I'll probably won't, left to my own devices
-                                                                        But that's the difference in our opinions.
-                                                     </textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <label class="form-label">&nbsp; แก้ไขล่าสุด 13/06/2024</label>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="btn-list justify-content-end">
-                                            <a href="#" class="btn">
-                                                Clear
-                                            </a>
-                                            <a href="#" class="btn btn-primary">
-                                                บันทึก
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-12 col-sm-4 p-3 mb-2">
+                              <input class="form-control" type="file" id="formFileMultiple" multiple>
+                        </div>
+                        <div class="col-12 col-sm-4 p-3 mb-2">
+                            <label class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="radios-inline-12">
+                                <span class="form-check-label">ผ่านแบบมีเงื่อนไข (PC)</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-sm-4 p-3 mb-2">
+                            <textarea rows="1" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ" value=""></textarea>
                         </div>
                     </div>
                 </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="form-label">&nbsp; แก้ไขล่าสุด 13/06/2024</label>
+                        </div>
+                        <div class="col-6">
+                            <div class="btn-list justify-content-end">
+                                <a href="#" class="btn">
+                                    Clear
+                                </a>
+                                <a href="#" class="btn btn-primary">
+                                    บันทึก
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>             
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const switchElement = document.getElementById('threeStateSwitch');
+            let currentState = 'state-na'; // Initial state is set to N/A
+
+            switchElement.addEventListener('click', function () {
+                switch (currentState) {
+                    case 'state-on':
+                        currentState = 'state-na';
+                        break;
+                    case 'state-na':
+                        currentState = 'state-off';
+                        break;
+                    case 'state-off':
+                        currentState = 'state-on';
+                        break;
+                }
+
+                switchElement.className = `three-state-switch ${currentState}`;
+            });
+        });
+    </script>
 </div>
+
+<style>
+    .three-state-switch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 120px;
+        height: 30px;
+        background-color: #dfdfdf;
+        border-radius: 15px;
+        position: relative;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+    .switch-handle {
+        width: 40px;
+        height: 100%;
+        background-color: #909090;
+        border-radius: 15px;
+        position: absolute;
+        transition: all 0.3s;
+    }
+
+    .switch-label {
+        width: 40px;
+        text-align: center;
+        line-height: 30px;
+        font-size: 10px;
+        z-index: 1;
+    }
+
+    .state-on .switch-handle {
+        left: 0;
+        background-color: #28a745;
+    }
+
+    .state-na .switch-handle {
+        left: 40px;
+        background-color: #C0C0C0;
+    }
+
+    .state-off .switch-handle {
+        left: 80px;
+        background-color: #dc3545;
+    }
+
+    .switch-radio-container {
+        display: flex;
+        align-items: center;
+    }
+</style>
+
 <style>
 
     .align-center {
@@ -480,141 +528,7 @@
     }
 
 </style>
-<style>
-    .open {
-        position: fixed;
-        top: 40px;
-        right: 40px;
-        width: 50px;
-        height: 50px;
-        display: block;
-        cursor: pointer;
-        transition: opacity 0.2s linear;
-    }
 
-    .open:hover {
-        opacity: 0.8;
-    }
-
-    .open span {
-        display: block;
-        height: 4px;
-        width: 40px;
-        border-radius: 40px;
-        background-color: #000;
-        position: absolute;
-        right: 3px;
-        top: 3px;
-        overflow: hidden;
-        transition: all 0.4s ease;
-    }
-
-    .open span:nth-child(1) {
-        margin-top: 10px;
-        z-index: 9;
-    }
-
-    .open span:nth-child(2) {
-        margin-top: 25px;
-    }
-
-    .open span:nth-child(3) {
-        margin-top: 40px;
-    }
-
-    .sub-menu {
-        transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        height: 0;
-        width: 0;
-        right: 0;
-        top: 0;
-        position: absolute;
-        background-color: rgba(38, 84, 133, 0.54);
-        border-radius: 50%;
-        z-index: 18;
-        overflow: hidden;
-    }
-
-    .sub-menu li {
-        display: block;
-        float: right;
-        clear: both;
-        height: auto;
-        margin-right: -160px;
-        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-    .sub-menu li:first-child {
-        margin-top: 180px;
-    }
-
-    .sub-menu li:nth-child(1) {
-        transition-delay: 0.05s;
-    }
-
-    .sub-menu li:nth-child(2) {
-        transition-delay: 0.10s;
-    }
-
-    .sub-menu li:nth-child(3) {
-        transition-delay: 0.15s;
-    }
-
-    .sub-menu li:nth-child(4) {
-        transition-delay: 0.20s;
-    }
-
-    .sub-menu li:nth-child(5) {
-        transition-delay: 0.25s;
-    }
-
-    .sub-menu li a {
-        color: #fff;
-        font-family: 'Lato', Arial, Helvetica, sans-serif;
-        font-size: 16px;
-        width: 100%;
-        display: block;
-        float: left;
-        line-height: 40px;
-    }
-
-    .oppenned .sub-menu {
-        opacity: 1;
-        height: 400px;
-        width: 400px;
-    }
-
-    .oppenned span:nth-child(2) {
-        overflow: visible;
-    }
-
-    .oppenned span:nth-child(1),
-    .oppenned span:nth-child(3) {
-        z-index: 100;
-        transform: rotate(45deg);
-    }
-
-    .oppenned span:nth-child(1) {
-        transform: rotate(45deg) translateY(12px) translateX(12px);
-    }
-
-    .oppenned span:nth-child(2) {
-        height: 400px;
-        width: 400px;
-        right: -160px;
-        top: -160px;
-        border-radius: 50%;
-        background-color: rgba(38, 84, 133, 0.54);
-    }
-
-    .oppenned span:nth-child(3) {
-        transform: rotate(-45deg) translateY(-10px) translateX(10px);
-    }
-
-    .oppenned li {
-        margin-right: 168px;
-    }
-</style>
 
 <link href="~/lib/core-ui/dist/libs/dropzone/dist/dropzone.css?1692870487" rel="stylesheet" />
 <link href="~/lib/core-ui/dist/css/tabler-vendors.min.css?1692870487" rel="stylesheet" />
@@ -629,22 +543,23 @@
 <script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>
 
 <script>
-        $(document).ready(function () {
-           form_check_list.init();
-        });
 
-        $(document).ready(function() {
-		$(document).delegate('.open', 'click', function(event){
-			$(this).addClass('oppenned');
-			event.stopPropagation();
-		})
-		$(document).delegate('body', 'click', function(event) {
-			$('.open').removeClass('oppenned');
-		})
-		$(document).delegate('.cls', 'click', function(event){
-			$('.open').removeClass('oppenned');
-			event.stopPropagation();
-		});
+  //      $(document).ready(function () {
+  //         form_check_list.init();
+  //      });
+
+  //      $(document).ready(function() {
+		//$(document).delegate('.open', 'click', function(event){
+		//	$(this).addClass('oppenned');
+		//	event.stopPropagation();
+		//})
+		//$(document).delegate('body', 'click', function(event) {
+		//	$('.open').removeClass('oppenned');
+		//})
+		//$(document).delegate('.cls', 'click', function(event){
+		//	$('.open').removeClass('oppenned');
+		//	event.stopPropagation();
+		//});
 
         document.querySelectorAll('.form-check-input').forEach(function (radio) {
             radio.addEventListener('click', function () {
@@ -656,23 +571,12 @@
                 });
             });
         });
-            document.addEventListener("DOMContentLoaded", function () {
-                new Dropzone("#dropzone-custom")
-            })
+
+        document.addEventListener("DOMContentLoaded", function () {
+            new Dropzone("#dropzone-custom")
+        })
 
 	});
-</script>
-
-<script>
-    function closeOffcanvas() {
-        setTimeout(function () {
-            var closeButton = document.getElementById('closs_canvass');
-            if (closeButton) {
-                closeButton.click();
-            }
-        }, 1000); // 1500 milliseconds = 1.5 seconds
-    }
-    
 </script>
 
 }

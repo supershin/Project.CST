@@ -1,0 +1,355 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-home-heart">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M21 12l-9 -9l-9 9h2v7a2 2 0 0 0 2 2h6" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.39 0 .754 .112 1.061 .304" />
+                        <path d="M19 21.5l2.518 -2.58a1.74 1.74 0 0 0 0 -2.413a1.627 1.627 0 0 0 -2.346 0l-.168 .172l-.168 -.172a1.627 1.627 0 0 0 -2.346 0a1.74 1.74 0 0 0 0 2.412l2.51 2.59z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="card-body">
+                <h1>
+                    Unit A-01 <small class="text-yellow"> โครงการเอสต้า รังสิต</small>
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="page-body">
+        <div class="container-xl mb-3">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="container mt-1">
+                                    <span class="badge bg-secondary text-white">งวดที่ 4</span> สร้างโดย 21 Century <span class="badge bg-orange text-white">QC</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="container mt-1">
+                                                <label class="form-label align-center">
+                                                   วิศวกรผู้ควบคุมงาน  : นายสมชาย ใจดี
+                                                </label>
+                                                <label class="form-label align-center">
+                                                    วันที่ส่งงาน : 12/06/2567
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-xl mb-3">
+             <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">ผลการตรวจ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">มีการผ่านแบบมีเงื่อนไข!!!</li>
+             </ol>
+            <br>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                                <form action="@Url.Action("index","FormCheckList")" method="post">
+                                    <button class="status-dot bg-green">
+                                        <i class="fa-regular fa-circle-check"></i>
+                                    </button>
+                                </form>
+                                <div class="ms-2 c-details">
+                                    <h3 class="mb-0">
+                                        งานก่ออิฐ
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="align-items-right">
+                                <button class="status-dot bg-primary" onclick="openModal()">
+                                    <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <label class="form-label">
+                            ความเห็นจากวิศวกร
+                        </label>
+                        <textarea rows="1" class="form-control" placeholder="ความคิดเห็น" disabled>ตรวจผ่านครั้งที่ 2</textarea>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                                <form action="@Url.Action("index","FormCheckList")" method="post">
+                                    <button class="status-dot bg-green">
+                                        <i class="fa-regular fa-circle-check"></i>
+                                    </button>
+                                </form>
+                                <div class="ms-2 c-details">
+                                    <h3 class="mb-0">
+                                        ฝ้าภายนอกชั้นบน
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="align-items-right">
+                                <button class="status-dot bg-primary" onclick="openModal()">
+                                    <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <label class="form-label">
+                            ความเห็นจากวิศวกร
+                        </label>
+                        <textarea rows="1" class="form-control" placeholder="ความคิดเห็น" disabled>งานเรียบร้อยดีไม่ติดปัญหา</textarea>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                                <form action="@Url.Action("index","FormCheckList")" method="post">
+                                    <button class="status-dot bg-green">
+                                        <i class="fa-regular fa-circle-check"></i>
+                                    </button>
+                                </form>
+                                <div class="ms-2 c-details">
+                                    <h3 class="mb-0">
+                                        ตั้งวงกบ
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="align-items-right">
+                                <button class="status-dot bg-primary" onclick="openModal()">
+                                    <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <label class="form-label">
+                            ความเห็นจากวิศวกร
+                        </label>
+                        <textarea rows="1" class="form-control" placeholder="ความคิดเห็น" disabled>งานเรียบร้อยดีไม่ติดปัญห</textarea>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                                <form action="@Url.Action("index","FormCheckList")" method="post">
+                                    <button class="status-dot bg-green">
+                                        <i class="fa-regular fa-circle-check"></i>
+                                    </button>
+                                </form>
+                                <div class="ms-2 c-details">
+                                    <h3 class="mb-0">
+                                        งานท่อไฟฟ้า+ประปา
+                                    </h3>
+                                </div>
+                            </div> 
+                            <div class="align-items-right">
+                                <button class="status-dot bg-primary" onclick="openModal()">
+                                    <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <label class="form-label">
+                            ความเห็นจากวิศวกร
+                        </label>
+                        <textarea rows="1" class="form-control" placeholder="ความคิดเห็น" disabled>ตรวจผ่านในครั้งแรก</textarea>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                                <form action="@Url.Action("index","FormCheckList")" method="post">
+                                    <button class="status-dot bg-primary">
+                                        <i class="fa-regular fa-circle-check"></i>
+                                    </button>
+                                </form>
+                                <div class="ms-2 c-details">
+                                    <h3 class="mb-0">
+                                        มุงหลังคารอบบน
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="align-items-right">
+                                <button class="status-dot bg-primary" onclick="openModal()">
+                                    <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <label class="form-label">
+                            ความเห็นจากวิศวกร
+                        </label>
+                        <textarea class="form-control" placeholder="ความคิดเห็น" disabled>ขออนุโลมจ่ายในงวดที่ 7 เนื่องจาก Supplier ส่งวัศวุล่าช้าโดยจะจบงานให้ภายใน 10/06/2567</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-xl mb-3">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title align-center">
+                                    อนุมัติการผ่านแบบมีเงื่อนไข
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-12 p-1 mb-2">
+                                    <d></d>
+                                    <label class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="radios-inline-12">
+                                        <span class="form-check-label">ผ่านเพื่อส่ง PJM Head</span>
+                                    </label>
+                                    <label class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="radios-inline-12">
+                                        <span class="form-check-label">ไม่อนุมัติ</span>
+                                    </label>
+                                </div>
+                                <div class="col-12 p-1 mb-2">
+                                    <textarea rows="1" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ" value=""></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-xl mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <div class="ribbon ribbon-top bg-yellow">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
+                    </div>
+                    <h3 class="card-title align-center">
+                        <span class="material-icons"> account_circle </span>บันทึกผลการอนุมัติ
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-2 p-3 mb-2">
+                            <button type="button" class="btn btn-outline-warning">เกรดที่วิศวกรประเมิณงวดนี้ : B</button>
+                        </div>
+                        <div class="col-12 col-sm-1 p-3 mb-2">
+                            <button type="button" class="btn btn-success">QC Pass</button>
+                        </div>
+                        <div class="col-12 col-sm-4 p-3 mb-2">
+                            <input class="form-control" type="file" id="formFileMultiple" multiple>
+                        </div>
+                        <div class="col-12 col-sm-4 p-3 mb-2">
+                            <label class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="radios-inline-12">
+                                <span class="form-check-label">อนุมัติ</span>
+                            </label>
+                            <label class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="radios-inline-12">
+                                <span class="form-check-label">ไม่อนุมัติ</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-sm-4 p-3 mb-2">
+                            <textarea rows="1" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ" value=""></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="form-label">&nbsp; แก้ไขล่าสุด 13/06/2024</label>
+                        </div>
+                        <div class="col-6">
+                            <div class="btn-list justify-content-end">
+                                <a href="#" class="btn">
+                                    Save
+                                </a>
+                                <a href="#" class="btn btn-primary">
+                                    Submit
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">รูปภาพ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2 g-md-3">
+                        <div class="col-6">
+                            <a data-fslightbox="gallery" href="~/img/img11.jpg">
+                                <img src="~/img/img11.jpg" alt="..." class="img-thumbnail">
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a data-fslightbox="gallery" href="~/img/img12.jpg">
+                                <img src="~/img/img12.jpg" alt="..." class="img-thumbnail">
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a data-fslightbox="gallery" href="~/img/img13.jpg">
+                                <img src="~/img/img13.jpg" alt="..." class="img-thumbnail">
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a data-fslightbox="gallery" href="~/img/img8.png">
+                                <img src="~/img/img8.png" alt="..." class="img-thumbnail">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .status-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        border: none;
+        outline: none;
+        font-size: 20px;
+    }
+    .card {
+        border: none;
+        border-radius: 10px
+    }
+
+</style>
+<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+<script src="~/lib/core-ui/dist/libs/fslightbox/index.js?1692870487" defer></script>
+<script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>
+<script src="~/lib/core-ui/dist/js/demo.min.js?1692870487" defer></script>
+<script>
+    function openModal() {
+        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+        myModal.show();
+    }
+</script>

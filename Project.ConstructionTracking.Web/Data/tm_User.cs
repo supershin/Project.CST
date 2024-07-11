@@ -14,6 +14,12 @@ namespace Project.ConstructionTracking.Web.Data
         public int? RoleID { get; set; }
         [StringLength(100)]
         [Unicode(false)]
+        public string? Username { get; set; }
+        [StringLength(100)]
+        [Unicode(false)]
+        public string? Password { get; set; }
+        [StringLength(100)]
+        [Unicode(false)]
         public string? FirstName { get; set; }
         [StringLength(200)]
         [Unicode(false)]

@@ -8,9 +8,12 @@ namespace Project.ConstructionTracking.Web.Controllers
 		{
 			return View();
 		}
+
+		[HttpPost]
 		public IActionResult Login()
 		{
-			return View();
-		}
-	}
+
+            return RedirectToAction("Index", "Dashboard");
+        }
+    }
 }
