@@ -12,6 +12,13 @@
         border-radius: 0.5rem;
     }
 
+/*    .card-link-pop {
+        padding: 20px;
+        margin: 5px auto;
+        width: 95%;
+        max-width: 500px;
+    }*/
+
     .fixed-size-btn {
         width: 80px; /* Adjust the width as needed */
         height: 30px;
@@ -19,7 +26,7 @@
 
     .card {
         border: none;
-        margin: 0 10px;
+        border-radius: 10px;
     }
 
     .carousel-item {
@@ -39,6 +46,23 @@
     .carousel-control-next-icon {
         background-color: #000;
         border-radius: 50%;
+    }
+
+    .status-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        border: none;
+        outline: none;
+    }
+
+    .status-text {
+        font-size: 1em;
     }
 
 </style>
@@ -217,434 +241,286 @@
             </form>
             <br>
         </div>      
-        <div class="col-12 d-none d-sm-block">
-            <div class="card">
-                <div class="container-xl">
-                    <div class="row row-cards">
-                        @foreach (var item in Model.TrackingUnitList)
-                        {
-                            <div class="col-12">
-                                <div class="card card-link card-link-pop">
-                                    <div id="carddata" class="row">
-                                        <div class="col-1 col-sm-1 text-left">
-                                            @if (item.StatusID == 8 || item.StatusID == 9)
-                                            {
-                                                <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
-                                            } 
-                                            else if (item.StatusID == 10) 
-                                            {
-                                                <span class="status-dot status-dot-animated bg-red d-block" style="width: 16px; height: 16px;"></span>
-                                            }
-                                            else if (item.StatusID == 11 || item.StatusID == 12)
-                                            {
-                                                <span class="status-dot status-dot-animated bg-yellow d-block" style="width: 16px; height: 16px;"></span>
-                                            }
-                                            else 
-                                            {
-                                                <span class="status-dot d-block" style="width: 16px; height: 16px;"></span>
-                                            }
-                                            
-                                        </div>
-                                        <div class="col-3 col-sm-1 text-left">
-                                            <a href="#" class="text-reset" tabindex="-1" data-toggle="tooltip" data-placement="right" title="">@item.FormName</a>
-                                            <div class="row d-block d-sm-none">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        @if (item.StatusID == 9)
-                                                        {
-                                                                <form asp-action="Index" asp-controller="FormCheckList" method="post">         
-                                                                <input type="hidden" name="ProjectID" value="@item.ID" />
-                                                                    <button type="submit" class="btn btn-success fixed-size-btn">
-                                                                    ผ่าน
-                                                                    </button>
-                                                                </form>
-                                                        }
-                                                        else if (item.StatusID == 14)
-                                                        {
-                                                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                                                <button type="submit" class="btn btn-success fixed-size-btn">
-                                                                    ผ่าน<span class="material-icons"> error </span>
-                                                                </button>
-                                                            </form>
-                                                        }
-                                                        else if (item.StatusID == 12)
-                                                        {
-                                                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                                                <button class="btn btn-danger fixed-size-btn">
-                                                                    ไม่ผ่าน
-                                                                </button>
-                                                            </form>
-                                                        }
-                                                        else if (item.StatusID == 10)
-                                                        {
-                                                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                                                <button class="btn fixed-size-btn" style="background-color: #CCCC00; color: white;">
-                                                                    กำลังตรวจ
-                                                                </button>
-                                                            </form>
-                                                        }
-                                                        else if (item.StatusID == 11)
-                                                        {
-                                                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                                                <button class="btn fixed-size-btn" style="background-color: orange; color: white;">
-                                                                    รออนุมัติ
-                                                                </button>
-                                                            </form>
-                                                        }
-                                                        else
-                                                        {
-                                                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                                                <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
-                                                                    ตรวจ
-                                                                </button>
-                                                            </form>
-                                                        }
-                                                    </div>
-                                                    @if (item.FormRef.FormName == null)
-                                                    {
-                                                        <!-- ถ้าไม่ QC ไม่ต้องแสดง-->
-                                                    }
-                                                    else
-                                                    {
-@*                                                        <div class="col-12">
-                                                            <a href="#" class="text-reset" tabindex="-1" data-bs-toggle="tooltip" data-bs-placement="right" title="">@item.FormRef.FormName </a>
-                                                        </div>*@
-                                                        <div class="col-12">
-                                                            <form action="@Url.Action("index","FormCheckList")">
-                                                                <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
-                                                                    ตรวจ
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="d-none d-sm-block col-sm-2 text-left">
-                                            @if (item.StatusID == 9)
-                                            {
+        <div class="container-xl">
+            <div class="row row-cards">
+                <div class="col-12">
+                    <div class="card card-link card-link-pop">
+                        <div class="row justify-content-center">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="row">
+                                            <div class="col-3">
                                                 <form action="@Url.Action("index","FormGroup")" method="post">
                                                     <button type="submit" class="btn btn-success fixed-size-btn">
-                                                        ผ่าน
+                                                        งวดที่ 1
                                                     </button>
                                                 </form>
-                                            }
-                                            else if (item.StatusID == 14)
-                                            {
-                                                <form action="@Url.Action("index","FormCheckList")" method="post">
-                                                    <button type="submit" class="btn btn-success fixed-size-btn">
-                                                        ผ่าน<span class="material-icons"> error </span>
-                                                    </button>
-                                                </form>
-                                            }
-                                            else if (item.StatusID == 12)
-                                            {
-                                                <form action="@Url.Action("index","FormCheckList")" method="post">
-                                                    <button class="btn btn-danger fixed-size-btn">
-                                                        ไม่ผ่าน
-                                                    </button>
-                                                </form>
-                                            }
-                                            else if (item.StatusID == 10)
-                                            {
-                                                <form action="@Url.Action("index","FormCheckList")" method="post">
-                                                    <button class="btn fixed-size-btn" style="background-color: #CCCC00; color: white;">
-                                                        กำลังตรวจ
-                                                    </button>
-                                                </form>
-                                            }
-                                            else if (item.StatusID == 11)
-                                            {
-                                                <form action="@Url.Action("index","FormCheckList")" method="post">
-                                                    <button class="btn fixed-size-btn" style="background-color: orange; color: white;">
-                                                        รออนุมัติ
-                                                    </button>
-                                                </form>
-                                            }
-                                            else
-                                            {
-                                                <form action="@Url.Action("index","FormCheckList")" method="post">
-                                                    <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
-                                                        ตรวจ
-                                                    </button>
-                                                </form>
-                                            }
-                                        </div>
-                                        <div class="d-none d-sm-block col-2 col-sm-1 text-left">
-                                            @if (item.FormRef.FormName == null)
-                                            {
-                                                //กรณีไม่มี QC 
-                                            }
-                                            else
-                                            {
-                                                <a href="#" class="text-reset" tabindex="-1" data-toggle="tooltip" data-placement="right" title="">@item.FormRef.FormName</a>
-                                                <div class="row d-block d-sm-none">
-                                                    <form action="@Url.Action("index","FormCheckList")">
-                                                        <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
-                                                            ตรวจ
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            }
-                                        </div>
-                                        <div class="d-none d-sm-block col-sm-2 text-left">
-                                            @if (item.FormRef.FormName == null)
-                                            {
-                                                    //กรณีไม่มี QC
-                                            }
-                                            else
-                                            {
-                                                <div class="col-12">
-                                                <form action="@Url.Action("index","FormCheckList")">
-                                                    <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
-                                                        ตรวจ
-                                                    </button>
-                                                </form>
-                                                </div>
-                                            }
-                                        </div>
-                                        <div class="col-8 col-sm-5 text-center">
-                                            <div class="row">
-                                                <div class="col-12 col-sm-6">
-                                                    แผน : @item.StartDate - @item.EndDate
-                                                </div>
-                                                <div class="col-12 col-sm-6">
-                                                    ทำจริง : 03/01/2024 - 09/01/2024
-                                                </div>
                                             </div>
+                                            <div class="col-9 d-none d-sm-block">
+                                                งานติดตั้งฝ้าภายใน-ภายนอก ชั้นบน-ชั้นล่าง 100% งานไม้มอบฝ้า (ถ้ามี)  งานปูกระเบื้องพื้นห้องน้ำ 100% กระเบื้องพื้นชั้นบน-ชั้นล่าง และลานจอดรถ   งานติดตั้งบานประตูภายในพร้อมอุปกรณ์   จนแล้วเสร็จ
+                                            </div>
+                                        </div>                                                
+                                    </div>
+                                    <div class="col">
+                                        <form action="@Url.Action("index","FormGroup")" method="post">
+                                            <button type="submit" class="status-dot bg-green">
+                                                <span class="status-text">
+                                                    PE
+                                                </span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <div class="status-dot bg-green">
+                                            <span class="status-text">QC</span>
                                         </div>
+                                    </div>
+                                    <div class="col">
+                                        <form action="@Url.Action("index","PMFormcheck")" method="post">
+                                            <button type="submit" class="status-dot bg-green">
+                                                <span class="status-text">
+                                                    PM
+                                                </span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                          
                                     </div>
                                 </div>
                             </div>
-                        }      
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-12 d-block d-sm-none">
-            <div class="card">
-                <div class="container-xl">
-                    <div class="row row-cards">
-                        <div class="col-12">
-                            <div class="row">
-                                <div class="col-4"></div>
-                                <div class="col"><h3>EN</h3></div>
-                                <div class="col"><h3>QC</h3></div>
-                                <div class="col"><h3>PM</h3></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card card-link card-link-pop">
-                                    <div class="row justify-content-center">
-                                        <div class="col-12 mb-2">
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    <form action="@Url.Action("index","FormGroup")" method="post">
-                                                        <button type="submit" class="btn btn-success fixed-size-btn">
-                                                            งวดที่ 1
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 mb-2">
-                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content.."></textarea>
-                                        </div>
+                <div class="col-12">
+                    <div class="card card-link card-link-pop">
+                        <div class="row justify-content-center">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <form action="@Url.Action("index","FormGroup")" method="post">
+                                            <button type="submit" class="btn btn-success fixed-size-btn">
+                                                งวดที่ 2
+                                            </button>
+                                        </form>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card card-link card-link-pop">
-                                    <div class="row justify-content-center">
-                                        <div class="col-12 mb-2">
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    <form action="@Url.Action("index","FormGroup")" method="post">
-                                                        <button type="submit" class="btn btn-success fixed-size-btn">
-                                                            งวดที่ 2
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                                <div class="col">
+                                    <div class="col">
+                                        <form action="@Url.Action("index","FormGroup")" method="post">
+                                            <button class="status-dot bg-green">
+                                                <span class="status-text">PE</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
 
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 mb-2">
-                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content.."></textarea>
-                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <form action="@Url.Action("index","PMFormcheck")" method="post">
+                                            <button type="submit" class="status-dot bg-green">
+                                                <span class="status-text">
+                                                    PM
+                                                </span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                <div class="status-dot bg-primary">
+                                    <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                </div>
+                            </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card card-link card-link-pop">
+                        <div class="row justify-content-center">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <form action="@Url.Action("index","FormGroup")" method="post">
+                                            <button type="submit" class="btn btn-success fixed-size-btn">
+                                                งวดที่ 3
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <form action="@Url.Action("index","FormGroup")" method="post">
+                                            <button class="status-dot bg-green">
+                                                <span class="status-text">PE</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                    </div>
+                                    <div class="col">
+                                        <form action="@Url.Action("index","PMFormcheck")" method="post">
+                                            <button type="submit" class="status-dot bg-green">
+                                                <span class="status-text">
+                                                    PM
+                                                </span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <form action="@Url.Action("index","Conditionalpass")" method="post">
+                                            <button class="status-dot bg-primary">
+                                                <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card card-link card-link-pop">
-                                    <div class="row justify-content-center">
-                                        <div class="col-12 mb-2">
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    <form action="@Url.Action("index","FormGroup")" method="post">
-                                                        <button type="submit" class="btn btn-primary fixed-size-btn">
-                                                           งวดที่ 3 (PC)
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                                <div class="col">
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 mb-2">
-                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content..">ขออนุญาติให้ผ่านแบบมีเงื่อนไขเนื่องจาก supplier ส่งวัสดุล่าช้า</textarea>
-                                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card card-link card-link-pop">
+                        <div class="row justify-content-center">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <form action="@Url.Action("index","FormGroup")" method="post">
+                                            <button type="submit" class="btn btn-danger fixed-size-btn">
+                                                งวดที่ 4
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <form action="@Url.Action("index","FormGroup")" method="post">
+                                            <button class="status-dot bg-green">
+                                                <span class="status-text">PE</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                    </div>
+                                    <div class="col">
+                                        <form action="@Url.Action("index","PMFormcheck")" method="post">
+                                            <button type="submit" class="status-dot status-dot-animated bg-danger">
+                                                <span class="status-text">
+                                                    PM
+                                                </span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card card-link card-link-pop">
-                                    <div class="row justify-content-center">
-                                        <div class="col-12 mb-2">
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    <form action="@Url.Action("index","FormGroup")" method="post">
-                                                        <button class="btn btn-danger fixed-size-btn">
-                                                            งวดที่ 4
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot bg-green d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                                <div class="col">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card card-link card-link-pop">
+                        <div class="row justify-content-center">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <form action="@Url.Action("index","FormGroup")" method="post">
+                                            <button class="btn fixed-size-btn" style="background-color: orange; color: white;">
+                                                งวดที่ 5
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <form action="@Url.Action("index","FormGroup")" method="post">
+                                            <button class="status-dot status-dot-animated" style="background-color: orange;">
+                                                <span class="status-text">PE</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <div class="status-dot status-dot-animated" style="background-color: orange;">
+                                            <span class="status-text">QC</span>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="status-dot" style="background-color: #C0C0C0;">
+                                            <span class="status-text">PM</span>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card card-link card-link-pop">
+                        <div class="row justify-content-center">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <form action="@Url.Action("index","FormGroup")" method="post">
+                                            <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
+                                                งวดที่ 6
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <form action="@Url.Action("index","FormGroup")" method="post">
+                                            <button class="status-dot" style="background-color: #C0C0C0;">
+                                                <span class="status-text">PE</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
 
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot status-dot-animated bg-red d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 mb-2">
-                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content..">(PM) : ไม่อนุญาติให้ผ่านเนื่งจากงานไม่เรียบร้อย</textarea>
-                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <form action="@Url.Action("index","PMFormcheck")" method="post">
+                                            <button type="submit" class="status-dot" style="background-color: #C0C0C0;">
+                                                <span class="status-text">
+                                                    PM
+                                                </span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card card-link card-link-pop">
-                                    <div class="row justify-content-center">
-                                        <div class="col-12 mb-2">
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    <form action="@Url.Action("index","FormGroup")" method="post">
-                                                        <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
-                                                            งวดที่ 5
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                                <div class="col">
-                                                     <span class="status-dot d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                                <div class="col">
-
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 mb-2">
-                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content.."></textarea>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card card-link card-link-pop">
+                        <div class="row justify-content-center">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <form action="@Url.Action("index","FormGroup")" method="post">
+                                            <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
+                                                งวดที่ 7
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <form action="@Url.Action("index","FormGroup")" method="post">
+                                            <button class="status-dot" style="background-color: #C0C0C0;">
+                                                <span class="status-text">PE</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <div class="status-dot" style="background-color: #C0C0C0;">
+                                            <span class="status-text">QC</span>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card card-link card-link-pop">
-                                    <div class="row justify-content-center">
-                                        <div class="col-12 mb-2">
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    <form action="@Url.Action("index","FormGroup")" method="post">
-                                                        <button class="btn fixed-size-btn" style="background-color: orange; color: white;">
-                                                            งวดที่ 6
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot status-dot-animated bg-yellow d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                                <div class="col">
-
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 mb-2">
-                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content.."></textarea>
-                                        </div>
+                                    <div class="col">
+                                        <form action="@Url.Action("index","PMFormcheck")" method="post">
+                                            <button type="submit" class="status-dot" style="background-color: #C0C0C0;">
+                                                <span class="status-text">
+                                                    PM
+                                                </span>
+                                            </button>
+                                        </form>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card card-link card-link-pop">
-                                    <div class="row justify-content-center">
-                                        <div class="col-12 mb-2">
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    <form action="@Url.Action("index","FormGroup")" method="post">
-                                                        <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
-                                                            งวดที่ 7
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                                <div class="col">
-                                                    <span class="status-dot d-block" style="width: 16px; height: 16px;"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 mb-2">
-                                            <textarea class="form-control" disabled name="example-textarea-input" rows="2" placeholder="Content.."></textarea>
-                                        </div>
+                                    <div class="col">
                                     </div>
                                 </div>
                             </div>
@@ -654,6 +530,7 @@
             </div>
         </div>
     </div>
+    <!-- Script -->
     <script>
 
         function openCollapse() {
@@ -669,9 +546,8 @@
         }
 
     </script>
-
 </div>
-
+<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
 <script src="~/lib/core-ui/dist/libs/fslightbox/index.js?1692870487" defer></script>
 <script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>
 <script src="~/lib/core-ui/dist/js/demo.min.js?1692870487" defer></script>

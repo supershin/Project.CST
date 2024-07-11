@@ -26,33 +26,20 @@
     </div>
     <div class="page-body">
         <div class="container mt-1 mb-2">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">ส่วนที่ 1</a></li>
-                <li class="breadcrumb-item active" aria-current="page">รายงานขออนุมัติการทำงาน</li>
-            </ol>
-            <br>
             <div class="row">
                 <div class="col-md-4">
                     <div class="card p-3 mb-2">
                         <div class="d-flex justify-content-between">
                             <div class="d-flex flex-row align-items-center">
-                                <div id="icon"> <i class="fa-solid fa-building-user"></i></div>
+                                <form action="@Url.Action("index","FormCheckList")" method="post">
+                                    <button class="status-dot bg-green">
+                                        <i class="fa-regular fa-circle-check"></i>
+                                    </button>
+                                </form>
                                 <div class="ms-2 c-details">
                                     <h3 class="mb-0">ก่ออิฐ</h3>
-                                </div>
+                                </div>                               
                             </div>
-                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                <button type="submit" class="btn btn-success fixed-size-btn">
-                                    ผ่าน
-                                </button>
-                            </form>
-                        </div>
-                        <div class="mt-3">
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 100%" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="100% Complete">
-                                </div>
-                            </div>
-                            <div class="mt-3"> <span class="text1">3 เช็คแล้ว <span class="text2">of 3 เช็คลิสต์</span></span> </div>
                         </div>
                     </div>
                 </div>
@@ -60,23 +47,36 @@
                     <div class="card p-3 mb-2">
                         <div class="d-flex justify-content-between">
                             <div class="d-flex flex-row align-items-center">
-                                <div id="icon"> <i class="fa-solid fa-building-user"></i></div>
+                                <form action="@Url.Action("index","FormCheckList")" method="post">
+                                    <button class="status-dot bg-green">
+                                        <i class="fa-regular fa-circle-check"></i>
+                                    </button>
+                                </form>
+                                <div class="ms-2 c-details">
+                                    <h3 class="mb-0">ฝ้าภายนอกชั้นบน</h3>
+                                </div>
+                            </div>
+                            <form action="@Url.Action("index","FormCheckList")" method="post">
+                                <button class="status-dot bg-primary">
+                                    <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                                <form action="@Url.Action("index","FormCheckList")" method="post">
+                                    <button class="status-dot status-dot-animated bg-danger">
+                                        <i class="fa-regular fa-circle-xmark"></i>
+                                    </button>
+                                </form>
                                 <div class="ms-2 c-details">
                                     <h3 class="mb-0">ตั้งวงกบ</h3>
                                 </div>
                             </div>
-                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                <button type="submit" class="btn btn-success fixed-size-btn">
-                                    ผ่าน
-                                </button>
-                            </form>
-                        </div>
-                        <div class="mt-3">
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 100%" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="100% Complete">
-                                </div>
-                            </div>
-                            <div class="mt-3"> <span class="text1">4 เช็คแล้ว <span class="text2">of 4 เช็คลิสต์</span></span> </div>
                         </div>
                     </div>
                 </div>
@@ -84,23 +84,15 @@
                     <div class="card p-3 mb-2">
                         <div class="d-flex justify-content-between">
                             <div class="d-flex flex-row align-items-center">
-                                <div id="icon"> <i class="fa-solid fa-building-user"></i></div>
+                                <form action="@Url.Action("index","FormCheckList")" method="post">
+                                    <button class="status-dot status-dot-animated" style="background-color: orange;">
+                                        <i class="fa-solid fa-file-pen"></i>
+                                    </button>
+                                </form>
                                 <div class="ms-2 c-details">
                                     <h3 class="mb-0">งานท่อไฟฟ้า+ประปา</h3>
                                 </div>
                             </div>
-                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                <button type="submit" class="btn btn-success fixed-size-btn">
-                                    ผ่าน
-                                </button>
-                            </form>
-                        </div>
-                        <div class="mt-3">
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 100%" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="100% Complete">
-                                </div>
-                            </div>
-                            <div class="mt-3"> <span class="text1">1 เช็คแล้ว <span class="text2">of 1 เช็คลิสต์</span></span> </div>
                         </div>
                     </div>
                 </div>
@@ -108,176 +100,15 @@
                     <div class="card p-3 mb-2">
                         <div class="d-flex justify-content-between">
                             <div class="d-flex flex-row align-items-center">
-                                <div id="icon"> <i class="fa-solid fa-building-user"></i></div>
+                                <form action="@Url.Action("index","FormCheckList")" method="post">
+                                    <button class="status-dot" style="background-color: #C0C0C0;">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </button>
+                                </form>
                                 <div class="ms-2 c-details">
                                     <h3 class="mb-0">มุงหลังคารอบบน</h3>
                                 </div>
                             </div>
-                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                <button type="submit" class="btn btn-success fixed-size-btn">
-                                    ผ่าน
-                                </button>
-                            </form>
-                        </div>
-                        <div class="mt-3">
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 100%" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="100% Complete">
-                                </div>
-                            </div>
-                            <div class="mt-3"> <span class="text1">3 เช็คแล้ว <span class="text2">of 3 เช็คลิสต์</span></span> </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-3 mb-2">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <div id="icon"> <i class="fa-solid fa-building-user"></i></div>
-                                <div class="ms-2 c-details">
-                                    <h3 class="mb-0">โครงสร้างบันได คสล.</h3>
-                                </div>
-                            </div>
-                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                <button type="submit" class="btn btn-primary fixed-size-btn">
-                                    ผ่าน (PC)
-                                </button>
-                            </form>
-                        </div>
-                        <div class="mt-3">
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 100%" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="100% Complete">
-                                </div>
-                            </div>
-                            <div class="mt-3"> <span class="text1">2 เช็คแล้ว <span class="text2">of 2 เช็คลิสต์</span></span> </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container mt-1 mb-2">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">ส่วนที 2</a></li>
-                <li class="breadcrumb-item active" aria-current="page">รายการตรวจสอบ</li>
-            </ol>
-            <br>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card p-3 mb-2">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <div id="icon"> <i class="fa-solid fa-building-user"></i></div>
-                                <div class="ms-2 c-details">
-                                    <h3 class="mb-0">ก่ออิฐ</h3>
-                                </div>
-                            </div>
-                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                <button type="submit" class="btn btn-success fixed-size-btn">
-                                    ผ่าน
-                                </button>
-                            </form>
-                        </div>
-                        <div class="mt-3">
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 100%" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="100% Complete">
-                                </div>
-                            </div>
-                            <div class="mt-3"> <span class="text1">5 เช็คแล้ว <span class="text2">of 5 เช็คลิสต์</span></span> </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-3 mb-2">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <div id="icon"> <i class="fa-solid fa-building-user"></i></div>
-                                <div class="ms-2 c-details">
-                                    <h3 class="mb-0">ตั้งวงกบ</h3>
-                                </div>
-                            </div>
-                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                <button class="btn fixed-size-btn" style="background-color: orange; color: white;">
-                                    กำลังตรวจ
-                                </button>
-                            </form>
-                        </div>
-                        <div class="mt-3">
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 50%" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="50" aria-label="50% Complete">
-                                </div>
-                            </div>
-                            <div class="mt-3"> <span class="text1">2 เช็คแล้ว <span class="text2">of 4 เช็คลิสต์</span></span> </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-3 mb-2">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <div id="icon"> <i class="fa-solid fa-building-user"></i></div>
-                                <div class="ms-2 c-details">
-                                    <h3 class="mb-0">งานท่อไฟฟ้า+ประปา</h3>
-                                </div>
-                            </div>
-                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                <button class="btn btn-danger fixed-size-btn">
-                                    ไม่ผ่าน
-                                </button>
-                            </form>
-                        </div>
-                        <div class="mt-3">
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 100%" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="100% Complete">
-                                </div>
-                            </div>
-                            <div class="mt-3"> <span class="text1">1 เช็คแล้ว <span class="text2">of 1 เช็คลิสต์</span></span> </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-3 mb-2">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <div id="icon"> <i class="fa-solid fa-building-user"></i></div>
-                                <div class="ms-2 c-details">
-                                    <h3 class="mb-0">มุงหลังคารอบบน</h3>
-                                </div>
-                            </div>
-                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
-                                    รอตรวจ
-                                </button>
-                            </form>
-                        </div>
-                        <div class="mt-3">
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 0%" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" aria-label="0% Complete">
-                                </div>
-                            </div>
-                            <div class="mt-3"> <span class="text1">3 เช็คแล้ว <span class="text2">of 3 เช็คลิสต์</span></span> </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-3 mb-2">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <div id="icon"> <i class="fa-solid fa-building-user"></i></div>
-                                <div class="ms-2 c-details">
-                                    <h3 class="mb-0">โครงสร้างบันได คสล.</h3>
-                                </div>
-                            </div>
-                            <form action="@Url.Action("index","FormCheckList")" method="post">
-                                <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
-                                    รอตรวจ
-                                </button>
-                            </form>
-                        </div>
-                        <div class="mt-3">
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 0%" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" aria-label="0% Complete">
-                                </div>
-                            </div>
-                            <div class="mt-3"> <span class="text1">0 เช็คแล้ว <span class="text2">of 2 เช็คลิสต์</span></span> </div>
                         </div>
                     </div>
                 </div>
@@ -286,52 +117,66 @@
         <div class="container mt-1 mb-2">
             <div class="row">
                 <div class="col-md-4">
-                        <div class="card p-3 mb-2">
-                            <div class="d-flex justify-content-between">
-                                <div class="d-flex flex-row align-items-center">
-                                <div id="icon"> <i class="fa-solid fa-signature"></i></div>
-                                    <div class="ms-2 c-details">
-                                    <h3 class="mb-0">ประเมิณคุณภาพการทำงานในงวด</h3>
-                                    </div>
+                    <div class="card p-3 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                            <div id="icon"> <i class="fa-solid fa-building-user"></i></div>
+                                <div class="ms-2 c-details">
+                                <h3 class="mb-0">ประเมิณคุณภาพการทำงานในงวด</h3>
                                 </div>
                             </div>
-                            <div class="mt-3">
-                                <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox">
-                                    <span class="form-check-label">A</span>
-                                </label>
-                                <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox">
-                                    <span class="form-check-label">B</span>
-                                </label>
-                                <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox">
-                                    <span class="form-check-label">C</span>
-                                </label>
-                                <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox">
-                                    <span class="form-check-label">D</span>
-                                </label>
-                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox">
+                                <span class="form-check-label">A</span>
+                            </label>
+                            <label class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox">
+                                <span class="form-check-label">B</span>
+                            </label>
+                            <label class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox">
+                                <span class="form-check-label">C</span>
+                            </label>
+                            <label class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox">
+                                <span class="form-check-label">D</span>
+                            </label>
+                        </div>
                         <div class="mt-3">
                             <label class="form-label">วิศกรผู้ควบคุมงาน</label>
                             <input type="text" class="form-control" name="example-disabled-input" placeholder="Disabled..." value="นาย สมชาย ใจดี" disabled>
                         </div>
-                             <div class="card-footer">
-                                <div class="d-flex">
-                                    <a href="#" class="btn btn-link">บันทึก</a>
-                                    <a href="#" class="btn btn-primary ms-auto">ขออนุมัติ</a>
-                                </div>
-                            </div>
+                        <div class="card-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                ผู้รับเหมาลงนาม
+                            </button>
+                            <button class="btn btn-link">Save</button>
+                            <button class="btn btn-primary ms-auto">Submit</button>
                         </div>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card p-3 mb-2">
-                <div class="signature-pad">
-                    <canvas id="signatureCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">ผู้รับเหมาลงนาม</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <button id="clearBtn" class="btn btn-danger mt-2">Clear</button>
-                 </div>
+                <div class="modal-body">
+                    <div class="signature-pad">
+                        <canvas id="signatureCanvas"></canvas>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="clearBtn" class="btn btn-danger mt-2">Clear</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
@@ -378,6 +223,20 @@
 
 <style>
 
+    .status-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        border: none;
+        outline: none;
+        font-size: 20px;
+    }
+
     .card {
         border: none;
         border-radius: 10px;
@@ -401,15 +260,15 @@
     }
 
     #icon {
-    width: 50px;
-    height: 50px;
-    background-color: #eee;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 25px
-}
+        width: 50px;
+        height: 50px;
+        background-color: #eee;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px
+    }
 
     .progress {
         height: 10px;
