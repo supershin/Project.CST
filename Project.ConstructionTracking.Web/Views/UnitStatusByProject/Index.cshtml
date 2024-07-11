@@ -2,29 +2,28 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 }
-<link href="~/lib/datatable/jquery.datatables.min.css" rel="stylesheet" />
-<!-- Content Header (Page header) -->
+
 
 <div class="page-wrapper">
-
-    <!-- Page header -->
     <div class="page-header d-print-none">
-        <div class="container-xl">
-            <div class="row g-2 align-items-center">
-                <div class="col">
-                    <h2 class="page-title">
-                        หน้าค้นหา Unit
-                    </h2>
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-home-heart">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M21 12l-9 -9l-9 9h2v7a2 2 0 0 0 2 2h6" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.39 0 .754 .112 1.061 .304" />
+                        <path d="M19 21.5l2.518 -2.58a1.74 1.74 0 0 0 0 -2.413a1.627 1.627 0 0 0 -2.346 0l-.168 .172l-.168 -.172a1.627 1.627 0 0 0 -2.346 0a1.74 1.74 0 0 0 0 2.412l2.51 2.59z" />
+                    </svg>
                 </div>
+            </div>
+            <div class="card-body">
+                <h1>หน้าจอ Unit status แสดงทั้งโครงการ(show on website)</h1>
             </div>
         </div>
     </div>
-    <!-- Page body -->
     <div class="page-body">
-        <div id="divLoadingProgress" name="divLoadingProgress" align="center" class="divWaiting" style="display: none;">
-            <img alt="progress" src="./img/loading.gif" />
-        </div>
-        <div class="container-xl">
+        <div class="container mt-3">
             <div class="col-12">
                 <div class="card-body">
                     <form id="form-search" method="post">
@@ -32,20 +31,17 @@
                             <div class="col-3">
                                 <div class="mb-3">
                                     <label class="form-label"><h3>โครงการ</h3></label>
-                                    <select type="text" class="form-select" name="ProjectID" id="select-users" value="">
-                                        @if (ViewBag.ProjectSelectList != null)
-                                        {
-                                            @foreach (var item in (List<SelectListItem>)ViewBag.ProjectSelectList)
-                                            {
-                                                <option value="@item.Value">@item.Text</option>
-                                            }
-                                        }
-                                    </select>
+                                      <select class="form-select">
+                                            <option value="1">โครงการ 1</option>
+                                            <option value="2">โครงการ 2</option>
+                                            <option value="3">โครงการ 3</option>
+                                            <option value="4">โครงการ 4</option>
+                                      </select>
                                 </div>
                             </div>
                             <div class="col-3">
                                 <div class="mb-3">
-                                  <label class="form-label"><h3>สถานะ</h3></label>
+                                  <label class="form-label"><h3>สถานะขาย</h3></label>
                                   <select class="form-select">
                                     <option value="1">ว่าง</option>
                                     <option value="2">จอง</option>
@@ -56,10 +52,14 @@
                             </div>
                             <div class="col-6">
                                 <div class="mb-3">
-                                    <label class="form-label"><h3>รายการค้นหา</h3></label>
+                                    <label class="form-label"><h3>สถานะก่อสร้าง</h3></label>
                                     <div class="row g-2">
                                         <div class="col">
-                                            <input type="text" name="Search" class="form-control" placeholder="Search for…">
+                                            <select class="form-select">
+                                                <option value="1">ยังไม่เริ่มสร้าง</option>
+                                                <option value="2">กำลังสร้าง</option>
+                                                <option value="3">สร้างเสร็จแล้ว</option>
+                                            </select>
                                         </div>
                                         <div class="col-auto">
                                             <button type="submit" class="btn btn-icon" aria-label="Button">
@@ -120,69 +120,33 @@
                     </div>
                 </div>
             </div>
-            <br>
-            <div class="col-12">
-                <div class="card">
-                    <div class="table-responsive">
-                        <partial name="Partial_Unit_List" />
-                    </div>
-                </div>
-            </div>
+        </div>
+        <div class="container mt-3">
+            @Html.Partial("PartialTable")
         </div>
     </div>
 </div>
-<style>
-    .status-dot-animated {
-        position: relative;
-        display: inline-block;
-        vertical-align: middle;
-        border-radius: 50%;
-        margin-right: 8px;
-        animation: blink 1.5s infinite;
-    }
 
-</style>
-
-@section scripts{
-<script src="~/lib/datatable/jquery.datatables.min.js"></script>
-<script src="~/lib/core-ui/dist/libs/fslightbox/index.js?1692870487" defer></script>
-@*<script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>*@
-<script src="~/lib/core-ui/dist/js/demo.min.js?1692870487" defer></script>
-<script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>
-
-    <script src="~/js/pages/unit.js?ver=@DateTime.Now.Ticks.ToString()"></script>
-    <script>
-        function getProjectSelectList() {
-            $("#divLoadingProgress").show();
-            return new Promise(function (resolve, reject) {
-                var url = '@Url.Action("GetProjectSelectList", "Base")';
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    success: function (data) {
-                        var $select = $('#select-users');
-                        $select.empty(); 
-                        $.each(data, function (index, item) {
-                            $select.append('<option value="' + item.Value + '">' + item.Text + '</option>');
-                        });                      
-                        resolve();
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error fetching GetProjectSelectList : ผิดพลาด', error);
-                        reject(error);
-                    }
-                });
-            });
-          
-        }
-
-        $(document).ready(function () {
-            getProjectSelectList().then(function () {               
-                unit.init();
-            }).catch(function (error) {
-                console.error('Initialization failed due to error : ผิดพลาด', error);
-            });
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "language": {
+                "lengthMenu": "Show _MENU_ rows per page",
+                "zeroRecords": "No matching records found",
+                "info": "Showing page _PAGE_ of _PAGES_",
+                "infoEmpty": "No records available",
+                "infoFiltered": "(filtered from _MAX_ total records)"
+            }
         });
+    });
 
         function toggleCollapse() {
             var collapseElement = document.getElementById('collapseExample');
@@ -195,6 +159,4 @@
                 bsCollapse.show();
             }
         }
-    </script>
-
-}
+</script>
