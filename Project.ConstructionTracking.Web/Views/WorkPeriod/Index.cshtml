@@ -1,0 +1,669 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+}
+<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+<script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>
+<script src="~/lib/core-ui/dist/js/demo.min.js?1692870487" defer></script>
+<script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-home-heart">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M21 12l-9 -9l-9 9h2v7a2 2 0 0 0 2 2h6" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.39 0 .754 .112 1.061 .304" />
+                        <path d="M19 21.5l2.518 -2.58a1.74 1.74 0 0 0 0 -2.413a1.627 1.627 0 0 0 -2.346 0l-.168 .172l-.168 -.172a1.627 1.627 0 0 0 -2.346 0a1.74 1.74 0 0 0 0 2.412l2.51 2.59z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="card-body">
+                <h1>หน้าจอ ทำรายการเบิกงวดงาน (show on website)</h1>
+            </div>
+        </div>
+    </div>
+    <div class="page-body">
+        <div class="container mt-3">
+            <div class="col-12">
+                <div class="card-body">
+                    <form id="form-search" method="post">
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="mb-3">
+                                    <label class="form-label"><h3>โครงการ</h3></label>
+                                      <select class="form-select">
+                                            <option value="1">โครงการ 1</option>
+                                            <option value="2">โครงการ 2</option>
+                                            <option value="3">โครงการ 3</option>
+                                            <option value="4">โครงการ 4</option>
+                                      </select>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><h3>สถานะรายการ</h3></label>
+                                    <div class="row g-2">
+                                        <div class="col">
+                                            <select class="form-select">
+                                                <option value="1">ยังไม่เริ่มสร้าง</option>
+                                                <option value="2">กำลังสร้าง</option>
+                                                <option value="3">สร้างเสร็จแล้ว</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-auto">
+                                            <button type="submit" class="btn btn-icon" aria-label="Button">
+                                                <!-- Download SVG icon from http://tabler-icons.io/i/search -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+                                            </button>
+                                        </div>
+                                        <div class="col-auto">
+                                            <button class="btn btn-icon" type="button" onclick="toggleCollapse()">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-filter">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="collapse" id="collapseExample">
+                      <div class="card card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">ตัวอย่างค้นหา</label>
+                                        <select class="form-select">
+                                            <option value="1">ค้นหา 1 </option>
+                                            <option value="2">ค้นหา 2</option>
+                                            <option value="3">ค้นหา 3</option>
+                                            <option value="4">ค้นหา 4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">ตัวอย่างค้นหา</label>
+                                        <select class="form-select">
+                                            <option value="1">ว่าง</option>
+                                            <option value="2">จอง</option>
+                                            <option value="3">สัญญา</option>
+                                            <option value="4">โอน</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">ตัวอย่างค้นหา</label>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <input type="text" name="Search" class="form-control" placeholder="Search for…">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mt-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Table</h3>
+                </div>
+                <div class="card-body border-bottom py-3">
+                    <div class="d-flex">
+                        <div class="text-secondary">
+                            Show
+                            <div class="mx-2 d-inline-block">
+                                <select id="entriesPerPage" class="form-control form-control-sm">
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+                            entries
+                        </div>
+                        <div class="ms-auto text-secondary">
+                            Search:
+                            <div class="ms-2 d-inline-block">
+                                <input type="search" id="searchInput" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap custom-table" id="example">
+                        <thead>
+                          <tr>
+                                <th class="w-1" data-sort="int">No.</th>
+                                <th class="w-1" data-sort="string">โครงการ</th>
+                                <th data-sort="string">Unit</th>
+                                <th data-sort="int">งวดที่</th>
+                                <th data-sort="string">ผู้รับเหมา</th>
+                                <th data-sort="string">เลขที่ PO</th>
+                                <th data-sort="date">วันที่ PM อนุมัติ</th>
+                                <th data-sort="string">ใบตรวจงวดงาน</th>
+                                <th data-sort="string">QC Checklist</th>
+                                <th data-sort="string">เลข GR</th>
+                                <th data-sort="date">วันที่บันทึก GR</th>
+                                <th data-sort="string">สถานะบัญชี</th>
+                          </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td>1</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Honor</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">A001</a></td>
+                                <td><span class="text-secondary">5</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">ABC & Co.</a></td>
+                                <td>SN001234</td>
+                                <td>12/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>GR016701</td>
+                                <td>12/2/2567</td>
+                                <td><span class="badge bg-success me-1"></span> ตรวจแล้ว</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Honor</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">A002</a></td>
+                                <td><span class="text-secondary">7</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">ABC & Co.</a></td>
+                                <td>SN001248</td>
+                                <td>12/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>
+                                    <button class="btn btn-primary btn-pill w-70" onclick="openModal()">
+                                        ใส่เลข GR
+                                    </button>
+                                </td>
+                                <td>12/2/2567</td>
+                                <td><span class="badge bg-warning me-1"></span> กำลังตรวจสอบ</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Honor</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">A003</a></td>
+                                <td><span class="text-secondary">7</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">ABC & Co.</a></td>
+                                <td>SN001878</td>
+                                <td>12/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>GR019658</td>
+                                <td>12/2/2567</td>
+                                <td><span class="badge bg-secondary me-1"></span> รอตรวจสอบ</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Honor</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">A004</a></td>
+                                <td><span class="text-secondary">3</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">XYZ Builders</a></td>
+                                <td>SN001908</td>
+                                <td>14/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>GR019708</td>
+                                <td>14/2/2567</td>
+                                <td><span class="badge bg-danger me-1"></span> ไม่ผ่าน</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Honor</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">A005</a></td>
+                                <td><span class="text-secondary">2</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">XYZ Builders</a></td>
+                                <td>SN001978</td>
+                                <td>15/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>
+                                    <button class="btn btn-primary btn-pill w-70" onclick="openModal()">
+                                        ใส่เลข GR
+                                    </button>
+                                </td>
+                                <td>31/1/2567</td>
+                                <td><span class="badge bg-success me-1"></span> ตรวจแล้ว</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Honor</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">A006</a></td>
+                                <td><span class="text-secondary">1</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">XYZ Builders</a></td>
+                                <td>SN002018</td>
+                                <td>16/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>GR019808</td>
+                                <td>16/2/2567</td>
+                                <td><span class="badge bg-warning me-1"></span> กำลังตรวจสอบ</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Prestige</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">B001</a></td>
+                                <td><span class="text-secondary">4</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">LMN Constructions</a></td>
+                                <td>SN002078</td>
+                                <td>17/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>GR019858</td>
+                                <td>17/2/2567</td>
+                                <td><span class="badge bg-secondary me-1"></span> รอตรวจสอบ</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Prestige</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">B002</a></td>
+                                <td><span class="text-secondary">6</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">LMN Constructions</a></td>
+                                <td>SN002138</td>
+                                <td>18/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>GR019908</td>
+                                <td>18/2/2567</td>
+                                <td><span class="badge bg-success me-1"></span> ตรวจแล้ว</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Prestige</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">B003</a></td>
+                                <td><span class="text-secondary">8</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">LMN Constructions</a></td>
+                                <td>SN002198</td>
+                                <td>19/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>
+                                    <button class="btn btn-primary btn-pill w-70" onclick="openModal()">
+                                        ใส่เลข GR
+                                    </button>
+                                </td>
+                                <td>19/2/2567</td>
+                                <td><span class="badge bg-warning me-1"></span> กำลังตรวจสอบ</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Prestige</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">B004</a></td>
+                                <td><span class="text-secondary">10</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">LMN Constructions</a></td>
+                                <td>SN002258</td>
+                                <td>20/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>
+                                    <button class="btn btn-primary btn-pill w-70" onclick="openModal()">
+                                        ใส่เลข GR
+                                    </button>
+                                </td>
+                                <td>20/2/2567</td>
+                                <td><span class="badge bg-secondary me-1"></span> รอตรวจสอบ</td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Prestige</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">B005</a></td>
+                                <td><span class="text-secondary">2</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">DEF Builders</a></td>
+                                <td>SN002318</td>
+                                <td>21/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>GR020058</td>
+                                <td>21/2/2567</td>
+                                <td><span class="badge bg-danger me-1"></span> ไม่ผ่าน</td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Prestige</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">B006</a></td>
+                                <td><span class="text-secondary">9</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">DEF Builders</a></td>
+                                <td>SN002378</td>
+                                <td>22/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>GR020108</td>
+                                <td>22/2/2567</td>
+                                <td><span class="badge bg-success me-1"></span> ตรวจแล้ว</td>
+                            </tr>
+                            <tr>
+                                <td>13</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Prestige</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">B007</a></td>
+                                <td><span class="text-secondary">11</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">DEF Builders</a></td>
+                                <td>SN002438</td>
+                                <td>23/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>
+                                    <button class="btn btn-primary btn-pill w-70" onclick="openModal()">
+                                        ใส่เลข GR
+                                    </button>
+                                </td>
+                                <td>23/2/2567</td>
+                                <td><span class="badge bg-warning me-1"></span> กำลังตรวจสอบ</td>
+                            </tr>
+                            <tr>
+                                <td>14</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Honor</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">A007</a></td>
+                                <td><span class="text-secondary">5</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">GHI Constructions</a></td>
+                                <td>SN002498</td>
+                                <td>24/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>GR020208</td>
+                                <td>24/2/2567</td>
+                                <td><span class="badge bg-secondary me-1"></span> รอตรวจสอบ</td>
+                            </tr>
+                            <tr>
+                                <td>15</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Honor</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">A008</a></td>
+                                <td><span class="text-secondary">7</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">GHI Constructions</a></td>
+                                <td>SN002558</td>
+                                <td>25/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>GR020258</td>
+                                <td>25/2/2567</td>
+                                <td><span class="badge bg-danger me-1"></span> ไม่ผ่าน</td>
+                            </tr>
+                            <tr>
+                                <td>16</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Honor</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">A009</a></td>
+                                <td><span class="text-secondary">4</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">GHI Constructions</a></td>
+                                <td>SN002618</td>
+                                <td>26/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>
+                                    <button class="btn btn-primary btn-pill w-70" onclick="openModal()">
+                                        ใส่เลข GR
+                                    </button>
+                                </td>
+                                <td>26/2/2567</td>
+                                <td><span class="badge bg-success me-1"></span> ตรวจแล้ว</td>
+                            </tr>
+                            <tr>
+                                <td>17</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Honor</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">A010</a></td>
+                                <td><span class="text-secondary">6</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">JKL Developers</a></td>
+                                <td>SN002678</td>
+                                <td>27/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>
+                                    <button class="btn btn-primary btn-pill w-70" onclick="openModal()">
+                                        ใส่เลข GR
+                                    </button>
+                                </td>
+                                <td>27/2/2567</td>
+                                <td><span class="badge bg-warning me-1"></span> กำลังตรวจสอบ</td>
+                            </tr>
+                            <tr>
+                                <td>18</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">The Honor</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">A011</a></td>
+                                <td><span class="text-secondary">9</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">JKL Developers</a></td>
+                                <td>SN002738</td>
+                                <td>28/2/2567</td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td><i class="fa-solid fa-file-pdf fa-2xl"></i></td>
+                                <td>
+                                    <button class="btn btn-primary btn-pill w-70" onclick="openModal()">
+                                        ใส่เลข GR
+                                    </button>
+                                </td>
+                                <td>28/2/2567</td>
+                                <td><span class="badge bg-secondary me-1"></span> รอตรวจสอบ</td>
+                            </tr>
+                            <!-- Additional rows here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer d-flex align-items-center">
+                    <p class="m-0 text-secondary">Showing <span id="start">1</span> to <span id="end">8</span> of <span id="total">16</span> entries</p>
+                    <ul class="pagination m-0 ms-auto" id="pagination">
+                        <li class="page-item disabled" id="prevPage">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M15 6l-6 6l6 6" /></svg>
+                                prev
+                            </a>
+                        </li>
+                        <!-- Pagination items will be dynamically added here -->
+                        <li class="page-item" id="nextPage">
+                            <a class="page-link" href="#">
+                                next
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M9 6l6 6l-6 6" /></svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                        บันทึกเลขที่ใบรับงาน (GR)
+                   </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="card">
+                        <div class="card-body">
+                            <div class="mb-3 row">
+                                <label class="col-3 col-form-label">โครงการ : </label>
+                                <div class="col">
+                                    <input type="text" class="form-control" disabled placeholder="" value="The Honor">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-3 col-form-label">ผู้รับเหมา : </label>
+                                <div class="col">
+                                    <input type="text" class="form-control" disabled placeholder="" value="PC Construction">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-3 col-form-label">งวดงานที่ : </label>
+                                <div class="col">
+                                    <input type="text" class="form-control" disabled placeholder="" value="2">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-3 col-form-label">เลขที่ PO : </label>
+                                <div class="col">
+                                    <input type="text" class="form-control" disabled placeholder="" value="GR016701">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-3 col-form-label required">ใส่หมายเลข : </label>
+                                <div class="col">
+                                  <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                      <div class="input-group-text">GR</div>
+                                    </div>
+                                        <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="ใส่หมายเลข GR">
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer text-end">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        function toggleCollapse() {
+            var collapseElement = document.getElementById('collapseExample');
+            var bsCollapse = new bootstrap.Collapse(collapseElement, {
+                toggle: false
+            });
+            if (collapseElement.classList.contains('show')) {
+                bsCollapse.hide();
+            } else {
+                bsCollapse.show();
+            }
+        }
+
+        function openModal() {
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            myModal.show();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const table = document.getElementById('example');
+            const tableBody = document.getElementById('tableBody');
+            const searchInput = document.getElementById('searchInput');
+            const entriesPerPage = document.getElementById('entriesPerPage');
+            const pagination = document.getElementById('pagination');
+            const prevPage = document.getElementById('prevPage');
+            const nextPage = document.getElementById('nextPage');
+            const start = document.getElementById('start');
+            const end = document.getElementById('end');
+            const total = document.getElementById('total');
+            const headers = table.querySelectorAll('thead th');
+
+            let currentPage = 1;
+            let rowsPerPage = parseInt(entriesPerPage.value);
+            let rows = Array.from(tableBody.rows);
+            let filteredRows = rows;
+            let sortColumn = null;
+            let sortOrder = 'asc';
+
+            const updatePagination = () => {
+                pagination.innerHTML = '';
+                const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
+                for (let i = 1; i <= pageCount; i++) {
+                    const pageItem = document.createElement('li');
+                    pageItem.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                    const pageLink = document.createElement('a');
+                    pageLink.className = 'page-link';
+                    pageLink.href = '#';
+                    pageLink.textContent = i;
+                    pageLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentPage = i;
+                        renderTable();
+                    });
+                    pageItem.appendChild(pageLink);
+                    pagination.appendChild(pageItem);
+                }
+                updatePaginationControls();
+            };
+
+            const updatePaginationControls = () => {
+                prevPage.classList.toggle('disabled', currentPage === 1);
+                nextPage.classList.toggle('disabled', currentPage === Math.ceil(filteredRows.length / rowsPerPage));
+            };
+
+            const renderTable = () => {
+                tableBody.innerHTML = '';
+                const startIdx = (currentPage - 1) * rowsPerPage;
+                const endIdx = Math.min(startIdx + rowsPerPage, filteredRows.length);
+                for (let i = startIdx; i < endIdx; i++) {
+                    tableBody.appendChild(filteredRows[i]);
+                }
+                start.textContent = startIdx + 1;
+                end.textContent = endIdx;
+                total.textContent = filteredRows.length;
+                updatePaginationControls();
+            };
+
+            const filterRows = () => {
+                const query = searchInput.value.toLowerCase();
+                filteredRows = rows.filter(row => Array.from(row.cells).some(cell => cell.textContent.toLowerCase().includes(query)));
+                currentPage = 1;
+                updatePagination();
+                renderTable();
+            };
+
+            const parseDate = (dateStr) => {
+                const [day, month, year] = dateStr.split('/');
+                return new Date(`${parseInt(year) - 543}-${month}-${day}`); // Adjust for Thai Buddhist calendar if applicable
+            };
+
+            const sortRows = (index, type) => {
+                const compare = {
+                    int: (a, b) => parseInt(a) - parseInt(b),
+                    string: (a, b) => a.localeCompare(b),
+                    date: (a, b) => parseDate(a) - parseDate(b)
+                };
+                const multiplier = sortOrder === 'asc' ? 1 : -1;
+                filteredRows.sort((a, b) => compare[type](a.cells[index].textContent.trim(), b.cells[index].textContent.trim()) * multiplier);
+                sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+                renderTable();
+            };
+
+            searchInput.addEventListener('input', filterRows);
+            entriesPerPage.addEventListener('change', (e) => {
+                rowsPerPage = parseInt(e.target.value);
+                currentPage = 1;
+                updatePagination();
+                renderTable();
+            });
+
+            prevPage.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                }
+            });
+
+            nextPage.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentPage < Math.ceil(filteredRows.length / rowsPerPage)) {
+                    currentPage++;
+                    renderTable();
+                }
+            });
+
+            headers.forEach((header, index) => {
+                header.style.cursor = 'pointer';
+                header.addEventListener('click', () => {
+                    const sortType = header.getAttribute('data-sort');
+                    sortRows(index, sortType);
+                });
+            });
+
+            filterRows();
+        });
+    </script>
+</div>
+<style>
+    #example tbody tr:hover {
+        background-color: #8495f5;
+    }
+</style>

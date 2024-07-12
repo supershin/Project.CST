@@ -162,7 +162,7 @@
                     <div class="container-xl">
                         <ul class="navbar-nav">
                             <li class="nav-item">
-                                <a class="nav-link" href="/Dashboard">
+                                <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
                                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                                         <!-- Download SVG icon from http://tabler-icons.io/i/home -->
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
@@ -173,7 +173,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/unit">
+                                <a class="nav-link" asp-controller="Unitmobile" asp-action="Index">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-building-community">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M8 9l5 5v7h-5v-4m0 4h-5v-7l5 -5m1 1v-6a1 1 0 0 1 1 -1h10a1 1 0 0 1 1 1v17h-8" />
@@ -204,10 +204,10 @@
                                             <a class="dropdown-item" href="./">
                                                 User
                                             </a>
-                                            <a class="dropdown-item" href="/FormOverall">
+                                            <a class="dropdown-item" asp-controller="FormOverall" asp-action="Index">
                                                 Project
                                             </a>
-                                            <a class="dropdown-item" href="/MasterForm">
+                                            <a class="dropdown-item" asp-controller="MasterForm" asp-action="Index">
                                                 Master Form
                                             </a>
                                         </div>
@@ -261,7 +261,66 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/login">
+                                <a class="nav-link" asp-controller="PMFormcheck" asp-action="Index">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
+                                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                      <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
+                                      <path d="M3.5 11.5l1.5 1.5l2.5 -2.5" />
+                                      <path d="M3.5 17.5l1.5 1.5l2.5 -2.5" />
+                                      <path d="M11 6l9 0" />
+                                      <path d="M11 12l9 0" />
+                                      <path d="M11 18l9 0" />
+                                    </svg>
+                                    <span class="nav-link-title">
+                                        PM
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="PJMApprove" asp-action="Index">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
+                                        <path d="M3.5 11.5l1.5 1.5l2.5 -2.5" />
+                                        <path d="M3.5 17.5l1.5 1.5l2.5 -2.5" />
+                                        <path d="M11 6l9 0" />
+                                        <path d="M11 12l9 0" />
+                                        <path d="M11 18l9 0" />
+                                    </svg>
+                                    <span class="nav-link-title">
+                                        PJM
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-settings">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" />
+                                        <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                                    </svg>
+                                    <span class="nav-link-title">
+                                        Desktop
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-menu-columns">
+                                        <div class="dropdown-menu-column">
+                                            <a class="dropdown-item" asp-controller="UnitStatusByProject" asp-action="Index">
+                                                Unit Status Project
+                                            </a>
+                                            <a class="dropdown-item" asp-controller="UnitStatusByUnit" asp-action="Index">
+                                                Unit Status Unit
+                                            </a>
+                                            <a class="dropdown-item" asp-controller="WorkPeriod" asp-action="Index">
+                                                WorkPeriod
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="login" asp-action="Index">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-user-share">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                         <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />

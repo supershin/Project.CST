@@ -48,6 +48,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=UnitStatusByUnit}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
     //pattern: "{controller=Unit}/{action=Index}/{id?}");
 app.Run();
