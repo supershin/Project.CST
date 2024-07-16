@@ -10,8 +10,8 @@ namespace Project.ConstructionTracking.Web.Data
     {
         public tm_Project()
         {
+            tm_ModelType = new HashSet<tm_ModelType>();
             tm_Unit = new HashSet<tm_Unit>();
-            tr_ProjectForm = new HashSet<tr_ProjectForm>();
             tr_UnitForm = new HashSet<tr_UnitForm>();
         }
 
@@ -39,9 +39,9 @@ namespace Project.ConstructionTracking.Web.Data
         [InverseProperty("tm_Project")]
         public virtual tm_Ext? ProjectType { get; set; }
         [InverseProperty("Project")]
-        public virtual ICollection<tm_Unit> tm_Unit { get; set; }
+        public virtual ICollection<tm_ModelType> tm_ModelType { get; set; }
         [InverseProperty("Project")]
-        public virtual ICollection<tr_ProjectForm> tr_ProjectForm { get; set; }
+        public virtual ICollection<tm_Unit> tm_Unit { get; set; }
         [InverseProperty("Project")]
         public virtual ICollection<tr_UnitForm> tr_UnitForm { get; set; }
     }

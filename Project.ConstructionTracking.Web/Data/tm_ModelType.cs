@@ -6,19 +6,31 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Project.ConstructionTracking.Web.Data
 {
-    public partial class tm_UnitType
+    public partial class tm_ModelType
     {
+        public tm_ModelType()
+        {
+            tm_Unit = new HashSet<tm_Unit>();
+        }
+
         [Key]
         public int ID { get; set; }
-        [StringLength(200)]
+        public Guid? ProjectID { get; set; }
+        [StringLength(100)]
+        [Unicode(false)]
         public string? Name { get; set; }
-        public int? Sort { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
-        public int? CreateBy { get; set; }
+        public Guid? CreateBy { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? UpdateDate { get; set; }
-        public int? UpdateBy { get; set; }
+        public Guid? UpdateBy { get; set; }
+
+        [ForeignKey("ProjectID")]
+        [InverseProperty("tm_ModelType")]
+        public virtual tm_Project? Project { get; set; }
+        [InverseProperty("ModelType")]
+        public virtual ICollection<tm_Unit> tm_Unit { get; set; }
     }
 }

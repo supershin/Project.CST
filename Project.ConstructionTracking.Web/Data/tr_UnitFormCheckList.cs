@@ -6,22 +6,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Project.ConstructionTracking.Web.Data
 {
-    public partial class tm_Resource
+    public partial class tr_UnitFormCheckList
     {
-        public tm_Resource()
-        {
-            tr_UnitFormResource = new HashSet<tr_UnitFormResource>();
-        }
-
         [Key]
-        public Guid ID { get; set; }
-        [StringLength(500)]
-        public string? FileName { get; set; }
-        [StringLength(500)]
-        public string? FilePath { get; set; }
-        [StringLength(500)]
+        public int ID { get; set; }
+        public Guid? UnitFormID { get; set; }
+        public int? FormID { get; set; }
+        public int? GroupID { get; set; }
+        public int? PackageID { get; set; }
+        public int? CheckListID { get; set; }
+        public int? StatusID { get; set; }
         [Unicode(false)]
-        public string? MimeType { get; set; }
+        public string? Remark { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
@@ -30,7 +26,8 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public int? UpdateBy { get; set; }
 
-        [InverseProperty("Resource")]
-        public virtual ICollection<tr_UnitFormResource> tr_UnitFormResource { get; set; }
+        [ForeignKey("UnitFormID")]
+        [InverseProperty("tr_UnitFormCheckList")]
+        public virtual tr_UnitForm? UnitForm { get; set; }
     }
 }

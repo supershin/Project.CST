@@ -23,27 +23,28 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tm_FormCheckList> tm_FormCheckList { get; set; } = null!;
         public virtual DbSet<tm_FormGroup> tm_FormGroup { get; set; } = null!;
         public virtual DbSet<tm_FormPackage> tm_FormPackage { get; set; } = null!;
+        public virtual DbSet<tm_FormType> tm_FormType { get; set; } = null!;
+        public virtual DbSet<tm_ModelType> tm_ModelType { get; set; } = null!;
         public virtual DbSet<tm_Project> tm_Project { get; set; } = null!;
         public virtual DbSet<tm_Resource> tm_Resource { get; set; } = null!;
         public virtual DbSet<tm_Unit> tm_Unit { get; set; } = null!;
         public virtual DbSet<tm_UnitType> tm_UnitType { get; set; } = null!;
         public virtual DbSet<tm_User> tm_User { get; set; } = null!;
-        public virtual DbSet<tr_ProjectForm> tr_ProjectForm { get; set; } = null!;
-        public virtual DbSet<tr_ProjectFormCheckList> tr_ProjectFormCheckList { get; set; } = null!;
-        public virtual DbSet<tr_ProjectFormGroup> tr_ProjectFormGroup { get; set; } = null!;
-        public virtual DbSet<tr_ProjectFormPackage> tr_ProjectFormPackage { get; set; } = null!;
+        public virtual DbSet<tm_Vendor> tm_Vendor { get; set; } = null!;
+        public virtual DbSet<tr_ProjectModelForm> tr_ProjectModelForm { get; set; } = null!;
         public virtual DbSet<tr_UnitForm> tr_UnitForm { get; set; } = null!;
-        public virtual DbSet<tr_UnitForm_Action> tr_UnitForm_Action { get; set; } = null!;
-        public virtual DbSet<tr_UnitForm_Action_Log> tr_UnitForm_Action_Log { get; set; } = null!;
-        public virtual DbSet<tr_UnitForm_Detail> tr_UnitForm_Detail { get; set; } = null!;
-        public virtual DbSet<tr_UnitForm_Resource> tr_UnitForm_Resource { get; set; } = null!;
+        public virtual DbSet<tr_UnitFormAction> tr_UnitFormAction { get; set; } = null!;
+        public virtual DbSet<tr_UnitFormActionLog> tr_UnitFormActionLog { get; set; } = null!;
+        public virtual DbSet<tr_UnitFormCheckList> tr_UnitFormCheckList { get; set; } = null!;
+        public virtual DbSet<tr_UnitFormGroup> tr_UnitFormGroup { get; set; } = null!;
+        public virtual DbSet<tr_UnitFormPackage> tr_UnitFormPackage { get; set; } = null!;
+        public virtual DbSet<tr_UnitFormResource> tr_UnitFormResource { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("data source=F-147;database=ConstrcutionTracking;Integrated Security=SSPI;persist security info=True;");
+                optionsBuilder.UseSqlServer("Data Source=10.0.20.14;Initial Catalog=ConstructionTracking;User ID=constructiontracking;Password=constructiontracking@2024;TrustServerCertificate=True;");
             }
         }
 
@@ -91,8 +92,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tm_Form>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
@@ -100,19 +99,9 @@ namespace Project.ConstructionTracking.Web.Data
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
 
                 entity.HasOne(d => d.FormType)
-                    .WithMany(p => p.tm_FormFormType)
+                    .WithMany(p => p.tm_Form)
                     .HasForeignKey(d => d.FormTypeID)
-                    .HasConstraintName("FK_tm_Form_tm_Ext2");
-
-                entity.HasOne(d => d.ProjectType)
-                    .WithMany(p => p.tm_FormProjectType)
-                    .HasForeignKey(d => d.ProjectTypeID)
-                    .HasConstraintName("FK_tm_Form_tm_Ext");
-
-                entity.HasOne(d => d.UnitType)
-                    .WithMany(p => p.tm_FormUnitType)
-                    .HasForeignKey(d => d.UnitTypeID)
-                    .HasConstraintName("FK_tm_Form_tm_Ext1");
+                    .HasConstraintName("FK_tm_Form_tm_FormType");
             });
 
             modelBuilder.Entity<tm_FormCheckList>(entity =>
@@ -163,6 +152,23 @@ namespace Project.ConstructionTracking.Web.Data
                     .HasConstraintName("FK_tm_FormPackage_tm_FormGroup");
             });
 
+            modelBuilder.Entity<tm_FormType>(entity =>
+            {
+                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
+            });
+
+            modelBuilder.Entity<tm_ModelType>(entity =>
+            {
+                entity.HasOne(d => d.Project)
+                    .WithMany(p => p.tm_ModelType)
+                    .HasForeignKey(d => d.ProjectID)
+                    .HasConstraintName("FK_tm_ModelType_tm_Project");
+            });
+
             modelBuilder.Entity<tm_Project>(entity =>
             {
                 entity.Property(e => e.ProjectID).ValueGeneratedNever();
@@ -201,6 +207,11 @@ namespace Project.ConstructionTracking.Web.Data
 
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
 
+                entity.HasOne(d => d.ModelType)
+                    .WithMany(p => p.tm_Unit)
+                    .HasForeignKey(d => d.ModelTypeID)
+                    .HasConstraintName("FK_tm_Unit_tm_ModelType");
+
                 entity.HasOne(d => d.Project)
                     .WithMany(p => p.tm_Unit)
                     .HasForeignKey(d => d.ProjectID)
@@ -210,6 +221,11 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tm_Unit)
                     .HasForeignKey(d => d.UnitTypeID)
                     .HasConstraintName("FK_tm_Unit_tm_Ext");
+
+                entity.HasOne(d => d.Vendor)
+                    .WithMany(p => p.tm_Unit)
+                    .HasForeignKey(d => d.VendorID)
+                    .HasConstraintName("FK_tm_Unit_tm_Vendor");
             });
 
             modelBuilder.Entity<tm_UnitType>(entity =>
@@ -244,78 +260,15 @@ namespace Project.ConstructionTracking.Web.Data
                     .HasConstraintName("FK_tm_User_tm_Ext");
             });
 
-            modelBuilder.Entity<tr_ProjectForm>(entity =>
+            modelBuilder.Entity<tr_ProjectModelForm>(entity =>
             {
                 entity.Property(e => e.ID).ValueGeneratedNever();
 
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
+                entity.Property(e => e.ModelTypeID).IsFixedLength();
 
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
-
-                entity.HasOne(d => d.FormType)
-                    .WithMany(p => p.tr_ProjectForm)
-                    .HasForeignKey(d => d.FormTypeID)
-                    .HasConstraintName("FK_tr_ProjectForm_tm_Ext");
-
-                entity.HasOne(d => d.Project)
-                    .WithMany(p => p.tr_ProjectForm)
-                    .HasForeignKey(d => d.ProjectID)
-                    .HasConstraintName("FK_tr_ProjectForm_tr_ProjectForm");
-
-                entity.HasOne(d => d.UnitType)
-                    .WithMany(p => p.tr_ProjectForm)
-                    .HasForeignKey(d => d.UnitTypeID)
-                    .HasConstraintName("FK_tr_ProjectForm_tm_UnitType");
-            });
-
-            modelBuilder.Entity<tr_ProjectFormCheckList>(entity =>
-            {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
-                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
-
-                entity.HasOne(d => d.Package)
-                    .WithMany(p => p.tr_ProjectFormCheckList)
-                    .HasForeignKey(d => d.PackageID)
-                    .HasConstraintName("FK_tr_ProjectFormCheckList_tr_ProjectFormPackage");
-            });
-
-            modelBuilder.Entity<tr_ProjectFormGroup>(entity =>
-            {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
-                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
-
-                entity.HasOne(d => d.Form)
-                    .WithMany(p => p.tr_ProjectFormGroup)
-                    .HasForeignKey(d => d.FormID)
-                    .HasConstraintName("FK_tr_ProjectFormGroup_tr_ProjectForm");
-            });
-
-            modelBuilder.Entity<tr_ProjectFormPackage>(entity =>
-            {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
-                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
-
-                entity.HasOne(d => d.Group)
-                    .WithMany(p => p.tr_ProjectFormPackage)
-                    .HasForeignKey(d => d.GroupID)
-                    .HasConstraintName("FK_tr_ProjectFormPackage_tr_ProjectFormGroup");
             });
 
             modelBuilder.Entity<tr_UnitForm>(entity =>
@@ -328,11 +281,6 @@ namespace Project.ConstructionTracking.Web.Data
 
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
 
-                entity.HasOne(d => d.Form)
-                    .WithMany(p => p.tr_UnitForm)
-                    .HasForeignKey(d => d.FormID)
-                    .HasConstraintName("FK_tr_UnitForm_tr_ProjectForm");
-
                 entity.HasOne(d => d.Project)
                     .WithMany(p => p.tr_UnitForm)
                     .HasForeignKey(d => d.ProjectID)
@@ -342,29 +290,34 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tr_UnitForm)
                     .HasForeignKey(d => d.UnitID)
                     .HasConstraintName("FK_tr_UnitForm_tm_Unit");
+
+                entity.HasOne(d => d.Vendor)
+                    .WithMany(p => p.tr_UnitForm)
+                    .HasForeignKey(d => d.VendorID)
+                    .HasConstraintName("FK_tr_UnitForm_tm_Vendor");
             });
 
-            modelBuilder.Entity<tr_UnitForm_Action>(entity =>
+            modelBuilder.Entity<tr_UnitFormAction>(entity =>
             {
                 entity.Property(e => e.ID).ValueGeneratedNever();
 
                 entity.HasOne(d => d.UnitForm)
-                    .WithMany(p => p.tr_UnitForm_Action)
+                    .WithMany(p => p.tr_UnitFormAction)
                     .HasForeignKey(d => d.UnitFormID)
                     .HasConstraintName("FK_tr_UnitForm_Action_tr_UnitForm");
             });
 
-            modelBuilder.Entity<tr_UnitForm_Action_Log>(entity =>
+            modelBuilder.Entity<tr_UnitFormActionLog>(entity =>
             {
                 entity.Property(e => e.ID).ValueGeneratedNever();
 
                 entity.HasOne(d => d.UnitForm)
-                    .WithMany(p => p.tr_UnitForm_Action_Log)
+                    .WithMany(p => p.tr_UnitFormActionLog)
                     .HasForeignKey(d => d.UnitFormID)
                     .HasConstraintName("FK_tr_UnitForm_Action_Log_tr_UnitForm");
             });
 
-            modelBuilder.Entity<tr_UnitForm_Detail>(entity =>
+            modelBuilder.Entity<tr_UnitFormCheckList>(entity =>
             {
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
@@ -372,33 +325,25 @@ namespace Project.ConstructionTracking.Web.Data
 
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
 
-                entity.HasOne(d => d.CheckList)
-                    .WithMany(p => p.tr_UnitForm_Detail)
-                    .HasForeignKey(d => d.CheckListID)
-                    .HasConstraintName("FK_tr_UnitForm_Detail_tr_ProjectFormCheckList");
-
-                entity.HasOne(d => d.Form)
-                    .WithMany(p => p.tr_UnitForm_Detail)
-                    .HasForeignKey(d => d.FormID)
-                    .HasConstraintName("FK_tr_UnitForm_Detail_tr_ProjectForm");
-
-                entity.HasOne(d => d.Group)
-                    .WithMany(p => p.tr_UnitForm_Detail)
-                    .HasForeignKey(d => d.GroupID)
-                    .HasConstraintName("FK_tr_UnitForm_Detail_tr_ProjectFormGroup");
-
-                entity.HasOne(d => d.Package)
-                    .WithMany(p => p.tr_UnitForm_Detail)
-                    .HasForeignKey(d => d.PackageID)
-                    .HasConstraintName("FK_tr_UnitForm_Detail_tr_ProjectFormPackage");
-
                 entity.HasOne(d => d.UnitForm)
-                    .WithMany(p => p.tr_UnitForm_Detail)
+                    .WithMany(p => p.tr_UnitFormCheckList)
                     .HasForeignKey(d => d.UnitFormID)
                     .HasConstraintName("FK_tr_UnitForm_Detail_tr_UnitForm");
             });
 
-            modelBuilder.Entity<tr_UnitForm_Resource>(entity =>
+            modelBuilder.Entity<tr_UnitFormGroup>(entity =>
+            {
+                entity.Property(e => e.UpdateBy).IsFixedLength();
+            });
+
+            modelBuilder.Entity<tr_UnitFormPackage>(entity =>
+            {
+                entity.Property(e => e.ID).ValueGeneratedNever();
+
+                entity.Property(e => e.UpdateBy).IsFixedLength();
+            });
+
+            modelBuilder.Entity<tr_UnitFormResource>(entity =>
             {
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
@@ -407,17 +352,17 @@ namespace Project.ConstructionTracking.Web.Data
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
 
                 entity.HasOne(d => d.Resource)
-                    .WithMany(p => p.tr_UnitForm_Resource)
+                    .WithMany(p => p.tr_UnitFormResource)
                     .HasForeignKey(d => d.ResourceID)
                     .HasConstraintName("FK_tr_UnitForm_Resource_tm_Resource");
 
                 entity.HasOne(d => d.Role)
-                    .WithMany(p => p.tr_UnitForm_Resource)
+                    .WithMany(p => p.tr_UnitFormResource)
                     .HasForeignKey(d => d.RoleID)
                     .HasConstraintName("FK_tr_UnitForm_Resource_tm_Ext");
 
                 entity.HasOne(d => d.UnitForm)
-                    .WithMany(p => p.tr_UnitForm_Resource)
+                    .WithMany(p => p.tr_UnitFormResource)
                     .HasForeignKey(d => d.UnitFormID)
                     .HasConstraintName("FK_tr_UnitForm_Resource_tr_UnitForm");
             });

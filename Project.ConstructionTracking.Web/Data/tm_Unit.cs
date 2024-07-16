@@ -16,10 +16,18 @@ namespace Project.ConstructionTracking.Web.Data
         [Key]
         public Guid UnitID { get; set; }
         public Guid? ProjectID { get; set; }
+        public int? ModelTypeID { get; set; }
         public int? UnitTypeID { get; set; }
+        public int? VendorID { get; set; }
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? PONo { get; set; }
         [StringLength(20)]
         [Unicode(false)]
         public string? UnitCode { get; set; }
+        [StringLength(10)]
+        [Unicode(false)]
+        public string? AddreessNo { get; set; }
         [StringLength(10)]
         [Unicode(false)]
         public string? Build { get; set; }
@@ -39,12 +47,18 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
 
+        [ForeignKey("ModelTypeID")]
+        [InverseProperty("tm_Unit")]
+        public virtual tm_ModelType? ModelType { get; set; }
         [ForeignKey("ProjectID")]
         [InverseProperty("tm_Unit")]
         public virtual tm_Project? Project { get; set; }
         [ForeignKey("UnitTypeID")]
         [InverseProperty("tm_Unit")]
         public virtual tm_Ext? UnitType { get; set; }
+        [ForeignKey("VendorID")]
+        [InverseProperty("tm_Unit")]
+        public virtual tm_Vendor? Vendor { get; set; }
         [InverseProperty("Unit")]
         public virtual ICollection<tr_UnitForm> tr_UnitForm { get; set; }
     }

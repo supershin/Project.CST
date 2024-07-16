@@ -5,5 +5,7 @@ namespace Project.ConstructionTracking.Web.Repositories
     public interface IProjectRepo
     {
         dynamic GetProjectList();
+        dynamic SearchProjects(string term);
     }
+
 }

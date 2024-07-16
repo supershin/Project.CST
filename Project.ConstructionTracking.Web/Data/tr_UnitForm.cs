@@ -10,16 +10,24 @@ namespace Project.ConstructionTracking.Web.Data
     {
         public tr_UnitForm()
         {
-            tr_UnitForm_Action = new HashSet<tr_UnitForm_Action>();
-            tr_UnitForm_Action_Log = new HashSet<tr_UnitForm_Action_Log>();
-            tr_UnitForm_Detail = new HashSet<tr_UnitForm_Detail>();
-            tr_UnitForm_Resource = new HashSet<tr_UnitForm_Resource>();
+            tr_UnitFormAction = new HashSet<tr_UnitFormAction>();
+            tr_UnitFormActionLog = new HashSet<tr_UnitFormActionLog>();
+            tr_UnitFormCheckList = new HashSet<tr_UnitFormCheckList>();
+            tr_UnitFormResource = new HashSet<tr_UnitFormResource>();
         }
 
         [Key]
         public Guid ID { get; set; }
         public Guid? ProjectID { get; set; }
         public Guid? UnitID { get; set; }
+        public int? VendorID { get; set; }
+        public Guid? VendorResourceID { get; set; }
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? PONo { get; set; }
+        [StringLength(2)]
+        [Unicode(false)]
+        public string? Grade { get; set; }
         public int? FormID { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         public decimal? Progress { get; set; }
@@ -33,22 +41,22 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public int? UpdateBy { get; set; }
 
-        [ForeignKey("FormID")]
-        [InverseProperty("tr_UnitForm")]
-        public virtual tr_ProjectForm? Form { get; set; }
         [ForeignKey("ProjectID")]
         [InverseProperty("tr_UnitForm")]
         public virtual tm_Project? Project { get; set; }
         [ForeignKey("UnitID")]
         [InverseProperty("tr_UnitForm")]
         public virtual tm_Unit? Unit { get; set; }
+        [ForeignKey("VendorID")]
+        [InverseProperty("tr_UnitForm")]
+        public virtual tm_Vendor? Vendor { get; set; }
         [InverseProperty("UnitForm")]
-        public virtual ICollection<tr_UnitForm_Action> tr_UnitForm_Action { get; set; }
+        public virtual ICollection<tr_UnitFormAction> tr_UnitFormAction { get; set; }
         [InverseProperty("UnitForm")]
-        public virtual ICollection<tr_UnitForm_Action_Log> tr_UnitForm_Action_Log { get; set; }
+        public virtual ICollection<tr_UnitFormActionLog> tr_UnitFormActionLog { get; set; }
         [InverseProperty("UnitForm")]
-        public virtual ICollection<tr_UnitForm_Detail> tr_UnitForm_Detail { get; set; }
+        public virtual ICollection<tr_UnitFormCheckList> tr_UnitFormCheckList { get; set; }
         [InverseProperty("UnitForm")]
-        public virtual ICollection<tr_UnitForm_Resource> tr_UnitForm_Resource { get; set; }
+        public virtual ICollection<tr_UnitFormResource> tr_UnitFormResource { get; set; }
     }
 }

@@ -10,6 +10,7 @@ namespace Project.ConstructionTracking.Web.Data
     {
         [Key]
         public Guid ID { get; set; }
+        public int? BUID { get; set; }
         public int? DepartmentID { get; set; }
         public int? RoleID { get; set; }
         [StringLength(100)]

@@ -173,6 +173,19 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" asp-controller="ProjectList" asp-action="Index">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-building-warehouse">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M3 21v-13l9 -4l9 4v13" />
+                                        <path d="M13 13h4v8h-10v-6h6" />
+                                        <path d="M13 21v-9a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1v3" />
+                                    </svg>
+                                    <span class="nav-link-title">
+                                        Project
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" asp-controller="Unitmobile" asp-action="Index">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-building-community">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -201,11 +214,26 @@
                                 <div class="dropdown-menu">
                                     <div class="dropdown-menu-columns">
                                         <div class="dropdown-menu-column">
-                                            <a class="dropdown-item" href="./">
-                                                User
-                                            </a>
                                             <a class="dropdown-item" asp-controller="FormOverall" asp-action="Index">
                                                 Project
+                                            </a>
+                                            <a class="dropdown-item" href="#">
+                                                Type บ้าน
+                                            </a>
+                                            <a class="dropdown-item" href="#">
+                                                งวดงาน
+                                            </a>
+                                            <a class="dropdown-item" href="#">
+                                                Checklist
+                                            </a>
+                                            <a class="dropdown-item" href="#">
+                                                Unit Master
+                                            </a>
+                                            <a class="dropdown-item" href="#">
+                                                ผรม.Master
+                                            </a>
+                                            <a class="dropdown-item" href="#">
+                                                User Master
                                             </a>
                                             <a class="dropdown-item" asp-controller="MasterForm" asp-action="Index">
                                                 Master Form
@@ -246,19 +274,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="./">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-building-warehouse">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M3 21v-13l9 -4l9 4v13" />
-                                        <path d="M13 13h4v8h-10v-6h6" />
-                                        <path d="M13 21v-9a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1v3" />
-                                    </svg>
-                                    <span class="nav-link-title">
-                                        Project
-                                    </span>
-                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="PMFormcheck" asp-action="Index">
