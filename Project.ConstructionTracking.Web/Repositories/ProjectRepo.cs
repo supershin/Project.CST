@@ -32,5 +32,26 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return data;
         }
+
+        public dynamic SearchProjects(string term)
+        {
+            var query = from u in _context.tm_Project
+                        where u.FlagActive == true && u.ProjectName.Contains(term)
+                        select new
+                        {
+                            u.ProjectID,
+                            u.ProjectCode,
+                            u.ProjectName
+                        };
+
+            var data = query.AsEnumerable().Select(e => new
+            {
+                e.ProjectID,
+                e.ProjectCode,
+                e.ProjectName
+            }).ToList();
+
+            return data;
+        }
     }
 }

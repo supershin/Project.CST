@@ -6,19 +6,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Project.ConstructionTracking.Web.Data
 {
-    public partial class tm_UnitType
+    public partial class tr_UnitFormPackage
     {
         [Key]
         public int ID { get; set; }
-        [StringLength(200)]
-        public string? Name { get; set; }
-        public int? Sort { get; set; }
-        public bool? FlagActive { get; set; }
+        public int? UnitFormID { get; set; }
+        public int? FormID { get; set; }
+        public int? GroupID { get; set; }
+        public int? PackageID { get; set; }
+        [Unicode(false)]
+        public string? Remark { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
-        public int? CreateBy { get; set; }
+        public Guid? CreateBy { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? UpdateDate { get; set; }
-        public int? UpdateBy { get; set; }
+        [StringLength(10)]
+        public string? UpdateBy { get; set; }
     }
 }

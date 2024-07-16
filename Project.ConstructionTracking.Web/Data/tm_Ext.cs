@@ -10,15 +10,11 @@ namespace Project.ConstructionTracking.Web.Data
     {
         public tm_Ext()
         {
-            tm_FormFormType = new HashSet<tm_Form>();
-            tm_FormProjectType = new HashSet<tm_Form>();
-            tm_FormUnitType = new HashSet<tm_Form>();
             tm_Project = new HashSet<tm_Project>();
             tm_Unit = new HashSet<tm_Unit>();
             tm_UserDepartment = new HashSet<tm_User>();
             tm_UserRole = new HashSet<tm_User>();
-            tr_ProjectForm = new HashSet<tr_ProjectForm>();
-            tr_UnitForm_Resource = new HashSet<tr_UnitForm_Resource>();
+            tr_UnitFormResource = new HashSet<tr_UnitFormResource>();
         }
 
         [Key]
@@ -38,12 +34,6 @@ namespace Project.ConstructionTracking.Web.Data
         [ForeignKey("ExtTypeID")]
         [InverseProperty("tm_Ext")]
         public virtual tm_ExtType? ExtType { get; set; }
-        [InverseProperty("FormType")]
-        public virtual ICollection<tm_Form> tm_FormFormType { get; set; }
-        [InverseProperty("ProjectType")]
-        public virtual ICollection<tm_Form> tm_FormProjectType { get; set; }
-        [InverseProperty("UnitType")]
-        public virtual ICollection<tm_Form> tm_FormUnitType { get; set; }
         [InverseProperty("ProjectType")]
         public virtual ICollection<tm_Project> tm_Project { get; set; }
         [InverseProperty("UnitType")]
@@ -52,9 +42,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual ICollection<tm_User> tm_UserDepartment { get; set; }
         [InverseProperty("Role")]
         public virtual ICollection<tm_User> tm_UserRole { get; set; }
-        [InverseProperty("FormType")]
-        public virtual ICollection<tr_ProjectForm> tr_ProjectForm { get; set; }
         [InverseProperty("Role")]
-        public virtual ICollection<tr_UnitForm_Resource> tr_UnitForm_Resource { get; set; }
+        public virtual ICollection<tr_UnitFormResource> tr_UnitFormResource { get; set; }
     }
 }

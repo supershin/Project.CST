@@ -16,5 +16,11 @@ namespace Project.ConstructionTracking.Web.Services
             var Projectlist = _ProjectRepo.GetProjectList();
             return Projectlist;
         }
+
+        public dynamic SearchProjects(string term)
+        {
+            var projects = _ProjectRepo.SearchProjects(term);
+            return projects;
+        }
     }
 }

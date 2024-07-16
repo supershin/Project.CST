@@ -6,22 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Project.ConstructionTracking.Web.Data
 {
-    public partial class tm_Resource
+    public partial class tr_ProjectModelForm
     {
-        public tm_Resource()
-        {
-            tr_UnitFormResource = new HashSet<tr_UnitFormResource>();
-        }
-
         [Key]
-        public Guid ID { get; set; }
-        [StringLength(500)]
-        public string? FileName { get; set; }
-        [StringLength(500)]
-        public string? FilePath { get; set; }
-        [StringLength(500)]
-        [Unicode(false)]
-        public string? MimeType { get; set; }
+        public int ID { get; set; }
+        public Guid? ProjectID { get; set; }
+        [StringLength(10)]
+        public string? ModelTypeID { get; set; }
+        public int? FormTypeID { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
@@ -29,8 +21,5 @@ namespace Project.ConstructionTracking.Web.Data
         [Column(TypeName = "datetime")]
         public DateTime? UpdateDate { get; set; }
         public int? UpdateBy { get; set; }
-
-        [InverseProperty("Resource")]
-        public virtual ICollection<tr_UnitFormResource> tr_UnitFormResource { get; set; }
     }
 }

@@ -16,24 +16,24 @@ namespace Project.ConstructionTracking.Web.Repositories
         {
             var ProjectFormList = new List<ProjectFormList>();
 
-            var query = (from u in _context.tr_ProjectForm.Where(e => e.ProjectID == formId && e.UnitTypeID == typeId)
-                        select new
-                        {
-                            u.ID,
-                            u.Name,
-                            u.FlagActive
-                        }).ToList();
+            //var query = (from u in _context.tr_ProjectForm.Where(e => e.ProjectID == formId && e.UnitTypeID == typeId)
+            //            select new
+            //            {
+            //                u.ID,
+            //                u.Name,
+            //                u.FlagActive
+            //            }).ToList();
 
-            foreach ( var item in query)
-            {
-                var data = new ProjectFormList()
-                {
-                    Id = item.ID,
-                    Name = item.Name,
-                    Action = item.FlagActive
-                };
-                ProjectFormList.Add(data);
-            }
+            //foreach ( var item in query)
+            //{
+            //    var data = new ProjectFormList()
+            //    {
+            //        Id = item.ID,
+            //        Name = item.Name,
+            //        Action = item.FlagActive
+            //    };
+            //    ProjectFormList.Add(data);
+            //}
 
             return ProjectFormList;
         }
