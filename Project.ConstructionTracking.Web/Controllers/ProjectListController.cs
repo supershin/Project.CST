@@ -37,7 +37,7 @@ namespace Project.ConstructionTracking.Web.Controllers
         [HttpPost]
         public IActionResult GoToUnitlist(int projectId)
         {
-            var userName = Request.Cookies["UserName"];
+            var userName = Request.Cookies["CST.UserName"];
             if (userName == "PE")
             {
                 return RedirectToAction("Index", "Unitmobile");

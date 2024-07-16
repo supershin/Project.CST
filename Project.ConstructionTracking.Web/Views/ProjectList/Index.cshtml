@@ -65,7 +65,7 @@
                                         <!-- รูปภาพของสินค้า -->
                                         <img src="~/img/img23.jpg" alt="รูปภาพโครงการ" class="img-fluid">
                                         <div class="hover">
-                                            <form method="post" action="/ProjectList/GoToUnitlist">
+                                            <form method="post"  asp-action="GoToUnitlist" asp-controller="ProjectList">
                                                 <input type="hidden" name="projectId" value="@project.ProjectID" />
                                                 <button type="submit" class="btn btn-primary btn-md waves-effect">Go</button>
                                             </form>
