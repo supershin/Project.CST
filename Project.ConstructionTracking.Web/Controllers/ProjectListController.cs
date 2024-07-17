@@ -35,21 +35,22 @@ namespace Project.ConstructionTracking.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult GoToUnitlist(int projectId)
+        public IActionResult GoToUnitlist(string projectId, string projectName)
         {
             var userName = Request.Cookies["UserName"];
             if (userName == "PE")
             {
-                return RedirectToAction("Index", "Unitmobile");
+                return RedirectToAction("Index", "Unitlist", new { projectId, projectName });
             }
             else if (userName == "PM")
             {
-                return RedirectToAction("Index", "PMFormcheck");
+                return RedirectToAction("Index", "PMFormcheck", new { projectId, projectName });
             }
             else
             {
-                return RedirectToAction("Index", "Unitmobile");
+                return RedirectToAction("Index", "Unitlist", new { projectId, projectName });
             }
         }
+
     }
 }

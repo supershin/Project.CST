@@ -11,9 +11,10 @@ namespace Project.ConstructionTracking.Web.Services
         {
           _unitRepo = unitRepo;
         }
-        public dynamic GetUnitList(Criteria criteria, DTParamModel param)
+
+        public List<UnitModel> GetUnitList(string Search, UnitModel Model)
         {
-            var units = _unitRepo.GetUnitList(criteria, param);
+            var units = _unitRepo.GetUnitList(Search, Model);
             return units;
         }
 

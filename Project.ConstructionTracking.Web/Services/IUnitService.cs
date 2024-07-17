@@ -4,7 +4,7 @@ namespace Project.ConstructionTracking.Web.Services
 {
     public interface IUnitService
     {
-        dynamic GetUnitList(Criteria criteria, DTParamModel param);
+        List<UnitModel> GetUnitList(string Search, UnitModel Model);
 
         dynamic GetUnitTypeList();
     }

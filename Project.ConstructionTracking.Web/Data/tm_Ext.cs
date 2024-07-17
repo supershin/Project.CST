@@ -11,7 +11,8 @@ namespace Project.ConstructionTracking.Web.Data
         public tm_Ext()
         {
             tm_Project = new HashSet<tm_Project>();
-            tm_Unit = new HashSet<tm_Unit>();
+            tm_UnitUnitStatus = new HashSet<tm_Unit>();
+            tm_UnitUnitType = new HashSet<tm_Unit>();
             tm_UserDepartment = new HashSet<tm_User>();
             tm_UserRole = new HashSet<tm_User>();
             tr_UnitFormResource = new HashSet<tr_UnitFormResource>();
@@ -36,8 +37,10 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual tm_ExtType? ExtType { get; set; }
         [InverseProperty("ProjectType")]
         public virtual ICollection<tm_Project> tm_Project { get; set; }
+        [InverseProperty("UnitStatus")]
+        public virtual ICollection<tm_Unit> tm_UnitUnitStatus { get; set; }
         [InverseProperty("UnitType")]
-        public virtual ICollection<tm_Unit> tm_Unit { get; set; }
+        public virtual ICollection<tm_Unit> tm_UnitUnitType { get; set; }
         [InverseProperty("Department")]
         public virtual ICollection<tm_User> tm_UserDepartment { get; set; }
         [InverseProperty("Role")]

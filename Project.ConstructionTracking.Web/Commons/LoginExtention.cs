@@ -41,6 +41,15 @@ namespace Project.ConstructionTracking.Web.Commons
                         Role = "PJM"
                     };
                     break;
+                case "QC":
+                    userProfile = new UserProfile
+                    {
+                        ID = 3,
+                        UserName = "QC",
+                        Password = "1234",
+                        Role = "QC"
+                    };
+                    break;
                 default:
                     // Handle case where user is not found or return a default profile
                     userProfile = new UserProfile
