@@ -45,7 +45,7 @@ namespace Project.ConstructionTracking.Web.Controllers
         [HttpPost]
         public IActionResult GoToByRole(string projectId, string projectName)
         {
-            var userName = Request.Cookies["UserName"];
+            var userName = Request.Cookies["CST.UserName"];
             if (userName == "PE")
             {
                 return RedirectToAction("Index", "Tracking", new { projectId, projectName });

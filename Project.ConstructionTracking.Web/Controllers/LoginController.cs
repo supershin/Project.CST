@@ -31,7 +31,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 // Set the username in a cookie
                 CookieOptions option = new CookieOptions();
                 option.Expires = DateTime.Now.AddDays(1); // Set the expiration date for the cookie
-                Response.Cookies.Append("UserName", userProfile.UserName, option);
+                Response.Cookies.Append("CST.UserName", userProfile.UserName, option);
 
                 // Handle successful login (e.g., redirect to a dashboard)
                 return RedirectToAction("Index", "Dashboard");
