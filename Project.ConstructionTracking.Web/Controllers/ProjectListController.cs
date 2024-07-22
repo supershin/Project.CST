@@ -46,6 +46,10 @@ namespace Project.ConstructionTracking.Web.Controllers
             {
                 return RedirectToAction("Index", "PMFormcheck", new { projectId, projectName });
             }
+            else if (userName == "QC")
+            {
+                return RedirectToAction("Index", "SummaryUnitQC", new { projectId, projectName });
+            }
             else
             {
                 return RedirectToAction("Index", "Unitlist", new { projectId, projectName });
