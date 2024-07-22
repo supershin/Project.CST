@@ -42,6 +42,28 @@ namespace Project.ConstructionTracking.Web.Controllers
             return View("Index", units);
         }
 
+        [HttpPost]
+        public IActionResult GoToByRole(string projectId, string projectName)
+        {
+            var userName = Request.Cookies["UserName"];
+            if (userName == "PE")
+            {
+                return RedirectToAction("Index", "Tracking", new { projectId, projectName });
+            }
+            else if (userName == "PM")
+            {
+                return RedirectToAction("Index", "PMApprove", new { projectId, projectName });
+            }
+            else if (userName == "QC")
+            {
+                return RedirectToAction("Index", "SummaryUnitQC", new { projectId, projectName });
+            }
+            else
+            {
+                return RedirectToAction("Index", "Unitlist", new { projectId, projectName });
+            }
+        }
+
     }
 }
 

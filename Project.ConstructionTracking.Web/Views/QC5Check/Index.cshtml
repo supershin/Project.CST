@@ -2,6 +2,10 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 }
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <style>
     .fixed-size-btn {
         width: 80px;
@@ -68,7 +72,8 @@
 
 </style>
 
-<button class="fixedButton" onclick="openModalDataQC()">
+
+<button class="fixedButton" onclick="openModalDataQC('add')">
     <i class="fa-solid fa-plus fa-xl"></i>
 </button>
 
@@ -115,72 +120,303 @@
         <div class="container mt-1 mb-3">
             <div class="row">
                 <div class="col-12 col-sm-4 mb-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">QC 5</a></li>
-                                <li class="breadcrumb-item" aria-current="page">ตรวจครั้งที่ 1</li>
-                                <li class="breadcrumb-item" aria-current="page">ผู้ตรวจ : นายตาดี สมองไว </li>
-                            </ol>
-                        </div>
-                        <div class="card-body">
-                            <label class="form-label mb-1">
-                                <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="radios-inline-1">
-                                    <span class="form-check-label">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
-                                </label>
-                            </label>
-                            <label class="form-label mb-1">
-                                <textarea class="form-control" rows="2" placeholder="ความคิดเห็น"></textarea>
-                            </label>
-                            <div class="container mt-4">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <input class="form-control" type="file" id="imageInput" multiple>
-                                    </div>
-                                    <div class="col-12 mt-3">
-                                        <div class="image-preview" id="imagePreview"></div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="#">QC 5</a></li>
+                                        <li class="breadcrumb-item" aria-current="page">ตรวจครั้งที่ 3</li>
+                                        <li class="breadcrumb-item" aria-current="page">ผู้ตรวจ : นายตาดี สมองไว </li>
+                                    </ol>
+                                </div>
+                                <div class="card-body">
+                                    <label class="form-label mb-1">
+                                        <label class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="radios-inline-1">
+                                            <span class="form-check-label">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
+                                        </label>
+                                    </label>
+                                    <label class="form-label mb-1">
+                                        <textarea class="form-control" rows="2" placeholder="ความคิดเห็น"></textarea>
+                                    </label>
+                                    <div class="container mt-4">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <input class="form-control" type="file" id="imageInput" multiple>
+                                            </div>
+                                            <div class="col-12 mt-3">
+                                                <div class="image-preview" id="imagePreview"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="col-12 mt-3 d-none d-md-block">
+                            <div class="card">
+                                <div class="card-header">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item" aria-current="page">
+                                            สรุปจำนวน
+                                        </li>
+                                    </ol>
+                                </div>
+                                <div class="card-body">
+                                    <div class="col-12">
+                                        <ul>
+                                            <li>
+                                                จำนวนรายการจากครั้งที่ 1 : 2 รายการ
+                                            </li>
+                                            <li>
+                                                จำนวนรายการจากครั้งที่ 2 : 1 รายการ
+                                            </li>
+                                            <li>
+                                                จำนวนรายการจากครั้งที่ 3 : 0 รายการ
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-6 text-yellow">รายการทั้งหมด  : 3 รายการ</div>
+                                                    <div class="col">
+                                                        <label class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                            <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="text-green col-2">ผ่าน : 0 </div>
+                                                    <div class="text-red col">ไม่ผ่าน : 2 </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <button class="btn btn-success w-100">Save</button>
+                                            </div>
+                                            <div class="col-4">
+                                                <button class="btn btn-primary w-100">Submit</button>
+                                            </div>
+                                            <div class="col-4">
+                                                <button class="btn btn-secondary w-100">ดูเอกสารตรวจ</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                   
                 </div>
-                <div class="col">
+                <div class="col mb-1">
                     <div class="row">
-                        <div class="card col-12 col-sm-6 mb-2">
-                            <div class="card-body">
-                                <h3><a href="#" onclick="openModal()"><i class="fa-regular fa-image"></i></a>&nbsp; รายกาที่ 1 &nbsp;</h3>
-                                    <ul>
-                                        <li>ตำแหน่ง : ห้องรับแขก</li>
-                                        <li>หมวดงาน : พื้นลามิเนต</li>
-                                        <li>รายการแก้ไข : ปูไม่เรียบ</li>
-                                    </ul>
-                                    <textarea class="form-control" rows="2" disabled placeholder="ความคิดเห็น">ตรงมุมห้องทุกด้าน</textarea>          
+                        <div class="col-12 col-sm-6 mt-1">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex flex-row align-items-center">
+                                                        <button class="status-dot bg-secondary" onclick="openModal()">
+                                                            <i class="fa-regular fa-image"></i>
+                                                        </button>
+                                                    <div class="ms-2 c-details">
+                                                        <h3 class="mb-0">
+                                                            รายการที่ 1
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="align-items-right">
+                                                    <button class="status-dot bg-primary" onclick="openModalDataQC('edit', {id: 1, location: 1, category: 1, defect: 1, comment: 'Sample comment'})">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <ul>
+                                                <li>ตำแหน่ง : ห้องรับแขก</li>
+                                                <li>หมวดงาน : พื้นลามิเนต</li>
+                                                <li>รายการแก้ไข : ปูไม่เรียบ</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-12">
+                                             <textarea class="form-control" rows="2" disabled placeholder="ความคิดเห็น">ตรงมุมห้องทุกด้าน</textarea>
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                             <label class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                <span class="form-check-label">ผ่าน</span>
+                                            </label>
+                                            <label class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                <span class="form-check-label">ไม่ผ่าน</span>
+                                            </label>
+                                        </div>
+                                    </div>                               
+                                </div>
                             </div>
                         </div>
-                        <div class="card col-12 col-sm-6 mb-2">
-                            <div class="card-body">
-                                <h3>
-                                    <a href="#" onclick="openModal()"><i class="fa-regular fa-image"></i></a>&nbsp; รายกาที่ 2 &nbsp;<i class="fa-solid fa-triangle-exclamation fa-xl" style="color: #f60404;"></i>
-                                </h3>
-                                <ul>
-                                    <li>ตำแหน่ง : ห้องรับแขก</li>
-                                    <li>หมวดงาน : ผนัง</li>
-                                    <li>รายการแก้ไข : ทาสีไม่เรียบร้อย</li>
-                                </ul>
-                                <textarea class="form-control" rows="2" disabled placeholder="ความคิดเห็น">ทาสียังไม่ครบ</textarea>
+                        <div class="col-12 col-sm-6 mt-1">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex flex-row align-items-center">
+                                                    <button class="status-dot bg-secondary" onclick="openModal()">
+                                                        <i class="fa-regular fa-image"></i>
+                                                    </button>
+                                                    <div class="ms-2 c-details">
+                                                        <h3 class="mb-0">
+                                                            รายการที่ 2
+                                                            <i class="fa-solid fa-triangle-exclamation fa-xl" style="color: #f60404;"></i>
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="align-items-right">
+                                                    <button class="status-dot bg-primary" onclick="openModalDataQC('edit', {id: 1, location: 1, category: 1, defect: 1, comment: 'Sample comment'})">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <ul>
+                                                <li>ตำแหน่ง : ห้องรับแขก</li>
+                                                <li>หมวดงาน : ผนัง</li>
+                                                <li>รายการแก้ไข : ทาสีไม่เรียบร้อย</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-12">
+                                            <textarea class="form-control" rows="2" disabled placeholder="ความคิดเห็น">ตรงมุมห้องทุกด้าน</textarea>
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <label class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                <span class="form-check-label">ผ่าน</span>
+                                            </label>
+                                            <label class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                <span class="form-check-label">ไม่ผ่าน</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="card col-12 col-sm-6 mb-2">
-                            <div class="card-body">
-                                <h3><a href="#" onclick="openModal()"><i class="fa-regular fa-image"></i></a> &nbsp; รายกาที่ 3 &nbsp;</h3>
-                                    <ul>
-                                        <li>ตำแหน่ง : ห้องรับแขก</li>
-                                        <li>หมวดงาน : ฟ่า</li>
-                                        <li>รายการแก้ไข : ฟ่ามีรูรั่ว</li>
-                                    </ul>
-                                    <textarea class="form-control" rows="2" disabled placeholder="ความคิดเห็น"></textarea>
+                        <div class="col-12 col-sm-6 mt-1">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex flex-row align-items-center">
+                                                    <button class="status-dot bg-secondary" onclick="openModal()">
+                                                        <i class="fa-regular fa-image"></i>
+                                                    </button>
+                                                    <div class="ms-2 c-details">
+                                                        <h3 class="mb-0">
+                                                            รายการที่ 3
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="align-items-right">
+                                                    <button class="status-dot bg-primary" onclick="openModalDataQC('edit', {id: 1, location: 1, category: 1, defect: 1, comment: 'Sample comment'})">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <ul>
+                                                <li>ตำแหน่ง : ห้องรับแขก</li>
+                                                <li>หมวดงาน : ฟ่า</li>
+                                                <li>รายการแก้ไข : ฟ่ามีรูรั่ว</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-12">
+                                            <textarea class="form-control" rows="2" disabled placeholder="ความคิดเห็น"></textarea>
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <label class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                <span class="form-check-label">ผ่าน</span>
+                                            </label>
+                                            <label class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                <span class="form-check-label">ไม่ผ่าน</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                           
+                        </div>
+                        <div class="col-12 mt-3 d-block d-md-none">
+                            <div class="card">
+                                <div class="card-header">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item" aria-current="page">
+                                            สรุปจำนวน
+                                        </li>
+                                    </ol>
+                                </div>
+                                <div class="card-body">
+                                    <div class="col-12">
+                                        <ul>
+                                            <li>
+                                                จำนวนรายการจากครั้งที่ 1 : 2 รายการ
+                                            </li>
+                                            <li>
+                                                จำนวนรายการจากครั้งที่ 2 : 1 รายการ
+                                            </li>
+                                            <li>
+                                                จำนวนรายการจากครั้งที่ 3 : 0 รายการ
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-6 text-yellow">รายการทั้งหมด  : 3 รายการ</div>
+                                                    <div class="col">
+                                                        <label class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                            <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="text-green col-2">ผ่าน : 0 </div>
+                                                    <div class="text-red col">ไม่ผ่าน : 2 </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <button class="btn btn-success w-100">Save</button>
+                                            </div>
+                                            <div class="col-4">
+                                                <button class="btn btn-primary w-100">Submit</button>
+                                            </div>
+                                            <div class="col-4">
+                                                <button class="btn btn-secondary w-100">ดูเอกสารตรวจ</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -223,7 +459,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="insert-new-qc5" tabindex="-1" aria-labelledby="insert-new-qc5-Label" aria-hidden="true">
+    <div class="modal fade" id="insert-new-qc5" tabindex="-1" aria-labelledby="insert-new-qc5-Label" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -238,9 +474,9 @@
                         <div class="col-12 mt-3">
                             <div class="image-preview" id="imagePreview2"></div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-12 col-sm-6">
                             <div class="form-label">ตำแหน่ง</div>
-                            <select class="form-select">
+                            <select class="form-select" id="locationSelect">
                                 <option value="0">กรุณาเลือก</option>
                                 <option value="1">ห้องรับแขก</option>
                                 <option value="2">ห้องครัว</option>
@@ -250,21 +486,17 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="form-label">หมวดงาน</div>
-                            <select class="form-select">
+                            <select class="form-select" id="categorySelect">
                                 <option value="0">กรุณาเลือก</option>
                                 <option value="1">พื้นลามิเนต</option>
                                 <option value="2">ผนัง</option>
-                                <option value="3">ฟ่า</option>
-                                <option value="-1">อื่นๆ</option>
+                                <option value="3">พื้น</option>
+                                <option value="4">หน้าต่าง</option>
                             </select>
                         </div>
                         <div class="col-12 col-sm-6">
-                            <div class="form-label">อื่นๆ ระบุ</div>
-                            <input type="text" class="form-control" name="example-text-input" placeholder="กรุณาระบุ">
-                        </div>
-                        <div class="col-12 col-sm-6">
                             <div class="form-label">รายการ defect</div>
-                            <select class="form-select">
+                            <select class="form-select" id="defectSelect">
                                 <option value="0">กรุณาเลือก</option>
                                 <option value="1">ปูไม่เรียบ</option>
                                 <option value="2">รอยร้าวขนาดใหญ่</option>
@@ -272,25 +504,25 @@
                                 <option value="-1">อื่นๆ</option>
                             </select>
                         </div>
-                        <div class="col-12 col-sm-6">
+                        <div class="col-12 col-sm-6" id="otherDefectDiv" style="display:none;">
                             <div class="form-label">อื่นๆ ระบุ</div>
-                            <input type="text" class="form-control" name="example-text-input" placeholder="กรุณาระบุ">
+                            <input type="text" class="form-control" id="otherDefectInput" placeholder="กรุณาระบุ">
                         </div>
                         <div class="col-12">
                             <div class="form-label">ความเห็น</div>
-                            <textarea class="form-control" rows="2" placeholder="ความคิดเห็น"></textarea>
+                            <textarea class="form-control" id="commentTextarea" rows="2" placeholder="ความคิดเห็น"></textarea>
                         </div>
                         <div class="col-12">
-                              <label class="form-check">
-                                <input class="form-check-input" type="checkbox" >
+                            <label class="form-check">
+                                <input class="form-check-input" type="checkbox" id="majorDefectCheckbox">
                                 <span class="form-check-label text-danger">เป็น Major Defect</span>
-                              </label>
+                            </label>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
+                    <button type="button" class="btn btn-primary" id="saveButton" data-bs-dismiss="modal">Save</button>
                 </div>
             </div>
         </div>
@@ -304,10 +536,51 @@
             myModal.show();
         }
 
-        function openModalDataQC() {
+        function openModalDataQC(action, data = null) {
             var myModal = new bootstrap.Modal(document.getElementById('insert-new-qc5'));
+
+            // Set modal title based on action
+            var modalTitle = document.getElementById('insert-new-qc5-Label');
+            if (action === 'add') {
+                modalTitle.textContent = 'เพิ่มข้อมูลรายการ';
+                // Reset all form fields for adding new data
+                document.getElementById('locationSelect').value = '0';
+                document.getElementById('categorySelect').value = '0';
+                document.getElementById('defectSelect').value = '0';
+                document.getElementById('otherDefectInput').value = '';
+                document.getElementById('otherDefectDiv').style.display = 'none';
+                document.getElementById('commentTextarea').value = '';
+                document.getElementById('majorDefectCheckbox').checked = false;
+            } else if (action === 'edit' && data) {
+                modalTitle.textContent = 'แก้ไขข้อมูลรายการ';
+                // Populate form fields with existing data for editing
+                document.getElementById('locationSelect').value = data.location;
+                document.getElementById('categorySelect').value = data.category;
+                document.getElementById('defectSelect').value = data.defect;
+                document.getElementById('commentTextarea').value = data.comment;
+                document.getElementById('majorDefectCheckbox').checked = data.majorDefect || false;
+                // Show or hide the "other" defect input based on the defect value
+                if (data.defect == '-1') {
+                    document.getElementById('otherDefectDiv').style.display = 'block';
+                } else {
+                    document.getElementById('otherDefectDiv').style.display = 'none';
+                }
+            }
+
+            // Show the modal
             myModal.show();
         }
+
+        // Show or hide the "other" defect input based on the defect selection
+        document.getElementById('defectSelect').addEventListener('change', function () {
+            var otherDefectDiv = document.getElementById('otherDefectDiv');
+            if (this.value == '-1') {
+                otherDefectDiv.style.display = 'block';
+            } else {
+                otherDefectDiv.style.display = 'none';
+            }
+        });
+
 
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
@@ -384,6 +657,16 @@
                 reader.readAsDataURL(file);
             }
         });
+
+        document.getElementById('defectSelect').addEventListener('change', function () {
+            var otherDefectDiv = document.getElementById('otherDefectDiv');
+            if (this.value == '-1') {
+                otherDefectDiv.style.display = 'block';
+            } else {
+                otherDefectDiv.style.display = 'none';
+            }
+        });
+
     </script>
 
 <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
