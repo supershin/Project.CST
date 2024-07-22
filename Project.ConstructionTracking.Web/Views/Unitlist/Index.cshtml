@@ -113,7 +113,7 @@
                                         </p>
                                         @if (!string.IsNullOrEmpty(unit.FormName))
                                         {
-                                            <form action="@Url.Action("index", "Tracking")" method="post">
+                                            <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
                                                 <button type="submit" class="btn btn-primary btn-sm">@unit.FormName</button>
                                             </form>
                                         }
