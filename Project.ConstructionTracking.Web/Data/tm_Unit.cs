@@ -25,6 +25,7 @@ namespace Project.ConstructionTracking.Web.Data
         [StringLength(20)]
         [Unicode(false)]
         public string? UnitCode { get; set; }
+        public int? UnitStatusID { get; set; }
         [StringLength(10)]
         [Unicode(false)]
         public string? AddreessNo { get; set; }
@@ -53,8 +54,11 @@ namespace Project.ConstructionTracking.Web.Data
         [ForeignKey("ProjectID")]
         [InverseProperty("tm_Unit")]
         public virtual tm_Project? Project { get; set; }
+        [ForeignKey("UnitStatusID")]
+        [InverseProperty("tm_UnitUnitStatus")]
+        public virtual tm_Ext? UnitStatus { get; set; }
         [ForeignKey("UnitTypeID")]
-        [InverseProperty("tm_Unit")]
+        [InverseProperty("tm_UnitUnitType")]
         public virtual tm_Ext? UnitType { get; set; }
         [ForeignKey("VendorID")]
         [InverseProperty("tm_Unit")]

@@ -27,17 +27,19 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tm_ModelType> tm_ModelType { get; set; } = null!;
         public virtual DbSet<tm_Project> tm_Project { get; set; } = null!;
         public virtual DbSet<tm_Resource> tm_Resource { get; set; } = null!;
+        public virtual DbSet<tm_Role> tm_Role { get; set; } = null!;
         public virtual DbSet<tm_Unit> tm_Unit { get; set; } = null!;
         public virtual DbSet<tm_UnitType> tm_UnitType { get; set; } = null!;
         public virtual DbSet<tm_User> tm_User { get; set; } = null!;
         public virtual DbSet<tm_Vendor> tm_Vendor { get; set; } = null!;
         public virtual DbSet<tr_ProjectModelForm> tr_ProjectModelForm { get; set; } = null!;
+        public virtual DbSet<tr_RoleActionStatus> tr_RoleActionStatus { get; set; } = null!;
         public virtual DbSet<tr_UnitForm> tr_UnitForm { get; set; } = null!;
         public virtual DbSet<tr_UnitFormAction> tr_UnitFormAction { get; set; } = null!;
         public virtual DbSet<tr_UnitFormActionLog> tr_UnitFormActionLog { get; set; } = null!;
         public virtual DbSet<tr_UnitFormCheckList> tr_UnitFormCheckList { get; set; } = null!;
-        public virtual DbSet<tr_UnitFormGroup> tr_UnitFormGroup { get; set; } = null!;
         public virtual DbSet<tr_UnitFormPackage> tr_UnitFormPackage { get; set; } = null!;
+        public virtual DbSet<tr_UnitFormPassCondition> tr_UnitFormPassCondition { get; set; } = null!;
         public virtual DbSet<tr_UnitFormResource> tr_UnitFormResource { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -197,6 +199,15 @@ namespace Project.ConstructionTracking.Web.Data
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
             });
 
+            modelBuilder.Entity<tm_Role>(entity =>
+            {
+                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
+            });
+
             modelBuilder.Entity<tm_Unit>(entity =>
             {
                 entity.Property(e => e.UnitID).ValueGeneratedNever();
@@ -217,8 +228,13 @@ namespace Project.ConstructionTracking.Web.Data
                     .HasForeignKey(d => d.ProjectID)
                     .HasConstraintName("FK_tm_Unit_tm_Project");
 
+                entity.HasOne(d => d.UnitStatus)
+                    .WithMany(p => p.tm_UnitUnitStatus)
+                    .HasForeignKey(d => d.UnitStatusID)
+                    .HasConstraintName("FK_tm_Unit_tm_Ext1");
+
                 entity.HasOne(d => d.UnitType)
-                    .WithMany(p => p.tm_Unit)
+                    .WithMany(p => p.tm_UnitUnitType)
                     .HasForeignKey(d => d.UnitTypeID)
                     .HasConstraintName("FK_tm_Unit_tm_Ext");
 
@@ -271,6 +287,16 @@ namespace Project.ConstructionTracking.Web.Data
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
             });
 
+            modelBuilder.Entity<tr_RoleActionStatus>(entity =>
+            {
+                entity.Property(e => e.ID).ValueGeneratedNever();
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.tr_RoleActionStatus)
+                    .HasForeignKey(d => d.RoleID)
+                    .HasConstraintName("FK_tr_RoleActionStatus_tm_Role");
+            });
+
             modelBuilder.Entity<tr_UnitForm>(entity =>
             {
                 entity.Property(e => e.ID).ValueGeneratedNever();
@@ -301,6 +327,16 @@ namespace Project.ConstructionTracking.Web.Data
             {
                 entity.Property(e => e.ID).ValueGeneratedNever();
 
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.tr_UnitFormAction)
+                    .HasForeignKey(d => d.RoleID)
+                    .HasConstraintName("FK_tr_UnitFormAction_tm_Role");
+
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.tr_UnitFormAction)
+                    .HasForeignKey(d => d.StatusID)
+                    .HasConstraintName("FK_tr_UnitFormAction_tr_RoleActionStatus");
+
                 entity.HasOne(d => d.UnitForm)
                     .WithMany(p => p.tr_UnitFormAction)
                     .HasForeignKey(d => d.UnitFormID)
@@ -310,6 +346,16 @@ namespace Project.ConstructionTracking.Web.Data
             modelBuilder.Entity<tr_UnitFormActionLog>(entity =>
             {
                 entity.Property(e => e.ID).ValueGeneratedNever();
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.tr_UnitFormActionLog)
+                    .HasForeignKey(d => d.RoleID)
+                    .HasConstraintName("FK_tr_UnitFormActionLog_tm_Role");
+
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.tr_UnitFormActionLog)
+                    .HasForeignKey(d => d.StatusID)
+                    .HasConstraintName("FK_tr_UnitFormActionLog_tr_RoleActionStatus");
 
                 entity.HasOne(d => d.UnitForm)
                     .WithMany(p => p.tr_UnitFormActionLog)
@@ -331,16 +377,16 @@ namespace Project.ConstructionTracking.Web.Data
                     .HasConstraintName("FK_tr_UnitForm_Detail_tr_UnitForm");
             });
 
-            modelBuilder.Entity<tr_UnitFormGroup>(entity =>
-            {
-                entity.Property(e => e.UpdateBy).IsFixedLength();
-            });
-
             modelBuilder.Entity<tr_UnitFormPackage>(entity =>
             {
                 entity.Property(e => e.ID).ValueGeneratedNever();
 
                 entity.Property(e => e.UpdateBy).IsFixedLength();
+            });
+
+            modelBuilder.Entity<tr_UnitFormPassCondition>(entity =>
+            {
+                entity.Property(e => e.ID).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<tr_UnitFormResource>(entity =>

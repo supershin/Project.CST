@@ -61,16 +61,14 @@
                             <!-- เริ่มต้นการ์ดของสินค้า -->
                             <div class="card product_item">
                                 <div class="body">
-                                    <div class="cp_img">
+                                    <div class="cp_img" onclick="document.getElementById('form-@project.ProjectID').submit();">
                                         <!-- รูปภาพของสินค้า -->
                                         <img src="~/img/img23.jpg" alt="รูปภาพโครงการ" class="img-fluid">
-                                        <div class="hover">
-                                            <form method="post"  asp-action="GoToUnitlist" asp-controller="ProjectList">
-                                                <input type="hidden" name="projectId" value="@project.ProjectID" />
-                                                <button type="submit" class="btn btn-primary btn-md waves-effect">Go</button>
-                                            </form>
-                                        </div>
                                     </div>
+                                    <form id="form-@project.ProjectID" method="post" asp-controller="ProjectList" asp-action="GoToUnitlist" style="display: none;">
+                                        <input type="hidden" name="projectId" value="@project.ProjectID" />
+                                        <input type="hidden" name="projectName" value="@project.ProjectName" />
+                                    </form>
                                     <div class="product_details">
                                         <!-- Project name -->
                                         <h5><a href="#">@project.ProjectName</a></h5>
@@ -83,292 +81,59 @@
                 </div>
             </div>
         </div>
+
     </div>
+
+    <style>
+        .product_item {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .product_item .body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .product_item .cp_img {
+            cursor: pointer;
+            width: 100%;
+            padding: 15px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .product_item .cp_img img {
+            transition: all 0.2s ease-in-out;
+            border-radius: 6px;
+        }
+
+        .product_item .product_details {
+            text-align: center;
+            margin-top: auto; /* Pushes the content to the bottom */
+        }
+
+        .product_item .product_details h5 {
+            margin-bottom: 5px;
+        }
+
+        .product_item .product_details h5 a {
+            font-size: 16px;
+            color: #444;
+        }
+
+        .product_item .product_details h5 a:hover {
+            text-decoration: none;
+        }
+    </style>
 
 
 </div>
 
-<style>
-    /* จัดการรีวิว */
-    .c_review { /* คลาสสำหรับการจัดการรีวิว */
-        margin-bottom: 0; /* ตั้งค่าระยะห่างด้านล่างเป็น 0 */
-    }
 
-    .c_review li { /* คลาสสำหรับรายการในรีวิว */
-        margin-bottom: 16px; /* ตั้งค่าระยะห่างด้านล่างของรายการเป็น 16px */
-        padding-bottom: 13px; /* ตั้งค่าระยะห่างด้านล่างภายในเป็น 13px */
-        border-bottom: 1px solid #e8e8e8; /* ตั้งค่าเส้นขอบด้านล่างสีเทาอ่อน */
-    }
-
-    .c_review li:last-child { /* คลาสสำหรับรายการสุดท้ายในรีวิว */
-        margin: 0; /* ตั้งค่าระยะห่างเป็น 0 */
-        border: none; /* ไม่ใช้เส้นขอบ */
-    }
-
-    .c_review .avatar { /* คลาสสำหรับภาพโปรไฟล์ */
-        float: left; /* จัดวางภาพโปรไฟล์ทางซ้าย */
-        width: 80px; /* ตั้งค่าความกว้างของภาพโปรไฟล์เป็น 80px */
-    }
-
-    .c_review .comment-action { /* คลาสสำหรับการกระทำในรีวิว */
-        float: left; /* จัดวางทางซ้าย */
-        width: calc(100% - 80px); /* ตั้งค่าความกว้างของส่วนนี้เป็น 100% ลบด้วยความกว้างของภาพโปรไฟล์ */
-    }
-
-    .c_review .comment-action .c_name { /* คลาสสำหรับชื่อในรีวิว */
-        margin: 0; /* ตั้งค่าระยะห่างเป็น 0 */
-    }
-
-    .c_review .comment-action p { /* คลาสสำหรับย่อหน้าในรีวิว */
-        text-overflow: ellipsis; /* แสดง ... เมื่อข้อความล้น */
-        white-space: nowrap; /* ไม่ให้ข้อความย่อหน้าแยกบรรทัด */
-        overflow: hidden; /* ซ่อนข้อความที่ล้น */
-        max-width: 95%; /* ตั้งค่าความกว้างสูงสุดเป็น 95% */
-        display: block; /* แสดงเป็นบล็อก */
-    }
-
-    /* การจัดการลักษณะของสินค้า */
-    .product_item:hover .cp_img { /* คลาสสำหรับภาพของสินค้าที่ถูกชี้เมาส์ */
-        top: -40px; /* ตั้งค่าตำแหน่งบนเป็น -40px */
-    }
-
-    .product_item:hover .cp_img img { /* คลาสสำหรับภาพของสินค้าที่ถูกชี้เมาส์ */
-        box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22); /* ตั้งค่าเงา */
-    }
-
-    .product_item:hover .cp_img .hover { /* คลาสสำหรับปุ่มที่ปรากฏเมื่อชี้เมาส์ที่สินค้า */
-        display: block; /* แสดงปุ่ม */
-    }
-
-    .product_item .cp_img { /* คลาสสำหรับภาพของสินค้า */
-        position: absolute; /* ตั้งค่าตำแหน่งแบบสัมบูรณ์ */
-        top: 0px; /* ตั้งค่าตำแหน่งบนเป็น 0px */
-        left: 50%; /* ตั้งค่าตำแหน่งซ้ายเป็น 50% */
-        transform: translate(-50%); /* ย้ายตำแหน่งไปทางซ้าย 50% */
-        width: 100%; /* ตั้งค่าความกว้างเป็น 100% */
-        padding: 15px; /* ตั้งค่าระยะห่างภายในเป็น 15px */
-        transition: all 0.2s ease-in-out; /* ตั้งค่าการเปลี่ยนแปลงทุกอย่างใน 0.2 วินาที */
-    }
-
-    .product_item .cp_img img { /* คลาสสำหรับภาพของสินค้า */
-        transition: all 0.2s ease-in-out; /* ตั้งค่าการเปลี่ยนแปลงทุกอย่างใน 0.2 วินาที */
-        border-radius: 6px; /* ตั้งค่ามุมของภาพให้โค้ง 6px */
-    }
-
-    .product_item .cp_img .hover { /* คลาสสำหรับปุ่มที่ปรากฏเมื่อชี้เมาส์ที่สินค้า */
-        display: none; /* ไม่แสดงปุ่ม */
-        text-align: center; /* จัดข้อความให้อยู่กึ่งกลาง */
-        margin-top: 10px; /* ตั้งค่าระยะห่างด้านบนเป็น 10px */
-    }
-
-    .product_item .product_details { /* คลาสสำหรับรายละเอียดของสินค้า */
-        padding-top: 85%; /* ตั้งค่าระยะห่างด้านบนภายในเป็น 95% */
-        text-align: center; /* จัดข้อความให้อยู่กึ่งกลาง */
-    }
-
-    .product_item .product_details h5 { /* คลาสสำหรับหัวเรื่องของสินค้า */
-        margin-bottom: 5px; /* ตั้งค่าระยะห่างด้านล่างเป็น 5px */
-    }
-
-    .product_item .product_details h5 a { /* คลาสสำหรับลิงก์ในหัวเรื่องของสินค้า */
-        font-size: 16px; /* ตั้งค่าขนาดตัวอักษรเป็น 16px */
-        color: #444; /* ตั้งค่าสีของตัวอักษรเป็นสีเทาเข้ม */
-    }
-
-    .product_item .product_details h5 a:hover { /* คลาสสำหรับลิงก์ในหัวเรื่องของสินค้าที่ถูกชี้เมาส์ */
-        text-decoration: none; /* ไม่ใช้เส้นใต้ */
-    }
-
-    .product_item .product_details .product_price { /* คลาสสำหรับราคาของสินค้า */
-        margin: 0; /* ตั้งค่าระยะห่างเป็น 0 */
-    }
-
-    .product_item .product_details .product_price li { /* คลาสสำหรับรายการราคาของสินค้า */
-        display: inline-block; /* แสดงเป็นบล็อกในแนวนอน */
-        padding: 0 10px; /* ตั้งค่าระยะห่างภายในเป็น 10px */
-    }
-
-    .product_item .product_details .product_price .new_price { /* คลาสสำหรับราคาของสินค้าปัจจุบัน */
-        font-weight: 600; /* ตั้งค่าความหนาของตัวอักษรเป็น 600 */
-        color: #ff4136; /* ตั้งค่าสีของตัวอักษรเป็นสีแดง */
-    }
-
-    .product_item_list table tr td { /* คลาสสำหรับเซลล์ในตารางรายการสินค้า */
-        vertical-align: middle; /* จัดแนวตั้งให้อยู่ตรงกลาง */
-    }
-
-    .product_item_list table tr td h5 { /* คลาสสำหรับหัวเรื่องในเซลล์ของตาราง */
-        font-size: 15px; /* ตั้งค่าขนาดตัวอักษรเป็น 15px */
-        margin: 0; /* ตั้งค่าระยะห่างเป็น 0 */
-    }
-
-    .product_item_list table tr td .btn { /* คลาสสำหรับปุ่มในเซลล์ของตาราง */
-        box-shadow: none !important; /* ไม่มีเงา */
-    }
-
-    .product-order-list table tr th:last-child { /* คลาสสำหรับเซลล์หัวตารางสุดท้าย */
-        width: 145px; /* ตั้งค่าความกว้างเป็น 145px */
-    }
-
-    .preview { /* คลาสสำหรับการแสดงผลภาพตัวอย่าง */
-        display: flex; /* แสดงผลแบบยืดหยุ่น */
-        flex-direction: column; /* จัดเรียงในแนวตั้ง */
-    }
-
-    .preview .preview-pic { /* คลาสสำหรับภาพตัวอย่าง */
-        flex-grow: 1; /* เพิ่มความยืดหยุ่นในการขยาย */
-    }
-
-    .preview .preview-thumbnail.nav-tabs { /* คลาสสำหรับแท็บรูปขนาดย่อ */
-        margin-top: 15px; /* ตั้งค่าระยะห่างด้านบนเป็น 15px */
-        font-size: 0; /* ตั้งค่าขนาดตัวอักษรเป็น 0 */
-    }
-
-    .preview .preview-thumbnail.nav-tabs li { /* คลาสสำหรับรายการแท็บรูปขนาดย่อ */
-        width: 20%; /* ตั้งค่าความกว้างเป็น 20% */
-        display: inline-block; /* แสดงเป็นบล็อกในแนวนอน */
-    }
-
-    .preview .preview-thumbnail.nav-tabs li nav-link img { /* คลาสสำหรับรูปขนาดย่อในแท็บ */
-        max-width: 100%; /* ตั้งค่าความกว้างสูงสุดเป็น 100% */
-        display: block; /* แสดงเป็นบล็อก */
-    }
-
-    .preview .preview-thumbnail.nav-tabs li a { /* คลาสสำหรับลิงก์ในแท็บ */
-        padding: 0; /* ตั้งค่าระยะห่างภายในเป็น 0 */
-        margin: 2px; /* ตั้งค่าระยะห่างภายนอกเป็น 2px */
-        border-radius: 0 !important; /* ไม่ให้มุมของขอบโค้ง */
-        border-top: none !important; /* ไม่ใช้ขอบด้านบน */
-        border-left: none !important; /* ไม่ใช้ขอบด้านซ้าย */
-        border-right: none !important; /* ไม่ใช้ขอบด้านขวา */
-    }
-
-    .preview .preview-thumbnail.nav-tabs li:last-of-type { /* คลาสสำหรับรายการแท็บสุดท้าย */
-        margin-right: 0; /* ตั้งค่าระยะห่างด้านขวาเป็น 0 */
-    }
-
-    .preview .tab-content { /* คลาสสำหรับเนื้อหาในแท็บ */
-        overflow: hidden; /* ซ่อนเนื้อหาที่ล้น */
-    }
-
-    .preview .tab-content img { /* คลาสสำหรับภาพในเนื้อหาแท็บ */
-        width: 100%; /* ตั้งค่าความกว้างเป็น 100% */
-        animation-name: opacity; /* ใช้แอนิเมชัน opacity */
-        animation-duration: .3s; /* ตั้งค่าเวลาในการแอนิเมชันเป็น 0.3 วินาที */
-    }
-
-    .details { /* คลาสสำหรับรายละเอียด */
-        display: flex; /* แสดงผลแบบยืดหยุ่น */
-        flex-direction: column; /* จัดเรียงในแนวตั้ง */
-    }
-
-    .details .rating .stars { /* คลาสสำหรับดาวในเรตติ้ง */
-        display: inline-block; /* แสดงเป็นบล็อกในแนวนอน */
-    }
-
-    .details .sizes .size { /* คลาสสำหรับขนาด */
-        margin-right: 10px; /* ตั้งค่าระยะห่างด้านขวาเป็น 10px */
-    }
-
-    .details .sizes .size:first-of-type { /* คลาสสำหรับขนาดแรก */
-        margin-left: 40px; /* ตั้งค่าระยะห่างด้านซ้ายเป็น 40px */
-    }
-
-    .details .colors .color { /* คลาสสำหรับสี */
-        display: inline-block; /* แสดงเป็นบล็อกในแนวนอน */
-        vertical-align: middle; /* จัดแนวตั้งให้อยู่ตรงกลาง */
-        margin-right: 10px; /* ตั้งค่าระยะห่างด้านขวาเป็น 10px */
-        height: 2em; /* ตั้งค่าความสูงเป็น 2em */
-        width: 2em; /* ตั้งค่าความกว้างเป็น 2em */
-        border-radius: 2px; /* ตั้งค่ามุมของสีให้โค้ง 2px */
-    }
-
-    .details .colors .color:first-of-type { /* คลาสสำหรับสีแรก */
-        margin-left: 20px; /* ตั้งค่าระยะห่างด้านซ้ายเป็น 20px */
-    }
-
-    .details .colors .not-available { /* คลาสสำหรับสีที่ไม่สามารถใช้ได้ */
-        text-align: center; /* จัดข้อความให้อยู่กึ่งกลาง */
-        line-height: 2em; /* ตั้งค่าระยะห่างระหว่างบรรทัดเป็น 2em */
-    }
-
-    .details .colors .not-available:before { /* คลาสสำหรับสัญลักษณ์ก่อนหน้าสีที่ไม่สามารถใช้ได้ */
-        font-family: Material-Design-Iconic-Font; /* ใช้ฟอนต์ Material-Design-Iconic-Font */
-        content: "\f136"; /* ใช้สัญลักษณ์ "\f136" */
-        color: #fff; /* ตั้งค่าสีของสัญลักษณ์เป็นสีขาว */
-    }
-
-    .cart-page .cart-table tr th:last-child { /* คลาสสำหรับหัวตารางสุดท้ายในหน้ารถเข็น */
-        width: 145px; /* ตั้งค่าความกว้างเป็น 145px */
-    }
-
-    .cart-table .quantity-grp { /* คลาสสำหรับกลุ่มปริมาณในตารางรถเข็น */
-        width: 120px; /* ตั้งค่าความกว้างเป็น 120px */
-    }
-
-    .cart-table .quantity-grp .input-group { /* คลาสสำหรับกลุ่มอินพุตในกลุ่มปริมาณ */
-        margin-bottom: 0; /* ตั้งค่าระยะห่างด้านล่างเป็น 0 */
-    }
-
-    .cart-table .quantity-grp .input-group-addon { /* คลาสสำหรับแอดออนในกลุ่มปริมาณ */
-        padding: 0 !important; /* ตั้งค่าระยะห่างภายในเป็น 0 */
-        text-align: center; /* จัดข้อความให้อยู่กึ่งกลาง */
-        background-color: #1ab1e3; /* ตั้งค่าสีพื้นหลังเป็นสีน้ำเงิน */
-    }
-
-    .cart-table .quantity-grp .input-group-addon a { /* คลาสสำหรับลิงก์ในแอดออนกลุ่มปริมาณ */
-        display: block; /* แสดงเป็นบล็อก */
-        padding: 8px 10px 10px; /* ตั้งค่าระยะห่างภายใน */
-        color: #fff; /* ตั้งค่าสีของตัวอักษรเป็นสีขาว */
-    }
-
-    .cart-table .quantity-grp .input-group-addon a i { /* คลาสสำหรับไอคอนในแอดออนกลุ่มปริมาณ */
-        vertical-align: middle; /* จัดแนวตั้งให้อยู่ตรงกลาง */
-    }
-
-    .cart-table .quantity-grp .form-control { /* คลาสสำหรับฟอร์มในกลุ่มปริมาณ */
-        background-color: #fff; /* ตั้งค่าสีพื้นหลังเป็นสีขาว */
-    }
-
-    .cart-table .quantity-grp .form-control + .input-group-addon { /* คลาสสำหรับแอดออนที่ติดกับฟอร์มในกลุ่มปริมาณ */
-        background-color: #1ab1e3; /* ตั้งค่าสีพื้นหลังเป็นสีน้ำเงิน */
-    }
-
-    .ec-checkout .wizard .content .form-group .btn-group.bootstrap-select.form-control { /* คลาสสำหรับกลุ่มปุ่มในฟอร์มชำระเงิน */
-        padding: 0; /* ตั้งค่าระยะห่างภายในเป็น 0 */
-    }
-
-    .ec-checkout .wizard .content .form-group .btn-group.bootstrap-select.form-control .btn-round.btn-simple { /* คลาสสำหรับปุ่มในฟอร์มชำระเงิน */
-        padding-top: 12px; /* ตั้งค่าระยะห่างด้านบนภายในเป็น 12px */
-        padding-bottom: 12px; /* ตั้งค่าระยะห่างด้านล่างภายในเป็น 12px */
-    }
-
-    .ec-checkout .wizard .content ul.card-type { /* คลาสสำหรับรายการประเภทบัตรในฟอร์มชำระเงิน */
-        font-size: 0; /* ตั้งค่าขนาดตัวอักษรเป็น 0 */
-    }
-
-    .ec-checkout .wizard .content ul.card-type li { /* คลาสสำหรับรายการในประเภทบัตรในฟอร์มชำระเงิน */
-        display: inline-block; /* แสดงเป็นบล็อกในแนวนอน */
-        margin-right: 10px; /* ตั้งค่าระยะห่างด้านขวาเป็น 10px */
-    }
-
-    .card { /* คลาสสำหรับการ์ด */
-        background: #fff; /* ตั้งค่าสีพื้นหลังเป็นสีขาว */
-        transition: .5s; /* ตั้งค่าเวลาในการเปลี่ยนแปลงเป็น 0.5 วินาที */
-        border: 0; /* ไม่ใช้เส้นขอบ */
-        border-radius: .55rem; /* ตั้งค่ามุมของขอบให้โค้ง 0.55rem */
-        position: relative; /* ตั้งค่าตำแหน่งแบบสัมพัทธ์ */
-        width: 100%; /* ตั้งค่าความกว้างเป็น 100% */
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1); /* ตั้งค่าเงาเบา ๆ */
-    }
-
-    .card .body { /* คลาสสำหรับเนื้อหาภายในการ์ด */
-        font-size: 14px; /* ตั้งค่าขนาดตัวอักษรเป็น 14px */
-        color: #424242; /* ตั้งค่าสีของตัวอักษรเป็นสีเทาเข้ม */
-        padding: 20px; /* ตั้งค่าระยะห่างภายในเป็น 20px */
-        font-weight: 400; /* ตั้งค่าความหนาของตัวอักษรเป็น 400 */
-    }
-</style>
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

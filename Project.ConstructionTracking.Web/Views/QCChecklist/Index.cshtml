@@ -1,0 +1,359 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<style>
+    .fixed-size-btn {
+        width: 80px;
+        height: 30px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .status-dot {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        color: white;
+        border: none;
+        outline: none;
+    }
+
+    .status-text {
+        font-size: 1em;
+    }
+
+    .text-yellow {
+        color: yellow;
+    }
+
+    .custom-heading {
+        line-height: 1.2;
+    }
+    
+     .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+     }
+    .image-preview img {
+        max-width: 100px;
+        max-height: 100px;
+        object-fit: cover;
+    }
+    .image-preview .remove-btn {
+        display: block;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+</style>
+<div class="page-wrapper">
+    <!-- Page header -->
+    <div class="page-header d-print-none">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-home-heart">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M21 12l-9 -9l-9 9h2v7a2 2 0 0 0 2 2h6" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.39 0 .754 .112 1.061 .304" />
+                        <path d="M19 21.5l2.518 -2.58a1.74 1.74 0 0 0 0 -2.413a1.627 1.627 0 0 0 -2.346 0l-.168 .172l-.168 -.172a1.627 1.627 0 0 0 -2.346 0a1.74 1.74 0 0 0 0 2.412l2.51 2.59z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-row align-items-baseline">
+                        <form asp-controller="SummaryUnitQC" asp-action="index">
+                            <button class="status-dot bg-transparent">
+                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="d-block d-sm-flex align-items-baseline custom-heading">
+                        <h1 class="mb-0 header-text">Unit : A008</h1>
+                        <div class="text-muted">
+                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">ดิ ออเนอร์ โยธินพัฒนา (สถานะ : สัญญา)</h5>
+                        </div>
+                    </div>
+                    <div class="align-items-right">
+                        <button class="status-dot bg-transparent">
+              
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page body -->
+    <div class="page-body">
+        <div class="container mt-1 mb-3">
+            <div class="row">
+                <div class="col-12 col-sm-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">QC 1</a></li>
+                                <li class="breadcrumb-item" aria-current="page">ตรวจครั้งที่ 1</li>
+                                <li class="breadcrumb-item" aria-current="page">ผู้ตรวจ : นายตาดี สมองไว </li>
+                            </ol>
+                        </div>
+                        <div class="card-body">
+                            <label class="form-label mb-1">
+                                <label class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="radios-inline-1">
+                                    <span class="form-check-label">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
+                                </label>
+                            </label>
+                            <label class="form-label mb-1">
+                                    <textarea class="form-control" rows="2" placeholder="ความคิดเห็น"></textarea>
+                            </label>
+                            <div class="container mt-4">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input class="form-control" type="file" id="imageInput" multiple>
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <div class="image-preview" id="imagePreview"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="card mt-1">
+                            <div class="card-body">
+                                <div class="mb-2 row">
+                                    ระดับหลังคานคสล.ถูกต้องและเรียบสม่ำเสมอ
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-12 col-lg-4 col-form-label mb-1">
+                                        <label class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="radios-inline-1">
+                                            <span class="form-check-label">ผ่าน</span>
+                                        </label>
+                                        <label class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="radios-inline-1">
+                                            <span class="form-check-label">ไม่ผ่าน</span>
+                                        </label>
+                                    </label>
+                                    <div class="col mb-1">
+                                        <textarea class="form-control" placeholder="ความคิดเห็น" rows="2"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <input class="form-control" type="file" id="imageInput" multiple>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="image-preview" id="imagePreview"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mt-1">
+                            <div class="card-body">
+                                <div class="mb-2 row">
+                                    แนวข้างคาน ได้แนว ไม่คดหรือบิด โก่ง บวม
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-12 col-lg-4 col-form-label mb-1">
+                                        <label class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="radios-inline-2">
+                                            <span class="form-check-label">ผ่าน</span>
+                                        </label>
+                                        <label class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="radios-inline-2">
+                                            <span class="form-check-label">ไม่ผ่าน</span>
+                                        </label>
+                                    </label>
+                                    <div class="col mb-1">
+                                        <textarea class="form-control" placeholder="ความคิดเห็น" rows="2"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <input class="form-control" type="file" id="imageInput" multiple>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="image-preview" id="imagePreview"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mt-1">
+                            <div class="card-body">
+                                <div class="mb-2 row">
+                                     หล่อหูช้างคสล. รับแผ่นพื้นฯครบถ้วนและถูกต้องตามมาตรฐาน
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-12 col-lg-4 col-form-label mb-1">
+                                        <label class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="radios-inline-3">
+                                            <span class="form-check-label">ผ่าน</span>
+                                        </label>
+                                        <label class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="radios-inline-3">
+                                            <span class="form-check-label">ไม่ผ่าน</span>
+                                        </label>
+                                    </label>
+                                    <div class="col mb-1">
+                                        <textarea class="form-control" placeholder="ความคิดเห็น" rows="2"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <input class="form-control" type="file" id="imageInput" multiple>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="image-preview" id="imagePreview"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mt-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item" aria-current="page">ประวัติการตรวจ ครั้งที่ 1 : 12/3/2567</li>
+                                        <li class="breadcrumb-item" aria-current="page">ผู้ตรวจ : นายตาดี สมองไว</li>
+                                    </ol>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12 col-sm-4 mb-2">
+                                            <button type="button" class="btn btn-secondary">
+                                                วิศวกรควบคุมงานลงนาม
+                                            </button>
+                                        </div>
+                                        <div class="col-12 col-sm-4 mb-2">
+                                            <button type="button" class="btn btn-success">SAVE</button>
+                                            <button type="button" class="btn btn-primary">SUBMIT</button>
+                                        </div>
+                                        <div class="col-12 col-sm-4 mb-2">
+                                            <button type="button" class="btn btn-light">
+                                                ดูเอกสารตรวจ
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">รูปภาพ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2 g-md-3">
+                        <div class="col-6">
+                            <a data-fslightbox="gallery" href="~/img/img11.jpg">
+                                <img src="~/img/img11.jpg" alt="..." class="img-thumbnail">
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a data-fslightbox="gallery" href="~/img/img12.jpg">
+                                <img src="~/img/img12.jpg" alt="..." class="img-thumbnail">
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a data-fslightbox="gallery" href="~/img/img13.jpg">
+                                <img src="~/img/img13.jpg" alt="..." class="img-thumbnail">
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a data-fslightbox="gallery" href="~/img/img8.png">
+                                <img src="~/img/img8.png" alt="..." class="img-thumbnail">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+
+        function openModal() {
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            myModal.show();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+                let previous = null;
+                radio.addEventListener('click', function () {
+                    if (previous === this) {
+                        this.checked = false;
+                        previous = null;
+                    } else {
+                        previous = this;
+                    }
+                });
+            });
+        });
+
+        document.getElementById('imageInput').addEventListener('change', function(event) {
+            const files = event.target.files;
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.innerHTML = '';
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.classList.add('image-container');
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = file.name;
+                    const removeBtn = document.createElement('button');
+                    removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-btn');
+                    removeBtn.textContent = 'Remove';
+                    removeBtn.addEventListener('click', function() {
+                        imagePreview.removeChild(div);
+                    });
+
+                    div.appendChild(img);
+                    div.appendChild(removeBtn);
+                    imagePreview.appendChild(div);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+    </script>
+
+<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+<script src="~/lib/core-ui/dist/libs/fslightbox/index.js?1692870487" defer></script>
+<script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>
+<script src="~/lib/core-ui/dist/js/demo.min.js?1692870487" defer></script>
+<script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>

@@ -29,20 +29,20 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewData["Title"] = "Check";
             return View();
         }
-        public JsonResult GetUnitList(Criteria criteria, DTParamModel param)
-        {
-            var units = _unitService.GetUnitList(criteria, param);
-            return Json(
-                             new
-                             {
-                                 success = true,
-                                 data = units,
-                                 param.draw,
-                                 iTotalRecords = param.TotalRowCount,
-                                 iTotalDisplayRecords = param.TotalRowCount
-                             });
+        //public JsonResult GetUnitList(Criteria criteria, DTParamModel param)
+        //{
+        //    var units = _unitService.GetUnitList(criteria, param);
+        //    return Json(
+        //                     new
+        //                     {
+        //                         success = true,
+        //                         data = units,
+        //                         param.draw,
+        //                         iTotalRecords = param.TotalRowCount,
+        //                         iTotalDisplayRecords = param.TotalRowCount
+        //                     });
 
-        }
+        //}
 
     }
 }
