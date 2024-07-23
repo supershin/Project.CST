@@ -49,5 +49,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     //pattern: "{controller=Login}/{action=Index}/{id?}");
-pattern: "{controller=Login}/{action=Index}/{id?}");
+pattern: "{controller=QC5Check}/{action=Index}/{id?}");
 app.Run();
