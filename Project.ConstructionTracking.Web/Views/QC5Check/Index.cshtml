@@ -601,294 +601,295 @@
     </div>
 
 </div>
-    <script>
-        const canvas = document.getElementById('signatureCanvas');
-        const ctx = canvas.getContext('2d');
-        let isDrawing = false;
 
-        canvas.addEventListener('mousedown', () => {
-            isDrawing = true;
-            ctx.beginPath();
-        });
+<script>
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
 
-        canvas.addEventListener('mousemove', (event) => {
-            if (isDrawing) {
-                ctx.lineTo(event.offsetX, event.offsetY);
-                ctx.stroke();
+    canvas.addEventListener('mousedown', () => {
+        isDrawing = true;
+        ctx.beginPath();
+    });
+
+    canvas.addEventListener('mousemove', (event) => {
+        if (isDrawing) {
+            ctx.lineTo(event.offsetX, event.offsetY);
+            ctx.stroke();
+        }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        isDrawing = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        isDrawing = false;
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+
+    function resizeCanvas() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    }
+
+    resizeCanvas();
+</script>
+<script>
+    function autocomplete(input, array) {
+        var currentFocus;
+        input.addEventListener("input", function () {
+            var a, b, i, val = this.value;
+            closeAllLists();
+            if (!val) { return false; }
+            currentFocus = -1;
+            a = document.createElement("div");
+            a.setAttribute("id", this.id + "autocomplete-list");
+            a.setAttribute("class", "autocomplete-items");
+            this.parentNode.appendChild(a);
+            for (i = 0; i < array.length; i++) {
+                if (array[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                    b = document.createElement("div");
+                    b.setAttribute("class", "autocomplete-item");
+                    b.innerHTML = "<strong>" + array[i].substr(0, val.length) + "</strong>";
+                    b.innerHTML += array[i].substr(val.length);
+                    b.innerHTML += "<input type='hidden' value='" + array[i] + "'>";
+                    b.addEventListener("click", function () {
+                        input.value = this.getElementsByTagName("input")[0].value;
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                }
             }
         });
-
-        canvas.addEventListener('mouseup', () => {
-            isDrawing = false;
-        });
-
-        canvas.addEventListener('mouseleave', () => {
-            isDrawing = false;
-        });
-
-        document.getElementById('clearBtn').addEventListener('click', () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        });
-
-        window.addEventListener('resize', resizeCanvas);
-
-        function resizeCanvas() {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-        }
-
-        resizeCanvas();
-    </script>
-    <script>
-        function autocomplete(input, array) {
-            var currentFocus;
-            input.addEventListener("input", function () {
-                var a, b, i, val = this.value;
-                closeAllLists();
-                if (!val) { return false; }
-                currentFocus = -1;
-                a = document.createElement("div");
-                a.setAttribute("id", this.id + "autocomplete-list");
-                a.setAttribute("class", "autocomplete-items");
-                this.parentNode.appendChild(a);
-                for (i = 0; i < array.length; i++) {
-                    if (array[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-                        b = document.createElement("div");
-                        b.setAttribute("class", "autocomplete-item");
-                        b.innerHTML = "<strong>" + array[i].substr(0, val.length) + "</strong>";
-                        b.innerHTML += array[i].substr(val.length);
-                        b.innerHTML += "<input type='hidden' value='" + array[i] + "'>";
-                        b.addEventListener("click", function () {
-                            input.value = this.getElementsByTagName("input")[0].value;
-                            closeAllLists();
-                        });
-                        a.appendChild(b);
-                    }
-                }
-            });
-            input.addEventListener("keydown", function (e) {
-                var x = document.getElementById(this.id + "autocomplete-list");
-                if (x) x = x.getElementsByClassName("autocomplete-item");
-                if (e.keyCode == 40) {
-                    currentFocus++;
-                    addActive(x);
-                } else if (e.keyCode == 38) {
-                    currentFocus--;
-                    addActive(x);
-                } else if (e.keyCode == 13) {
-                    e.preventDefault();
-                    if (currentFocus > -1) {
-                        if (x) x[currentFocus].click();
-                    }
-                }
-            });
-            function addActive(x) {
-                if (!x) return false;
-                removeActive(x);
-                if (currentFocus >= x.length) currentFocus = 0;
-                if (currentFocus < 0) currentFocus = (x.length - 1);
-                x[currentFocus].classList.add("autocomplete-active");
-            }
-            function removeActive(x) {
-                for (var i = 0; i < x.length; i++) {
-                    x[i].classList.remove("autocomplete-active");
+        input.addEventListener("keydown", function (e) {
+            var x = document.getElementById(this.id + "autocomplete-list");
+            if (x) x = x.getElementsByClassName("autocomplete-item");
+            if (e.keyCode == 40) {
+                currentFocus++;
+                addActive(x);
+            } else if (e.keyCode == 38) {
+                currentFocus--;
+                addActive(x);
+            } else if (e.keyCode == 13) {
+                e.preventDefault();
+                if (currentFocus > -1) {
+                    if (x) x[currentFocus].click();
                 }
             }
-            function closeAllLists(elmnt) {
-                var x = document.getElementsByClassName("autocomplete-items");
-                for (var i = 0; i < x.length; i++) {
-                    if (elmnt != x[i] && elmnt != input) {
-                        x[i].parentNode.removeChild(x[i]);
-                    }
+        });
+        function addActive(x) {
+            if (!x) return false;
+            removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (x.length - 1);
+            x[currentFocus].classList.add("autocomplete-active");
+        }
+        function removeActive(x) {
+            for (var i = 0; i < x.length; i++) {
+                x[i].classList.remove("autocomplete-active");
+            }
+        }
+        function closeAllLists(elmnt) {
+            var x = document.getElementsByClassName("autocomplete-items");
+            for (var i = 0; i < x.length; i++) {
+                if (elmnt != x[i] && elmnt != input) {
+                    x[i].parentNode.removeChild(x[i]);
                 }
             }
-            document.addEventListener("click", function (e) {
-                closeAllLists(e.target);
-            });
         }
+        document.addEventListener("click", function (e) {
+            closeAllLists(e.target);
+        });
+    }
 
-        var options = ["บริษัท วิชัยการช่าง จำกัด", "บริษัท วิน อินเวนชั่น จำกัด", "บริษัท ปัญญาฤทธิ์ โฮม คอนสตัคชั่น จำกัด", "บริษัท เอ็น9-ไพล์ เอ็นเตอร์ไพรซ์ จำกัด", "บริษัท พี เอส ซี เอ็ม จำกัด"];
-        autocomplete(document.getElementById("myInput"), options);
-    </script>
-    <script>
-        function adjustTextareaRows() {
-            const textareas = document.querySelectorAll('.custom-textarea');
-            textareas.forEach(textarea => {
-                if (window.innerWidth <= 576) {
-                    textarea.setAttribute('rows', 3);
-                } else {
-                    textarea.setAttribute('rows', 2);
-                }
-            });
-        }
+    var options = ["บริษัท วิชัยการช่าง จำกัด", "บริษัท วิน อินเวนชั่น จำกัด", "บริษัท ปัญญาฤทธิ์ โฮม คอนสตัคชั่น จำกัด", "บริษัท เอ็น9-ไพล์ เอ็นเตอร์ไพรซ์ จำกัด", "บริษัท พี เอส ซี เอ็ม จำกัด"];
+    autocomplete(document.getElementById("myInput"), options);
+</script>
+<script>
+    function adjustTextareaRows() {
+        const textareas = document.querySelectorAll('.custom-textarea');
+        textareas.forEach(textarea => {
+            if (window.innerWidth <= 576) {
+                textarea.setAttribute('rows', 3);
+            } else {
+                textarea.setAttribute('rows', 2);
+            }
+        });
+    }
 
-        // Initial adjustment
-        document.addEventListener('DOMContentLoaded', adjustTextareaRows);
+    // Initial adjustment
+    document.addEventListener('DOMContentLoaded', adjustTextareaRows);
 
-        // Adjust on window resize
-        window.addEventListener('resize', adjustTextareaRows);
-    </script>
-    <script>
+    // Adjust on window resize
+    window.addEventListener('resize', adjustTextareaRows);
+</script>
+<script>
 
-        function openModal() {
-            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-            myModal.show();
-        }
+    function openModal() {
+        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+        myModal.show();
+    }
 
-        function openModalDataQC(action, data = null) {
-            var myModal = new bootstrap.Modal(document.getElementById('insert-new-qc5'));
+    function openModalDataQC(action, data = null) {
+        var myModal = new bootstrap.Modal(document.getElementById('insert-new-qc5'));
 
-            // Set modal title based on action
-            var modalTitle = document.getElementById('insert-new-qc5-Label');
-            if (action === 'add') {
-                modalTitle.textContent = 'เพิ่มข้อมูลรายการ';
-                // Reset all form fields for adding new data
-                document.getElementById('locationSelect').value = '0';
-                document.getElementById('categorySelect').value = '0';
-                document.getElementById('defectSelect').value = '0';
-                document.getElementById('otherDefectInput').value = '';
+        // Set modal title based on action
+        var modalTitle = document.getElementById('insert-new-qc5-Label');
+        if (action === 'add') {
+            modalTitle.textContent = 'เพิ่มข้อมูลรายการ';
+            // Reset all form fields for adding new data
+            document.getElementById('locationSelect').value = '0';
+            document.getElementById('categorySelect').value = '0';
+            document.getElementById('defectSelect').value = '0';
+            document.getElementById('otherDefectInput').value = '';
+            document.getElementById('otherDefectDiv').style.display = 'none';
+            document.getElementById('commentTextarea').value = '';
+            document.getElementById('majorDefectCheckbox').checked = false;
+        } else if (action === 'edit' && data) {
+            modalTitle.textContent = 'แก้ไขข้อมูลรายการ';
+            // Populate form fields with existing data for editing
+            document.getElementById('locationSelect').value = data.location;
+            document.getElementById('categorySelect').value = data.category;
+            document.getElementById('defectSelect').value = data.defect;
+            document.getElementById('commentTextarea').value = data.comment;
+            document.getElementById('majorDefectCheckbox').checked = data.majorDefect || false;
+            // Show or hide the "other" defect input based on the defect value
+            if (data.defect == '-1') {
+                document.getElementById('otherDefectDiv').style.display = 'block';
+            } else {
                 document.getElementById('otherDefectDiv').style.display = 'none';
-                document.getElementById('commentTextarea').value = '';
-                document.getElementById('majorDefectCheckbox').checked = false;
-            } else if (action === 'edit' && data) {
-                modalTitle.textContent = 'แก้ไขข้อมูลรายการ';
-                // Populate form fields with existing data for editing
-                document.getElementById('locationSelect').value = data.location;
-                document.getElementById('categorySelect').value = data.category;
-                document.getElementById('defectSelect').value = data.defect;
-                document.getElementById('commentTextarea').value = data.comment;
-                document.getElementById('majorDefectCheckbox').checked = data.majorDefect || false;
-                // Show or hide the "other" defect input based on the defect value
-                if (data.defect == '-1') {
-                    document.getElementById('otherDefectDiv').style.display = 'block';
-                } else {
-                    document.getElementById('otherDefectDiv').style.display = 'none';
-                }
             }
-
-            // Show the modal
-            myModal.show();
         }
 
-        // Show or hide the "other" defect input based on the defect selection
-        document.getElementById('defectSelect').addEventListener('change', function () {
-            var otherDefectDiv = document.getElementById('otherDefectDiv');
-            if (this.value == '-1') {
-                otherDefectDiv.style.display = 'block';
-            } else {
-                otherDefectDiv.style.display = 'none';
+        // Show the modal
+        myModal.show();
+    }
+
+    // Show or hide the "other" defect input based on the defect selection
+    document.getElementById('defectSelect').addEventListener('change', function () {
+        var otherDefectDiv = document.getElementById('otherDefectDiv');
+        if (this.value == '-1') {
+            otherDefectDiv.style.display = 'block';
+        } else {
+            otherDefectDiv.style.display = 'none';
+        }
+    });
+
+    //document.addEventListener('DOMContentLoaded', function () {
+    //    document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+    //        let previous = null;
+    //        console.log('XX');
+    //        radio.addEventListener('click', function () {
+    //            if (previous === this) {
+    //                this.checked = false;
+    //                previous = null;
+    //            } else {
+    //                previous = this;
+    //            }
+    //        });
+    //    });
+    //});
+
+    document.getElementById('imageInput').addEventListener('change', function(event) {
+        const files = event.target.files;
+        const imagePreview = document.getElementById('imagePreview');
+        imagePreview.innerHTML = '';
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.classList.add('image-container');
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = file.name;
+                const removeBtn = document.createElement('button');
+                removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-btn');
+                removeBtn.textContent = 'Remove';
+                removeBtn.addEventListener('click', function() {
+                    imagePreview.removeChild(div);
+                });
+
+                div.appendChild(img);
+                div.appendChild(removeBtn);
+                imagePreview.appendChild(div);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('imageInput2').addEventListener('change', function(event) {
+        const files = event.target.files;
+        const imagePreview = document.getElementById('imagePreview2');
+        imagePreview.innerHTML = '';
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.classList.add('image-container');
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = file.name;
+                const removeBtn = document.createElement('button');
+                removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-btn');
+                removeBtn.textContent = 'Remove';
+                removeBtn.addEventListener('click', function() {
+                    imagePreview.removeChild(div);
+                });
+
+                div.appendChild(img);
+                div.appendChild(removeBtn);
+                imagePreview.appendChild(div);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    });
+
+</script>
+<script>
+    $(() => {
+        // Add class 'checked' to checked radio buttons on load
+        addCheckedToCheckedRadio();
+        // Initial check for collapse section
+        toggleCollapseSection();
+
+        // Bind click event to allow deselecting radio buttons
+        $('input[type="radio"].allow-deselect').click(function (event) {
+            if ($(this).hasClass('checked')) {
+                this.checked = false;
             }
-        });
-
-        //document.addEventListener('DOMContentLoaded', function () {
-        //    document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
-        //        let previous = null;
-        //        console.log('XX');
-        //        radio.addEventListener('click', function () {
-        //            if (previous === this) {
-        //                this.checked = false;
-        //                previous = null;
-        //            } else {
-        //                previous = this;
-        //            }
-        //        });
-        //    });
-        //});
-
-        document.getElementById('imageInput').addEventListener('change', function(event) {
-            const files = event.target.files;
-            const imagePreview = document.getElementById('imagePreview');
-            imagePreview.innerHTML = '';
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    const div = document.createElement('div');
-                    div.classList.add('image-container');
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.alt = file.name;
-                    const removeBtn = document.createElement('button');
-                    removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-btn');
-                    removeBtn.textContent = 'Remove';
-                    removeBtn.addEventListener('click', function() {
-                        imagePreview.removeChild(div);
-                    });
-
-                    div.appendChild(img);
-                    div.appendChild(removeBtn);
-                    imagePreview.appendChild(div);
-                };
-
-                reader.readAsDataURL(file);
-            }
-        });
-
-        document.getElementById('imageInput2').addEventListener('change', function(event) {
-            const files = event.target.files;
-            const imagePreview = document.getElementById('imagePreview2');
-            imagePreview.innerHTML = '';
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    const div = document.createElement('div');
-                    div.classList.add('image-container');
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.alt = file.name;
-                    const removeBtn = document.createElement('button');
-                    removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-btn');
-                    removeBtn.textContent = 'Remove';
-                    removeBtn.addEventListener('click', function() {
-                        imagePreview.removeChild(div);
-                    });
-
-                    div.appendChild(img);
-                    div.appendChild(removeBtn);
-                    imagePreview.appendChild(div);
-                };
-
-                reader.readAsDataURL(file);
-            }
-        });
-
-    </script>
-    <script>
-        $(() => {
-            // Add class 'checked' to checked radio buttons on load
             addCheckedToCheckedRadio();
-            // Initial check for collapse section
             toggleCollapseSection();
-
-            // Bind click event to allow deselecting radio buttons
-            $('input[type="radio"].allow-deselect').click(function (event) {
-                if ($(this).hasClass('checked')) {
-                    this.checked = false;
-                }
-                addCheckedToCheckedRadio();
-                toggleCollapseSection();
-            });
         });
+    });
 
-        function addCheckedToCheckedRadio() {
-            $('input[type="radio"].allow-deselect').each(function () {
-                $(this).toggleClass('checked', this.checked);
-            });
-        }
+    function addCheckedToCheckedRadio() {
+        $('input[type="radio"].allow-deselect').each(function () {
+            $(this).toggleClass('checked', this.checked);
+        });
+    }
 
-        function toggleCollapseSection() {
-            if ($('input[type="radio"].allow-deselect:checked').length > 0) {
-                $('#collapseSection').collapse('show');
-            } else {
-                $('#collapseSection').collapse('hide');
-            }
+    function toggleCollapseSection() {
+        if ($('input[type="radio"].allow-deselect:checked').length > 0) {
+            $('#collapseSection').collapse('show');
+        } else {
+            $('#collapseSection').collapse('hide');
         }
-    </script>
+    }
+</script>
 
 <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
 <script src="~/lib/core-ui/dist/libs/fslightbox/index.js?1692870487" defer></script>

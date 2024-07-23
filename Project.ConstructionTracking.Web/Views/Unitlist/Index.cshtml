@@ -42,10 +42,31 @@
     .card-text {
         font-size: 1rem; /* Adjust the font size of the text */
     }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .text-yellow {
+        color: yellow;
+    }
+
+    .custom-heading {
+        line-height: 1.2;
+    }
+
+    .status-dot {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        color: white;
+        border: none;
+        outline: none;
+    }
 </style>
 
 <div class="page-wrapper">
-
     <!-- Page header -->
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
@@ -60,9 +81,25 @@
                 </div>
             </div>
             <div class="card-body">
-                <h1>
-                    หน้าค้นหา Unit <small class="text-yellow"> โครงการ @projectName</small>
-                </h1>
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-row align-items-baseline">
+                        <form asp-controller="ProjectList" asp-action="index">
+                            <button class="status-dot bg-transparent">
+                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="d-block d-sm-flex align-items-baseline custom-heading">
+                        <h1 class="mb-0 header-text">ค้นหา Unit</h1>
+                        <div class="text-muted">
+                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">โครงการ @projectName</h5>
+                        </div>
+                    </div>
+                    <div class="align-items-right">
+                        <button class="status-dot bg-transparent">
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -99,7 +136,7 @@
             </div>
             <br>
             <div class="col-12">
-                <div class="container mt-5">
+                <div class="container">
                     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4" id="unit-list">
                         @foreach (var unit in Model)
                         {
@@ -107,7 +144,7 @@
                                 <div class="card" id="card-unit">
                                     <img src="/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
                                     <div class="card-body text-center">
-                                        <h5 class="card-title">Unit : @unit.UnitCode</h5>
+                                        <h5 class="card-title">@unit.UnitCode</h5>
                                         <p class="card-text">
                                             สถานะ : @unit.UnitStatusName
                                         </p>
@@ -130,7 +167,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
