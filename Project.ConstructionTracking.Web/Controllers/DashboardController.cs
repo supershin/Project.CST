@@ -6,7 +6,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 	{
 		public IActionResult Index()
 		{
-            var userName = Request.Cookies["UserName"];
+            var userName = Request.Cookies["CST.UserName"];
             ViewData["UserName"] = userName;
             return View();
 		}
