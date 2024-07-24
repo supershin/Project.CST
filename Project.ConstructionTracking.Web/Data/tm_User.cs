@@ -8,6 +8,11 @@ namespace Project.ConstructionTracking.Web.Data
 {
     public partial class tm_User
     {
+        public tm_User()
+        {
+            tr_QC_UnitCheckList = new HashSet<tr_QC_UnitCheckList>();
+        }
+
         [Key]
         public Guid ID { get; set; }
         public int? BUID { get; set; }
@@ -39,11 +44,16 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
 
+        [ForeignKey("BUID")]
+        [InverseProperty("tm_User")]
+        public virtual tm_BU? BU { get; set; }
         [ForeignKey("DepartmentID")]
-        [InverseProperty("tm_UserDepartment")]
+        [InverseProperty("tm_User")]
         public virtual tm_Ext? Department { get; set; }
         [ForeignKey("RoleID")]
-        [InverseProperty("tm_UserRole")]
-        public virtual tm_Ext? Role { get; set; }
+        [InverseProperty("tm_User")]
+        public virtual tm_Role? Role { get; set; }
+        [InverseProperty("QCSign")]
+        public virtual ICollection<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; }
     }
 }

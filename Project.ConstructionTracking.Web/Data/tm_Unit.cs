@@ -10,6 +10,7 @@ namespace Project.ConstructionTracking.Web.Data
     {
         public tm_Unit()
         {
+            tr_QC_UnitCheckList = new HashSet<tr_QC_UnitCheckList>();
             tr_UnitForm = new HashSet<tr_UnitForm>();
         }
 
@@ -63,6 +64,8 @@ namespace Project.ConstructionTracking.Web.Data
         [ForeignKey("VendorID")]
         [InverseProperty("tm_Unit")]
         public virtual tm_Vendor? Vendor { get; set; }
+        [InverseProperty("Unit")]
+        public virtual ICollection<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; }
         [InverseProperty("Unit")]
         public virtual ICollection<tr_UnitForm> tr_UnitForm { get; set; }
     }

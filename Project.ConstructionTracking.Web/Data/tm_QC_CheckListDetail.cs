@@ -6,22 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Project.ConstructionTracking.Web.Data
 {
-    public partial class tm_FormType
+    public partial class tm_QC_CheckListDetail
     {
-        public tm_FormType()
+        public tm_QC_CheckListDetail()
         {
-            tm_Form = new HashSet<tm_Form>();
+            tr_QC_UnitCheckList_Detail = new HashSet<tr_QC_UnitCheckList_Detail>();
         }
 
         [Key]
         public int ID { get; set; }
-        public int? ProjectTypeID { get; set; }
-        [StringLength(50)]
+        public int? QCCheckListID { get; set; }
+        [StringLength(200)]
         [Unicode(false)]
         public string? Name { get; set; }
-        [StringLength(500)]
-        [Unicode(false)]
-        public string? Description { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
@@ -30,10 +27,10 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
 
-        [ForeignKey("ProjectTypeID")]
-        [InverseProperty("tm_FormType")]
-        public virtual tm_Ext? ProjectType { get; set; }
-        [InverseProperty("FormType")]
-        public virtual ICollection<tm_Form> tm_Form { get; set; }
+        [ForeignKey("QCCheckListID")]
+        [InverseProperty("tm_QC_CheckListDetail")]
+        public virtual tm_QC_CheckList? QCCheckList { get; set; }
+        [InverseProperty("CheckListDetail")]
+        public virtual ICollection<tr_QC_UnitCheckList_Detail> tr_QC_UnitCheckList_Detail { get; set; }
     }
 }

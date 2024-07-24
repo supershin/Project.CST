@@ -10,11 +10,18 @@ namespace Project.ConstructionTracking.Web.Data
     {
         public tm_Ext()
         {
+            tm_DefectArea = new HashSet<tm_DefectArea>();
+            tm_FormType = new HashSet<tm_FormType>();
             tm_Project = new HashSet<tm_Project>();
+            tm_QC_CheckListProjectType = new HashSet<tm_QC_CheckList>();
+            tm_QC_CheckListQCType = new HashSet<tm_QC_CheckList>();
             tm_UnitUnitStatus = new HashSet<tm_Unit>();
             tm_UnitUnitType = new HashSet<tm_Unit>();
-            tm_UserDepartment = new HashSet<tm_User>();
-            tm_UserRole = new HashSet<tm_User>();
+            tm_User = new HashSet<tm_User>();
+            tr_QC_UnitCheckList = new HashSet<tr_QC_UnitCheckList>();
+            tr_UnitForm = new HashSet<tr_UnitForm>();
+            tr_UnitFormCheckList = new HashSet<tr_UnitFormCheckList>();
+            tr_UnitFormPassCondition = new HashSet<tr_UnitFormPassCondition>();
             tr_UnitFormResource = new HashSet<tr_UnitFormResource>();
         }
 
@@ -36,15 +43,29 @@ namespace Project.ConstructionTracking.Web.Data
         [InverseProperty("tm_Ext")]
         public virtual tm_ExtType? ExtType { get; set; }
         [InverseProperty("ProjectType")]
+        public virtual ICollection<tm_DefectArea> tm_DefectArea { get; set; }
+        [InverseProperty("ProjectType")]
+        public virtual ICollection<tm_FormType> tm_FormType { get; set; }
+        [InverseProperty("ProjectType")]
         public virtual ICollection<tm_Project> tm_Project { get; set; }
+        [InverseProperty("ProjectType")]
+        public virtual ICollection<tm_QC_CheckList> tm_QC_CheckListProjectType { get; set; }
+        [InverseProperty("QCType")]
+        public virtual ICollection<tm_QC_CheckList> tm_QC_CheckListQCType { get; set; }
         [InverseProperty("UnitStatus")]
         public virtual ICollection<tm_Unit> tm_UnitUnitStatus { get; set; }
         [InverseProperty("UnitType")]
         public virtual ICollection<tm_Unit> tm_UnitUnitType { get; set; }
         [InverseProperty("Department")]
-        public virtual ICollection<tm_User> tm_UserDepartment { get; set; }
-        [InverseProperty("Role")]
-        public virtual ICollection<tm_User> tm_UserRole { get; set; }
+        public virtual ICollection<tm_User> tm_User { get; set; }
+        [InverseProperty("QCType")]
+        public virtual ICollection<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; }
+        [InverseProperty("Status")]
+        public virtual ICollection<tr_UnitForm> tr_UnitForm { get; set; }
+        [InverseProperty("Status")]
+        public virtual ICollection<tr_UnitFormCheckList> tr_UnitFormCheckList { get; set; }
+        [InverseProperty("LockStatus")]
+        public virtual ICollection<tr_UnitFormPassCondition> tr_UnitFormPassCondition { get; set; }
         [InverseProperty("Role")]
         public virtual ICollection<tr_UnitFormResource> tr_UnitFormResource { get; set; }
     }

@@ -6,18 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Project.ConstructionTracking.Web.Data
 {
-    public partial class tm_BU
+    public partial class tr_Form_QCCheckList
     {
-        public tm_BU()
-        {
-            tm_Project = new HashSet<tm_Project>();
-            tm_User = new HashSet<tm_User>();
-        }
-
         [Key]
         public int ID { get; set; }
-        [StringLength(200)]
-        public string? Name { get; set; }
+        public int? FormID { get; set; }
+        public int? QCCheckListID { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
@@ -26,9 +20,11 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public int? UpdateBy { get; set; }
 
-        [InverseProperty("BU")]
-        public virtual ICollection<tm_Project> tm_Project { get; set; }
-        [InverseProperty("BU")]
-        public virtual ICollection<tm_User> tm_User { get; set; }
+        [ForeignKey("FormID")]
+        [InverseProperty("tr_Form_QCCheckList")]
+        public virtual tm_Form? Form { get; set; }
+        [ForeignKey("QCCheckListID")]
+        [InverseProperty("tr_Form_QCCheckList")]
+        public virtual tm_QC_CheckList? QCCheckList { get; set; }
     }
 }

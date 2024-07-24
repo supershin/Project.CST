@@ -1,8 +1,6 @@
-﻿using Project.ConstructionTracking.Web.Commons;
-using Project.ConstructionTracking.Web.Data;
+﻿using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using System.Linq;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -13,63 +11,6 @@ namespace Project.ConstructionTracking.Web.Repositories
         public UnitRepo(ContructionTrackingDbContext context)
         {
             _context = context;
-        }
-
-        public dynamic GetUnitList(Criteria criteria, DTParamModel param)
-        {
-            var query = from u in _context.tm_Unit.Where(e => e.FlagActive == true)
-                        join ut in _context.tm_UnitType
-                            on u.UnitTypeID equals ut.ID
-                        where u.UnitCode.Contains(criteria.Search) || criteria.Search == null
-                           && u.ProjectID == criteria.ProjectID && criteria.ProjectID == null
-                        select new
-                        {
-                            u.UnitID,
-                            u.ProjectID,
-                            u.UnitTypeID,
-                            UnitTypeName = ut.Name,
-                            u.UnitCode,
-                            u.Build,
-                            u.Floor,
-                            u.Block,
-                            u.Area,
-                            u.StartDate,
-                            u.EndDate,                           
-                            u.FlagActive,
-                            u.CreateDate,
-                            u.CreateBy,
-                            u.UpdateDate,
-                            u.UpdateBy
-                        };
-
-            var totalRecord = 0;
-            bool asc = param.sortDirection.ToUpper().Contains("ASC");
-            criteria.Search = criteria.Search.ToStringNullable() ?? string.Empty;
-
-            var result = query.Page(param.start, param.length, i => i.UpdateDate, param.SortColumnName, asc, out totalRecord);
-            param.TotalRowCount = totalRecord;
-
-            var data = result.AsEnumerable().Select(e => new
-            {
-                e.UnitID,
-                e.ProjectID,
-                e.UnitTypeID,
-                e.UnitTypeName,
-                e.UnitCode,
-                e.Build,
-                e.Floor,
-                e.Block,
-                e.Area,
-                StartDate = e.StartDate.ToStringDate(),
-                EndDate = e.EndDate.ToStringDate(),               
-                e.FlagActive,
-                e.CreateDate,
-                e.CreateBy,
-                UpdateDate = e.UpdateDate.ToStringDateTime(),
-                e.UpdateBy
-            }).ToList();
-         
-            return data;
         }
 
         public List<UnitModel> GetUnitList(string Search, UnitModel Model)
@@ -89,7 +30,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                         from subT3 in gMaxFormIds.DefaultIfEmpty()
                         join t4 in _context.tm_Form on subT3.FormID equals t4.ID into gForm
                         from subT4 in gForm.DefaultIfEmpty()
-                        where t1.ProjectID == Model.ProjectID
+                        where t1.ProjectID == Model.ProjectID &&
+                              (string.IsNullOrEmpty(Search) || t1.UnitCode.Contains(Search)) &&
+                              (!Model.UnitStatusID.HasValue || t1.UnitStatusID == Model.UnitStatusID)
                         select new UnitModel
                         {
                             UnitID = t1.UnitID,
@@ -101,13 +44,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                             FormName = subT4.Name
                         };
 
-            var result = query.ToList();
-
-            return result;
+            return query.ToList();
         }
-
-
-
 
         public dynamic GetUnitTypeList()
         {
@@ -118,14 +56,11 @@ namespace Project.ConstructionTracking.Web.Repositories
                             u.Name
                         };
 
-            var data = query.AsEnumerable().Select(e => new
+            return query.AsEnumerable().Select(e => new
             {
                 e.ID,
                 e.Name
-
             }).ToList();
-
-            return data;
         }
     }
 }

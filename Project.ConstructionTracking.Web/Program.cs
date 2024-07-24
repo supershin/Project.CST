@@ -29,6 +29,9 @@ builder.Services.AddScoped<IProjectFormRepo, ProjectFormRepo>();
 builder.Services.AddScoped<IFormOverallService, FormOverallService>();
 builder.Services.AddScoped<IFormOverallRepo, FormOverallRepo>();
 
+builder.Services.AddScoped<IGetDDLService, GetDDLService>();
+builder.Services.AddScoped<IGetDDLRepo, GetDDLRepo>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -49,5 +52,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     //pattern: "{controller=Login}/{action=Index}/{id?}");
-pattern: "{controller=Login}/{action=Index}/{id?}");
+pattern: "{controller=SummaryUnitForm}/{action=Index}/{id?}");
 app.Run();

@@ -6,12 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Project.ConstructionTracking.Web.Data
 {
-    public partial class tr_UnitFormAction
+    public partial class tr_QC_UnitCheckList_Action
     {
         [Key]
         public int ID { get; set; }
-        public Guid? UnitFormID { get; set; }
-        public int? PassConditionID { get; set; }
+        public Guid? QCUnitCheckListID { get; set; }
         public int? RoleID { get; set; }
         public int? StatusID { get; set; }
         [Unicode(false)]
@@ -25,17 +24,14 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? CraeteDate { get; set; }
         public Guid? CreateBy { get; set; }
 
-        [ForeignKey("PassConditionID")]
-        [InverseProperty("tr_UnitFormAction")]
-        public virtual tr_UnitFormPassCondition? PassCondition { get; set; }
+        [ForeignKey("QCUnitCheckListID")]
+        [InverseProperty("tr_QC_UnitCheckList_Action")]
+        public virtual tr_QC_UnitCheckList? QCUnitCheckList { get; set; }
         [ForeignKey("RoleID")]
-        [InverseProperty("tr_UnitFormAction")]
+        [InverseProperty("tr_QC_UnitCheckList_Action")]
         public virtual tm_Role? Role { get; set; }
         [ForeignKey("StatusID")]
-        [InverseProperty("tr_UnitFormAction")]
+        [InverseProperty("tr_QC_UnitCheckList_Action")]
         public virtual tr_RoleActionStatus? Status { get; set; }
-        [ForeignKey("UnitFormID")]
-        [InverseProperty("tr_UnitFormAction")]
-        public virtual tr_UnitForm? UnitForm { get; set; }
     }
 }

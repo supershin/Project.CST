@@ -10,6 +10,75 @@
 <!-- Select2 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
+<style>
+    .product_item {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+    .product_item .body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+    .product_item .cp_img {
+        cursor: pointer;
+        width: 100%;
+        padding: 15px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .product_item .cp_img img {
+        transition: all 0.2s ease-in-out;
+        border-radius: 6px;
+    }
+
+    .product_item .product_details {
+        text-align: center;
+        margin-top: auto; /* Pushes the content to the bottom */
+    }
+
+    .product_item .product_details h5 {
+        margin-bottom: 5px;
+    }
+
+    .product_item .product_details h5 a {
+        font-size: 16px;
+        color: #444;
+    }
+
+    .product_item .product_details h5 a:hover {
+        text-decoration: none;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .text-yellow {
+        color: yellow;
+    }
+
+    .custom-heading {
+        line-height: 1.2;
+    }
+
+    .status-dot {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        color: white;
+        border: none;
+        outline: none;
+    }
+
+</style>
+
 <div class="page-wrapper">
     <!-- Page header -->
     <div class="page-header d-print-none">
@@ -25,7 +94,25 @@
                 </div>
             </div>
             <div class="card-body">
-                <h2>ค้นหาโครงการ</h2>
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-row align-items-baseline">
+                        <form asp-controller="Dashboard" asp-action="index">
+                            <button class="status-dot bg-transparent">
+                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="d-block d-sm-flex align-items-baseline custom-heading">
+                        <h1 class="mb-0 header-text">ค้นหาโครงการ</h1>
+                        <div class="text-muted">
+                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0"></h5>
+                        </div>
+                    </div>
+                    <div class="align-items-right">
+                        <button class="status-dot bg-transparent">
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -83,66 +170,8 @@
         </div>
 
     </div>
-
-    <style>
-        .product_item {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-        }
-
-        .product_item .body {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-        }
-
-        .product_item .cp_img {
-            cursor: pointer;
-            width: 100%;
-            padding: 15px;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .product_item .cp_img img {
-            transition: all 0.2s ease-in-out;
-            border-radius: 6px;
-        }
-
-        .product_item .product_details {
-            text-align: center;
-            margin-top: auto; /* Pushes the content to the bottom */
-        }
-
-        .product_item .product_details h5 {
-            margin-bottom: 5px;
-        }
-
-        .product_item .product_details h5 a {
-            font-size: 16px;
-            color: #444;
-        }
-
-        .product_item .product_details h5 a:hover {
-            text-decoration: none;
-        }
-    </style>
-
-
 </div>
 
-
-
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<!-- jQuery UI -->
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>
-<script src="~/lib/core-ui/dist/js/demo.min.js?1692870487" defer></script>
-<script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>
 <script>
     $(document).ready(function () {
         $("#Search_Project").autocomplete({
@@ -177,3 +206,13 @@
         });
     });
 </script>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<!-- jQuery UI -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>
+<script src="~/lib/core-ui/dist/js/demo.min.js?1692870487" defer></script>
+<script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>

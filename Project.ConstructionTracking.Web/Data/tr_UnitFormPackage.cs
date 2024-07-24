@@ -10,7 +10,7 @@ namespace Project.ConstructionTracking.Web.Data
     {
         [Key]
         public int ID { get; set; }
-        public int? UnitFormID { get; set; }
+        public Guid? UnitFormID { get; set; }
         public int? FormID { get; set; }
         public int? GroupID { get; set; }
         public int? PackageID { get; set; }
@@ -23,5 +23,18 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         [StringLength(10)]
         public string? UpdateBy { get; set; }
+
+        [ForeignKey("FormID")]
+        [InverseProperty("tr_UnitFormPackage")]
+        public virtual tm_Form? Form { get; set; }
+        [ForeignKey("GroupID")]
+        [InverseProperty("tr_UnitFormPackage")]
+        public virtual tm_FormGroup? Group { get; set; }
+        [ForeignKey("PackageID")]
+        [InverseProperty("tr_UnitFormPackage")]
+        public virtual tm_FormPackage? Package { get; set; }
+        [ForeignKey("UnitFormID")]
+        [InverseProperty("tr_UnitFormPackage")]
+        public virtual tr_UnitForm? UnitForm { get; set; }
     }
 }

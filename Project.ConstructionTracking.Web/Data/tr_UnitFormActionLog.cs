@@ -21,6 +21,9 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? CraeteDate { get; set; }
         public Guid? CreateBy { get; set; }
 
+        [ForeignKey("GroupID")]
+        [InverseProperty("tr_UnitFormActionLog")]
+        public virtual tm_FormGroup? Group { get; set; }
         [ForeignKey("RoleID")]
         [InverseProperty("tr_UnitFormActionLog")]
         public virtual tm_Role? Role { get; set; }

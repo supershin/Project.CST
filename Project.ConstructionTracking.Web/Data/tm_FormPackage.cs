@@ -11,6 +11,8 @@ namespace Project.ConstructionTracking.Web.Data
         public tm_FormPackage()
         {
             tm_FormCheckList = new HashSet<tm_FormCheckList>();
+            tr_UnitFormCheckList = new HashSet<tr_UnitFormCheckList>();
+            tr_UnitFormPackage = new HashSet<tr_UnitFormPackage>();
         }
 
         [Key]
@@ -33,5 +35,9 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual tm_FormGroup? Group { get; set; }
         [InverseProperty("Package")]
         public virtual ICollection<tm_FormCheckList> tm_FormCheckList { get; set; }
+        [InverseProperty("Package")]
+        public virtual ICollection<tr_UnitFormCheckList> tr_UnitFormCheckList { get; set; }
+        [InverseProperty("Package")]
+        public virtual ICollection<tr_UnitFormPackage> tr_UnitFormPackage { get; set; }
     }
 }

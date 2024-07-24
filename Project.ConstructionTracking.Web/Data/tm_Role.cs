@@ -10,6 +10,8 @@ namespace Project.ConstructionTracking.Web.Data
     {
         public tm_Role()
         {
+            tm_User = new HashSet<tm_User>();
+            tr_QC_UnitCheckList_Action = new HashSet<tr_QC_UnitCheckList_Action>();
             tr_RoleActionStatus = new HashSet<tr_RoleActionStatus>();
             tr_UnitFormAction = new HashSet<tr_UnitFormAction>();
             tr_UnitFormActionLog = new HashSet<tr_UnitFormActionLog>();
@@ -28,6 +30,10 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public int? UpdateBy { get; set; }
 
+        [InverseProperty("Role")]
+        public virtual ICollection<tm_User> tm_User { get; set; }
+        [InverseProperty("Role")]
+        public virtual ICollection<tr_QC_UnitCheckList_Action> tr_QC_UnitCheckList_Action { get; set; }
         [InverseProperty("Role")]
         public virtual ICollection<tr_RoleActionStatus> tr_RoleActionStatus { get; set; }
         [InverseProperty("Role")]
