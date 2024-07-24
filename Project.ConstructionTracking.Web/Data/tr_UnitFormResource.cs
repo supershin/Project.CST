@@ -22,6 +22,9 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public int? UpdateBy { get; set; }
 
+        [ForeignKey("PassConditionID")]
+        [InverseProperty("tr_UnitFormResource")]
+        public virtual tr_UnitFormPassCondition? PassCondition { get; set; }
         [ForeignKey("ResourceID")]
         [InverseProperty("tr_UnitFormResource")]
         public virtual tm_Resource? Resource { get; set; }

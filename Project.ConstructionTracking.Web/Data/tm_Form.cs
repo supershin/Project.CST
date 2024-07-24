@@ -11,6 +11,10 @@ namespace Project.ConstructionTracking.Web.Data
         public tm_Form()
         {
             tm_FormGroup = new HashSet<tm_FormGroup>();
+            tr_Form_QCCheckList = new HashSet<tr_Form_QCCheckList>();
+            tr_UnitForm = new HashSet<tr_UnitForm>();
+            tr_UnitFormCheckList = new HashSet<tr_UnitFormCheckList>();
+            tr_UnitFormPackage = new HashSet<tr_UnitFormPackage>();
         }
 
         [Key]
@@ -22,7 +26,6 @@ namespace Project.ConstructionTracking.Web.Data
         [StringLength(500)]
         [Unicode(false)]
         public string? Description { get; set; }
-        public int? FormRefID { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         public decimal? Progress { get; set; }
         public int? DurationDay { get; set; }
@@ -40,5 +43,13 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual tm_FormType? FormType { get; set; }
         [InverseProperty("Form")]
         public virtual ICollection<tm_FormGroup> tm_FormGroup { get; set; }
+        [InverseProperty("Form")]
+        public virtual ICollection<tr_Form_QCCheckList> tr_Form_QCCheckList { get; set; }
+        [InverseProperty("Form")]
+        public virtual ICollection<tr_UnitForm> tr_UnitForm { get; set; }
+        [InverseProperty("Form")]
+        public virtual ICollection<tr_UnitFormCheckList> tr_UnitFormCheckList { get; set; }
+        [InverseProperty("Form")]
+        public virtual ICollection<tr_UnitFormPackage> tr_UnitFormPackage { get; set; }
     }
 }

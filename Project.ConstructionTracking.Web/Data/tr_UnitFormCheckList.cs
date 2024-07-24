@@ -26,6 +26,21 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public int? UpdateBy { get; set; }
 
+        [ForeignKey("CheckListID")]
+        [InverseProperty("tr_UnitFormCheckList")]
+        public virtual tm_FormCheckList? CheckList { get; set; }
+        [ForeignKey("FormID")]
+        [InverseProperty("tr_UnitFormCheckList")]
+        public virtual tm_Form? Form { get; set; }
+        [ForeignKey("GroupID")]
+        [InverseProperty("tr_UnitFormCheckList")]
+        public virtual tm_FormGroup? Group { get; set; }
+        [ForeignKey("PackageID")]
+        [InverseProperty("tr_UnitFormCheckList")]
+        public virtual tm_FormPackage? Package { get; set; }
+        [ForeignKey("StatusID")]
+        [InverseProperty("tr_UnitFormCheckList")]
+        public virtual tm_Ext? Status { get; set; }
         [ForeignKey("UnitFormID")]
         [InverseProperty("tr_UnitFormCheckList")]
         public virtual tr_UnitForm? UnitForm { get; set; }

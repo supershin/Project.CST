@@ -8,6 +8,11 @@ namespace Project.ConstructionTracking.Web.Data
 {
     public partial class tm_FormCheckList
     {
+        public tm_FormCheckList()
+        {
+            tr_UnitFormCheckList = new HashSet<tr_UnitFormCheckList>();
+        }
+
         [Key]
         public int ID { get; set; }
         public int? PackageID { get; set; }
@@ -26,5 +31,7 @@ namespace Project.ConstructionTracking.Web.Data
         [ForeignKey("PackageID")]
         [InverseProperty("tm_FormCheckList")]
         public virtual tm_FormPackage? Package { get; set; }
+        [InverseProperty("CheckList")]
+        public virtual ICollection<tr_UnitFormCheckList> tr_UnitFormCheckList { get; set; }
     }
 }

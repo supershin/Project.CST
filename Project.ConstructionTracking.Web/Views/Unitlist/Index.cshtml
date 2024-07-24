@@ -6,6 +6,7 @@
     var unitsJson = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
     var projectId = ViewBag.ProjectId;
     var projectName = ViewBag.ProjectName;
+    var ddlList = ViewBag.DDLList as List<Project.ConstructionTracking.Web.Models.GetDDL>;
 }
 @model List<Project.ConstructionTracking.Web.Models.UnitModel>
 
@@ -108,7 +109,7 @@
         <div class="container-xl">
             <div class="col-12">
                 <div class="card-body">
-                    <form id="form-search" method="post">
+                    <form id="form-search" method="post" asp-controller="Unitlist" asp-action="SearchUnits">
                         <input type="hidden" id="ProjectId" name="ProjectId" value="@projectId" />
                         <input type="hidden" id="ProjectName" name="ProjectName" value="@projectName" />
                         <div class="row">
@@ -119,9 +120,21 @@
                                             <input type="text" id="Search" name="Search" class="form-control" placeholder="พิมพ์ Unit เพื่อค้นหา...">
                                         </div>
                                         <div class="col-auto">
+                                            <select id="ddlList" name="unitStatusId" class="form-control">
+                                                <option value="">ทั้งหมด</option>
+                                                @if (ddlList != null)
+                                                {
+                                                    foreach (var item in ddlList)
+                                                    {
+                                                        <option value="@item.Value">@item.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-auto">
                                             <button type="submit" class="btn btn-icon" aria-label="Button">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24 24H0z" fill="none" />
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                     <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
                                                     <path d="M21 21l-6 -6" />
                                                 </svg>
@@ -151,6 +164,9 @@
                                         @if (!string.IsNullOrEmpty(unit.FormName))
                                         {
                                             <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
+                                                <input type="hidden" name="projectId" value="@projectId" />
+                                                <input type="hidden" name="projectName" value="@projectName" />
+                                                <input type="hidden" name="unitId" value="@unit.UnitID" />
                                                 <button type="submit" class="btn btn-primary btn-sm">@unit.FormName</button>
                                             </form>
                                         }
@@ -162,8 +178,6 @@
                                 </div>
                             </div>
                         }
-
-                        <!-- Add more columns with similar structure as needed -->
                     </div>
                 </div>
             </div>
@@ -189,11 +203,15 @@
         $("#form-search").on("submit", function (e) {
             e.preventDefault();
             var searchTerm = $("#Search").val().toLowerCase();
+            var selectedUnitStatusId = $("#ddlList").val();
+
             var filteredUnits = allUnits.filter(function (unit) {
-                return unit.UnitCode.toLowerCase().includes(searchTerm);
+                var matchesSearchTerm = unit.UnitCode.toLowerCase().includes(searchTerm);
+                var matchesUnitStatus = !selectedUnitStatusId || unit.UnitStatusID == selectedUnitStatusId;
+                return matchesSearchTerm && matchesUnitStatus;
             });
 
-            if (searchTerm === "") {
+            if (searchTerm === "" && !selectedUnitStatusId) {
                 filteredUnits = allUnits;
             }
 
@@ -206,16 +224,22 @@
             $.each(units, function (index, unit) {
                 var unitCard = `
                         <div class="col unit-card" data-unit-code="${unit.UnitCode}">
-                            <div class="card">
+                            <div class="card" id="card-unit">
                                 <img src="/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
                                 <div class="card-body text-center">
-                                    <h5 class="card-title">Unit : ${unit.UnitCode}</h5>
+                                    <h5 class="card-title">${unit.UnitCode}</h5>
                                     <p class="card-text">
                                         สถานะ : ${unit.UnitStatusName}
                                     </p>
-                                    <form action="@Url.Action("index", "Tracking")" method="post">
-                                        <button type="submit" class="btn btn-primary btn-sm">งวดที่ 1</button>
-                                    </form>
+                                    ${unit.FormName
+                        ? `<form action="@Url.Action("GoToByRole", "Unitlist")" method="post">
+                                                <input type="hidden" name="projectId" value="@projectId" />
+                                                <input type="hidden" name="projectName" value="@projectName" />
+                                                <input type="hidden" name="unitId" value="${unit.UnitID}" />
+                                                <button type="submit" class="btn btn-primary btn-sm">${unit.FormName}</button>
+                                            </form>`
+                        : `<button type="button" class="btn btn-secondary btn-sm">ยังไม่เริ่มตรวจ</button>`
+                    }
                                 </div>
                             </div>
                         </div>`;

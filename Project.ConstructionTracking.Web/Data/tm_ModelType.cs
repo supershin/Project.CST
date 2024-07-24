@@ -16,6 +16,9 @@ namespace Project.ConstructionTracking.Web.Data
         [Key]
         public int ID { get; set; }
         public Guid? ProjectID { get; set; }
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? Code { get; set; }
         [StringLength(100)]
         [Unicode(false)]
         public string? Name { get; set; }

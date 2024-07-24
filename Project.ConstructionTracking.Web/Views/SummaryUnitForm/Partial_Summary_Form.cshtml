@@ -1,0 +1,292 @@
+﻿<style>
+        .status-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        border: none;
+        outline: none;
+    }
+</style>
+<div class="container-xl">
+    <div class="row row-cards">
+        <div class="col-12">
+            <div class="card card-link card-link-pop">
+                <div class="row justify-content-center">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button type="submit" class="btn btn-success fixed-size-btn">
+                                        งวดที่ 1
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button type="submit" class="status-dot bg-green">
+                                        <span class="status-text">
+                                            PE
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <div class="status-dot bg-green">
+                                    <span class="status-text">QC</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","PMApprove")" method="post">
+                                    <button type="submit" class="status-dot bg-green">
+                                        <span class="status-text">
+                                            PM
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card card-link card-link-pop">
+                <div class="row justify-content-center">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button type="submit" class="btn btn-success fixed-size-btn">
+                                        งวดที่ 2
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button class="status-dot bg-green">
+                                        <span class="status-text">PE</span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","PMApprove")" method="post">
+                                    <button type="submit" class="status-dot bg-green">
+                                        <span class="status-text">
+                                            PM
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <div class="status-dot bg-primary">
+                                    <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card card-link card-link-pop">
+                <div class="row justify-content-center">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button type="submit" class="btn btn-success fixed-size-btn">
+                                        งวดที่ 3
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button class="status-dot bg-green">
+                                        <span class="status-text">PE</span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","PMApprove")" method="post">
+                                    <button type="submit" class="status-dot bg-green">
+                                        <span class="status-text">
+                                            PM
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","Conditionalpass")" method="post">
+                                    <button class="status-dot bg-primary">
+                                        <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card card-link card-link-pop">
+                <div class="row justify-content-center">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button type="submit" class="btn btn-danger fixed-size-btn">
+                                        งวดที่ 4
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button class="status-dot bg-green">
+                                        <span class="status-text">PE</span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","PMApprove")" method="post">
+                                    <button type="submit" class="status-dot status-dot-animated bg-danger">
+                                        <span class="status-text">
+                                            PM
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card card-link card-link-pop">
+                <div class="row justify-content-center">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button class="btn fixed-size-btn" style="background-color: orange; color: white;">
+                                        งวดที่ 5
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button class="status-dot status-dot-animated" style="background-color: orange;">
+                                        <span class="status-text">PE</span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <div class="status-dot status-dot-animated" style="background-color: orange;">
+                                    <span class="status-text">QC</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="status-dot" style="background-color: #C0C0C0;">
+                                    <span class="status-text">PM</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card card-link card-link-pop">
+                <div class="row justify-content-center">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
+                                        งวดที่ 6
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button class="status-dot" style="background-color: #C0C0C0;">
+                                        <span class="status-text">PE</span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","PMApprove")" method="post">
+                                    <button type="submit" class="status-dot" style="background-color: #C0C0C0;">
+                                        <span class="status-text">
+                                            PM
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card card-link card-link-pop">
+                <div class="row justify-content-center">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
+                                        งวดที่ 7
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","FormGroup")" method="post">
+                                    <button class="status-dot" style="background-color: #C0C0C0;">
+                                        <span class="status-text">PE</span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <div class="status-dot" style="background-color: #C0C0C0;">
+                                    <span class="status-text">QC</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <form action="@Url.Action("index","PMApprove")" method="post">
+                                    <button type="submit" class="status-dot" style="background-color: #C0C0C0;">
+                                        <span class="status-text">
+                                            PM
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

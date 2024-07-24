@@ -13,6 +13,8 @@ namespace Project.ConstructionTracking.Web.Data
             tr_UnitFormAction = new HashSet<tr_UnitFormAction>();
             tr_UnitFormActionLog = new HashSet<tr_UnitFormActionLog>();
             tr_UnitFormCheckList = new HashSet<tr_UnitFormCheckList>();
+            tr_UnitFormPackage = new HashSet<tr_UnitFormPackage>();
+            tr_UnitFormPassCondition = new HashSet<tr_UnitFormPassCondition>();
             tr_UnitFormResource = new HashSet<tr_UnitFormResource>();
         }
 
@@ -41,21 +43,37 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public int? UpdateBy { get; set; }
 
+        [ForeignKey("FormID")]
+        [InverseProperty("tr_UnitForm")]
+        public virtual tm_Form? Form { get; set; }
         [ForeignKey("ProjectID")]
         [InverseProperty("tr_UnitForm")]
         public virtual tm_Project? Project { get; set; }
+        [ForeignKey("StatusID")]
+        [InverseProperty("tr_UnitForm")]
+        public virtual tm_Ext? Status { get; set; }
+        [ForeignKey("StatusID")]
+        [InverseProperty("tr_UnitForm")]
+        public virtual tm_UnitFormStatus? StatusNavigation { get; set; }
         [ForeignKey("UnitID")]
         [InverseProperty("tr_UnitForm")]
         public virtual tm_Unit? Unit { get; set; }
         [ForeignKey("VendorID")]
         [InverseProperty("tr_UnitForm")]
         public virtual tm_Vendor? Vendor { get; set; }
+        [ForeignKey("VendorResourceID")]
+        [InverseProperty("tr_UnitForm")]
+        public virtual tm_Resource? VendorResource { get; set; }
         [InverseProperty("UnitForm")]
         public virtual ICollection<tr_UnitFormAction> tr_UnitFormAction { get; set; }
         [InverseProperty("UnitForm")]
         public virtual ICollection<tr_UnitFormActionLog> tr_UnitFormActionLog { get; set; }
         [InverseProperty("UnitForm")]
         public virtual ICollection<tr_UnitFormCheckList> tr_UnitFormCheckList { get; set; }
+        [InverseProperty("UnitForm")]
+        public virtual ICollection<tr_UnitFormPackage> tr_UnitFormPackage { get; set; }
+        [InverseProperty("UnitForm")]
+        public virtual ICollection<tr_UnitFormPassCondition> tr_UnitFormPassCondition { get; set; }
         [InverseProperty("UnitForm")]
         public virtual ICollection<tr_UnitFormResource> tr_UnitFormResource { get; set; }
     }

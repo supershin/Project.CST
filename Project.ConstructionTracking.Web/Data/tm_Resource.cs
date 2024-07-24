@@ -10,6 +10,9 @@ namespace Project.ConstructionTracking.Web.Data
     {
         public tm_Resource()
         {
+            tr_QC_UnitCheckList = new HashSet<tr_QC_UnitCheckList>();
+            tr_QC_UnitCheckList_Resource = new HashSet<tr_QC_UnitCheckList_Resource>();
+            tr_UnitForm = new HashSet<tr_UnitForm>();
             tr_UnitFormResource = new HashSet<tr_UnitFormResource>();
         }
 
@@ -30,6 +33,12 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public int? UpdateBy { get; set; }
 
+        [InverseProperty("QCSignResource")]
+        public virtual ICollection<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; }
+        [InverseProperty("Resource")]
+        public virtual ICollection<tr_QC_UnitCheckList_Resource> tr_QC_UnitCheckList_Resource { get; set; }
+        [InverseProperty("VendorResource")]
+        public virtual ICollection<tr_UnitForm> tr_UnitForm { get; set; }
         [InverseProperty("Resource")]
         public virtual ICollection<tr_UnitFormResource> tr_UnitFormResource { get; set; }
     }

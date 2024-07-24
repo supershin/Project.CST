@@ -10,6 +10,8 @@ namespace Project.ConstructionTracking.Web.Data
     {
         public tr_RoleActionStatus()
         {
+            tr_QC_UnitCheckList = new HashSet<tr_QC_UnitCheckList>();
+            tr_QC_UnitCheckList_Action = new HashSet<tr_QC_UnitCheckList_Action>();
             tr_UnitFormAction = new HashSet<tr_UnitFormAction>();
             tr_UnitFormActionLog = new HashSet<tr_UnitFormActionLog>();
         }
@@ -31,6 +33,10 @@ namespace Project.ConstructionTracking.Web.Data
         [ForeignKey("RoleID")]
         [InverseProperty("tr_RoleActionStatus")]
         public virtual tm_Role? Role { get; set; }
+        [InverseProperty("QCStatus")]
+        public virtual ICollection<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; }
+        [InverseProperty("Status")]
+        public virtual ICollection<tr_QC_UnitCheckList_Action> tr_QC_UnitCheckList_Action { get; set; }
         [InverseProperty("Status")]
         public virtual ICollection<tr_UnitFormAction> tr_UnitFormAction { get; set; }
         [InverseProperty("Status")]
