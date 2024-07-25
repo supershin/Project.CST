@@ -11,7 +11,7 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             _ProjectService = projectService;
         }
-
+           
         public IActionResult Index()
         {
             var projects = _ProjectService.GetProjectList();
@@ -29,7 +29,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 
         [HttpGet]
         public JsonResult SearchProjects(string term)
-        {
+        { 
             var projects = _ProjectService.SearchProjects(term);
             return Json(projects);
         }
@@ -38,23 +38,6 @@ namespace Project.ConstructionTracking.Web.Controllers
         public IActionResult GoToUnitlist(string projectId, string projectName)
         {
             return RedirectToAction("Index", "Unitlist", new { projectId, projectName });
-            //var userName = Request.Cookies["UserName"];
-            //if (userName == "PE")
-            //{
-                
-            //}
-            //else if (userName == "PM")
-            //{
-            //    return RedirectToAction("Index", "PMFormcheck", new { projectId, projectName });
-            //}
-            //else if (userName == "QC")
-            //{
-            //    return RedirectToAction("Index", "SummaryUnitQC", new { projectId, projectName });
-            //}
-            //else
-            //{
-            //    return RedirectToAction("Index", "Unitlist", new { projectId, projectName });
-            //}
         }
 
     }
