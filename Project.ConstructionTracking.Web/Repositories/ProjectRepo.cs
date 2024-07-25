@@ -14,44 +14,59 @@ namespace Project.ConstructionTracking.Web.Repositories
         }
         public dynamic GetProjectList()
         {
-            var query = from u in _context.tm_Project.Where(e => e.FlagActive == true)
-                        select new
-                        {
-                            u.ProjectID,
-                            u.ProjectCode,
-                            u.ProjectName
-                        };
-
-            var data = query.AsEnumerable().Select(e => new
+            try
             {
-                e.ProjectID,
-                e.ProjectCode,
-                e.ProjectName
+                var query = from u in _context.tm_Project.Where(e => e.FlagActive == true)
+                            select new
+                            {
+                                u.ProjectID,
+                                u.ProjectCode,
+                                u.ProjectName
+                            };
 
-            }).ToList();
+                var data = query.AsEnumerable().Select(e => new
+                {
+                    e.ProjectID,
+                    e.ProjectCode,
+                    e.ProjectName
 
-            return data;
+                }).ToList();
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                return new { ex.Message, error = "Catch ใน Repo" };
+            }
         }
 
         public dynamic SearchProjects(string term)
         {
-            var query = from u in _context.tm_Project
-                        where u.FlagActive == true && u.ProjectName.Contains(term)
-                        select new
-                        {
-                            u.ProjectID,
-                            u.ProjectCode,
-                            u.ProjectName
-                        };
-
-            var data = query.AsEnumerable().Select(e => new
+            try
             {
-                e.ProjectID,
-                e.ProjectCode,
-                e.ProjectName
-            }).ToList();
+                var query = from u in _context.tm_Project
+                            where u.FlagActive == true && u.ProjectName.Contains(term)
+                            select new
+                            {
+                                u.ProjectID,
+                                u.ProjectCode,
+                                u.ProjectName
+                            };
 
-            return data;
+                var data = query.AsEnumerable().Select(e => new
+                {
+                    e.ProjectID,
+                    e.ProjectCode,
+                    e.ProjectName
+                }).ToList();
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                return new { ex.Message , error = "Catch ใน Repo" };
+            }
         }
+
     }
 }

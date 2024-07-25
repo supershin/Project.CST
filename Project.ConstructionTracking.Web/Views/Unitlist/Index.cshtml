@@ -231,15 +231,14 @@
                                     <p class="card-text">
                                         สถานะ : ${unit.UnitStatusName}
                                     </p>
-                                    ${unit.FormName
-                        ? `<form action="@Url.Action("GoToByRole", "Unitlist")" method="post">
-                                                <input type="hidden" name="projectId" value="@projectId" />
-                                                <input type="hidden" name="projectName" value="@projectName" />
-                                                <input type="hidden" name="unitId" value="${unit.UnitID}" />
-                                                <button type="submit" class="btn btn-primary btn-sm">${unit.FormName}</button>
-                                            </form>`
-                        : `<button type="button" class="btn btn-secondary btn-sm">ยังไม่เริ่มตรวจ</button>`
-                    }
+                                    ${unit.FormName ? `<form action="@Url.Action("GoToByRole", "Unitlist")" method="post">
+                                                            <input type="hidden" name="projectId" value="@projectId" />
+                                                            <input type="hidden" name="projectName" value="@projectName" />
+                                                            <input type="hidden" name="unitId" value="${unit.UnitID}" />
+                                                            <button type="submit" class="btn btn-primary btn-sm">${unit.FormName}</button>
+                                                        </form>`
+                                        : `<button type="button" class="btn btn-secondary btn-sm">ยังไม่เริ่มตรวจ</button>`
+                                    }
                                 </div>
                             </div>
                         </div>`;
