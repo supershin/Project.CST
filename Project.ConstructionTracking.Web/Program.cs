@@ -32,6 +32,12 @@ builder.Services.AddScoped<IFormOverallRepo, FormOverallRepo>();
 builder.Services.AddScoped<IGetDDLService, GetDDLService>();
 builder.Services.AddScoped<IGetDDLRepo, GetDDLRepo>();
 
+builder.Services.AddScoped<ISummeryUnitFormService, SummeryUnitFormService>();
+builder.Services.AddScoped<ISummeryUnitFormRepo, SummeryUnitFormRepo>();
+
+builder.Services.AddScoped<IFormGroupService, FormGroupService>();
+builder.Services.AddScoped<IFormGroupRepo, FormGroupRepo>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

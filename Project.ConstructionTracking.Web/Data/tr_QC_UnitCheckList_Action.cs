@@ -12,6 +12,9 @@ namespace Project.ConstructionTracking.Web.Data
         public int ID { get; set; }
         public Guid? QCUnitCheckListID { get; set; }
         public int? RoleID { get; set; }
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? ActionType { get; set; }
         public int? StatusID { get; set; }
         [Unicode(false)]
         public string? Remark { get; set; }

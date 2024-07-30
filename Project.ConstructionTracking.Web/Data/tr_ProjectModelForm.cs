@@ -11,8 +11,7 @@ namespace Project.ConstructionTracking.Web.Data
         [Key]
         public int ID { get; set; }
         public Guid? ProjectID { get; set; }
-        [StringLength(10)]
-        public string? ModelTypeID { get; set; }
+        public int? ModelTypeID { get; set; }
         public int? FormTypeID { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]

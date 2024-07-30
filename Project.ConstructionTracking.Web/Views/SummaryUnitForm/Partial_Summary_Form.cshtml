@@ -1,292 +1,159 @@
-﻿<style>
-        .status-dot {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0 auto;
-        border: none;
-        outline: none;
-    }
-</style>
+﻿@model List<Project.ConstructionTracking.Web.Models.SummeryUnitForm>
+@{
+    var projectId = ViewBag.ProjectId;
+    var projectName = ViewBag.ProjectName;
+    var UnitCode = ViewBag.UnitCode;
+    var UnitStatusName = ViewBag.UnitStatusName;
+}
+
 <div class="container-xl">
     <div class="row row-cards">
-        <div class="col-12">
-            <div class="card card-link card-link-pop">
-                <div class="row justify-content-center">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-4">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button type="submit" class="btn btn-success fixed-size-btn">
-                                        งวดที่ 1
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button type="submit" class="status-dot bg-green">
-                                        <span class="status-text">
-                                            PE
-                                        </span>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                                <div class="status-dot bg-green">
-                                    <span class="status-text">QC</span>
+        @foreach (var item in Model)
+        {
+            <div class="col-12">
+                <div class="card card-link card-link-pop">
+                    <div class="row justify-content-center">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-4">
+                                    @{
+                                        string bgColorClass;
+
+                                        if (item.PE == "success" && item.PM == "success")
+                                        {
+                                            bgColorClass = "btn-success";
+                                        }
+                                        else if (item.PE == "danger" || item.PM == "danger")
+                                        {
+                                            bgColorClass = "btn-danger";
+                                        }
+                                        else if (item.PE == "warning" || item.PM == "warning" || item.PM == "")
+                                        {
+                                            bgColorClass = "btn-warning";
+                                        }
+                                        else
+                                        {
+                                            bgColorClass = "btn-secondary";
+                                        }
+                                    }
+                                    <form asp-controller="FormGroup" asp-action="index" method="post">
+                                        <input type="hidden" name="projectId" value="@projectId" />
+                                        <input type="hidden" name="projectName" value="@projectName" />
+                                        <input type="hidden" name="FormID" value="@item.FormID"/>
+                                        <input type="hidden" name="UnitFormName" value="@item.UnitFormName" />
+                                        <input type="hidden" name="unitId" value="@item.UnitID" />
+                                        <input type="hidden" name="UnitCode" value="@UnitCode" />
+                                        <input type="hidden" name="UnitStatusName" value="@UnitStatusName" />
+                                        <button type="submit" class="btn @bgColorClass fixed-size-btn">
+                                            @item.UnitFormName
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="col">
+                                    <form asp-controller="FormGroup" asp-action="index" method="post">
+                                        <input type="hidden" name="projectId" value="@projectId" />
+                                        <input type="hidden" name="projectName" value="@projectName" />
+                                        <input type="hidden" name="FormID" value="@item.FormID" />
+                                        <input type="hidden" name="UnitFormName" value="@item.UnitFormName" />
+                                        <input type="hidden" name="unitId" value="@item.UnitID" />
+                                        <input type="hidden" name="UnitCode" value="@UnitCode" />
+                                        <input type="hidden" name="UnitStatusName" value="@UnitStatusName" />
+                                        <button type="submit" class="status-dot bg-@item.PE @(item.PE == "danger" || item.PE == "warning" ? "status-dot-animated" : "")">
+                                            <span class="status-text">
+                                                PE
+                                            </span>
+                                        </button>
+                                    </form>
+@*                                    <form action="@Url.Action("index", "FormGroup")" method="post">
+                                        <button type="submit" class="status-dot bg-@item.PE @(item.PE == "danger" || item.PE == "warning" ? "status-dot-animated" : "")">
+                                            <span class="status-text">
+                                                PE
+                                            </span>
+                                        </button>
+                                    </form>*@
+                                </div>
+                                <div class="col">
+                                    @if (!string.IsNullOrEmpty(item.QC1) ||
+                                       !string.IsNullOrEmpty(item.QC2) ||
+                                       !string.IsNullOrEmpty(item.QC3) ||
+                                       !string.IsNullOrEmpty(item.QC4_1) ||
+                                       !string.IsNullOrEmpty(item.QC4_2) ||
+                                       !string.IsNullOrEmpty(item.QC5))
+                                    {
+                                        <div class="status-dot bg-info" tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" title="งวดตรวจ QC" data-bs-html="true" data-bs-content="
+                                        @if (!string.IsNullOrEmpty(item.QC1))
+                                        {
+                                            <div class='status-dot bg-@item.QC1'>
+                                                <span class='status-text'>QC1</span>
+                                            </div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.QC2))
+                                        {
+                                            <div class='status-dot bg-@item.QC2'>
+                                                <span class='status-text'>QC2</span>
+                                            </div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.QC3))
+                                        {
+                                            <div class='status-dot bg-@item.QC3'>
+                                                <span class='status-text'>QC3</span>
+                                            </div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.QC4_1))
+                                        {
+                                            <div class='status-dot bg-@item.QC4_1)'>
+                                                <span class='status-text'>QC4.1</span>
+                                            </div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.QC4_2))
+                                        {
+                                            <div class='status-dot bg-@item.QC4_2'>
+                                                <span class='status-text'>QC4.2</span>
+                                            </div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.QC5))
+                                        {
+                                            <div class='status-dot bg-@item.QC5'>
+                                                <span class='status-text'>QC5</span>
+                                            </div>
+                                        }
+                                    ">
+                                                <span class="status-text">QC</span>
+                                            </div>
+                                    }
+                                </div>
+                                <div class="col">
+                                    <form action="@Url.Action("index", "PMApprove")" method="post">
+                                        <button type="submit" class="status-dot bg-@item.PM @(item.PM == "danger" || item.PM == "warning" ? "status-dot-animated" : "")">
+                                            <span class="status-text">
+                                                PM
+                                            </span>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="col">
+                                    @if (!string.IsNullOrEmpty(item.PassConditionStatus))
+                                    {
+                                        <div class="status-dot bg-@item.PassConditionStatus">
+                                            <span class="status-text">
+                                                @if (@item.LockStatusID == 8)
+                                                {
+                                                    <i class="fa-solid fa-lock-open"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fa-solid fa-lock"></i>
+                                                }
+                                            </span>
+                                        </div>
+                                    }
                                 </div>
                             </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","PMApprove")" method="post">
-                                    <button type="submit" class="status-dot bg-green">
-                                        <span class="status-text">
-                                            PM
-                                        </span>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-12">
-            <div class="card card-link card-link-pop">
-                <div class="row justify-content-center">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-4">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button type="submit" class="btn btn-success fixed-size-btn">
-                                        งวดที่ 2
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button class="status-dot bg-green">
-                                        <span class="status-text">PE</span>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                            </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","PMApprove")" method="post">
-                                    <button type="submit" class="status-dot bg-green">
-                                        <span class="status-text">
-                                            PM
-                                        </span>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                                <div class="status-dot bg-primary">
-                                    <span class="status-text"><i class="fa-solid fa-lock"></i></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="card card-link card-link-pop">
-                <div class="row justify-content-center">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-4">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button type="submit" class="btn btn-success fixed-size-btn">
-                                        งวดที่ 3
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button class="status-dot bg-green">
-                                        <span class="status-text">PE</span>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                            </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","PMApprove")" method="post">
-                                    <button type="submit" class="status-dot bg-green">
-                                        <span class="status-text">
-                                            PM
-                                        </span>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","Conditionalpass")" method="post">
-                                    <button class="status-dot bg-primary">
-                                        <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="card card-link card-link-pop">
-                <div class="row justify-content-center">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-4">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button type="submit" class="btn btn-danger fixed-size-btn">
-                                        งวดที่ 4
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button class="status-dot bg-green">
-                                        <span class="status-text">PE</span>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                            </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","PMApprove")" method="post">
-                                    <button type="submit" class="status-dot status-dot-animated bg-danger">
-                                        <span class="status-text">
-                                            PM
-                                        </span>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="card card-link card-link-pop">
-                <div class="row justify-content-center">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-4">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button class="btn fixed-size-btn" style="background-color: orange; color: white;">
-                                        งวดที่ 5
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button class="status-dot status-dot-animated" style="background-color: orange;">
-                                        <span class="status-text">PE</span>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                                <div class="status-dot status-dot-animated" style="background-color: orange;">
-                                    <span class="status-text">QC</span>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="status-dot" style="background-color: #C0C0C0;">
-                                    <span class="status-text">PM</span>
-                                </div>
-                            </div>
-                            <div class="col">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="card card-link card-link-pop">
-                <div class="row justify-content-center">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-4">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
-                                        งวดที่ 6
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button class="status-dot" style="background-color: #C0C0C0;">
-                                        <span class="status-text">PE</span>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                            </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","PMApprove")" method="post">
-                                    <button type="submit" class="status-dot" style="background-color: #C0C0C0;">
-                                        <span class="status-text">
-                                            PM
-                                        </span>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="card card-link card-link-pop">
-                <div class="row justify-content-center">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-4">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
-                                        งวดที่ 7
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","FormGroup")" method="post">
-                                    <button class="status-dot" style="background-color: #C0C0C0;">
-                                        <span class="status-text">PE</span>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                                <div class="status-dot" style="background-color: #C0C0C0;">
-                                    <span class="status-text">QC</span>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <form action="@Url.Action("index","PMApprove")" method="post">
-                                    <button type="submit" class="status-dot" style="background-color: #C0C0C0;">
-                                        <span class="status-text">
-                                            PM
-                                        </span>
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        }
     </div>
 </div>
+

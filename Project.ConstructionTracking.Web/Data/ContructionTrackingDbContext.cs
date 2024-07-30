@@ -55,12 +55,13 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tr_UnitFormPackage> tr_UnitFormPackage { get; set; } = null!;
         public virtual DbSet<tr_UnitFormPassCondition> tr_UnitFormPassCondition { get; set; } = null!;
         public virtual DbSet<tr_UnitFormResource> tr_UnitFormResource { get; set; } = null!;
+        public virtual DbSet<vw_UnitForm_Action> vw_UnitForm_Action { get; set; } = null!;
+        public virtual DbSet<vw_UnitQC_Action> vw_UnitQC_Action { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Data Source=10.0.20.14;Initial Catalog=ConstructionTracking;User ID=constructiontracking;Password=constructiontracking@2024;TrustServerCertificate=True;");
             }
         }
@@ -419,15 +420,15 @@ namespace Project.ConstructionTracking.Web.Data
 
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
 
+                entity.HasOne(d => d.CheckList)
+                    .WithMany(p => p.tr_Form_QCCheckList)
+                    .HasForeignKey(d => d.CheckListID)
+                    .HasConstraintName("FK_tr_Form_QCCheckList_tm_QC_CheckList");
+
                 entity.HasOne(d => d.Form)
                     .WithMany(p => p.tr_Form_QCCheckList)
                     .HasForeignKey(d => d.FormID)
                     .HasConstraintName("FK_tr_Form_QCCheckList_tm_Form");
-
-                entity.HasOne(d => d.QCCheckList)
-                    .WithMany(p => p.tr_Form_QCCheckList)
-                    .HasForeignKey(d => d.QCCheckListID)
-                    .HasConstraintName("FK_tr_Form_QCCheckList_tm_QC_CheckList");
             });
 
             modelBuilder.Entity<tr_ProjectModelForm>(entity =>
@@ -435,8 +436,6 @@ namespace Project.ConstructionTracking.Web.Data
                 entity.Property(e => e.ID).ValueGeneratedNever();
 
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.ModelTypeID).IsFixedLength();
 
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
             });
@@ -789,6 +788,16 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tr_UnitFormResource)
                     .HasForeignKey(d => d.UnitFormID)
                     .HasConstraintName("FK_tr_UnitForm_Resource_tr_UnitForm");
+            });
+
+            modelBuilder.Entity<vw_UnitForm_Action>(entity =>
+            {
+                entity.ToView("vw_UnitForm_Action");
+            });
+
+            modelBuilder.Entity<vw_UnitQC_Action>(entity =>
+            {
+                entity.ToView("vw_UnitQC_Action");
             });
 
             OnModelCreatingPartial(modelBuilder);

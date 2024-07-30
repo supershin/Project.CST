@@ -22,6 +22,10 @@ namespace Project.ConstructionTracking.Web.Data
         [StringLength(50)]
         [Unicode(false)]
         public string? Name { get; set; }
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? Color { get; set; }
+        public bool? UseGroup { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }

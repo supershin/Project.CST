@@ -13,6 +13,9 @@ namespace Project.ConstructionTracking.Web.Data
         public Guid? UnitFormID { get; set; }
         public int? PassConditionID { get; set; }
         public int? RoleID { get; set; }
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? ActionType { get; set; }
         public int? StatusID { get; set; }
         [Unicode(false)]
         public string? Remark { get; set; }

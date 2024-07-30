@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Evaluation;
+using Microsoft.CodeAnalysis;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Services;
 
@@ -6,17 +8,23 @@ namespace Project.ConstructionTracking.Web.Controllers
 {
     public class SummaryUnitFormController : Controller
     {
-        private readonly ITrackingService _TrackingService;
+        private readonly ISummeryUnitFormService _SummeryUnitFormService;
 
-        public SummaryUnitFormController(ITrackingService trackingService)
+        public SummaryUnitFormController(ISummeryUnitFormService SummaryUnitFormService)
         {
-            _TrackingService = trackingService;
+            _SummeryUnitFormService = SummaryUnitFormService;
         }
 
-        public IActionResult Index(Guid ID)
+        public IActionResult Index(Guid unitId , Guid projectId , string projectName , string UnitCode , string UnitStatusName)
         {
-            TrackingUnitView viewModel = _TrackingService.GetTrackingUnit(ID);
-            return View(viewModel);
+            ViewBag.ProjectId = projectId;
+            ViewBag.ProjectName = projectName;
+            ViewBag.UnitCode = UnitCode;
+            ViewBag.UnitStatusName = UnitStatusName;
+
+            var Model = new SummeryUnitForm { UnitID = unitId };
+            List<SummeryUnitForm> listSummeryUnitForm = _SummeryUnitFormService.GetSummeryUnitFormList(Model);
+            return View(listSummeryUnitForm);
         }
     }
 }

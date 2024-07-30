@@ -11,7 +11,7 @@ namespace Project.ConstructionTracking.Web.Data
         [Key]
         public int ID { get; set; }
         public int? FormID { get; set; }
-        public int? QCCheckListID { get; set; }
+        public int? CheckListID { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
@@ -20,11 +20,11 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public int? UpdateBy { get; set; }
 
+        [ForeignKey("CheckListID")]
+        [InverseProperty("tr_Form_QCCheckList")]
+        public virtual tm_QC_CheckList? CheckList { get; set; }
         [ForeignKey("FormID")]
         [InverseProperty("tr_Form_QCCheckList")]
         public virtual tm_Form? Form { get; set; }
-        [ForeignKey("QCCheckListID")]
-        [InverseProperty("tr_Form_QCCheckList")]
-        public virtual tm_QC_CheckList? QCCheckList { get; set; }
     }
 }

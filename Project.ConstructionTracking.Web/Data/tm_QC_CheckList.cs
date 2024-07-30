@@ -35,7 +35,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual tm_Ext? QCType { get; set; }
         [InverseProperty("QCCheckList")]
         public virtual ICollection<tm_QC_CheckListDetail> tm_QC_CheckListDetail { get; set; }
-        [InverseProperty("QCCheckList")]
+        [InverseProperty("CheckList")]
         public virtual ICollection<tr_Form_QCCheckList> tr_Form_QCCheckList { get; set; }
         [InverseProperty("CheckList")]
         public virtual ICollection<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; }
