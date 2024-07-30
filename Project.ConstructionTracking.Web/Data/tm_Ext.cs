@@ -30,6 +30,9 @@ namespace Project.ConstructionTracking.Web.Data
         public int? ExtTypeID { get; set; }
         [StringLength(200)]
         public string? Name { get; set; }
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? OtherVal { get; set; }
         public int? LineOrder { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]

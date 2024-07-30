@@ -167,6 +167,8 @@
                                                 <input type="hidden" name="projectId" value="@projectId" />
                                                 <input type="hidden" name="projectName" value="@projectName" />
                                                 <input type="hidden" name="unitId" value="@unit.UnitID" />
+                                                <input type="hidden" name="UnitCode" value="@unit.UnitCode" />
+                                                <input type="hidden" name="UnitStatusName" value="@unit.UnitStatusName" />
                                                 <button type="submit" class="btn btn-primary btn-sm">@unit.FormName</button>
                                             </form>
                                         }
@@ -235,6 +237,8 @@
                                                             <input type="hidden" name="projectId" value="@projectId" />
                                                             <input type="hidden" name="projectName" value="@projectName" />
                                                             <input type="hidden" name="unitId" value="${unit.UnitID}" />
+                                                            <input type="hidden" name="UnitCode" value="${unit.UnitCode}" />
+                                                            <input type="hidden" name="UnitStatusName" value="${unit.UnitStatusName}" />
                                                             <button type="submit" class="btn btn-primary btn-sm">${unit.FormName}</button>
                                                         </form>`
                                         : `<button type="button" class="btn btn-secondary btn-sm">ยังไม่เริ่มตรวจ</button>`

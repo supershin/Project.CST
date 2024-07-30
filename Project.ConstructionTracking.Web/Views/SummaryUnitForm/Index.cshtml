@@ -1,7 +1,12 @@
 ﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
+    var projectId = ViewBag.ProjectId;
+    var projectName = ViewBag.ProjectName;
+    var UnitCode = ViewBag.UnitCode;
+    var UnitStatusName = ViewBag.UnitStatusName;
 }
+@model List<Project.ConstructionTracking.Web.Models.SummeryUnitForm>
 
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 
@@ -44,6 +49,19 @@
         transition: transform 0.3s;
     }
 
+    .status-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        border: none;
+        outline: none;
+        font-size: 18px;
+    }
 </style>
 <!-- Content Header (Page header) -->
 <div class="page-wrapper">
@@ -63,22 +81,24 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        <form asp-controller="ProjectList" asp-action="index">
+                        <form id="form-@projectId" method="post" asp-controller="Unitlist" asp-action="Index">
+                            <input type="hidden" name="projectId" value="@projectId" />
+                            <input type="hidden" name="projectName" value="@projectName" />
                             <button class="status-dot bg-transparent">
                                 <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
                             </button>
                         </form>
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
-                        <h3 class="mb-0 header-text">Unit : A008</h3>
+                        <h3 class="mb-0 header-text">Unit : @UnitCode</h3>
                         <div class="text-muted">
-                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">ดิ ออเนอร์ โยธินพัฒนา (สถานะ : สัญญา)</h5>
+                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@projectName (สถานะ : @UnitStatusName)</h5>
                         </div>
                     </div>
                     <div class="align-items-right">
-                        <button id="toggleButton" class="status-dot bg-transparent" onclick="openCollapse()">
+  @*                      <button id="toggleButton" class="status-dot bg-transparent" onclick="openCollapse()">
                             <i class="fas fa-arrow-down animated-arrow fa-xl" style="color: #f7f7f7;"></i>
-                        </button>
+                        </button>*@
                     </div>
                 </div>
             </div>
@@ -87,9 +107,9 @@
     <!-- Page body -->
     <div class="page-body">
         <div class="col-12 collapse" id="collapseUnitdetail">
-            <partial name="Partial_Unit_Detail"/>
+         @*   <partial name="Partial_Unit_Detail"/>*@
         </div>      
-        <partial name="Partial_Summary_Form"/>
+        <partial name="Partial_Summary_Form" model="Model"/>
     </div>
     <!-- Script -->
     <script>

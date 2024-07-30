@@ -61,12 +61,12 @@ namespace Project.ConstructionTracking.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult GoToByRole(string projectId, string projectName, Guid unitId)
+        public IActionResult GoToByRole(Guid projectId, string projectName, Guid unitId , string UnitCode , string UnitStatusName)
         {
             var userName = Request.Cookies["CST.UserName"];
             if (userName == "PE")
             {
-                return RedirectToAction("Index", "SummaryUnitForm", new { unitId });
+                return RedirectToAction("Index", "SummaryUnitForm", new { unitId, projectId, projectName , UnitCode , UnitStatusName });
             }
             else if (userName == "PM")
             {
