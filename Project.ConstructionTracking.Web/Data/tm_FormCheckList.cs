@@ -14,9 +14,9 @@ namespace Project.ConstructionTracking.Web.Data
         }
 
         [Key]
-        public int ID { get; set; }
+        public int? ID { get; set; }
         public int? PackageID { get; set; }
-        [StringLength(50)]
+        [StringLength(100)]
         [Unicode(false)]
         public string? Name { get; set; }
         public int? Sort { get; set; }
@@ -28,9 +28,6 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
 
-        [ForeignKey("PackageID")]
-        [InverseProperty("tm_FormCheckList")]
-        public virtual tm_FormPackage? Package { get; set; }
         [InverseProperty("CheckList")]
         public virtual ICollection<tr_UnitFormCheckList> tr_UnitFormCheckList { get; set; }
     }

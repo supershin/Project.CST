@@ -28,10 +28,18 @@ namespace Project.ConstructionTracking.Web.Controllers
             // Check if the password is correct (simple check for demonstration purposes)
             if (userProfile != null && userProfile.Password == password)
             {
-                // Set the username in a cookie
-                CookieOptions option = new CookieOptions();
-                option.Expires = DateTime.Now.AddDays(1); // Set the expiration date for the cookie
+                // Set the username and role in cookies
+                CookieOptions option = new CookieOptions
+                {
+                    Expires = DateTime.Now.AddDays(1) // Set the expiration date for the cookies
+                };
+
                 Response.Cookies.Append("CST.UserName", userProfile.UserName, option);
+                Response.Cookies.Append("CST.Role", userProfile.Role?.ToString(), option);
+
+                // Set another session cookie
+                var sessionId = Guid.NewGuid().ToString(); // Example session ID
+                Response.Cookies.Append("CST.SessionID", sessionId, option);
 
                 // Handle successful login (e.g., redirect to a dashboard)
                 return RedirectToAction("Index", "Dashboard");

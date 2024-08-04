@@ -25,7 +25,7 @@
     <link href="~/lib/core-ui/dist/css/tabler.min.css?1692870487" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="~/lib/core-ui/dist/css/demo.min.css?1692870487" rel="stylesheet" />
-   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>
     <script src="~/js/app.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -290,9 +290,9 @@
     <script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>
     <script src="~/lib/core-ui/dist/js/demo.min.js?1692870487" defer></script>
     <script src="~/lib/core-ui/dist/libs/litepicker/dist/litepicker.js?1692870487" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
     <script>
-
         document.addEventListener("DOMContentLoaded", function () {
             window.Litepicker && (new Litepicker({
                 element: document.getElementById('datepicker-icon-prepend'),

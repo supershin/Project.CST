@@ -61,7 +61,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                  UnitID = t1.UnitID,
                                  UnitFormID = t4.ID,
                                  UnitFormName = t3.Name,
-                                 FormID = t4.FormID,
+                                 FormID = t3.ID,
                                  PE = t5.PE,
                                  QC1 = t5.QC1,
                                  QC2 = t5.QC2,

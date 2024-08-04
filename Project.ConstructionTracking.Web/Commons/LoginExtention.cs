@@ -20,7 +20,7 @@ namespace Project.ConstructionTracking.Web.Commons
                         ID = 1,
                         UserName = "PE",
                         Password = "1234",
-                        Role = "PE"
+                        Role = 1
                     };
                     break;
                 case "PM":
@@ -29,7 +29,7 @@ namespace Project.ConstructionTracking.Web.Commons
                         ID = 2,
                         UserName = "PM",
                         Password = "1234",
-                        Role = "PM"
+                        Role = 2
                     };
                     break;
                 case "PJM":
@@ -38,7 +38,7 @@ namespace Project.ConstructionTracking.Web.Commons
                         ID = 3,
                         UserName = "PJM",
                         Password = "1234",
-                        Role = "PJM"
+                        Role = 3
                     };
                     break;
                 case "QC":
@@ -47,7 +47,7 @@ namespace Project.ConstructionTracking.Web.Commons
                         ID = 3,
                         UserName = "QC",
                         Password = "1234",
-                        Role = "QC"
+                        Role = 4
                     };
                     break;
                 default:
@@ -57,7 +57,7 @@ namespace Project.ConstructionTracking.Web.Commons
                         ID = 0,
                         UserName = "Guest",
                         Password = string.Empty,
-                        Role = "Guest"
+                        Role = 0
                     };
                     break;
             }
