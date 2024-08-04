@@ -18,10 +18,18 @@ namespace Project.ConstructionTracking.Web.Data
         public Guid? ProjectID { get; set; }
         [StringLength(50)]
         [Unicode(false)]
-        public string? Code { get; set; }
+        public string? ModelCode { get; set; }
         [StringLength(100)]
         [Unicode(false)]
-        public string? Name { get; set; }
+        public string? ModelName { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal? ModelArea { get; set; }
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? ModelTypeCode { get; set; }
+        [StringLength(100)]
+        [Unicode(false)]
+        public string? ModelTypeName { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }

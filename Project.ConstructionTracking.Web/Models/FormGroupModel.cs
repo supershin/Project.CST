@@ -8,7 +8,10 @@ namespace Project.ConstructionTracking.Web.Models
         public int GroupID { get; set; }
         public int? FormID { get; set; }
         public string? GroupName { get; set; }
-        public int? Sort { get; set; }
-        public bool? FlagActive { get; set; }
+        public string? StatusUse { get; set;}
+        public int? LockStatusID { get; set; }
+        public int? Cnt_CheckList_All { get; set; }
+        public int? Cnt_CheckList_Unit { get; set; }
+        public int? Cnt_CheckList_NotPass { get; set; }
     }
 }

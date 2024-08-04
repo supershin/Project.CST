@@ -62,26 +62,100 @@
                         <div class="card card-link card-link-pop p-3 mb-2">
                             <div class="d-flex justify-content-between">
                                 <div class="d-flex flex-row align-items-center">
-                                    <form action="@Url.Action("index","FormCheckList")" method="post">
-                                        <button class="status-dot bg-green">
-                                            <i class="fa-regular fa-circle-check"></i>
+                                    <form asp-controller="FormCheckList" asp-action="index" method="post">
+                                        <input type="hidden" name="projectId" value="@projectId" />
+                                        <input type="hidden" name="projectName" value="@projectName" />
+                                        <input type="hidden" name="FormID" value="@FormID" />
+                                        <input type="hidden" name="UnitFormName" value="@UnitFormName" />
+                                        <input type="hidden" name="unitId" value="@unitId" />
+                                        <input type="hidden" name="UnitCode" value="@UnitCode" />
+                                        <input type="hidden" name="UnitStatusName" value="@UnitStatusName" />
+                                        <input type="hidden" name="GroupName" value="@item.GroupName" />
+                                        <input type="hidden" name="GroupID" value="@item.GroupID" />
+                                        <button class="status-dot bg-@item.StatusUse @(item.StatusUse == "danger" || item.StatusUse == "warning" ? "status-dot-animated" : "")">
+                                            @if (item.StatusUse == "success")
+                                            {
+                                                <i class="fa-regular fa-circle-check"></i>
+                                            }
+                                            else if (item.StatusUse == "danger")
+                                            {
+                                                <i class="fa-regular fa-circle-xmark"></i>
+                                            }
+                                            else if (item.StatusUse == "warning")
+                                            {
+                                                <i class="fa-solid fa-file-pen"></i>
+                                            }
+                                            else if (item.StatusUse == "secondary")
+                                            {
+                                                <i class="fa-solid fa-magnifying-glass"></i>
+                                            }
                                         </button>
                                     </form>
                                     <div class="ms-2 c-details">
                                         <h3 class="mb-0">@item.GroupName</h3>
                                     </div>
                                 </div>
-                                <form action="@Url.Action("index","FormCheckList")" method="post">
-                                    <button class="status-dot bg-primary">
-                                        <span class="status-text"><i class="fa-solid fa-lock"></i></span>
-                                    </button>
-                                </form>
+                                @if (item.LockStatusID != 0)
+                                {
+                                    @if (item.LockStatusID == 1)
+                                    {
+                                         <form action="@Url.Action("index","FormCheckList")" method="post">
+                                            <button class="status-dot bg-primary">
+                                                <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                            </button>
+                                        </form>                                   
+                                    }
+                                    else if (item.LockStatusID == 4)
+                                    {
+                                        <form action="@Url.Action("index","FormCheckList")" method="post">
+                                            <button class="status-dot bg-success">
+                                                <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                            </button>
+                                        </form>
+                                    }
+                                    else if (item.LockStatusID == 6)
+                                    {
+                                        <form action="@Url.Action("index","FormCheckList")" method="post">
+                                            <button class="status-dot bg-primary">
+                                                <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
+                                            </button>
+                                        </form>
+                                    }
+                                    else if (item.LockStatusID == 7)
+                                    {
+                                        <form action="@Url.Action("index","FormCheckList")" method="post">
+                                            <button class="status-dot bg-danger">
+                                                <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
+                                            </button>
+                                        </form>
+                                    }
+                                    else if (item.LockStatusID == 8)
+                                    {
+                                        <form action="@Url.Action("index","FormCheckList")" method="post">
+                                            <button class="status-dot bg-success">
+                                                <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
+                                            </button>
+                                        </form>
+                                    }
+                                    else if (item.LockStatusID == 9)
+                                    {
+                                        <form action="@Url.Action("index","FormCheckList")" method="post">
+                                            <button class="status-dot bg-danger">
+                                                <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
+                                            </button>
+                                        </form>
+                                    }
+                                }
+                                else  
+                                {
+                        
+                                }
                             </div>
                             <div class="mt-3">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><span class="text1">รายการทั้งหมด 52 </span></li>
-                                    <li class="breadcrumb-item" aria-current="page"><span class="text2">ตรวจแล้ว 49 </span></li>
-                                    <li class="breadcrumb-item" aria-current="page"><span class="text3">ไม่ผ่าน 3</span></li>
+                                    <li class="breadcrumb-item"><span class="text1">รายการทั้งหมด @item.Cnt_CheckList_All </span></li>
+                                    <li class="breadcrumb-item" aria-current="page"><span class="text2">ตรวจแล้ว @item.Cnt_CheckList_Unit </span></li>
+                                    <li class="breadcrumb-item" aria-current="page"><span class="text3">ไม่ผ่าน @item.Cnt_CheckList_NotPass</span></li>
                                 </ol>
                             </div>
                         </div>

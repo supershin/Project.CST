@@ -188,7 +188,9 @@
 </div>
 
 <script>
+    
     $(function () {
+     
         var unitCodes = @Html.Raw(unitCodesJson);
         var allUnits = @Html.Raw(unitsJson);
 
@@ -204,6 +206,7 @@
 
         $("#form-search").on("submit", function (e) {
             e.preventDefault();
+            
             var searchTerm = $("#Search").val().toLowerCase();
             var selectedUnitStatusId = $("#ddlList").val();
 
@@ -224,10 +227,11 @@
             var $unitList = $("#unit-list");
             $unitList.empty();
             $.each(units, function (index, unit) {
+               
                 var unitCard = `
                         <div class="col unit-card" data-unit-code="${unit.UnitCode}">
                             <div class="card" id="card-unit">
-                                <img src="/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                <img src="` + baseUrl + `img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
                                 <div class="card-body text-center">
                                     <h5 class="card-title">${unit.UnitCode}</h5>
                                     <p class="card-text">

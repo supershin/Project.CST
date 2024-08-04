@@ -20,7 +20,7 @@ namespace Project.ConstructionTracking.Web.Data
         [Key]
         public int ID { get; set; }
         public int? FormID { get; set; }
-        [StringLength(50)]
+        [StringLength(100)]
         [Unicode(false)]
         public string? Name { get; set; }
         public int? Sort { get; set; }
