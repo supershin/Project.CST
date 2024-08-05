@@ -19,15 +19,15 @@ public class FormChecklistRepo : IFormChecklistRepo
         // เริ่มการสร้าง query โดยใช้ LINQ
         var query = from t1 in _context.tm_FormPackage
                         // เชื่อมกับ tm_FormCheckList โดยใช้ left join
-                    join t2 in _context.tm_FormCheckList on t1.ID equals t2.PackageID into t2Join
+                    join t2 in _context.tm_FormCheckList.Where(f => f.FlagActive == true) on t1.ID equals t2.PackageID into t2Join
                     from t2 in t2Join.DefaultIfEmpty()
 
                         // เชื่อมกับ tr_UnitFormCheckList โดยใช้ left join และจับคู่คีย์ที่ระบุ
-                    join t4 in _context.tr_UnitFormCheckList on new { t1.GroupID, PackageID = t1.ID, CheckListID = t2.ID } equals new { t4.GroupID, t4.PackageID, t4.CheckListID } into t4Join
+                    join t4 in _context.tr_UnitFormCheckList.Where(f => f.FlagActive == true) on new { t1.GroupID, PackageID = t1.ID, CheckListID = t2.ID , filterData.UnitFormID } equals new { t4.GroupID, t4.PackageID, t4.CheckListID ,t4.UnitFormID } into t4Join
                     from t4 in t4Join.DefaultIfEmpty()
 
                         // เชื่อมกับ tr_UnitFormPackage โดยใช้ left join และจับคู่คีย์ที่ระบุ
-                    join t5 in _context.tr_UnitFormPackage on new { t1.GroupID, PackageID = t1.ID } equals new { t5.GroupID, t5.PackageID } into t5Join
+                    join t5 in _context.tr_UnitFormPackage on new { t1.GroupID, PackageID = t1.ID , filterData.UnitFormID } equals new { t5.GroupID, t5.PackageID ,t5.UnitFormID} into t5Join
                     from t5 in t5Join.DefaultIfEmpty()
 
                         // กำหนดเงื่อนไขให้กรองข้อมูลที่ GroupID ตรงกับค่าใน filterData
@@ -77,7 +77,7 @@ public class FormChecklistRepo : IFormChecklistRepo
 
     public List<FormCheckListModel.Form_getListStatus> GetFormCheckListStatus(FormCheckListModel.Form_getFilterData filterData)
     {
-        var unitForms = _context.tr_UnitForm
+        var unitForms = _context.tr_UnitForm.Where(f => f.FlagActive == true)
             .Where(t1 => (!filterData.ProjectID.HasValue || t1.ProjectID == filterData.ProjectID) &&
                          (!filterData.UnitID.HasValue || t1.UnitID == filterData.UnitID) &&
                          (!filterData.FormID.HasValue || t1.FormID == filterData.FormID))
@@ -89,6 +89,10 @@ public class FormChecklistRepo : IFormChecklistRepo
             .Where(t2 => unitFormIds.Contains(t2.UnitFormID.Value) && t2.RoleID == 1)
             .ToList();
 
+        var unitFormPassConditions = _context.tr_UnitFormPassCondition
+            .Where(t3 => unitFormIds.Contains(t3.UnitFormID.Value) && t3.FlagActive == true)
+            .ToList();
+
         var result = unitForms
             .Select(t1 => new
             {
@@ -96,7 +100,8 @@ public class FormChecklistRepo : IFormChecklistRepo
                 t1.ProjectID,
                 t1.UnitID,
                 t1.FormID,
-                UnitFormAction = unitFormActions.FirstOrDefault(t2 => t2.UnitFormID == t1.ID)
+                UnitFormAction = unitFormActions.FirstOrDefault(t2 => t2.UnitFormID == t1.ID),
+                UnitFormPassCondition = unitFormPassConditions.FirstOrDefault(t3 => t3.UnitFormID == t1.ID)
             })
             .Select(x => new FormCheckListModel.Form_getListStatus
             {
@@ -105,6 +110,8 @@ public class FormChecklistRepo : IFormChecklistRepo
                 UnitID = x.UnitID,
                 UnitFormActionID = x.UnitFormAction?.ID,
                 FormID = x.FormID,
+                LockStatusID = x.UnitFormPassCondition?.LockStatusID,
+                RemarkPassCondition = x.UnitFormAction?.Remark,
                 RoleID = x.UnitFormAction?.RoleID,
                 ActionType = x.UnitFormAction?.ActionType,
                 UpdateDate = x.UnitFormAction?.UpdateDate.HasValue ?? false
@@ -116,11 +123,11 @@ public class FormChecklistRepo : IFormChecklistRepo
         return result;
     }
 
-
     public void InsertOrUpdate(FormChecklistIUDModel model)
     {
         var UnitFormIDUse = Guid.Empty;
         var package = model.Packages.FirstOrDefault();
+        var pcCheck = model.PcCheck;
 
         if (package != null)
         {
@@ -128,6 +135,14 @@ public class FormChecklistRepo : IFormChecklistRepo
             InsertOrUpdateUnitFormAction(package, UnitFormIDUse);
             InsertOrUpdateUnitFormPackage(model.Packages, UnitFormIDUse);
             InsertOrUpdateUnitFormCheckList(model.CheckLists, UnitFormIDUse);
+        }
+        if(pcCheck != null)
+        {
+            InsertOrUpdatePassConditionCheck(pcCheck , UnitFormIDUse);
+        }
+        else if (pcCheck == null)
+        {
+            InsertOrUpdatePassConditionUnCheck(package,UnitFormIDUse);
         }
 
         _context.SaveChanges();
@@ -279,5 +294,90 @@ public class FormChecklistRepo : IFormChecklistRepo
         _context.SaveChanges(); // บันทึกการเปลี่ยนแปลงทั้งหมดลงฐานข้อมูล
     }
 
+    private void InsertOrUpdatePassConditionCheck(PassConditionCheckModel pcCheck, Guid unitFormIDUse)
+    {
+        var passCondition = _context.tr_UnitFormPassCondition
+            .Where(pc => pc.UnitFormID == unitFormIDUse && pc.GroupID == pcCheck.GroupID)
+            .FirstOrDefault();
+
+        if (passCondition == null)
+        {
+            // Insert new record
+            passCondition = new tr_UnitFormPassCondition
+            {
+                UnitFormID = unitFormIDUse,
+                GroupID = pcCheck.GroupID,
+                LockStatusID = 1,
+                FlagActive = true,
+                ActionDate = DateTime.Now,
+                CraeteDate = DateTime.Now,
+                //CreateBy = pcCheck.UserID,
+                UpdateDate = DateTime.Now,
+                //UpdateBy = pcCheck.UserID
+            };
+            _context.tr_UnitFormPassCondition.Add(passCondition);
+        }
+        else
+        {
+            // Update existing record
+            passCondition.GroupID = pcCheck.GroupID;
+            passCondition.LockStatusID = 1;
+            passCondition.FlagActive = true;
+            passCondition.ActionDate = DateTime.Now;
+            passCondition.UpdateDate = DateTime.Now;
+            //passCondition.UpdateBy = pcCheck.UserID;
+        }
+
+        _context.SaveChanges();
+
+        var passConditionID = passCondition.ID;
+
+        // Update tr_UnitFormAction 
+        var unitFormAction = _context.tr_UnitFormAction
+            .Where(ua => ua.UnitFormID == unitFormIDUse)
+            .FirstOrDefault();
+
+        if (unitFormAction != null)
+        {
+            // Update existing record
+            unitFormAction.PassConditionID = passConditionID;
+            unitFormAction.UpdateDate = DateTime.Now;
+            unitFormAction.Remark = pcCheck.Remark;
+
+            _context.SaveChanges();
+        }
+    }
+
+    private void InsertOrUpdatePassConditionUnCheck(PackageModel pcCheck, Guid unitFormIDUse)
+    {
+        var passCondition = _context.tr_UnitFormPassCondition
+            .Where(pc => pc.UnitFormID == unitFormIDUse && pc.GroupID == pcCheck.GroupID)
+            .FirstOrDefault();
+
+        if (passCondition != null)
+        {
+            passCondition.GroupID = pcCheck.GroupID;
+            passCondition.LockStatusID = 1;
+            passCondition.FlagActive = false;
+            passCondition.ActionDate = DateTime.Now;
+            passCondition.UpdateDate = DateTime.Now;
+        }
+        _context.SaveChanges();
+
+        // Update tr_UnitFormAction 
+        var unitFormAction = _context.tr_UnitFormAction
+            .Where(ua => ua.UnitFormID == unitFormIDUse)
+            .FirstOrDefault();
+
+        if (unitFormAction != null)
+        {
+            // Update existing record
+            unitFormAction.PassConditionID = null;
+            unitFormAction.UpdateDate = DateTime.Now;
+            unitFormAction.Remark = null;
+
+            _context.SaveChanges();
+        }
+    }
 
 }

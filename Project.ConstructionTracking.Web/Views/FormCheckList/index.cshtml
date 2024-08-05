@@ -12,6 +12,8 @@
     var UnitStatusName = ViewBag.UnitStatusName;
     var GroupName = ViewBag.GroupName;
     var GroupID = ViewBag.GroupID;
+    var LockStatusID = ViewBag.LockStatusID;
+    var RemarkPassCondition = ViewBag.RemarkPassCondition;
     var StatusActionType = ViewBag.StatusActionType;
     var StatusUpdateDate = ViewBag.StatusUpdateDate;
     var UserName = ViewBag.UserName;
@@ -122,6 +124,7 @@
                             <input type="hidden" name="projectId" value="@projectId" id="hd_projectId" />
                             <input type="hidden" name="projectName" value="@projectName" />
                             <input type="hidden" name="FormID" value="@FormID" id="hd_FormID" />
+                            <input type="hidden" name="UnitFormID" value="@UnitFormID"/>
                             <input type="hidden" name="UnitFormName" value="@UnitFormName" />
                             <input type="hidden" name="unitId" value="@unitId" id="hd_unitId" />
                             <input type="hidden" name="UnitCode" value="@UnitCode" />
@@ -228,12 +231,14 @@
                             </div>
                             <div class="col-12">
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="radios-inline-pc" id="pc-radio" onclick="checkPC(this)">
+                                    <input class="form-check-input" type="radio" name="radios-inline-pc" id="pc-radio"
+                                           onclick="checkPC(this)"
+                                           @(ViewBag.LockStatusID != null ? "checked" : "")>
                                     <span class="form-check-label">ผ่านแบบมีเงื่อนไข (PC)</span>
                                 </label>
                             </div>
                             <div class="col-12">
-                                <textarea id="Remark-PC" rows="1" class="form-control" name="Remark-PC" placeholder="ระบุเหตุผลเพื่อขออนุมัติ"></textarea>
+                                <textarea id="Remark-PC" rows="1" class="form-control" name="Remark-PC" placeholder="ระบุเหตุผลเพื่อขออนุมัติ">@ViewBag.RemarkPassCondition</textarea>
                             </div>
                         </div>
                     </div>

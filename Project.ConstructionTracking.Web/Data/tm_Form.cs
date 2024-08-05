@@ -18,7 +18,7 @@ namespace Project.ConstructionTracking.Web.Data
         }
 
         [Key]
-        public int? ID { get; set; }
+        public int ID { get; set; }
         public int? FormTypeID { get; set; }
         [StringLength(50)]
         [Unicode(false)]

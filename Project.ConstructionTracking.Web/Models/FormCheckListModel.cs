@@ -6,6 +6,7 @@
         {
             public Guid? ProjectID { get; set; }
             public Guid? UnitID { get; set; }
+            public Guid? UnitFormID { get; set; }
             public int? FormID { get; set; }
             public int GroupID { get; set; }
         }
@@ -41,6 +42,8 @@
             public Guid? UnitID { get; set; }
             public int? UnitFormActionID { get; set; }
             public int? FormID { get; set; }
+            public int? LockStatusID { get; set; }
+            public string? RemarkPassCondition { get; set; }
             public int? RoleID { get; set; }
             public string? ActionType { get; set; }
             public string? UpdateDate { get; set; }

@@ -22,15 +22,15 @@ namespace Project.ConstructionTracking.Web.Repositories
             try
             {
                 var result = from t1 in _context.tm_Unit
-                             where t1.UnitID == model.UnitID
-                join t2 in _context.tr_ProjectModelForm
-                             on new { t1.ModelTypeID, t1.ProjectID } equals new { t2.ModelTypeID , t2.ProjectID } into t2Join
+                             where t1.UnitID == model.UnitID && t1.FlagActive == true
+                             join t2 in _context.tr_ProjectModelForm.Where(f => f.FlagActive == true)
+                             on new { t1.ModelTypeID, t1.ProjectID } equals new { t2.ModelTypeID, t2.ProjectID } into t2Join
                              from t2 in t2Join.DefaultIfEmpty()
-                             join t3 in _context.tm_Form
+                             join t3 in _context.tm_Form.Where(f => f.FlagActive == true)
                              on t2.FormTypeID equals t3.FormTypeID into t3Join
                              from t3 in t3Join.DefaultIfEmpty()
-                             join t4 in _context.tr_UnitForm
-                             on new { FormID =(int?) t3.ID, UnitID=(Guid?)t1.UnitID } equals new { FormID = (int?)t4.FormID, t4.UnitID } into t4Join
+                             join t4 in _context.tr_UnitForm.Where(f => f.FlagActive == true)
+                             on new { FormID = (int?)t3.ID, UnitID = (Guid?)t1.UnitID } equals new { FormID = (int?)t4.FormID, t4.UnitID } into t4Join
                              from t4 in t4Join.DefaultIfEmpty()
                              join t5 in (
                                  from uf in _context.vw_UnitForm_Action

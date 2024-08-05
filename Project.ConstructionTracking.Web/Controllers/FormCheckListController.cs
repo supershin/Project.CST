@@ -15,7 +15,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             _FormChecklistService = FormChecklistService;
         }
 
-        public IActionResult Index(Guid projectId, string projectName, int FormID, string UnitFormName, Guid unitId, string UnitCode, string UnitStatusName , string GroupName , int GroupID)
+        public IActionResult Index(Guid projectId, string projectName, int FormID, Guid UnitFormID, string UnitFormName, Guid unitId, string UnitCode, string UnitStatusName , string GroupName , int GroupID)
         {
             var userName = Request.Cookies["CST.UserName"];
             var userRole = Request.Cookies["CST.Role"];
@@ -23,6 +23,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.ProjectId = projectId;
             ViewBag.ProjectName = projectName;
             ViewBag.FormID = FormID;
+            ViewBag.UnitFormID = UnitFormID;
             ViewBag.UnitFormName = UnitFormName;
             ViewBag.UnitId = unitId;
             ViewBag.UnitCode = UnitCode;
@@ -32,7 +33,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.UserName = userName;
             ViewBag.UserRole = userRole;
 
-            var filterData = new FormCheckListModel.Form_getFilterData { GroupID = GroupID };
+            var filterData = new FormCheckListModel.Form_getFilterData { GroupID = GroupID , UnitFormID = UnitFormID };
             List<FormCheckListModel.Form_getListPackages> listChecklist = _FormChecklistService.GetFormCheckList(filterData);
 
             var statusFilterData = new FormCheckListModel.Form_getFilterData
@@ -52,7 +53,10 @@ namespace Project.ConstructionTracking.Web.Controllers
                 //ViewBag.StatusUnitID = status.UnitID;
                 //ViewBag.StatusFormID = status.FormID;
                 //ViewBag.StatusRoleID = status.RoleID;
-                ViewBag.UnitFormID = status.ID;
+                //ViewBag.UnitFormID = status.ID;
+
+                ViewBag.LockStatusID = status.LockStatusID;
+                ViewBag.RemarkPassCondition = status.RemarkPassCondition;
                 ViewBag.UnitFormActionID = status.UnitFormActionID;
                 ViewBag.StatusActionType = status.ActionType;
                 ViewBag.StatusUpdateDate = status.UpdateDate;
