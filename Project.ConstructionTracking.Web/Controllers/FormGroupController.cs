@@ -13,17 +13,18 @@ namespace Project.ConstructionTracking.Web.Controllers
             _FormGroupService = FormGroupService;
         }
 
-        public IActionResult Index(Guid projectId, string projectName, int FormID , string UnitFormName, Guid unitId , string UnitCode , string UnitStatusName)
+        public IActionResult Index(Guid projectId, string projectName, int FormID, Guid UnitFormID, string UnitFormName, Guid unitId , string UnitCode , string UnitStatusName)
         {
             ViewBag.ProjectId = projectId;
             ViewBag.ProjectName = projectName;
             ViewBag.FormID = FormID;
+            ViewBag.UnitFormID = UnitFormID;
             ViewBag.UnitFormName = UnitFormName;
             ViewBag.unitId = unitId;
             ViewBag.UnitCode = UnitCode;
             ViewBag.UnitStatusName = UnitStatusName;
 
-            var Model = new FormGroupModel { FormID = FormID };
+            var Model = new FormGroupModel { FormID = FormID , UnitID = unitId , UnitFormID = UnitFormID };
             List<FormGroupModel> listFormGroup = _FormGroupService.GetFormGroupList(Model);
             return View(listFormGroup);
         }

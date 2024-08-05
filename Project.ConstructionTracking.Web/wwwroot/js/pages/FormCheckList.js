@@ -156,12 +156,18 @@
                 if (pcRadio.dataset.wasChecked) {
                     pcRadio.checked = false;
                     pcRadio.dataset.wasChecked = "";
+                    allRadios.forEach(function (radio) {
+                        radio.disabled = false;
+                    });
                 } else {
                     var radios = document.getElementsByName(pcRadio.name);
                     for (var i = 0; i < radios.length; i++) {
                         radios[i].dataset.wasChecked = "";
                     }
                     pcRadio.dataset.wasChecked = "true";
+                    allRadios.forEach(function (radio) {
+                        radio.disabled = true;
+                    });
                 }
             }
         });
@@ -170,6 +176,7 @@
     $('#saveButton').on('click', function () {
         var packages = [];
         var checklists = [];
+        var pcCheck = null; // สำหรับเก็บข้อมูล PC Check
 
         // Collect data for each package
         $('div.container-xl.mb-3').each(function () {
@@ -223,32 +230,45 @@
                     }
                 });
             }
+
+            // ตรวจสอบว่า PC Radio ถูกเช็คหรือไม่
+            var pcRadioChecked = $('#pc-radio').is(':checked');
+            if (pcRadioChecked) {
+                var pcRemark = $('#Remark-PC').val();
+                pcCheck = {
+                    UnitFormID: packages[0]?.UnitFormID,
+                    GroupID: packages[0]?.GroupID,
+                    Remark: pcRemark
+                };
+            }
         });
 
         var data = {
             Packages: packages,
-            CheckLists: checklists
+            CheckLists: checklists,
+            PCCheck: pcCheck // เพิ่มข้อมูล PC Check ใน data
         };
 
-/*        console.log(data);*/
+        console.log(data);
 
-         $.ajax({
-             url: baseUrl + 'FormCheckList/UpdateStatus',
-             type: 'POST',
-             dataType: 'json',
-             data: data,
-             success: function (res) {
-                 if (res.success) {
-                     alert("Data saved successfully!");
-                     window.location.reload();
-                 } else {
-                     alert("An error occurred: " + res.message);
-                 }
-             },
-             error: function (xhr, status, error) {
-                 alert("An error occurred while saving the data.");
-             }
-         });
+        //$.ajax({
+        //    url: baseUrl + 'FormCheckList/UpdateStatus',
+        //    type: 'POST',
+        //    dataType: 'json',
+        //    data: data,
+        //    success: function (res) {
+        //        if (res.success) {
+        //            alert("Data saved successfully!");
+        //            window.location.reload();
+        //        } else {
+        //            alert("An error occurred: " + res.message);
+        //        }
+        //    },
+        //    error: function (xhr, status, error) {
+        //        alert("An error occurred while saving the data.");
+        //    }
+        //});
 
         return false;
     });
+
