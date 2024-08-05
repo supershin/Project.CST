@@ -14,7 +14,7 @@ namespace Project.ConstructionTracking.Web.Data
         public int? GroupID { get; set; }
         public int? RoleID { get; set; }
         public int? StatusID { get; set; }
-        public int? Remark { get; set; }
+        public string? Remark { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? ActionDate { get; set; }
         [Column(TypeName = "datetime")]

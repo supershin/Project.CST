@@ -246,28 +246,47 @@
         var data = {
             Packages: packages,
             CheckLists: checklists,
-            PCCheck: pcCheck // เพิ่มข้อมูล PC Check ใน data
+            PcCheck: pcCheck // เพิ่มข้อมูล PC Check ใน data
         };
 
         console.log(data);
 
-        //$.ajax({
-        //    url: baseUrl + 'FormCheckList/UpdateStatus',
-        //    type: 'POST',
-        //    dataType: 'json',
-        //    data: data,
-        //    success: function (res) {
-        //        if (res.success) {
-        //            alert("Data saved successfully!");
-        //            window.location.reload();
-        //        } else {
-        //            alert("An error occurred: " + res.message);
-        //        }
-        //    },
-        //    error: function (xhr, status, error) {
-        //        alert("An error occurred while saving the data.");
-        //    }
-        //});
+        $.ajax({
+            url: baseUrl + 'FormCheckList/UpdateStatus',
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: function (res) {
+                if (res.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'บันทึกข้อมูลสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'บันทึกข้อมูลไม่สำเร็จ',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'An error occurred while saving the data.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+
 
         return false;
     });

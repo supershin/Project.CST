@@ -4,6 +4,7 @@
     {
         public List<PackageModel> Packages { get; set; }
         public List<ChecklistModel> CheckLists { get; set; }
+        public PassConditionCheckModel PcCheck { get; set; }
     }
 
     public class PackageModel
@@ -31,5 +32,11 @@
         public int CheckListID { get; set; }
         public int UnitChecklistID { get; set; }
         public int RadioValue { get; set; }
+    }
+    public class PassConditionCheckModel
+    {
+        public int GroupID { get; set; }
+        public string Remark { get; set; }
+        public Guid UnitFormID { get; set; }
     }
 }

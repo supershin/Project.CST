@@ -623,8 +623,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_UnitFormAction>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.HasOne(d => d.PassCondition)
                     .WithMany(p => p.tr_UnitFormAction)
                     .HasForeignKey(d => d.PassConditionID)
@@ -737,8 +735,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_UnitFormPassCondition>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.HasOne(d => d.Group)
                     .WithMany(p => p.tr_UnitFormPassCondition)
                     .HasForeignKey(d => d.GroupID)
