@@ -8,19 +8,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class MasterFormController : BaseController
+    public class MasterVendorController : BaseController
     {
-        public MasterFormController()
+        public MasterVendorController()
         {
 
         }
 
         public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Detail()
         {
             return View();
         }

@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class MasterFormController : BaseController
+    public class MasterUser : BaseController
     {
-        public MasterFormController()
+        public MasterUser()
         {
 
         }
@@ -20,7 +20,17 @@ namespace Project.ConstructionTracking.Web.Controllers
             return View();
         }
 
-        public IActionResult Detail()
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        public IActionResult Edit()
+        {
+            return View();
+        }
+
+        public IActionResult Delete()
         {
             return View();
         }
