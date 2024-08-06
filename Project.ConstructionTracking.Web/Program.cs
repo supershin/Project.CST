@@ -38,6 +38,9 @@ builder.Services.AddScoped<ISummeryUnitFormRepo, SummeryUnitFormRepo>();
 builder.Services.AddScoped<IFormGroupService, FormGroupService>();
 builder.Services.AddScoped<IFormGroupRepo, FormGroupRepo>();
 
+builder.Services.AddScoped<IMasterProjectService, MasterProjectService>();
+builder.Services.AddScoped<IMasterProjectRepo, MasterProjectRepo>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -9,11 +9,9 @@ namespace Project.ConstructionTracking.Web.Controllers
     public class BaseController : Controller
     {
         protected string? BaseUrl = null;
-
-        private readonly IProjectService _ProjectService;
-        public BaseController(IProjectService ProjectService)
+    
+        public BaseController()
         {
-            _ProjectService = ProjectService;
         }
 
         [Microsoft.AspNetCore.Mvc.NonAction]
@@ -27,26 +25,6 @@ namespace Project.ConstructionTracking.Web.Controllers
             base.OnActionExecuting(context);
         }
 
-        public IActionResult Index()
-        {
-            ViewBag.ProjectSelectList = GetProjectSelectList(); 
-            return View();
-        }
-
-        public List<SelectListItem> GetProjectSelectList()
-        {
-            var selectLists = new List<SelectListItem>();
-            var lst = _ProjectService.GetProjectList();
-            foreach (var item in lst)
-            {
-                selectLists.Add(new SelectListItem
-                {
-                    Value = item.ProjectID.ToString(),
-                    Text = item.ProjectName 
-                });
-            }
-            return selectLists;
-        }
     }
 
 }

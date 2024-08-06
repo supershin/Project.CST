@@ -1,0 +1,86 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+
+    ViewData["Title"] = "Master User";
+}
+<div class="container mt-5">
+    <a href="javascript:history.back()" class="btn btn-secondary mb-3">
+        <i class="fas fa-chevron-left"></i> <span>Go Back</span>
+    </a>
+    <h1>Edit User</h1>
+    <form>
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label for="user-name" class="form-label">ชื่อ</label>
+                <input type="text" class="form-control" id="user-name" value="นายสมชาย">
+            </div>
+            <div class="col-lg-6">
+                <label for="user-last-name" class="form-label">นามสกุล</label>
+                <input type="text" class="form-control" id="user-last-name" value="ตัวอย่าง">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label for="user-email" class="form-label">อีเมลล์</label>
+                <input type="email" class="form-control" id="user-email" value="test@mail.com">
+            </div>
+            <div class="col-lg-6">
+                <label for="user-mobile" class="form-label">หมายเลขโทรศัพท์</label>
+                <input type="tel" class="form-control" id="user-mobile" value="012-345-6789">
+            </div>
+        </div>
+        <hr />
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label for="user-bu-id" class="form-label">BU</label>
+                <select class="form-control" id="user-bu-id">
+                    <option value="0">กรุณาเลือก BU</option>
+                    <option value="1">BUG 1</option>
+                    <option value="2" selected>BUG 2</option>
+                    <option value="3">BUG 3</option>
+                    <option value="4">BUG 4</option>
+                    <option value="5">SE</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label for="user-department" class="form-label">ตำแหน่ง</label>
+                <input type="text" class="form-control" id="user-department" value="Senior">
+            </div>
+            <div class="col-lg-6">
+                <label for="user-role" class="form-label">Role</label>
+                <select class="form-control" id="user-role">
+                    <option value="0">กรุณาเลือก Role</option>
+                    <option value="1" selected>PE</option>
+                    <option value="2">PM</option>
+                    <option value="1">PJM</option>
+                    <option value="2">QC</option>
+                </select>
+            </div>
+        </div>
+        <hr />
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label for="user-id" class="form-label">รหัสผู้ใช้งาน</label>
+                <input type="text" class="form-control" id="user-id" value="testaccountpe" disabled>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label for="user-password" class="form-label">รหัสผ่าน</label>
+                <input type="password" class="form-control" id="user-password">
+            </div>
+            <div class="col-lg-6">
+                <label for="user-password-confirm" class="form-label">ยืนยันรหัสผ่าน</label>
+                <input type="password" class="form-control" id="user-password-confirm">
+            </div>
+        </div>
+        <hr />
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-success">
+                บันทึก
+            </button>
+        </div>
+    </form>
+</div>

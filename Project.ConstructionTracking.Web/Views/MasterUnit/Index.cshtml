@@ -1,8 +1,9 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 
-    ViewData["Title"] = "Master Form";
+    ViewData["Title"] = "Master Unit";
 }
+
 @section Styles{
     <link href="~/lib/datatable/jquery.datatables.min.css?ver=@DateTime.Now.Ticks.ToString()" rel="stylesheet" />
 }
@@ -59,7 +60,7 @@
                 </div>
                 <!-- Third column: Create button -->
                 <div class="col-md-4 d-flex justify-content-end">
-                    <button id="form-create" class="btn btn-primary">
+                    <button id="unit-create" class="btn btn-primary">
                         <i class="fa fa-plus" style="margin-right:5px"></i> Create
                     </button>
                 </div>
@@ -69,22 +70,22 @@
 
         <div class="table-responsive">
             <div class="card-table table-responsive">
-                <partial name="Partial_List_MForm" />
+                <partial name="Partial_List_MUnit" />
             </div>
         </div>
     </div>
 </div>
 
-<partial name="Partial_Modal_Create_F" />
-<partial name="Partial_Modal_Edit_F" />
+<partial name="Partial_Modal_Create_U" />
+<partial name="Partial_Modal_Edit_U" />
 
 @section Scripts {
     <script src="~/lib/datatable/jquery.datatables.min.js"></script>
-    <script src="~/js/master/masterform.js?version=@DateTime.Now.Ticks.ToString()"></script>
+    <script src="~/js/master/masterunit.js?version=@DateTime.Now.Ticks.ToString()"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
-            form.init();
+            unit.init();
         });
     </script>
 }
