@@ -25,19 +25,28 @@
     <link href="~/lib/core-ui/dist/css/tabler.min.css?1692870487" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="~/lib/core-ui/dist/css/demo.min.css?1692870487" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
     <script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>
     <script src="~/js/app.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+
+    <script src="~/lib/core-ui/dist/js/tabler.min.js"></script>
+    <script src="~/lib/core-ui/dist/js/demo.min.js"></script>
+    <script src="~/lib/core-ui/dist/js/demo-theme.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.2/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.2/dist/js/select2.min.js"></script>
+
 </head>
 <body>
     <div class="page">
         <script>
-     
+
             let baseUrl = '@ViewBag.baseUrl'
-            
+
         </script>
         <!-- header -->
         <header class="navbar navbar-expand-md d-print-none">
@@ -201,10 +210,10 @@
                                 <div class="dropdown-menu">
                                     <div class="dropdown-menu-columns">
                                         <div class="dropdown-menu-column">
-                                            <a class="dropdown-item" asp-controller="FormOverall" asp-action="Index">
-                                                Project
+                                            <a class="dropdown-item" asp-controller="MasterProject" asp-action="Index">
+                                                Project Master
                                             </a>
-                                            <a class="dropdown-item" href="#">
+                                            @*<a class="dropdown-item" href="#">
                                                 Type บ้าน
                                             </a>
                                             <a class="dropdown-item" href="#">
@@ -212,14 +221,14 @@
                                             </a>
                                             <a class="dropdown-item" href="#">
                                                 Checklist
-                                            </a>
-                                            <a class="dropdown-item" href="#">
+                                            </a>*@
+                                            <a class="dropdown-item" asp-controller="MasterUnit" asp-action="Index">
                                                 Unit Master
                                             </a>
-                                            <a class="dropdown-item" href="#">
-                                                ผรม.Master
+                                            <a class="dropdown-item" asp-controller="MasterVendor" asp-action="Index">
+                                                Vendor Master
                                             </a>
-                                            <a class="dropdown-item" href="#">
+                                            <a class="dropdown-item" asp-controller="MasterUser" asp-action="Index">
                                                 User Master
                                             </a>
                                             <a class="dropdown-item" asp-controller="MasterForm" asp-action="Index">
@@ -249,7 +258,7 @@
             </div>
         </header>
         <div class="page-wrapper">
-            
+
             <!-- Loading Animation -->
             <div id="loading">
                 <img src="https://i.gifer.com/ZZ5H.gif" alt="Loading...">
@@ -285,27 +294,25 @@
 
     <!-- Libs JS -->
     <script src="~/lib/core-ui/dist/libs/nouislider/dist/nouislider.min.js?1692870487" defer></script>
-   
+
     <!-- Tabler Core -->
     <script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>
     <script src="~/lib/core-ui/dist/js/demo.min.js?1692870487" defer></script>
     <script src="~/lib/core-ui/dist/libs/litepicker/dist/litepicker.js?1692870487" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
+    @await RenderSectionAsync("Styles", required: false)
+    <script>document.addEventListener("DOMContentLoaded", function () {
             window.Litepicker && (new Litepicker({
                 element: document.getElementById('datepicker-icon-prepend'),
                 buttonText: {
                     previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>`,
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>`,
                     nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>`,
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>`,
                 },
             }));
-        });
-
-    </script>
+        });</script>
 </body>
 </html>
 

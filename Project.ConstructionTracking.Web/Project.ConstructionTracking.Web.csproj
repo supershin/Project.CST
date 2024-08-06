@@ -11,6 +11,13 @@
     <Folder Include="wwwroot\lib\datatable\" />
     <Folder Include="Views\FormOverall\" />
     <Folder Include="Views\MasterForm\" />
+    <Folder Include="Views\MasterProject\" />
+    <Folder Include="Models\MProjectModel\" />
+    <Folder Include="wwwroot\js\master\" />
+    <Folder Include="Views\MasterUnit\" />
+    <Folder Include="Views\MasterVendor\" />
+    <Folder Include="Views\MasterCompany\" />
+    <Folder Include="Views\MasterUser\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,8 +42,15 @@
   <ItemGroup>
     <None Remove="Views\FormOverall\" />
     <None Remove="Views\MasterForm\" />
+    <None Remove="Views\MasterProject\" />
+    <None Remove="Models\MProjectModel\" />
+    <None Remove="Views\MasterUnit\" />
+    <None Remove="Views\MasterVendor\" />
+    <None Remove="Views\MasterCompany\" />
+    <None Remove="Views\MasterUser\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="Views\FormOverall\PartialFormList.cshtml" />
+    <Content Remove="wwwroot\js\master\" />
   </ItemGroup>
 </Project>

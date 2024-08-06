@@ -1,0 +1,68 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div class="modal fade" id="modal-unit-c" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg" role="document">
+        <div id="modal-format" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Unit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">ชื่อโครงการ</label>
+                        <select class="form-control" id="u-project-list">
+                            <option value="1">ดิ ออเนอร์ โยธินพัฒนา</option>
+                            <option value="2">เอสต้า ซีรีนิตี้ บรมราชชนนี</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">ประเภทยูนิต</label>
+                        <select class="form-control" id="u-unit-type-list">
+                            <option value="1">บ้านเดี่ยว 2 ชั้น</option>
+                            <option value="2">บ้านเดี่ยว 3 ชั้น</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">ประเภทโมเดล</label>
+                        <select class="form-control" id="u-model-type-list">
+                            <option value="1">ดีไลท์</option>
+                            <option value="2">SERENE</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">รหัสยูนิต</label>
+                        <input type="text" class="form-control" name="u-unit-code">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">เลขที่อยู่</label>
+                        <input type="text" class="form-control" name="u-addr-no">
+                    </div>
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">เนื้อที่</label>
+                        <input type="text" class="form-control" name="u-area">
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </a>
+                <a href="#" class="btn btn-success ms-auto" data-bs-dismiss="modal">
+                    บันทึก
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

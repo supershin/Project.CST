@@ -9,11 +9,9 @@ namespace Project.ConstructionTracking.Web.Controllers
     public class BaseController : Controller
     {
         protected string? BaseUrl = null;
-
-
+    
         public BaseController()
         {
-
         }
 
         [Microsoft.AspNetCore.Mvc.NonAction]

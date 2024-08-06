@@ -1,7 +1,7 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 
-    ViewData["Title"] = "Master Form";
+    ViewData["Title"] = "Master Vendor";
 }
 @section Styles{
     <link href="~/lib/datatable/jquery.datatables.min.css?ver=@DateTime.Now.Ticks.ToString()" rel="stylesheet" />
@@ -31,21 +31,11 @@
 <div class="container mt-3">
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">รายการยูนิต</h3>
+            <h3 class="card-title">รายชื่อผู้รับเหมา</h3>
         </div>
         <div class="card-body border-bottom py-3">
             <div class="row d-flex align-items-center">
-                <!-- First column: Dropdown -->
-                <div class="col-md-4 mb-3 mb-md-0">
-                    <div class="input-group">
-                        <select class="form-select" id="dropdown-select">
-                            <option value="1">ดิ ออเนอร์ โยธินพัฒนา</option>
-                            <option value="2">เอสต้า ซีรีนิตี้ บรมราชชนนี</option>
-                        </select>
-                    </div>
-                </div>
-                <!-- Second column: Search form -->
-                <div class="col-md-4 mb-3 mb-md-0">
+                <div class="col-md-6 col-lg-4 mb-3 mb-md-0">
                     <form id="form-search" method="post">
                         <div class="input-group">
                             <input type="text" class="form-control form-control-rounded" placeholder="Search..." autocomplete="off" name="strSearch">
@@ -57,34 +47,31 @@
                         </div>
                     </form>
                 </div>
-                <!-- Third column: Create button -->
-                <div class="col-md-4 d-flex justify-content-end">
-                    <button id="form-create" class="btn btn-primary">
+                <div class="col-md-6 col-lg-8 d-flex justify-content-end">
+                    <button id="vendor-create" class="btn btn-primary">
                         <i class="fa fa-plus" style="margin-right:5px"></i> Create
                     </button>
                 </div>
             </div>
         </div>
-
-
         <div class="table-responsive">
             <div class="card-table table-responsive">
-                <partial name="Partial_List_MForm" />
+                <partial name="Partial_List_MVendor" />
             </div>
         </div>
     </div>
 </div>
 
-<partial name="Partial_Modal_Create_F" />
-<partial name="Partial_Modal_Edit_F" />
+<partial name="Partial_Modal_Create_V" />
+<partial name="Partial_Modal_Edit_V" />
 
 @section Scripts {
     <script src="~/lib/datatable/jquery.datatables.min.js"></script>
-    <script src="~/js/master/masterform.js?version=@DateTime.Now.Ticks.ToString()"></script>
+    <script src="~/js/master/mastervendor.js?version=@DateTime.Now.Ticks.ToString()"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
-            form.init();
+            vendor.init();
         });
     </script>
 }
