@@ -38,6 +38,8 @@ builder.Services.AddScoped<ISummeryUnitFormRepo, SummeryUnitFormRepo>();
 builder.Services.AddScoped<IFormGroupService, FormGroupService>();
 builder.Services.AddScoped<IFormGroupRepo, FormGroupRepo>();
 
+builder.Services.AddScoped<IFormChecklistService, FormChecklistService>();
+builder.Services.AddScoped<IFormChecklistRepo, FormChecklistRepo>();
 builder.Services.AddScoped<IMasterProjectService, MasterProjectService>();
 builder.Services.AddScoped<IMasterProjectRepo, MasterProjectRepo>();
 

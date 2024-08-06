@@ -33,10 +33,22 @@ namespace Project.ConstructionTracking.Web.Data
         [StringLength(10)]
         [Unicode(false)]
         public string? Build { get; set; }
-        public int? Floor { get; set; }
-        public int? Block { get; set; }
+        [StringLength(10)]
+        [Unicode(false)]
+        public string? Floor { get; set; }
+        [StringLength(10)]
+        [Unicode(false)]
+        public string? Block { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         public decimal? Area { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal? TitledeedArea { get; set; }
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? PhaseName { get; set; }
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? SubPhaseName { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? StartDate { get; set; }
         [Column(TypeName = "datetime")]

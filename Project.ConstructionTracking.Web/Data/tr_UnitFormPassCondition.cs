@@ -19,6 +19,7 @@ namespace Project.ConstructionTracking.Web.Data
         public Guid? UnitFormID { get; set; }
         public int? GroupID { get; set; }
         public int? LockStatusID { get; set; }
+        public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? ActionDate { get; set; }
         [Column(TypeName = "datetime")]

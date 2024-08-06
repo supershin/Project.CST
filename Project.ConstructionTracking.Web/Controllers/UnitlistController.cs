@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class UnitlistController : Controller
+    public class UnitlistController : BaseController
     {
         private readonly IUnitService _unitService;
         private readonly IGetDDLService _getDDLService;

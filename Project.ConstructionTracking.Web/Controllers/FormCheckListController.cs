@@ -1,48 +1,89 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient.Server;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Services;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    [Route("FormCheckList")]
-    public class FormCheckListController : Controller
+    public class FormCheckListController : BaseController
     {
-        private readonly IProjectFormService _ProjectFormService;
 
-        public FormCheckListController(IProjectFormService ProjectFormService)
+        private readonly IFormChecklistService _FormChecklistService;
+
+        public FormCheckListController(IFormChecklistService FormChecklistService)
         {
-            _ProjectFormService = ProjectFormService;
+            _FormChecklistService = FormChecklistService;
         }
-        [HttpPost("Index")]
-        public IActionResult Index(TrackingUnitModel model)
+
+        public IActionResult Index(Guid projectId, string projectName, int FormID, Guid UnitFormID, string UnitFormName, Guid unitId, string UnitCode, string UnitStatusName , string GroupName , int GroupID)
         {
-            //Guid unitID = model.UnitID;
-            int ID = model.ID;
-            int test = 1;
-            int test2 = 1;
-            FormCheckListUnitView viewModel = _ProjectFormService.GetFormCheckListUnit(test, test2);
+            var userName = Request.Cookies["CST.UserName"];
+            var userRole = Request.Cookies["CST.Role"];
+
+            ViewBag.ProjectId = projectId;
+            ViewBag.ProjectName = projectName;
+            ViewBag.FormID = FormID;
+            ViewBag.UnitFormID = UnitFormID;
+            ViewBag.UnitFormName = UnitFormName;
+            ViewBag.UnitId = unitId;
+            ViewBag.UnitCode = UnitCode;
+            ViewBag.UnitStatusName = UnitStatusName;
+            ViewBag.GroupName = GroupName;
+            ViewBag.GroupID = GroupID;
+            ViewBag.UserName = userName;
+            ViewBag.UserRole = userRole;
+
+            var filterData = new FormCheckListModel.Form_getFilterData { GroupID = GroupID , UnitFormID = UnitFormID };
+            List<FormCheckListModel.Form_getListPackages> listChecklist = _FormChecklistService.GetFormCheckList(filterData);
+
+            var statusFilterData = new FormCheckListModel.Form_getFilterData
+            {
+                ProjectID = projectId,
+                UnitID = unitId,
+                FormID = FormID
+            };
+
+            List<FormCheckListModel.Form_getListStatus> listStatus = _FormChecklistService.GetFormCheckListStatus(statusFilterData);
+
+            if (listStatus != null && listStatus.Count > 0)
+            {
+                var status = listStatus[0]; // Assuming there is only one row in listStatus
+                //ViewBag.StatusID = status.ID;
+                //ViewBag.StatusProjectID = status.ProjectID;
+                //ViewBag.StatusUnitID = status.UnitID;
+                //ViewBag.StatusFormID = status.FormID;
+                //ViewBag.StatusRoleID = status.RoleID;
+                //ViewBag.UnitFormID = status.ID;
+
+                ViewBag.LockStatusID = status.LockStatusID;
+                ViewBag.RemarkPassCondition = status.RemarkPassCondition;
+                ViewBag.UnitFormActionID = status.UnitFormActionID;
+                ViewBag.StatusActionType = status.ActionType;
+                ViewBag.StatusUpdateDate = status.UpdateDate;
+            }
+
+            var viewModel = new FormChecklistViewModel
+            {
+                ListPackages = listChecklist,
+                ListStatus = listStatus
+            };
+
             return View(viewModel);
         }
-        //[HttpPost("Indextest")]
-        //public IActionResult Indextest(UnitModel model)
-        //{
-        //    // Access the ID property from the model
-        //    int test = 1; // assuming the ID property is in your UnitModel
-        //    int test2 = 1; // This can be any other parameter you need
 
-        //    // Call your service method with the parameters
-        //    FormCheckListUnitView viewModel = _ProjectFormService.GetFormCheckListUnit(test, test2);
 
-        //    // Return the view with the viewModel
-        //    return View(viewModel);
-        //}
-
-        [HttpPost("UpdateStatus")]
-        public IActionResult UpdateStatus(UnitForm model)
+        [HttpPost]
+        public IActionResult UpdateStatus(FormChecklistIUDModel model)
         {
-            _ProjectFormService.InsertFormCheckListUnit(model);
-            return RedirectToAction("Success"); // Redirect to a success page or wherever appropriate
-            //return Ok(new { success = true });
+            try
+            {
+                _FormChecklistService.InsertOrUpdate(model);
+                return Ok(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = "บันทึกข้อมูลไม่สำเร็จ: " + ex.Message });
+            }
         }
 
     }

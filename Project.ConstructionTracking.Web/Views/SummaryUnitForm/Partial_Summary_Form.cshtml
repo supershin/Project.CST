@@ -6,12 +6,12 @@
     var UnitStatusName = ViewBag.UnitStatusName;
 }
 
-<div class="container-xl">
-    <div class="row row-cards">
+<div class="container mt-1 mb-2">
+    <div class="row">
         @foreach (var item in Model)
         {
-            <div class="col-12">
-                <div class="card card-link card-link-pop">
+            <div class="col-12 col-sm-6">
+                <div class="card card-link card-link-pop mb-2">
                     <div class="row justify-content-center">
                         <div class="card-body">
                             <div class="row">
@@ -39,7 +39,8 @@
                                     <form asp-controller="FormGroup" asp-action="index" method="post">
                                         <input type="hidden" name="projectId" value="@projectId" />
                                         <input type="hidden" name="projectName" value="@projectName" />
-                                        <input type="hidden" name="FormID" value="@item.FormID"/>
+                                        <input type="hidden" name="FormID" value="@item.FormID" />
+                                        <input type="hidden" name="UnitFormID" value="@item.UnitFormID" />
                                         <input type="hidden" name="UnitFormName" value="@item.UnitFormName" />
                                         <input type="hidden" name="unitId" value="@item.UnitID" />
                                         <input type="hidden" name="UnitCode" value="@UnitCode" />
@@ -54,6 +55,7 @@
                                         <input type="hidden" name="projectId" value="@projectId" />
                                         <input type="hidden" name="projectName" value="@projectName" />
                                         <input type="hidden" name="FormID" value="@item.FormID" />
+                                        <input type="hidden" name="UnitFormID" value="@item.UnitFormID" />
                                         <input type="hidden" name="UnitFormName" value="@item.UnitFormName" />
                                         <input type="hidden" name="unitId" value="@item.UnitID" />
                                         <input type="hidden" name="UnitCode" value="@UnitCode" />
@@ -64,13 +66,6 @@
                                             </span>
                                         </button>
                                     </form>
-@*                                    <form action="@Url.Action("index", "FormGroup")" method="post">
-                                        <button type="submit" class="status-dot bg-@item.PE @(item.PE == "danger" || item.PE == "warning" ? "status-dot-animated" : "")">
-                                            <span class="status-text">
-                                                PE
-                                            </span>
-                                        </button>
-                                    </form>*@
                                 </div>
                                 <div class="col">
                                     @if (!string.IsNullOrEmpty(item.QC1) ||

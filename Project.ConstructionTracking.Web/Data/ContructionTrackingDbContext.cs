@@ -16,6 +16,7 @@ namespace Project.ConstructionTracking.Web.Data
         {
         }
 
+        public virtual DbSet<temp_unit_400H007> temp_unit_400H007 { get; set; } = null!;
         public virtual DbSet<tm_BU> tm_BU { get; set; } = null!;
         public virtual DbSet<tm_DefectArea> tm_DefectArea { get; set; } = null!;
         public virtual DbSet<tm_DefectAreaType_Mapping> tm_DefectAreaType_Mapping { get; set; } = null!;
@@ -182,11 +183,6 @@ namespace Project.ConstructionTracking.Web.Data
                 entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
-
-                entity.HasOne(d => d.Package)
-                    .WithMany(p => p.tm_FormCheckList)
-                    .HasForeignKey(d => d.PackageID)
-                    .HasConstraintName("FK_tm_FormCheckList_tm_FormPackage");
             });
 
             modelBuilder.Entity<tm_FormGroup>(entity =>
@@ -627,8 +623,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_UnitFormAction>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.HasOne(d => d.PassCondition)
                     .WithMany(p => p.tr_UnitFormAction)
                     .HasForeignKey(d => d.PassConditionID)
@@ -716,8 +710,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_UnitFormPackage>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.Property(e => e.UpdateBy).IsFixedLength();
 
                 entity.HasOne(d => d.Form)
@@ -743,8 +735,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_UnitFormPassCondition>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.HasOne(d => d.Group)
                     .WithMany(p => p.tr_UnitFormPassCondition)
                     .HasForeignKey(d => d.GroupID)
