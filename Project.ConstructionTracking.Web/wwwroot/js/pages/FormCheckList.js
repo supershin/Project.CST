@@ -249,7 +249,7 @@
             PcCheck: pcCheck // เพิ่มข้อมูล PC Check ใน data
         };
 
-        console.log(data);
+/*        console.log(data);*/
 
         $.ajax({
             url: baseUrl + 'FormCheckList/UpdateStatus',

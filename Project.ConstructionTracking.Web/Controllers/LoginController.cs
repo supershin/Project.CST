@@ -33,7 +33,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 {
                     Expires = DateTime.Now.AddDays(1) // Set the expiration date for the cookies
                 };
-
+                Response.Cookies.Append("CST.ID", userProfile.ID.ToString(), option);
                 Response.Cookies.Append("CST.UserName", userProfile.UserName, option);
                 Response.Cookies.Append("CST.Role", userProfile.Role?.ToString(), option);
 
