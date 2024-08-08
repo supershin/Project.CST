@@ -17,5 +17,16 @@ namespace Project.ConstructionTracking.Web.Services
             var ListFormGroup = _IFormGroupRepo.GetFormGroupList(Model);
             return ListFormGroup;
         }
+
+        public FormGroupModel.FormGroupDetail GetFormGroupDetail(Guid unitFormId)
+        {
+            var FormGroupDetail = _IFormGroupRepo.GetFormGroupDetail(unitFormId);
+            return FormGroupDetail;
+        }
+
+        public void SubmitSaveFormGroup(FormGroupModel.FormGroupIUDModel model)
+        {
+            _IFormGroupRepo.SubmitSaveFormGroup(model);
+        }
     }
 }

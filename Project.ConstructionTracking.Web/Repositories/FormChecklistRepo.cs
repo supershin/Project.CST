@@ -202,7 +202,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                 {
                     UnitFormID = unitFormIDUse,
                     RoleID = 1,
-                    ActionType = "save",
+                    //ActionType = "save",
                     StatusID = 1,
                     Remark = package.Remark,
                     ActionDate = DateTime.Now,
