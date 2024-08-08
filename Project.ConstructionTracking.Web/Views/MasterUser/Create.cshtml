@@ -1,13 +1,22 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 
-    ViewData["Title"] = "Master User";
+    ViewData["Title"] = "Create User";
 }
+<div class="page-header d-print-none">
+    <div class="container-xl">
+        <div class="row">
+            <div class="col-3">
+                <a href="javascript:history.back()" class="btn btn-secondary mb-3">
+                    <i class="fas fa-chevron-left"></i> <span>Go Back</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container mt-5">
-    <a href="javascript:history.back()" class="btn btn-secondary mb-3">
-        <i class="fas fa-chevron-left"></i> <span>Go Back</span>
-    </a>
     <h2>Create User</h2>
+    <hr />
     <form>
         <div class="row mb-3">
             <div class="col-lg-6">
@@ -52,7 +61,7 @@
                 <label for="user-role" class="form-label">Role</label>
                 <select class="form-control" id="user-role">
                     <option value="0">กรุณาเลือก Role</option>
-                    <option value="1">PE</option>
+                    <option value="1">PE/SE</option>
                     <option value="2">PM</option>
                     <option value="1">PJM</option>
                     <option value="2">QC</option>
@@ -60,12 +69,6 @@
             </div>
         </div>
         <hr />
-        <div class="row mb-3">
-            <div class="col-lg-6">
-                <label for="user-id" class="form-label">รหัสผู้ใช้งาน</label>
-                <input type="text" class="form-control" id="user-id">
-            </div>
-        </div>
         <div class="row mb-3">
             <div class="col-lg-6">
                 <label for="user-password" class="form-label">รหัสผ่าน</label>

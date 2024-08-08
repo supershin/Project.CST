@@ -15,7 +15,6 @@
     <Folder Include="Models\MProjectModel\" />
     <Folder Include="wwwroot\js\master\" />
     <Folder Include="Views\MasterUnit\" />
-    <Folder Include="Views\MasterVendor\" />
     <Folder Include="Views\MasterCompany\" />
     <Folder Include="Views\MasterUser\" />
   </ItemGroup>
@@ -45,7 +44,6 @@
     <None Remove="Views\MasterProject\" />
     <None Remove="Models\MProjectModel\" />
     <None Remove="Views\MasterUnit\" />
-    <None Remove="Views\MasterVendor\" />
     <None Remove="Views\MasterCompany\" />
     <None Remove="Views\MasterUser\" />
   </ItemGroup>
