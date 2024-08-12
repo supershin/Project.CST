@@ -3,6 +3,8 @@
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 }
 
+@model List<Project.ConstructionTracking.Web.Models.ApproveFormcheckModel>
+
 <div class="page-wrapper">
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
@@ -62,33 +64,40 @@
              </ol>
             <br>
             <div class="row">
-                <div class="col-md-4">
-                    <div class="card p-3 mb-2">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <form action="@Url.Action("index","FormCheckList")" method="post">
-                                    <button class="status-dot bg-green">
-                                        <i class="fa-regular fa-circle-check"></i>
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-4">
+                        <div class="card p-3 mb-2">
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex flex-row align-items-center">
+                                    <form action="@Url.Action("index","FormCheckList")" method="post">
+                                        <button class="status-dot bg-green">
+                                            <i class="fa-regular fa-circle-check"></i>
+                                        </button>
+                                    </form>
+                                    <div class="ms-2 c-details">
+                                        <h3 class="mb-0">
+                                            @item.Group_Name
+                                        </h3>
+                                    </div>
+                                </div>
+                                <div class="align-items-right">
+                                    <button class="status-dot bg-primary" onclick="openModal()">
+                                        <i class="fa-solid fa-magnifying-glass-plus"></i>
                                     </button>
-                                </form>
-                                <div class="ms-2 c-details">
-                                    <h3 class="mb-0">
-                                        งานก่ออิฐ
-                                    </h3>
                                 </div>
                             </div>
-                            <div class="align-items-right">
-                                <button class="status-dot bg-primary" onclick="openModal()">
-                                    <i class="fa-solid fa-magnifying-glass-plus"></i>
-                                </button>
-                            </div>
+                            <label class="form-label">
+                                ความเห็นจากวิศวกร
+                            </label>
+                            <textarea rows="1" class="form-control" placeholder="ความคิดเห็น" disabled>@item.Remark</textarea>
                         </div>
-                        <label class="form-label">
-                            ความเห็นจากวิศวกร
-                        </label>
-                        <textarea rows="1" class="form-control" placeholder="ความคิดเห็น" disabled>ตรวจผ่านครั้งที่ 2</textarea>
                     </div>
-                </div>
+                }
+                
+
+
+@*
                 <div class="col-md-4">
                     <div class="card p-3 mb-2">
                         <div class="d-flex justify-content-between">
@@ -196,7 +205,7 @@
                         </label>
                         <textarea class="form-control" placeholder="ความคิดเห็น" disabled>ขออนุโลมจ่ายในงวดที่ 7 เนื่องจาก Supplier ส่งวัศวุล่าช้าโดยจะจบงานให้ภายใน 10/06/2567</textarea>
                     </div>
-                </div>
+                </div>*@
             </div>
         </div>
         <div class="container-xl mb-3">
@@ -344,7 +353,6 @@
 
 </style>
 <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
-<script src="~/lib/core-ui/dist/libs/fslightbox/index.js?1692870487" defer></script>
 <script>
     function openModal() {
         var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));

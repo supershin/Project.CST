@@ -6,7 +6,7 @@ namespace Project.ConstructionTracking.Web.Models
     public class FormGroupModel
     {
         public Guid? UnitID { get; set; }
-        public int GroupID { get; set; }
+        public int? GroupID { get; set; }
         public int? FormID { get; set; }
         public Guid? UnitFormID { get; set; }
         public string? GroupName { get; set; }
@@ -58,6 +58,11 @@ namespace Project.ConstructionTracking.Web.Models
             public int? PE_StatusID { get; set; }
             public string? PM_ActionType { get; set; }
             public int? PM_StatusID { get; set; }
+            public string? PJM_ActionType { get; set; }
+            public int? PJM_StatusID { get; set; }
+            public string? FilePath { get; set; }
+            public string? FileName { get; set; }
+
         }
     }
 }

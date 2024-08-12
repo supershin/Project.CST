@@ -2,6 +2,8 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 }
+@model List<Project.ConstructionTracking.Web.Models.PMApproveModel>
+
 <style>
 
 .card {
@@ -81,185 +83,70 @@
     <div class="page-body">
         <div class="container mb-3">
             <div class="row">
-                <div class="col-md-4">
-                    <div class="card p-3 mb-2">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <div class="ms-2 c-details p-2">
-                                    <h3 class="mb-0 text-primary">
-                                        A-01<small class="text-yellow"> โครงการเอสต้า รังสิต</small>
-                                    </h3>
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-4">
+                        <div class="card p-3 mb-2">
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex flex-row align-items-center">
+                                    <div class="ms-2 c-details p-2">
+                                        <h3 class="mb-0 text-primary">
+                                            @item.UnitCode <small class="text-yellow"> @item.ProjectName </small>
+                                        </h3>
+                                    </div>
                                 </div>
-                                
-                            </div>
-                            <form action="@Url.Action("index","PMApprove")" method="post">
-                                <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
-                                    รออนุมัติ
-                                </button>
-                            </form>
-                            <form action="@Url.Action("index","PMApprove")" method="post">
-                                <button class="btn fixed-size-btn" style="background-color: blue; color: white;">
-                                    <i class="fa-solid fa-lock"></i>
-                                </button>
-                            </form>
-                        </div>
-                        <div class="mt-1">
-                            <div class="row">
-                                <div class="col-4">
-                                    <button type="button" class="btn btn-outline-secondary">งวดที่ 2</button>
-                                </div>
-                                <div class="col-8">
-                                    <h3 class="heading"> สร้างโดย 21 Century </h3>
-                                    <h5>วันที่ submit 1/6/2567</h5>                                                                  
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-3 mb-2">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <div class="ms-2 c-details p-2">
-                                    <h3 class="mb-0 text-primary">
-                                        A-05<small class="text-yellow"> โครงการเอสต้า รังสิต</small>
-                                    </h3>
-                                </div>
+                                <form action="@Url.Action("index", "PMApprove", new { unitId = item.UnitID, formId = item.FormID })" method="post">
+                                    @{
+                                        // Initialize variables with default values
+                                        string buttonText = "รออนุมัติ";
+                                        string buttonColor = "secondary";
 
+                                        if (string.IsNullOrEmpty(item.StatusID_PM?.ToString()) || item.StatusID_PM == 0)
+                                        {
+                                            buttonText = "รออนุมัติ";
+                                            buttonColor = "secondary";
+                                        }
+                                        else if (item.StatusID_PM == 4)
+                                        {
+                                            buttonText = "อนุมัติ";
+                                            buttonColor = "success";
+                                        }
+                                        else if (item.StatusID_PM == 5)
+                                        {
+                                            buttonText = "ไม่อนุมัติ";
+                                            buttonColor = "danger";
+                                        }
+                                        else if (item.StatusID_PM == 6)
+                                        {
+                                            buttonText = "รอผล PJM Head";
+                                            buttonColor = "primary";
+                                        }
+                                    }
+                                    <button class="btn fixed-size-btn btn-@buttonColor" style="color: white;">
+                                        @buttonText
+                                    </button>
+                                </form>
+                                @if (@item.PassConditionID != null)
+                                {
+                                    <button class="btn fixed-size-btn" style="background-color: blue; color: white;">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </button>
+                                }
                             </div>
-                            <form action="@Url.Action("index","PMApprove")" method="post">
-                                <button class="btn fixed-size-btn" style="background-color: #C0C0C0; color: white;">
-                                    รออนุมัติ
-                                </button>
-                            </form>
-@*                            <form action="@Url.Action("index","FormGroup")" method="post">
-                                <button class="btn fixed-size-btn" style="background-color: blue; color: white;">
-                                    <i class="fa-solid fa-lock"></i>
-                                </button>
-                            </form>*@
-                        </div>
-                        <div class="mt-1">
-                            <div class="row">
-                                <div class="col-4">
-                                    <button type="button" class="btn btn-outline-secondary">งวดที่ 7</button>
-                                </div>
-                                <div class="col-8">
-                                    <h3 class="heading"> สร้างโดย 21 Century </h3>
-                                    <h5>วันที่ submit 24/9/2567</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-3 mb-2">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <div class="ms-2 c-details p-2">
-                                    <h3 class="mb-0 text-primary">
-                                        A-08<small class="text-yellow"> โครงการอาร์เบอร์ RW </small>
-                                    </h3>
-                                </div>
-
-                            </div>
-                            <form action="@Url.Action("index","PMApprove")" method="post">
-                                <button class="btn fixed-size-btn" style="background-color: red; color: white;">
-                                    ไม่ผ่าน <i class="fa-solid fa-bolt"></i>
-                                </button>
-                            </form>
-@*                            <form action="@Url.Action("index","FormGroup")" method="post">
-                                <button class="btn fixed-size-btn" style="background-color: blue; color: white;">
-                                    <i class="fa-solid fa-lock"></i>
-                                </button>
-                            </form>*@
-                        </div>
-                        <div class="mt-1">
-                            <div class="row">
-                                <div class="col-4">
-                                    <button type="button" class="btn btn-outline-secondary">งวดที่ 5</button>
-                                </div>
-                                <div class="col-8">
-                                    <h3 class="heading">
-                                        สร้างโดย อมรรัตน์ คอน
-                                    </h3>
-                                    <h5>วันที่ submit 17/5/2567</h5>
+                            <div class="mt-1">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <button type="button" class="btn btn-outline-secondary">@item.FormName</button>
+                                    </div>
+                                    <div class="col-8">
+                                        <h3 class="heading"> สร้างโดย @item.VenderName </h3>
+                                        <h5>วันที่ submit @item.ActionDate_PE</h5>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-3 mb-2">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <div class="ms-2 c-details p-2">
-                                    <h3 class="mb-0 text-primary">
-                                        A-11<small class="text-yellow">โครงการอาร์เบอร์ RW</small>
-                                    </h3>
-                                </div>
-
-                            </div>
-                            <form action="@Url.Action("index","PMApprove")" method="post">
-                                <button class="btn fixed-size-btn" style="background-color: red; color: white;">
-                                    ไม่ผ่าน
-                                </button>
-                            </form>
-@*                            <form action="@Url.Action("index","FormGroup")" method="post">
-                                <button class="btn fixed-size-btn" style="background-color: blue; color: white;">
-                                    <i class="fa-solid fa-lock"></i>
-                                </button>
-                            </form>*@
-                        </div>
-                        <div class="mt-1">
-                            <div class="row">
-                                <div class="col-4">
-                                    <button type="button" class="btn btn-outline-secondary">งวดที่ 5</button>
-                                </div>
-                                <div class="col-8">
-                                    <h3 class="heading">
-                                        สร้างโดย อมรรัตน์ คอน
-                                    </h3>
-                                    <h5>วันที่ submit 12/6/2567</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-3 mb-2">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <div class="ms-2 c-details p-2">
-                                    <h3 class="mb-0 text-primary">
-                                        A-09<small class="text-yellow"> โครงการเอสต้า รังสิต</small>
-                                    </h3>
-                                </div>
-
-                            </div>
-                            <form action="@Url.Action("index","PMApprove")" method="post">
-                                <button class="btn fixed-size-btn" style="background-color: green; color: white;">
-                                    ผ่าน
-                                </button>
-                            </form>
-                            <form action="@Url.Action("index","FormGroup")" method="post">
-                                <button class="btn fixed-size-btn" style="background-color: green; color: white;">
-                                    <i class="fa-solid fa-lock-open"></i>
-                                </button>
-                            </form>
-                        </div>
-                        <div class="mt-1">
-                            <div class="row">
-                                <div class="col-4">
-                                    <button type="button" class="btn btn-outline-secondary">งวดที่ 12</button>
-                                </div>
-                                <div class="col-8">
-                                    <h3 class="heading"> สร้างโดย 21 Century </h3>
-                                    <h5>วันที่ submit 1/12/2567</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
         </div>
     </div>

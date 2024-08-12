@@ -89,9 +89,9 @@ namespace Project.ConstructionTracking.Web.Repositories
             return orderedQuery;
 
         }
-
         public FormGroupDetail GetFormGroupDetail(Guid unitFormId)
         {
+            // Step 1: Fetch the UnitForm and related actions (PE, PM, and PJM)
             var result = (from t1 in _context.tr_UnitForm
                           where t1.ID == unitFormId
                           join t2 in _context.tr_UnitFormAction.Where(a => a.RoleID == 1)
@@ -100,18 +100,67 @@ namespace Project.ConstructionTracking.Web.Repositories
                           join t3 in _context.tr_UnitFormAction.Where(a => a.RoleID == 2)
                               on t1.ID equals t3.UnitFormID into pmActions
                           from pmAction in pmActions.DefaultIfEmpty()
-                          select new FormGroupDetail
+                          join t4 in _context.tr_UnitFormAction.Where(a => a.RoleID == 3)
+                              on t1.ID equals t4.UnitFormID into pjmActions
+                          from pjmAction in pjmActions.DefaultIfEmpty()
+                          select new
                           {
-                              ID = t1.ID,
-                              Grade = t1.Grade,
-                              FormID = t1.FormID,
+                              t1.ID,
+                              t1.Grade,
+                              t1.FormID,
                               PE_ActionType = peAction != null ? peAction.ActionType : null,
                               PE_StatusID = peAction != null ? peAction.StatusID : null,
                               PM_ActionType = pmAction != null ? pmAction.ActionType : null,
-                              PM_StatusID = pmAction != null ? pmAction.StatusID : null
-                          }).FirstOrDefault(); // ใช้ FirstOrDefault เพื่อดึงข้อมูลรายการแรกหรือค่า null หากไม่มีข้อมูล
+                              PM_StatusID = pmAction != null ? pmAction.StatusID : null,
+                              PJM_ActionType = pjmAction != null ? pjmAction.ActionType : null,
+                              PJM_StatusID = pjmAction != null ? pjmAction.StatusID : null
+                          }).FirstOrDefault();
 
-            return result;
+            if (result == null)
+                return null;
+
+            // Step 2: Fetch the latest UnitFormResource and related Resource
+            var latestResource = (from ure in _context.tr_UnitFormResource
+                                  where ure.UnitFormID == result.ID && ure.PassConditionID == null
+                                  orderby ure.CreateDate descending
+                                  select new
+                                  {
+                                      ure.ResourceID,
+                                      ure.CreateDate
+                                  }).FirstOrDefault();
+
+            string filePath = null;
+            string fileName = null;
+
+            if (latestResource != null)
+            {
+                var resource = _context.tm_Resource
+                    .Where(r => r.ID == latestResource.ResourceID)
+                    .Select(r => new { r.FilePath, r.FileName })
+                    .FirstOrDefault();
+
+                if (resource != null)
+                {
+                    filePath = resource.FilePath;
+                    fileName = resource.FileName;
+                }
+            }
+
+            // Step 3: Combine results into FormGroupDetail
+            return new FormGroupDetail
+            {
+                ID = result.ID,
+                Grade = result.Grade,
+                FormID = result.FormID,
+                PE_ActionType = result.PE_ActionType,
+                PE_StatusID = result.PE_StatusID,
+                PM_ActionType = result.PM_ActionType,
+                PM_StatusID = result.PM_StatusID,
+                PJM_ActionType = result.PJM_ActionType,
+                PJM_StatusID = result.PJM_StatusID,
+                FilePath = filePath,
+                FileName = fileName
+            };
         }
 
 
@@ -132,6 +181,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
             else
             {
+
                 if (model.Sign != null)
                 {
                     SaveSignature(model.Sign, model.ApplicationPath, model.UnitFormID, model.FormGrade, model.VendorID ,model.userID , model.RoleID);
@@ -140,28 +190,27 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             _context.SaveChanges();
         }
-        private void SaveSignature(SignatureData signData, string? appPath , Guid? UnitFormID , string? FormGrade , int? VendorID , Guid? userID ,int? RoleID)
+        private void SaveSignature(SignatureData signData, string? appPath, Guid? UnitFormID, string? FormGrade, int? VendorID, Guid? userID, int? RoleID)
         {
             var resource = new FormGroupModel.Resources
             {
                 MimeType = signData.MimeType,
                 ResourceStorageBase64 = signData.StorageBase64
             };
-            Guid guidId = Guid.NewGuid(); // สร้าง Guid ใหม่สำหรับไฟล์
-            string fileName = guidId + ".jpg"; // ตั้งชื่อไฟล์ด้วย Guid และนามสกุล .jpg
-            var folder = DateTime.Now.ToString("yyyyMM");
-            var dirPath = $"Upload/document/{folder}/sign/"; // กำหนด path ของโฟลเดอร์
-            var filePath = dirPath + fileName; // กำหนด path ของไฟล์
 
-            resource.PhysicalPathServer = appPath;
-            resource.ResourceStorageBase64 = signData.StorageBase64;
-            resource.ResourceStoragePath = filePath;
-            resource.Directory = Path.Combine(appPath, dirPath);
+            Guid guidId = Guid.NewGuid(); // Generate a new Guid for the file
+            string fileName = guidId + ".jpg"; // Set the file name with .jpg extension
+            var folder = DateTime.Now.ToString("yyyyMM");
+            var dirPath = Path.Combine(appPath, "wwwroot", "Upload", "document", folder, "sign"); // Ensure path is within wwwroot
+            var filePath = Path.Combine(dirPath, fileName); // Determine the full file path
+
+            resource.PhysicalPathServer = dirPath;
+            resource.ResourceStoragePath = Path.Combine("Upload", "document", folder, "sign", fileName).Replace("\\", "/"); // Store as a relative path with forward slashes
 
             ConvertByteToImage(resource);
-            InsertResource(guidId , fileName , filePath , "jpg" , userID);
-            InsertUnitFormResource(guidId, UnitFormID , userID , RoleID);
-            SubmitUpdateUnitForm(guidId, UnitFormID , FormGrade , VendorID , userID, RoleID);
+            InsertResource(guidId, fileName, resource.ResourceStoragePath, "image/jpeg", userID);
+            InsertUnitFormResource(guidId, UnitFormID, userID, RoleID);
+            SubmitUpdateUnitForm(guidId, UnitFormID, FormGrade, VendorID, userID, RoleID);
         }
         private void ConvertByteToImage(FormGroupModel.Resources item)
         {
@@ -169,53 +218,52 @@ namespace Project.ConstructionTracking.Web.Repositories
             byte[] binaryData;
             try
             {
-                binaryData =
-                   System.Convert.FromBase64String(item.ResourceStorageBase64);
+                binaryData = Convert.FromBase64String(item.ResourceStorageBase64);
             }
-            catch (System.ArgumentNullException)
+            catch (ArgumentNullException)
             {
-                System.Console.WriteLine("Base 64 string is null.");
+                Console.WriteLine("Base64 string is null.");
                 return;
             }
-            catch (System.FormatException ex)
+            catch (FormatException ex)
             {
                 throw ex;
             }
 
             // Write out the decoded data.
-            System.IO.FileStream outFile;
             try
             {
-                if (!Directory.Exists(item.Directory))
+                if (!Directory.Exists(item.PhysicalPathServer))
                 {
-                    Directory.CreateDirectory(item.Directory);
+                    Directory.CreateDirectory(item.PhysicalPathServer);
                 }
-                //var pathFile = string.Format("{0}{1}", item.PhysicalPathServer, item.ResourceStoragePath);
-                outFile = new System.IO.FileStream(item.ResourceStoragePath,
-                                           System.IO.FileMode.Create,
-                                           System.IO.FileAccess.Write);
-                outFile.Write(binaryData, 0, binaryData.Length);
-                outFile.Close();
+
+                // Use the correct path by combining the physical directory and filename
+                var fullPath = Path.Combine(item.PhysicalPathServer, Path.GetFileName(item.ResourceStoragePath));
+                using (var outFile = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+                {
+                    outFile.Write(binaryData, 0, binaryData.Length);
+                }
             }
-            catch (System.Exception exp)
+            catch (Exception exp)
             {
                 // Error creating stream or writing to it.
                 throw exp;
             }
         }
-        public void InsertResource(Guid guidId , string fileName, string filePath, string mimeType , Guid? userID)
+        public void InsertResource(Guid guidId, string fileName, string filePath, string mimeType, Guid? userID)
         {
             var newResource = new tm_Resource
             {
-                ID = guidId, // สร้าง Guid ใหม่สำหรับ ID
+                ID = guidId,
                 FileName = fileName,
-                FilePath = filePath,
+                FilePath = filePath, // This should already be the relative path
                 MimeType = mimeType,
                 FlagActive = true,
-                CreateDate = DateTime.Now, // วันที่สร้าง
-                //CreateBy = userID, // ผู้สร้าง
-                UpdateDate = DateTime.Now, // วันที่อัพเดท
-                //UpdateBy = userID // ผู้ที่อัพเดท
+                CreateDate = DateTime.Now,
+                //CreateBy = userID,
+                UpdateDate = DateTime.Now,
+                //UpdateBy = userID,
             };
 
             _context.tm_Resource.Add(newResource);

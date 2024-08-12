@@ -22,10 +22,7 @@
 
 @model Project.ConstructionTracking.Web.Models.FormChecklistViewModel
 
-@*@model Project.ConstructionTracking.Web.Models.FormCheckListUnitView*@
-
 <style>
-
     .status-dot {
         width: 40px;
         height: 40px;
@@ -45,9 +42,9 @@
         align-items: center;
     }
 
-    .align-center .material-icons {
-        margin-right: 8px;
-    }
+        .align-center .material-icons {
+            margin-right: 8px;
+        }
 
     .card {
         border: none;
@@ -83,13 +80,13 @@
         max-height: 100px;
     }
 
-    .preview-image img {
-        max-width: 100%;
-        max-height: 100%;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        display: block;
-    }
+        .preview-image img {
+            max-width: 100%;
+            max-height: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: block;
+        }
 
     .remove-button {
         position: absolute;
@@ -101,7 +98,6 @@
         border-radius: 50%;
         cursor: pointer;
     }
-
 </style>
 <div class="page-wrapper">
     <!-- Page header -->
@@ -124,7 +120,7 @@
                             <input type="hidden" name="projectId" value="@projectId" id="hd_projectId" />
                             <input type="hidden" name="projectName" value="@projectName" />
                             <input type="hidden" name="FormID" value="@FormID" id="hd_FormID" />
-                            <input type="hidden" name="UnitFormID" value="@UnitFormID"/>
+                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
                             <input type="hidden" name="UnitFormName" value="@UnitFormName" />
                             <input type="hidden" name="unitId" value="@unitId" id="hd_unitId" />
                             <input type="hidden" name="UnitCode" value="@UnitCode" />
@@ -149,24 +145,30 @@
     </div>
     <!-- Page body -->
     <div class="page-body">
-        <form id="formChecklistForm" method="post">
+        <form id="formChecklistForm" method="post" enctype="multipart/form-data">
+            @{
+                var packageIndex = 0;
+            }
             @foreach (var item in Model.ListPackages)
             {
                 <div>
                     <div class="container-xl mb-3">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item active" aria-current="page">@item.PackagesName</li>
-                            <input type="hidden" id="UnitPackagesID" name="UnitPackagesID" value="@item.UnitPackagesID">
-                            <input type="hidden" id="PackagesID" name="PackagesID" value="@item.PackagesID">
-                            <input type="hidden" id="UnitFormID" name="UnitFormID" value="@UnitFormID">
-                            <input type="hidden" id="UnitFormActionID" name="UnitFormActionID" value="@UnitFormActionID">
-                            <input type="hidden" name="unitId" value="@unitId" id="hd_unitId_IUD" />
-                            <input type="hidden" name="projectId" value="@projectId" id="hd_projectId_IUD" />
-                            <input type="hidden" name="UserName" value="@UserName" id="UserName" />
-                            <input type="hidden" name="UserRole" value="@UserRole" id="UserRole" />
+                            <input type="hidden" id="UnitPackagesID" name="Packages[@packageIndex].UnitPackagesID" value="@item.UnitPackagesID">
+                            <input type="hidden" id="PackagesID" name="Packages[@packageIndex].PackagesID" value="@item.PackagesID">
+                            <input type="hidden" id="UnitFormID" name="Packages[@packageIndex].UnitFormID" value="@UnitFormID">
+                            <input type="hidden" id="UnitFormActionID" name="Packages[@packageIndex].UnitFormActionID" value="@UnitFormActionID">
+                            <input type="hidden" name="Packages[@packageIndex].unitId" value="@unitId" id="hd_unitId_IUD" />
+                            <input type="hidden" name="Packages[@packageIndex].projectId" value="@projectId" id="hd_projectId_IUD" />
+                            <input type="hidden" name="Packages[@packageIndex].UserName" value="@UserName" id="UserName" />
+                            <input type="hidden" name="Packages[@packageIndex].UserRole" value="@UserRole" id="UserRole" />
                         </ol>
                         <br>
                         <div class="row">
+                            @{
+                                var checklistIndex = 0;
+                            }
                             @foreach (var item1 in item.ListCheckLists)
                             {
                                 <div class="col-12 col-sm-6 col-lg-4">
@@ -183,7 +185,7 @@
                                                             {
                                                                 <div class="col-4">
                                                                     <label class="form-check form-check-inline">
-                                                                        <input class="form-check-input" type="radio" data-action="chk-check-list" name="radios-inline-@item1.CheckListID" form-id="@ViewBag.FormID" group-id="@item.GroupID" package-id="@item.PackagesID" check-list-id="@item1.CheckListID" Unit-check-list-id="@item1.UnitCheckListID"  value="@item2.RadioCheck_ID" onclick="toggleRadio(this)" @(item1.StatusCheck == item2.RadioCheck_ID ? "checked" : "")>
+                                                                        <input class="form-check-input" type="radio" data-action="chk-check-list" name="Packages[@packageIndex].CheckLists[@checklistIndex].radios-inline-@item1.CheckListID" form-id="@ViewBag.FormID" group-id="@item.GroupID" package-id="@item.PackagesID" check-list-id="@item1.CheckListID" Unit-check-list-id="@item1.UnitCheckListID" value="@item2.RadioCheck_ID" onclick="toggleRadio(this)" @(item1.StatusCheck == item2.RadioCheck_ID ? "checked" : "")>
                                                                         <span class="form-check-label">@item2.RadioCheck_Name</span>
                                                                     </label>
                                                                 </div>
@@ -195,14 +197,16 @@
                                         </div>
                                     </div>
                                 </div>
+                                checklistIndex++;
                             }
                             <div class="col-md-12">
                                 <label class="form-label">ความคิดเห็น</label>
-                                <textarea rows="1" class="form-control" id="input-remark-@item.PackagesID" placeholder="ความคิดเห็น">@item.Remark</textarea>
+                                <textarea rows="1" class="form-control" id="input-remark-@item.PackagesID" name="Packages[@packageIndex].Remark" placeholder="ความคิดเห็น">@item.Remark</textarea>
                             </div>
                         </div>
                     </div>
                 </div>
+                packageIndex++;
             }
             <div class="container-xl mb-3">
                 <div class="card col-12 col-sm-6">
@@ -215,7 +219,12 @@
                             </svg>
                         </div>
                         <h3 class="card-title align-center">
-                            <span class="material-icons"> account_circle </span>บันทึกผู้ตรวจ
+                            <button type="button" class="status-dot bg-secondary" onclick="openModal()"><i class="fa-regular fa-image"></i></button>
+                            <div class="ms-2 c-details">
+                                <h3 class="mb-0">
+                                    บันทึกผู้ตรวจ
+                                </h3>
+                            </div>
                         </h3>
                     </div>
                     <div class="card-body">
@@ -225,20 +234,18 @@
                                     <p class="drop-zone-text">
                                         <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
                                     </p>
-                                    <input type="file" id="file-input" class="drop-zone-input" multiple>
+                                    <input type="file" id="file-input" class="drop-zone-input" name="PcCheck.Images" multiple>
                                 </div>
                                 <div id="preview-container" class="row preview-container"></div>
                             </div>
                             <div class="col-12">
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="radios-inline-pc" id="pc-radio"
-                                           onclick="checkPC(this)"
-                                           @(ViewBag.LockStatusID != null ? "checked" : "")>
+                                    <input class="form-check-input" type="radio" name="PcCheck.IsChecked" id="pc-radio" value="true" onclick="checkPC(this)" @(LockStatusID!= null ? "checked" : "")>
                                     <span class="form-check-label">ผ่านแบบมีเงื่อนไข (PC)</span>
                                 </label>
                             </div>
                             <div class="col-12">
-                                <textarea id="Remark-PC" rows="1" class="form-control" name="Remark-PC" placeholder="ระบุเหตุผลเพื่อขออนุมัติ">@ViewBag.RemarkPassCondition</textarea>
+                                <textarea id="Remark-PC" rows="1" class="form-control" name="PcCheck.Remark" placeholder="ระบุเหตุผลเพื่อขออนุมัติ">@RemarkPassCondition</textarea>
                             </div>
                         </div>
                     </div>
@@ -261,15 +268,55 @@
                     </div>
                 </div>
             </div>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">รูปภาพ</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row g-2 g-md-3">
+                                @if (Model.ListStatus != null && Model.ListStatus.Count > 0)
+                                {
+                                    var imageList = Model.ListStatus.FirstOrDefault()?.Form_getListImagePasswithCondition;
+
+                                    if (imageList != null && imageList.Count > 0)
+                                    {
+                                        foreach (var image in imageList)
+                                        {
+                                            <div class="col-6 position-relative">
+                                                <a data-fslightbox="gallery" href="~/@image.FilePath">
+                                                    <img src="~/@image.FilePath" alt="..." class="img-thumbnail">
+                                                </a>
+                                                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0" onclick="deleteImage('@image.ResourceID')">
+                                                    ลบรูปภาพ
+                                                </button>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>ไม่มีรูปภาพ</p>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>ไม่มีรูปภาพ</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </form>
     </div>
 </div>
 
-
 <link href="~/lib/core-ui/dist/css/tabler-vendors.min.css?1692870487" rel="stylesheet" />
 <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
 @section scripts{
-    
-<script src="~/js/pages/FormCheckList.js?ver=@DateTime.Now.Ticks.ToString()"></script>
-
+    <script src="~/js/pages/FormCheckList.js?ver=@DateTime.Now.Ticks.ToString()"></script>
 }

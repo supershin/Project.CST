@@ -173,121 +173,314 @@
         });
     });
 
-    $('#saveButton').on('click', function () {
-        var packages = [];
-        var checklists = [];
-        var pcCheck = null; // สำหรับเก็บข้อมูล PC Check
+//    $('#saveButton').on('click', function () {
+//        var packages = [];
+//        var checklists = [];
+//        var pcCheck = null; // สำหรับเก็บข้อมูล PC Check
 
-        // Collect data for each package
-        $('div.container-xl.mb-3').each(function () {
-            var UserName = $(this).find('input[id="UserName"]').val();
-            var UserRole = $(this).find('input[id="UserRole"]').val();
-            var projectId = $(this).find('input[id="hd_projectId_IUD"]').val();
-            var unitId = $(this).find('input[id="hd_unitId_IUD"]').val();
-            var UnitFormID = $(this).find('input[id="UnitFormID"]').val() || null;
-            var UnitFormActionID = $(this).find('input[id="UnitFormActionID"]').val() || -99;
-            var package_id = $(this).find('input[id="PackagesID"]').val();
-            var Unitpackage_id = $(this).find('input[id="UnitPackagesID"]').val() || -99;
-            var group_id = $(this).find('input[data-action="chk-check-list"]').first().attr('group-id');
-            var form_id = $(this).find('input[data-action="chk-check-list"]').first().attr('form-id');
-            var remark = $(this).find('textarea.form-control').val();
+//        // Collect data for each package
+//        $('div.container-xl.mb-3').each(function () {
+//            var UserName = $(this).find('input[id="UserName"]').val();
+//            var UserRole = $(this).find('input[id="UserRole"]').val();
+//            var projectId = $(this).find('input[id="hd_projectId_IUD"]').val();
+//            var unitId = $(this).find('input[id="hd_unitId_IUD"]').val();
+//            var UnitFormID = $(this).find('input[id="UnitFormID"]').val() || null;
+//            var UnitFormActionID = $(this).find('input[id="UnitFormActionID"]').val() || -99;
+//            var package_id = $(this).find('input[id="PackagesID"]').val();
+//            var Unitpackage_id = $(this).find('input[id="UnitPackagesID"]').val() || -99;
+//            var group_id = $(this).find('input[data-action="chk-check-list"]').first().attr('group-id');
+//            var form_id = $(this).find('input[data-action="chk-check-list"]').first().attr('form-id');
+//            var remark = $(this).find('textarea.form-control').val();
 
-            // Check if the necessary fields are not empty
-            if (UserName && UserRole && projectId && unitId && form_id && group_id && package_id) {
-                var package = {
-                    UserName: UserName,
-                    UserRole: UserRole,
-                    ProjectId: projectId,
-                    UnitId: unitId,
-                    UnitFormID: UnitFormID,
-                    UnitFormActionID: UnitFormActionID,
-                    UnitPackageID: Unitpackage_id,
-                    FormID: form_id,
-                    GroupID: group_id,
-                    PackageID: package_id,
-                    Remark: remark
-                };
-                packages.push(package);
+//            // Check if the necessary fields are not empty
+//            if (UserName && UserRole && projectId && unitId && form_id && group_id && package_id) {
+//                var package = {
+//                    UserName: UserName,
+//                    UserRole: UserRole,
+//                    ProjectId: projectId,
+//                    UnitId: unitId,
+//                    UnitFormID: UnitFormID,
+//                    UnitFormActionID: UnitFormActionID,
+//                    UnitPackageID: Unitpackage_id,
+//                    FormID: form_id,
+//                    GroupID: group_id,
+//                    PackageID: package_id,
+//                    Remark: remark
+//                };
+//                packages.push(package);
 
-                // Collect data for each checklist
-                $(this).find('div.card.card-link.card-link-pop').each(function () {
-                    var checklist_id = $(this).find('input[data-action="chk-check-list"]').first().attr('check-list-id');
-                    var Unit_checklist_id = $(this).find('input[data-action="chk-check-list"]').first().attr('Unit-check-list-id') || -99;
-                    var radio_value = $(this).find('input[data-action="chk-check-list"]:checked').val() || 0;
+//                // Collect data for each checklist
+//                $(this).find('div.card.card-link.card-link-pop').each(function () {
+//                    var checklist_id = $(this).find('input[data-action="chk-check-list"]').first().attr('check-list-id');
+//                    var Unit_checklist_id = $(this).find('input[data-action="chk-check-list"]').first().attr('Unit-check-list-id') || -99;
+//                    var radio_value = $(this).find('input[data-action="chk-check-list"]:checked').val() || 0;
 
-                    // Check if the necessary fields are not empty
-                    if (checklist_id) {
-                        var checklist = {
-                            FormID: form_id,
-                            GroupID: group_id,
-                            PackageID: package_id,
-                            UnitPackageID: Unitpackage_id,
-                            CheckListID: checklist_id,
-                            UnitChecklistID: Unit_checklist_id,
-                            RadioValue: radio_value
-                        };
-                        checklists.push(checklist);
-                    }
-                });
-            }
+//                    // Check if the necessary fields are not empty
+//                    if (checklist_id) {
+//                        var checklist = {
+//                            FormID: form_id,
+//                            GroupID: group_id,
+//                            PackageID: package_id,
+//                            UnitPackageID: Unitpackage_id,
+//                            CheckListID: checklist_id,
+//                            UnitChecklistID: Unit_checklist_id,
+//                            RadioValue: radio_value
+//                        };
+//                        checklists.push(checklist);
+//                    }
+//                });
+//            }
 
-            // ตรวจสอบว่า PC Radio ถูกเช็คหรือไม่
-            var pcRadioChecked = $('#pc-radio').is(':checked');
-            if (pcRadioChecked) {
-                var pcRemark = $('#Remark-PC').val();
-                pcCheck = {
-                    UnitFormID: packages[0]?.UnitFormID,
-                    GroupID: packages[0]?.GroupID,
-                    Remark: pcRemark
-                };
-            }
-        });
+//            // ตรวจสอบว่า PC Radio ถูกเช็คหรือไม่
+//            var pcRadioChecked = $('#pc-radio').is(':checked');
+//            if (pcRadioChecked) {
+//                var pcRemark = $('#Remark-PC').val();
+//                pcCheck = {
+//                    UnitFormID: packages[0]?.UnitFormID,
+//                    GroupID: packages[0]?.GroupID,
+//                    Remark: pcRemark
+//                };
+//            }
+//        });
 
-        var data = {
-            Packages: packages,
-            CheckLists: checklists,
-            PcCheck: pcCheck // เพิ่มข้อมูล PC Check ใน data
+//        var data = {
+//            Packages: packages,
+//            CheckLists: checklists,
+//            PcCheck: pcCheck // เพิ่มข้อมูล PC Check ใน data
+//        };
+
+///*        console.log(data);*/
+
+//        $.ajax({
+//            url: baseUrl + 'FormCheckList/UpdateStatusV1',
+//            type: 'POST',
+//            dataType: 'json',
+//            data: data,
+//            success: function (res) {
+//                if (res.success) {
+//                    Swal.fire({
+//                        title: 'Success!',
+//                        text: 'บันทึกข้อมูลสำเร็จ',
+//                        icon: 'success',
+//                        confirmButtonText: 'OK'
+//                    }).then((result) => {
+//                        if (result.isConfirmed) {
+//                            window.location.reload();
+//                        }
+//                    });
+//                } else {
+//                    Swal.fire({
+//                        title: 'Error!',
+//                        text: 'บันทึกข้อมูลไม่สำเร็จ',
+//                        icon: 'error',
+//                        confirmButtonText: 'OK'
+//                    });
+//                }
+//            },
+//            error: function (xhr, status, error) {
+//                Swal.fire({
+//                    title: 'Error!',
+//                    text: 'An error occurred while saving the data.',
+//                    icon: 'error',
+//                    confirmButtonText: 'OK'
+//                });
+//            }
+//        });
+
+
+//        return false;
+//    });
+
+$('#saveButton').on('click', function () {
+    var packages = [];
+    var checklists = [];
+    var pcCheck = null;
+
+    // Collect data for each package
+    $('div.container-xl.mb-3').each(function (index) {
+        var package = {
+            UserName: $(this).find('input[id="UserName"]').val(),
+            UserRole: $(this).find('input[id="UserRole"]').val(),
+            ProjectId: $(this).find('input[id="hd_projectId_IUD"]').val(),
+            UnitId: $(this).find('input[id="hd_unitId_IUD"]').val(),
+            UnitFormID: $(this).find('input[id="UnitFormID"]').val() || null,
+            UnitFormActionID: $(this).find('input[id="UnitFormActionID"]').val() || -99,
+            UnitPackageID: $(this).find('input[id="UnitPackagesID"]').val() || -99,
+            FormID: $(this).find('input[data-action="chk-check-list"]').first().attr('form-id'),
+            GroupID: $(this).find('input[data-action="chk-check-list"]').first().attr('group-id'),
+            PackageID: $(this).find('input[id="PackagesID"]').val(),
+            Remark: $(this).find('textarea.form-control').val()
         };
 
-/*        console.log(data);*/
+        // Validation to ensure the package is not empty
+        if (package.UserName && package.UserRole && package.ProjectId && package.UnitId && package.FormID && package.GroupID && package.PackageID) {
+            packages.push(package);
 
-        $.ajax({
-            url: baseUrl + 'FormCheckList/UpdateStatus',
-            type: 'POST',
-            dataType: 'json',
-            data: data,
-            success: function (res) {
-                if (res.success) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'บันทึกข้อมูลสำเร็จ',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.reload();
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'บันทึกข้อมูลไม่สำเร็จ',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
+            // Collect data for each checklist
+            $(this).find('div.card.card-link.card-link-pop').each(function () {
+                var checklist = {
+                    FormID: package.FormID,
+                    GroupID: package.GroupID,
+                    PackageID: package.PackageID,
+                    UnitPackageID: package.UnitPackageID,
+                    CheckListID: $(this).find('input[data-action="chk-check-list"]').first().attr('check-list-id'),
+                    UnitChecklistID: $(this).find('input[data-action="chk-check-list"]').first().attr('Unit-check-list-id') || -99,
+                    RadioValue: $(this).find('input[data-action="chk-check-list"]:checked').val() || 0
+                };
+
+                if (checklist.CheckListID) {
+                    checklists.push(checklist);
                 }
-            },
-            error: function (xhr, status, error) {
+            });
+        }
+    });
+
+    var pcRadioChecked = $('#pc-radio').is(':checked');
+    if (pcRadioChecked) {
+        pcCheck = {
+            UnitFormID: packages[0]?.UnitFormID,
+            GroupID: packages[0]?.GroupID,
+            Remark: $('#Remark-PC').val(),
+            IsChecked: true
+        };
+    }
+
+    var data = new FormData();
+
+    packages.forEach((pkg, index) => {
+        for (const key in pkg) {
+            data.append(`Packages[${index}].${key}`, pkg[key]);
+        }
+    });
+
+    checklists.forEach((checklist, index) => {
+        for (const key in checklist) {
+            data.append(`CheckLists[${index}].${key}`, checklist[key]);
+        }
+    });
+
+    if (pcCheck) {
+        for (const key in pcCheck) {
+            data.append(`PcCheck.${key}`, pcCheck[key]);
+        }
+    }
+
+    // Append images directly under the FormChecklistIUDModel
+    var files = $('#file-input')[0].files;
+    for (var i = 0; i < files.length; i++) {
+        data.append('Images', files[i]);
+    }
+
+    console.log(data);
+
+    $.ajax({
+        url: baseUrl + 'FormCheckList/UpdateStatusV1',
+        type: 'POST',
+        contentType: false,
+        processData: false,
+        data: data,
+        success: function (res) {
+            if (res.success) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'บันทึกข้อมูลสำเร็จ',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.reload();
+                    }
+                });
+            } else {
                 Swal.fire({
                     title: 'Error!',
-                    text: 'An error occurred while saving the data.',
+                    text: 'บันทึกข้อมูลไม่สำเร็จ',
                     icon: 'error',
                     confirmButtonText: 'OK'
                 });
             }
-        });
-
-
-        return false;
+        },
+        error: function (xhr, status, error) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'An error occurred while saving the data.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
     });
+
+    return false;
+});
+
+
+
+function openModal() {
+    var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+    myModal.show();
+}
+
+//function deleteImage(fileName) {
+//    // Show a confirmation dialog using SweetAlert2
+//    Swal.fire({
+//        title: 'Are you sure?',
+//        text: "Do you really want to delete this image?",
+//        icon: 'warning',
+//        showCancelButton: true,
+//        confirmButtonColor: '#d33',
+//        cancelButtonColor: '#3085d6',
+//        confirmButtonText: 'Yes, delete it!',
+//        cancelButtonText: 'Cancel'
+//    }).then((result) => {
+//        if (result.isConfirmed) {
+//            // Simulate success for now (replace with actual AJAX call later)
+//            Swal.fire(
+//                'Deleted!',
+//                'The image has been deleted.',
+//                'success'
+//            );
+
+//            // Remove the image from the DOM
+//            $(`[onclick="deleteImage('${fileName}')"]`).closest('.position-relative').remove();
+//        }
+//    });
+//}
+
+function deleteImage(resourceId) {
+    Swal.fire({
+        title: '',
+        text: "ต้องการลลบรูปภาพหรือไม่?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'ลบรูปภาพ',
+        cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Perform the deletion via an AJAX call
+            $.ajax({
+                url: baseUrl + 'FormCheckList/DeleteImage',
+                type: 'POST',
+                data: { resourceId: resourceId },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire('ลบรูปภาพสำเร็จ', '', 'success');
+                        // Remove the image from the DOM
+                        $(`[onclick="deleteImage('${resourceId}')"]`).closest('.position-relative').remove();
+                    } else {
+                        Swal.fire('Error!', response.message, 'error');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire('Error!', 'An error occurred while processing your request.', 'error');
+                }
+            });
+        }
+    });
+}
+
+
+
+
 

@@ -60,5 +60,11 @@ namespace Project.ConstructionTracking.Web.Controllers
                 return BadRequest(new { success = false, message = "บันทึกข้อมูลไม่สำเร็จ: " + ex.Message });
             }
         }
+
+        [HttpPost]
+        public IActionResult GoToFormChecklist(Guid projectId, string projectName, int FormID, Guid UnitFormID, string UnitFormName, Guid unitId, string UnitCode, string UnitStatusName, string GroupName, int GroupID)
+        {
+            return RedirectToAction("Index", "FormCheckList", new { projectId, projectName, FormID, UnitFormID, UnitFormName, unitId, UnitCode, UnitStatusName , GroupName , GroupID });
+        }
     }
 }

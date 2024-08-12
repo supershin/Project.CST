@@ -5,11 +5,13 @@
         public List<PackageModel> Packages { get; set; }
         public List<ChecklistModel> CheckLists { get; set; }
         public PassConditionCheckModel PcCheck { get; set; }
+        public string? ApplicationPath { get; set; }
+        public List<IFormFile> Images { get; set; } // Add this property
     }
 
     public class PackageModel
     {
-        public int UserID { get; set; }
+        public Guid? UserID { get; set; }
         public string UserName { get; set; }
         public int RoleID { get; set; }
         public Guid ProjectId { get; set; }
@@ -22,6 +24,7 @@
         public int PackageID { get; set; }
         public string Remark { get; set; }
     }
+
     public class ChecklistModel
     {
         public string UserName { get; set; }
@@ -33,6 +36,7 @@
         public int UnitChecklistID { get; set; }
         public int RadioValue { get; set; }
     }
+
     public class PassConditionCheckModel
     {
         public int GroupID { get; set; }

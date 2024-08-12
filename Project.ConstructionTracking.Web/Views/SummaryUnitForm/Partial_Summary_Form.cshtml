@@ -36,7 +36,7 @@
                                             bgColorClass = "btn-secondary";
                                         }
                                     }
-                                    <form asp-controller="FormGroup" asp-action="index" method="post">
+                                    <form asp-controller="SummaryUnitForm" asp-action="GoToFormGroup" method="post">
                                         <input type="hidden" name="projectId" value="@projectId" />
                                         <input type="hidden" name="projectName" value="@projectName" />
                                         <input type="hidden" name="FormID" value="@item.FormID" />
@@ -51,7 +51,7 @@
                                     </form>
                                 </div>
                                 <div class="col">
-                                    <form asp-controller="FormGroup" asp-action="index" method="post">
+                                    <form asp-controller="SummaryUnitForm" asp-action="GoToFormGroup" method="post">
                                         <input type="hidden" name="projectId" value="@projectId" />
                                         <input type="hidden" name="projectName" value="@projectName" />
                                         <input type="hidden" name="FormID" value="@item.FormID" />

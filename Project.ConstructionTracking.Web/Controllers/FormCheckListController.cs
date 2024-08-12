@@ -9,10 +9,12 @@ namespace Project.ConstructionTracking.Web.Controllers
     {
 
         private readonly IFormChecklistService _FormChecklistService;
+        private readonly IHostEnvironment _hosting;
 
-        public FormCheckListController(IFormChecklistService FormChecklistService)
+        public FormCheckListController(IFormChecklistService FormChecklistService, IHostEnvironment hosting)
         {
             _FormChecklistService = FormChecklistService;
+            _hosting = hosting;
         }
 
         public IActionResult Index(Guid projectId, string projectName, int FormID, Guid UnitFormID, string UnitFormName, Guid unitId, string UnitCode, string UnitStatusName , string GroupName , int GroupID)
@@ -40,6 +42,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             {
                 ProjectID = projectId,
                 UnitID = unitId,
+                GroupID = GroupID,
                 FormID = FormID
             };
 
@@ -71,13 +74,12 @@ namespace Project.ConstructionTracking.Web.Controllers
             return View(viewModel);
         }
 
-
         [HttpPost]
-        public IActionResult UpdateStatus(FormChecklistIUDModel model)
+        public async Task<IActionResult> UpdateStatus(FormChecklistIUDModel model,IFormFileCollection files)
         {
             try
             {
-                _FormChecklistService.InsertOrUpdate(model);
+                //await _FormChecklistService.InsertOrUpdate(model, files);
                 return Ok(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
             }
             catch (Exception ex)
@@ -85,6 +87,50 @@ namespace Project.ConstructionTracking.Web.Controllers
                 return BadRequest(new { success = false, message = "บันทึกข้อมูลไม่สำเร็จ: " + ex.Message });
             }
         }
+
+        [HttpPost]
+        public IActionResult UpdateStatusV1(FormChecklistIUDModel model)
+        {
+            try
+            {
+                // Convert userID to Guid
+                Guid userGuid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                // Convert roleID to int
+                int roleInt = int.TryParse(Request.Cookies["CST.Role"], out var tempRoleInt) ? tempRoleInt : -1;
+
+                model.ApplicationPath = _hosting.ContentRootPath;
+
+                _FormChecklistService.InsertOrUpdate(model, userGuid, roleInt);
+                return Ok(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = "บันทึกข้อมูลไม่สำเร็จ: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult DeleteImage(Guid resourceId)
+        {
+            try
+            {
+                var ApplicationPath = _hosting.ContentRootPath;
+                var result = _FormChecklistService.DeleteImage(resourceId , ApplicationPath);
+                if (result)
+                {
+                    return Ok(new { success = true, message = "Image deleted successfully." });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Failed to delete image." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = "An error occurred: " + ex.Message });
+            }
+        }
+
 
     }
 }

@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "index";
+    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
     var unitCodes = Model.Select(u => u.UnitCode).Distinct().ToList();
     var unitCodesJson = Newtonsoft.Json.JsonConvert.SerializeObject(unitCodes);

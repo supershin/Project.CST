@@ -11,6 +11,8 @@ namespace Project.ConstructionTracking.Web.Data
         [Key]
         public int ID { get; set; }
         public Guid? UnitFormID { get; set; }
+        public int? FormID { get; set; }
+        public int? GroupID { get; set; }
         public int? PassConditionID { get; set; }
         public int? RoleID { get; set; }
         public Guid? ResourceID { get; set; }
