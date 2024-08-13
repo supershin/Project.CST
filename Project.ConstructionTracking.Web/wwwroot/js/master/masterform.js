@@ -12,6 +12,10 @@
             return false;
         });
 
+        $("#form-detail").click(() => {
+            window.location.href = baseUrl + 'masterform/detail';
+            return false;
+        });
     },
     AjaxGrid: function () {
 

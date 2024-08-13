@@ -3,6 +3,7 @@
 
     ViewData["Title"] = "Detail Form";
 }
+
 <body data-bs-spy="scroll" data-bs-target="#scrollspy-nav" data-bs-offset="0">
 
     <div class="page-wrapper">
@@ -29,7 +30,7 @@
         <div class="page-body">
             <div class="container-xl">
                 <div id="scrollspy-nav">
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-12">
                             <div id="section-1" class="new-section">
                                 <div class="collapsible active" style="display: flex; align-items: center;">
@@ -44,7 +45,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-12">
                             <div id="section-2" class="new-section">
                                 <div class="collapsible active" style="display: flex; align-items: center;">
@@ -53,13 +54,13 @@
                                         <i class="fa fa-plus"></i> Create
                                     </button>
                                 </div>
-                                <div class="content-cl" style="display:block">
+                                <div class="content-cl" style="display: none">
                                     <partial name="Partial_List_Group" />
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-12">
                             <div id="section-3" class="new-section">
                                 <div class="collapsible active" style="display: flex; align-items: center;">
@@ -68,13 +69,13 @@
                                         <i class="fa fa-plus"></i> Create
                                     </button>
                                 </div>
-                                <div class="content-cl" style="display:block">
+                                <div class="content-cl" style="display: none">
                                     <partial name="Partial_List_Package" />
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-12">
                             <div id="section-4" class="new-section">
                                 <div class="collapsible active" style="display: flex; align-items: center;">
@@ -83,7 +84,7 @@
                                         <i class="fa fa-plus"></i> Create
                                     </button>
                                 </div>
-                                <div class="content-cl" style="display:block">
+                                <div class="content-cl" style="display: none">
                                     <partial name="Partial_List_Check" />
                                 </div>
                             </div>
@@ -94,74 +95,13 @@
         </div>
     </div>
 
-    <div class="fixed-button">
+    <div id="section-button" class="fixed-button">
         <button class="btn btn-primary" data-bs-target="#section-1">1</button>
         <button class="btn btn-primary" data-bs-target="#section-2">2</button>
         <button class="btn btn-primary" data-bs-target="#section-3">3</button>
         <button class="btn btn-primary" data-bs-target="#section-4">4</button>
     </div>
-
 </body>
-
-<div class="modal fade" id="partial-modal-form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add Master Project Form</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row mb-3">
-                    <div class="col-lg-6">
-                        <label class="form-label">ชื่อฟอร์ม</label>
-                        <input type="text" class="form-control" name="example-text-input" placeholder="กรุณากรอกข้อมูลชื่อฟอร์ม">
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-12">
-                        <label class="form-label">รายละเอียด</label>
-                        <input type="text" class="form-control" name="example-text-input" placeholder="กรุณากรอกข้อมูลรายละเอียด">
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label class="form-label">Progress</label>
-                            <input type="text" class="form-control" name="example-text-input" placeholder="เปอเซ็นต์การทำงาน(%)">
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label class="form-label">Duration</label>
-                            <input type="text" class="form-control" name="example-text-input" placeholder="ระยะเวลาทำงาน (วัน)">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <select class="your-select-element" multiple="multiple" style="width: 100%;">
-                            <option value="1">Option 1</option>
-                            <option value="2">Option 2</option>
-                            <option value="3">Option 3</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
-                    Cancel
-                </a>
-                <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal">
-                    <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg>
-                    Add Form
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
 
 <partial name="Partial_MasterForm" />
 <partial name="Partial_MasterGroup" />
@@ -267,15 +207,22 @@
             padding: 0; /* Remove default padding */
             text-align: center; /* Center text */
         }
+
+    .select-width {
+        width: 100% !important;
+    }
 </style>
 
 @section scripts{
-    <script src="~/js/pages/detailform.js?ver=@DateTime.Now.Ticks.ToString()"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
-        $(document).ready(function () {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <script src="~/js/pages/detailform.js?ver=@DateTime.Now.Ticks.ToString()"></script>
+
+    <script>$(document).ready(function () {
             detail.init();
-        });
-    </script>
+        });</script>
 }

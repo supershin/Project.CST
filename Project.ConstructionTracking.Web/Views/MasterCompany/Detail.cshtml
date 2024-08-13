@@ -1,0 +1,121 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+
+    ViewData["Title"] = "Detail Company";
+}
+@section Styles{
+    <link href="~/lib/datatable/jquery.datatables.min.css?ver=@DateTime.Now.Ticks.ToString()" rel="stylesheet" />
+}
+<style>
+    .btn-search {
+        border: 0px;
+        background-color: transparent;
+        color: inherit;
+    }
+
+    .btn-rounded {
+        border-radius: 20px;
+    }
+
+    .search-rounded {
+        cursor: pointer;
+        border-top-right-radius: 10rem;
+        border-bottom-right-radius: 10rem;
+    }
+
+    .form-control-rounded {
+        border-radius: 10rem
+    }
+</style>
+
+<div class="page-wrapper">
+    <!-- Page header -->
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row">
+                <div class="col-3">
+                    <a href="javascript:history.back()" class="btn btn-secondary mb-3">
+                        <i class="fas fa-chevron-left"></i> <span>Go Back</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-body">
+        <div class="container-xl">
+            <h2 class="page-title">
+                ข้อมูล Company
+            </h2>
+            <hr />
+            <div class="row mb-3">
+                <div class="col-lg-12">
+                    <label for="user-name" class="form-label">ชื่อ</label>
+                    <input type="text" class="form-control" id="company-name" value="บริษัท พี เอส ซี เอ็ม จำกัด">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-12">
+                    <label class="form-label">Mapping​ โครงการ</label>
+                    <select class="js-example-responsive" id="multiple-select-project" multiple="multiple" style="width: 50%">
+                        <option value="1" selected>QC 1</option>
+                        <option value="2" selected>QC 2</option>
+                        <option value="3" selected>QC 3</option>
+                        <option value="4">QC 4</option>
+                        <option value="5">QC 5</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-12">
+                    <div class="d-flex justify-content-start">
+                        <button type="submit" class="btn btn-success">
+                            บันทึก
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <h2 class="page-title">
+                ข้อมูล Vendor
+            </h2>
+            <hr />
+            <div class="row mb-3">
+                <div class="col-lg-6">
+                    <label for="user-department" class="form-label">ชื่อผู้ควบคุมงาน</label>
+                    <input type="text" class="form-control" id="vendor-name" value="">
+                </div>
+                <div class="col-lg-6">
+                    <label></label>
+                    <div class="justify-content-start" style="margin-top:8px; ">
+                        <button type="submit" class="btn btn-primary" style="width:25%">
+                            เพิ่ม
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-6">
+                    <label for="user-department" class="form-label">อีเมลล์</label>
+                    <input type="text" class="form-control" id="vendor-email" value="">
+                </div>
+            </div>
+            <div class="table-responsive">
+                <div class="card-table table-responsive">
+                    <partial name="Partial_List_MVendor" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<partial name="Partial_Modal_Edit_V" />
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="~/lib/datatable/jquery.datatables.min.js"></script>
+    <script src="~/js/pages/detailcompany.js?version=@DateTime.Now.Ticks.ToString()"></script>
+
+    <script type="text/javascript">$(document).ready(function () {
+            detailCom.init();
+        });</script>
+}

@@ -9,7 +9,7 @@ const company = {
         });
 
         $("#company-edit").click(() => {
-            $("#modal-company-e").modal('show');
+            window.location.href = baseUrl + 'mastercompany/detail';
             return false;
         });
     },

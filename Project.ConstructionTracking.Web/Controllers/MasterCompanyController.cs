@@ -19,6 +19,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             return View();
         }
+
+        public IActionResult Detail()
+        {
+            return View();
+        }
     }
 }
 
