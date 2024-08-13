@@ -1,8 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Humanizer.Localisation;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using System.Collections.Generic;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Project.ConstructionTracking.Web.Models.FormGroupModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -85,5 +90,184 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         }
 
+        public FormGroupDetail GetFormGroupDetail(Guid unitFormId)
+        {
+            var result = (from t1 in _context.tr_UnitForm
+                          where t1.ID == unitFormId
+                          join t2 in _context.tr_UnitFormAction.Where(a => a.RoleID == 1)
+                              on t1.ID equals t2.UnitFormID into peActions
+                          from peAction in peActions.DefaultIfEmpty()
+                          join t3 in _context.tr_UnitFormAction.Where(a => a.RoleID == 2)
+                              on t1.ID equals t3.UnitFormID into pmActions
+                          from pmAction in pmActions.DefaultIfEmpty()
+                          select new FormGroupDetail
+                          {
+                              ID = t1.ID,
+                              Grade = t1.Grade,
+                              FormID = t1.FormID,
+                              PE_ActionType = peAction != null ? peAction.ActionType : null,
+                              PE_StatusID = peAction != null ? peAction.StatusID : null,
+                              PM_ActionType = pmAction != null ? pmAction.ActionType : null,
+                              PM_StatusID = pmAction != null ? pmAction.StatusID : null
+                          }).FirstOrDefault(); // ใช้ FirstOrDefault เพื่อดึงข้อมูลรายการแรกหรือค่า null หากไม่มีข้อมูล
+
+            return result;
+        }
+
+
+        public void SubmitSaveFormGroup(FormGroupModel.FormGroupIUDModel model)
+        {
+            if (model.Act == "save")
+            {
+                var unitForm = _context.tr_UnitForm
+               .Where(uf => uf.ID == model.UnitFormID)
+               .FirstOrDefault();
+
+                if (unitForm != null)
+                {
+                    unitForm.Grade = model.FormGrade;
+                    unitForm.UpdateDate = DateTime.Now;
+                    //unitForm.UpdateBy = 1 ;
+                }
+            }
+            else
+            {
+                if (model.Sign != null)
+                {
+                    SaveSignature(model.Sign, model.ApplicationPath, model.UnitFormID, model.FormGrade, model.VendorID ,model.userID , model.RoleID);
+                }
+            }
+
+            _context.SaveChanges();
+        }
+        private void SaveSignature(SignatureData signData, string? appPath , Guid? UnitFormID , string? FormGrade , int? VendorID , Guid? userID ,int? RoleID)
+        {
+            var resource = new FormGroupModel.Resources
+            {
+                MimeType = signData.MimeType,
+                ResourceStorageBase64 = signData.StorageBase64
+            };
+            Guid guidId = Guid.NewGuid(); // สร้าง Guid ใหม่สำหรับไฟล์
+            string fileName = guidId + ".jpg"; // ตั้งชื่อไฟล์ด้วย Guid และนามสกุล .jpg
+            var folder = DateTime.Now.ToString("yyyyMM");
+            var dirPath = $"Upload/document/{folder}/sign/"; // กำหนด path ของโฟลเดอร์
+            var filePath = dirPath + fileName; // กำหนด path ของไฟล์
+
+            resource.PhysicalPathServer = appPath;
+            resource.ResourceStorageBase64 = signData.StorageBase64;
+            resource.ResourceStoragePath = filePath;
+            resource.Directory = Path.Combine(appPath, dirPath);
+
+            ConvertByteToImage(resource);
+            InsertResource(guidId , fileName , filePath , "jpg" , userID);
+            InsertUnitFormResource(guidId, UnitFormID , userID , RoleID);
+            SubmitUpdateUnitForm(guidId, UnitFormID , FormGrade , VendorID , userID, RoleID);
+        }
+        private void ConvertByteToImage(FormGroupModel.Resources item)
+        {
+            // Convert the Base64 UUEncoded input into binary output. 
+            byte[] binaryData;
+            try
+            {
+                binaryData =
+                   System.Convert.FromBase64String(item.ResourceStorageBase64);
+            }
+            catch (System.ArgumentNullException)
+            {
+                System.Console.WriteLine("Base 64 string is null.");
+                return;
+            }
+            catch (System.FormatException ex)
+            {
+                throw ex;
+            }
+
+            // Write out the decoded data.
+            System.IO.FileStream outFile;
+            try
+            {
+                if (!Directory.Exists(item.Directory))
+                {
+                    Directory.CreateDirectory(item.Directory);
+                }
+                //var pathFile = string.Format("{0}{1}", item.PhysicalPathServer, item.ResourceStoragePath);
+                outFile = new System.IO.FileStream(item.ResourceStoragePath,
+                                           System.IO.FileMode.Create,
+                                           System.IO.FileAccess.Write);
+                outFile.Write(binaryData, 0, binaryData.Length);
+                outFile.Close();
+            }
+            catch (System.Exception exp)
+            {
+                // Error creating stream or writing to it.
+                throw exp;
+            }
+        }
+        public void InsertResource(Guid guidId , string fileName, string filePath, string mimeType , Guid? userID)
+        {
+            var newResource = new tm_Resource
+            {
+                ID = guidId, // สร้าง Guid ใหม่สำหรับ ID
+                FileName = fileName,
+                FilePath = filePath,
+                MimeType = mimeType,
+                FlagActive = true,
+                CreateDate = DateTime.Now, // วันที่สร้าง
+                //CreateBy = userID, // ผู้สร้าง
+                UpdateDate = DateTime.Now, // วันที่อัพเดท
+                //UpdateBy = userID // ผู้ที่อัพเดท
+            };
+
+            _context.tm_Resource.Add(newResource);
+            _context.SaveChanges();
+        }
+        public bool InsertUnitFormResource(Guid ResourceID, Guid? UnitFormID ,Guid? userID ,int? RoleID)
+        {
+            var newResource = new tr_UnitFormResource
+            {
+                UnitFormID = UnitFormID,
+                RoleID = RoleID,
+                ResourceID = ResourceID,
+                FlagActive = true,
+                CreateDate = DateTime.Now, // วันที่สร้าง
+                //CreateBy = userID, // ผู้สร้าง
+                UpdateDate = DateTime.Now, // วันที่อัพเดท
+                //UpdateBy = userID// ผู้ที่อัพเดท
+            };
+
+            _context.tr_UnitFormResource.Add(newResource);
+            _context.SaveChanges();
+
+            return true;
+        }
+        public bool SubmitUpdateUnitForm(Guid ResourceID, Guid? UnitFormID , string? FormGrade , int? VendorID, Guid? userID, int? RoleID)
+        {
+             var unitForm = _context.tr_UnitForm
+            .Where(uf => uf.ID == UnitFormID)
+            .FirstOrDefault();
+
+            if (unitForm != null)
+            {
+                unitForm.VendorID = VendorID;
+                unitForm.VendorResourceID = ResourceID;
+                unitForm.Grade = FormGrade;
+                unitForm.UpdateDate = DateTime.Now;
+                //unitForm.UpdateBy = userID;
+            }
+
+            var unitFormAction = _context.tr_UnitFormAction
+            .Where(uf => uf.UnitFormID == UnitFormID && uf.RoleID == 1)
+            .FirstOrDefault();
+
+            if (unitFormAction != null)
+            {
+                unitFormAction.RoleID = RoleID;
+                unitFormAction.ActionType = "submit";
+                unitFormAction.UpdateDate = DateTime.Now;
+                //unitFormAction.UpdateBy = userID;
+            }
+
+            return true;
+        }
     }
 }

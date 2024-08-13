@@ -14,22 +14,36 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public List<GetDDL> GetDDLList(GetDDL Model)
         {
-
-            if (Model.Act == "Ext")
+            switch (Model.Act)
             {
-                var query = from ext in _context.tm_Ext
-                            where ext.ExtTypeID == Model.ID
-                            orderby ext.LineOrder
-                            select new GetDDL
-                            {
-                                Value = ext.ID,
-                                Text = ext.Name
-                            };
+                case "Ext":
+                    var extQuery = from ext in _context.tm_Ext
+                                   where ext.ExtTypeID == Model.ID
+                                   orderby ext.LineOrder
+                                   select new GetDDL
+                                   {
+                                       Value = ext.ID,
+                                       Text = ext.Name
+                                   };
 
-                return query.ToList();
+                    return extQuery.ToList();
+
+                case "Vender":
+                    var vendorQuery = from Vendor in _context.tm_Vendor
+                                      where Vendor.FlagActive == true
+                                      orderby Vendor.ID
+                                      select new GetDDL
+                                      {
+                                          Value = Vendor.ID,
+                                          Text = Vendor.Name
+                                      };
+
+                    return vendorQuery.ToList();
+
+                default:
+
+                return new List<GetDDL>();
             }
-
-            return new List<GetDDL>();
         }
     }
 }
