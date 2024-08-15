@@ -1,4 +1,5 @@
-﻿using Project.ConstructionTracking.Web.Commons;
+﻿using Microsoft.Data.SqlClient.Server;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 
@@ -12,6 +13,7 @@ namespace Project.ConstructionTracking.Web.Repositories
         {
             _context = context;
         }
+
         public List<PMApproveModel> GetPMApproveFormList()
         {
             var result = (from t1 in _context.tr_UnitForm
@@ -44,7 +46,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               t1.FormID,
                               FormName = form.Name,
                               t1.StatusID,
-                              actionPE.PassConditionID,
+                              //actionPE.PassConditionID,
                               RoleID_PE = actionPE.RoleID,
                               ActionType_PE = actionPE.ActionType,
                               StatusID_PE = actionPE.StatusID,
@@ -75,7 +77,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 FormID = item.FormID,
                 FormName = item.FormName,
                 StatusID = item.StatusID,
-                PassConditionID = item.PassConditionID,
+                //PassConditionID = item.PassConditionID,
                 RoleID_PE = item.RoleID_PE,
                 ActionType_PE = item.ActionType_PE,
                 StatusID_PE = item.StatusID_PE,
@@ -93,21 +95,21 @@ namespace Project.ConstructionTracking.Web.Repositories
             return formattedResult;
         }
 
-        public List<ApproveFormcheckModel> GetApproveFormcheckList(ApproveFormcheckModel model)
+        public ApproveFormcheckModel GetApproveFormcheck(ApproveFormcheckModel model)
         {
             var result = (from t1 in _context.tr_UnitForm
                           join t2 in _context.tm_Vendor on t1.VendorID equals t2.ID into vendors
                           from vendor in vendors.DefaultIfEmpty()
-                          join t3 in _context.tr_UnitFormAction on t1.ID equals t3.UnitFormID into unitFormActions
-                          from action in unitFormActions.DefaultIfEmpty()
                           join t4 in _context.tm_Project on t1.ProjectID equals t4.ProjectID into projects
                           from project in projects.DefaultIfEmpty()
                           join t5 in _context.tm_Unit on t1.UnitID equals t5.UnitID into units
                           from unit in units.DefaultIfEmpty()
-                          join t6 in _context.tm_FormGroup on t1.FormID equals t6.FormID into formGroups
-                          from formGroup in formGroups.DefaultIfEmpty()
-                          join t7 in _context.tr_UnitFormPassCondition on new { UnitFormID = (Guid?)t1.ID, GroupID = formGroup.ID } equals new { t7.UnitFormID, t7.GroupID } into unitFormPassConditions
-                          from passCondition in unitFormPassConditions.DefaultIfEmpty()
+                          join t8 in _context.tm_Form on t1.FormID equals t8.ID into forms
+                          from form in forms.DefaultIfEmpty()
+                          join t10 in _context.tr_UnitFormAction on t1.ID equals t10.UnitFormID into PEUnitFormActions 
+                          from PEUnitFormAction in PEUnitFormActions.Where(a => a.RoleID == 1)
+                          join t11 in _context.tr_UnitFormAction on t1.ID equals t11.UnitFormID into PMUnitFormActions
+                          from PMUnitFormAction in PMUnitFormActions.Where(a => a.RoleID == 2)
                           where t1.UnitID == model.UnitID && t1.FormID == model.FormID
                           select new ApproveFormcheckModel
                           {
@@ -121,13 +123,239 @@ namespace Project.ConstructionTracking.Web.Repositories
                               VendorResourceID = t1.VendorResourceID,
                               Grade = t1.Grade,
                               FormID = t1.FormID,
-                              Group_ID = formGroup.ID,
-                              Group_Name = formGroup.Name,
-                              Remark = action.Remark,
-                              LockStatusID = passCondition.LockStatusID
+                              FormName = form.Name,
+                              Actiondate = PEUnitFormAction.ActionDate,
+                              ActiondatePm = PMUnitFormAction.ActionDate,
+                              PM_StatusID = PMUnitFormAction.StatusID,
+                              PM_Remarkaction = PMUnitFormAction.Remark,
+                              PM_Actiontype = PMUnitFormAction.ActionType,
+                              PM_getListgroup = (from fg in _context.tm_FormGroup
+                                                 join t7 in _context.tr_UnitFormPassCondition on new { UnitFormID = (Guid?)t1.ID, GroupID = (int?)fg.ID } equals new { t7.UnitFormID, t7.GroupID } into unitFormPassConditions
+                                                 from passCondition in unitFormPassConditions.DefaultIfEmpty()
+                                                 where fg.FormID == t1.FormID
+                                                 select new PM_getListgroup
+                                                 {
+                                                     Group_ID = fg.ID,
+                                                     Group_Name = fg.Name,
+                                                     PassConditionsID = passCondition.ID,
+                                                     PC_StatusID = passCondition.StatusID,
+                                                     LockStatusID = passCondition.LockStatusID,
+                                                     PE_Remark = passCondition.PE_Remark,
+                                                     PM_Remark = passCondition.PM_Remark
+                                                 }).ToList(),
+                              PM_getListImage = (from img in _context.tr_UnitFormResource
+                                                 join res in _context.tm_Resource on img.ResourceID equals res.ID
+                                                 where img.UnitFormID == t1.ID && img.RoleID == 2 && img.FormID == model.FormID
+                                                 select new PM_getListImage
+                                                 {
+                                                     ResourceID = res.ID,
+                                                     FileName = res.FileName,
+                                                     FilePath = res.FilePath
+                                                 }).ToList()
+                          }).FirstOrDefault();
+
+            return result;
+        }
+
+        public List<UnitFormResourceModel> GetImage(UnitFormResourceModel model)
+        {
+            var result = (from t1 in _context.tr_UnitFormResource
+                          join t2 in _context.tm_Resource on t1.ResourceID equals t2.ID into resources
+                          from resource in resources.DefaultIfEmpty()
+                          where t1.UnitFormID == model.UnitFormID && t1.GroupID == model.GroupID && t1.RoleID == model.RoleID
+                          select new UnitFormResourceModel
+                          {
+                              UnitFormResourceID = t1.ID,
+                              ResourceID = t1.ResourceID,
+                              MasterResourceID = resource.ID,
+                              FileName = resource.FileName,
+                              FilePath = resource.FilePath
                           }).ToList();
 
             return result;
         }
+
+        public void SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
+        {
+            // Handle UnitFormAction for the RoleID = 2 (PM)
+            var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == model.UnitFormID && a.RoleID == 2);
+
+            if (unitFormAction == null)
+            {
+                // Insert a new UnitFormAction record
+                unitFormAction = new tr_UnitFormAction
+                {
+                    UnitFormID = model.UnitFormID,
+                    RoleID = 2,
+                    ActionType = model.ActionType,
+                    StatusID = model.UnitFormStatus,
+                    Remark = model.Remark,
+                    ActionDate = DateTime.Now,
+                    UpdateDate = DateTime.Now,
+                    CraeteDate = DateTime.Now
+                };
+
+                _context.tr_UnitFormAction.Add(unitFormAction);
+            }
+            else
+            {
+                // Update the existing UnitFormAction record
+                unitFormAction.ActionType = model.ActionType;
+                unitFormAction.StatusID = model.UnitFormStatus;
+                unitFormAction.Remark = model.Remark;
+                unitFormAction.ActionDate = DateTime.Now;
+                unitFormAction.UpdateDate = DateTime.Now;
+
+                _context.tr_UnitFormAction.Update(unitFormAction);
+            }
+
+            // Save changes to UnitFormAction
+            _context.SaveChanges();
+
+            // Log the action
+            InsertUnitFormActionLog(unitFormAction);
+
+            // Handle PassConditions if they exist
+            if (model.PassConditionsIUD != null && model.PassConditionsIUD.Count > 0)
+            {
+                foreach (var passConditionModel in model.PassConditionsIUD)
+                {
+                    var passCondition = _context.tr_UnitFormPassCondition
+                        .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID);
+
+                    if (passCondition == null)
+                    {
+                        // Insert a new PassCondition record
+                        passCondition = new tr_UnitFormPassCondition
+                        {
+                            UnitFormID = model.UnitFormID,
+                            GroupID = passConditionModel.Group_ID,
+                            StatusID = passConditionModel.PassConditionsvalue,
+                            PM_Remark = passConditionModel.Remark,
+                            ActionDate = DateTime.Now,
+                            CraeteDate = DateTime.Now
+                        };
+
+                        _context.tr_UnitFormPassCondition.Add(passCondition);
+
+                    }
+                    else
+                    {
+                        // Update the existing PassCondition record
+                        passCondition.StatusID = passConditionModel.PassConditionsvalue;
+                        passCondition.PM_Remark = passConditionModel.Remark;
+                        passCondition.UpdateDate = DateTime.Now;
+
+                        _context.tr_UnitFormPassCondition.Update(passCondition);
+                    }
+
+                    
+                    // Log the action
+                    InsertUnitFormActionLogPassCondition(passCondition);
+
+                    // Save changes for each PassCondition
+                    _context.SaveChanges();
+                }
+            }
+
+            // Save iamge 
+            InsertImagesPM(model, null, 2); // RoleID = 2 for PM
+        }
+
+        private void InsertUnitFormActionLogPassCondition(tr_UnitFormPassCondition UnitFormPassCondition)
+        {
+            var pcvalue = UnitFormPassCondition.StatusID == 6 ? "ให้ผ่านเพื่อส่ง PJM Head" : "ให้ไม่ผ่าน";
+
+            var actionLog = new tr_UnitFormActionLog
+            {
+                UnitFormID = UnitFormPassCondition.UnitFormID,
+                GroupID = UnitFormPassCondition.GroupID,
+                RoleID = 2,
+                StatusID = UnitFormPassCondition.StatusID,
+                Remark = "PM " + pcvalue + " UnitFormPassCondition",
+                ActionDate = DateTime.Now,
+                CraeteDate = DateTime.Now,
+                // CreateBy = unitFormAction.CreateBy, // Uncomment and set appropriately if you have the CreateBy field
+            };
+
+            _context.tr_UnitFormActionLog.Add(actionLog);
+            _context.SaveChanges();
+        }
+
+        private void InsertUnitFormActionLog(tr_UnitFormAction unitFormAction)
+        {
+            var actionLog = new tr_UnitFormActionLog
+            {
+                UnitFormID = unitFormAction.UnitFormID,
+                RoleID = unitFormAction.RoleID,
+                StatusID = unitFormAction.StatusID,
+                Remark = "PM " + unitFormAction.ActionType + " UnitFormAction",
+                ActionDate = unitFormAction.ActionDate,
+                CraeteDate = DateTime.Now,
+                // CreateBy = unitFormAction.CreateBy, // Uncomment and set appropriately if you have the CreateBy field
+            };
+
+            _context.tr_UnitFormActionLog.Add(actionLog);
+            _context.SaveChanges();
+        }
+
+        private void InsertImagesPM(ApproveFormcheckIUDModel model, Guid? userID, int RoleID)
+        {
+            if (model.Images != null && model.Images.Count > 0)
+            {
+                var folder = DateTime.Now.ToString("yyyyMM");
+                var dirPath = Path.Combine(model.ApplicationPath, "wwwroot", "Upload", "document", folder, "PMImage");
+                if (!Directory.Exists(dirPath))
+                {
+                    Directory.CreateDirectory(dirPath);
+                }
+
+                foreach (var image in model.Images)
+                {
+                    if (image.Length > 0)
+                    {
+                        Guid guidId = Guid.NewGuid(); // Generate a new Guid for the file
+                        string fileName = guidId + ".jpg"; // Set the file name with .jpg extension
+                        var filePath = Path.Combine(dirPath, fileName); // Determine the full file path
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            image.CopyTo(fileStream);
+                        }
+
+                        // Prepare the relative file path and replace backslashes with forward slashes
+                        string relativeFilePath = Path.Combine("Upload", "document", folder, "PMImage", fileName).Replace("\\", "/");
+
+                        // Save the image details in the tm_Resource table
+                        var newResource = new tm_Resource
+                        {
+                            ID = Guid.NewGuid(),
+                            FileName = fileName,
+                            FilePath = relativeFilePath, // Store the relative path with forward slashes
+                            MimeType = "image/jpeg", // Ensure the MimeType is set to "image/jpeg"
+                            FlagActive = true,
+                            CreateDate = DateTime.Now,
+                            UpdateDate = DateTime.Now,
+                        };
+                        _context.tm_Resource.Add(newResource);
+
+                        // Link this resource to the pass condition, if necessary
+                        var newFormResource = new tr_UnitFormResource
+                        {
+                            FormID = model.FormID,
+                            GroupID = model.Group_ID,
+                            RoleID = RoleID,
+                            UnitFormID = model.UnitFormID,
+                            ResourceID = newResource.ID,
+                            CreateDate = DateTime.Now,
+                        };
+                        _context.tr_UnitFormResource.Add(newFormResource);
+                    }
+                }
+
+                _context.SaveChanges();
+            }
+        }
+
     }
 }

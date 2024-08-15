@@ -10,7 +10,6 @@ namespace Project.ConstructionTracking.Web.Data
     {
         public tr_UnitFormPassCondition()
         {
-            tr_UnitFormAction = new HashSet<tr_UnitFormAction>();
             tr_UnitFormResource = new HashSet<tr_UnitFormResource>();
         }
 
@@ -19,6 +18,10 @@ namespace Project.ConstructionTracking.Web.Data
         public Guid? UnitFormID { get; set; }
         public int? GroupID { get; set; }
         public int? LockStatusID { get; set; }
+        public int? StatusID { get; set; }
+        public string? PE_Remark { get; set; }
+        public string? PM_Remark { get; set; }
+        public string? PJM_Remark { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? ActionDate { get; set; }
@@ -38,8 +41,6 @@ namespace Project.ConstructionTracking.Web.Data
         [ForeignKey("UnitFormID")]
         [InverseProperty("tr_UnitFormPassCondition")]
         public virtual tr_UnitForm? UnitForm { get; set; }
-        [InverseProperty("PassCondition")]
-        public virtual ICollection<tr_UnitFormAction> tr_UnitFormAction { get; set; }
         [InverseProperty("PassCondition")]
         public virtual ICollection<tr_UnitFormResource> tr_UnitFormResource { get; set; }
     }

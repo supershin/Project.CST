@@ -18,10 +18,21 @@ namespace Project.ConstructionTracking.Web.Services
             return ListPMApprove;
         }
 
-        public List<ApproveFormcheckModel> GetApproveFormcheckList(ApproveFormcheckModel model)
+        public ApproveFormcheckModel GetApproveFormcheck(ApproveFormcheckModel model)
         {
-            var ListPMApprove = _IPMApprovelistRepo.GetApproveFormcheckList(model);
-            return ListPMApprove;
+            var PMApproveData = _IPMApprovelistRepo.GetApproveFormcheck(model);
+            return PMApproveData;
+        }
+
+        public List<UnitFormResourceModel> GetImage(UnitFormResourceModel model)
+        {
+            var ListImage = _IPMApprovelistRepo.GetImage(model);
+            return ListImage;
+        }
+
+        public void SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
+        {
+            _IPMApprovelistRepo.SaveOrUpdateUnitFormAction(model);
         }
     }
 }

@@ -5,6 +5,8 @@ namespace Project.ConstructionTracking.Web.Services
     public interface IPMApproveService
     {
         List<PMApproveModel> GetPMApproveFormList();
-        List<ApproveFormcheckModel> GetApproveFormcheckList(ApproveFormcheckModel model);
+        ApproveFormcheckModel GetApproveFormcheck(ApproveFormcheckModel model);
+        List<UnitFormResourceModel> GetImage(UnitFormResourceModel model);
+        void SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model);
     }
 }

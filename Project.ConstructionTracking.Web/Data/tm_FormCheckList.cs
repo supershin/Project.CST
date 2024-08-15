@@ -14,7 +14,7 @@ namespace Project.ConstructionTracking.Web.Data
         }
 
         [Key]
-        public int? ID { get; set; }
+        public int ID { get; set; }
         public int? PackageID { get; set; }
         [StringLength(100)]
         [Unicode(false)]
