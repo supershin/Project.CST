@@ -2,6 +2,7 @@
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
+using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -106,10 +107,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from unit in units.DefaultIfEmpty()
                           join t8 in _context.tm_Form on t1.FormID equals t8.ID into forms
                           from form in forms.DefaultIfEmpty()
-                          join t10 in _context.tr_UnitFormAction on t1.ID equals t10.UnitFormID into PEUnitFormActions 
-                          from PEUnitFormAction in PEUnitFormActions.Where(a => a.RoleID == 1)
-                          join t11 in _context.tr_UnitFormAction on t1.ID equals t11.UnitFormID into PMUnitFormActions
-                          from PMUnitFormAction in PMUnitFormActions.Where(a => a.RoleID == 2)
+                          join t10 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)1 } equals new { t10.UnitFormID, t10.RoleID } into PEUnitFormActions
+                          from PEUnitFormAction in PEUnitFormActions.DefaultIfEmpty()
+                          join t11 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)2 } equals new { t11.UnitFormID, t11.RoleID } into PMUnitFormActions
+                          from PMUnitFormAction in PMUnitFormActions.DefaultIfEmpty()
                           where t1.UnitID == model.UnitID && t1.FormID == model.FormID
                           select new ApproveFormcheckModel
                           {
@@ -212,6 +213,16 @@ namespace Project.ConstructionTracking.Web.Repositories
             // Save changes to UnitFormAction
             _context.SaveChanges();
 
+            //if (model.ActionType == "submit" && model.UnitFormStatus == 5)
+            //{
+            //    UpdateUnitFormActionTypePE(model);
+            //}
+
+            bool PC = model.PassConditionsIUD != null && model.PassConditionsIUD.Count > 0;
+
+            // UpdateUnitForm action
+            UpdateUnitForm(model.UnitFormID, model.ActionType, model.UnitFormStatus);
+
             // Log the action
             InsertUnitFormActionLog(unitFormAction);
 
@@ -260,6 +271,62 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             // Save iamge 
             InsertImagesPM(model, null, 2); // RoleID = 2 for PM
+        }
+
+        private void UpdateUnitFormActionTypePE(ApproveFormcheckIUDModel model)
+        {
+            var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == model.UnitFormID && a.RoleID == 1);
+            if (unitFormAction != null)
+            {
+                unitFormAction.ActionType = null;
+                unitFormAction.UpdateDate = DateTime.Now;
+                _context.tr_UnitFormAction.Update(unitFormAction);
+                _context.SaveChanges();
+            }
+        }
+
+        private void UpdateUnitForm(Guid? unitformID, string? actiontype, int? StatusID)
+        {
+            var UnitForm = _context.tr_UnitForm
+                .FirstOrDefault(tr => tr.ID == unitformID);
+
+            if (UnitForm != null)  // Updated this condition to ensure it only proceeds if UnitForm is found
+            {
+                int answer;
+
+                if (actiontype == "save")
+                {
+                    answer = 3;
+                }
+                else if (actiontype == "submit")
+                {
+                    if (StatusID == 5)
+                    {
+                        answer = 5;
+                    }
+                    else if (StatusID == 4)
+                    {
+                        answer = 4;
+                    }
+                    else
+                    {
+                        answer = -1; 
+                    }
+                }
+                else
+                {
+                    answer = -1; 
+                }
+
+                if (answer != -1) 
+                {
+                    UnitForm.StatusID = answer;
+                    UnitForm.UpdateDate = DateTime.Now;
+
+                    _context.tr_UnitForm.Update(UnitForm);
+                    _context.SaveChanges(); 
+                }
+            }
         }
 
         private void InsertUnitFormActionLogPassCondition(tr_UnitFormPassCondition UnitFormPassCondition)

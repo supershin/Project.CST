@@ -168,6 +168,7 @@ var unitEquipment = {
                         confirmButtonText: 'OK'
                     }).then((result) => {
                         if (result.isConfirmed) {
+                            window.location.reload();
                             $('#modal-sign').modal('hide');
                         }
                     });
@@ -299,7 +300,6 @@ function saveData() {
         }
     });
 }
-
 
 function previewImage(event) {
     var reader = new FileReader();

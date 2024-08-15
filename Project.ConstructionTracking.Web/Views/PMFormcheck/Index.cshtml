@@ -140,9 +140,12 @@
                                             <div class="col-12 mb-1">
                                                 <button type="button" class="btn btn-outline-secondary">@item.FormName</button>
                                             </div>
-                                            <div class="col-12">
-                                                <button type="button" class="btn btn-outline-secondary">@item.ActionType_PM</button>
-                                            </div>
+                                            @if (@item.ActionType_PM != null)
+                                            {
+                                                <div class="col-12">
+                                                    <button type="button" class="btn btn-outline-secondary">@item.ActionType_PM</button>
+                                                </div>
+                                            }
                                         </div>                                       
                                     </div>
                                     <div class="col-8">

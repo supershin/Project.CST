@@ -245,52 +245,47 @@
                                         <h3 class="mb-0">@item.GroupName</h3>
                                     </div>
                                 </div>
-                                @if (item.LockStatusID != 0)
+                                @if (item.LockStatusID != null)
                                 {
-                                    @if (item.LockStatusID == 1)
+                                    @if (item.StatusID == 5)
                                     {
-                                         <form action="@Url.Action("index","FormCheckList")" method="post">
-                                            <button class="status-dot bg-primary">
+                                        <form method="post">
+                                            <button class="status-dot bg-danger">
                                                 <span class="status-text"><i class="fa-solid fa-lock"></i></span>
                                             </button>
-                                        </form>                                   
+                                        </form>
                                     }
-                                    else if (item.LockStatusID == 4)
+                                    else if (item.StatusID == 6 || item.StatusID == 5)
                                     {
-                                        <form action="@Url.Action("index","FormCheckList")" method="post">
+                                        <form method="post">
                                             <button class="status-dot bg-success">
                                                 <span class="status-text"><i class="fa-solid fa-lock"></i></span>
                                             </button>
                                         </form>
                                     }
-                                    else if (item.LockStatusID == 6)
+                                    else 
                                     {
-                                        <form action="@Url.Action("index","FormCheckList")" method="post">
+                                        <form method="post">
                                             <button class="status-dot bg-primary">
-                                                <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
+                                                <span class="status-text"><i class="fa-solid fa-lock"></i></span>
                                             </button>
                                         </form>
                                     }
-                                    else if (item.LockStatusID == 7)
+                                }
+                                else if (item.LockStatusID == 8)
+                                {
+                                    @if (item.StatusID == 11)
                                     {
-                                        <form action="@Url.Action("index","FormCheckList")" method="post">
+                                        <form method="post">
                                             <button class="status-dot bg-danger">
                                                 <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
                                             </button>
                                         </form>
                                     }
-                                    else if (item.LockStatusID == 8)
+                                    else if (item.StatusID == 10)
                                     {
-                                        <form action="@Url.Action("index","FormCheckList")" method="post">
+                                        <form method="post">
                                             <button class="status-dot bg-success">
-                                                <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
-                                            </button>
-                                        </form>
-                                    }
-                                    else if (item.LockStatusID == 9)
-                                    {
-                                        <form action="@Url.Action("index","FormCheckList")" method="post">
-                                            <button class="status-dot bg-danger">
                                                 <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
                                             </button>
                                         </form>
@@ -362,21 +357,27 @@
                             <div class="d-flex">
                                 @if (PE_ActionType == "submit")
                                 {
-                                    if (PM_StatusID == null)
+                                    if (PM_StatusID == null || PM_ActionType == "save" || PM_ActionType == null)
                                     {
                                         <label class="form-label">รอคำอนุมัติจาก PM</label>
                                     }
-                                    else if (PM_StatusID == 4)
+                                    else if (PM_StatusID == 4 && PM_ActionType == "submit")
                                     {
                                         <label class="form-label">PM อนุมัติ</label>
                                     }
-                                    else if (PM_StatusID == 5)
+                                    else if (PM_StatusID == 5 && PM_ActionType == "submit")
                                     {
-                                        <label class="form-label text-danger">PM ไม่อนุมัติ</label>
-                                        <button class="btn btn-secondary" onclick="saveData()">Save</button>
-                                        <button type="button" class="btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-vendor">Submit</button>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <label class="form-label text-danger">PM ไม่อนุมัติ</label>
+                                            </div>
+                                            <div class="col-12">
+                                                <button class="btn btn-secondary" onclick="saveData()">Save</button>
+                                                <button type="button" class="btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-vendor">Submit</button>
+                                            </div>
+                                        </div>                                     
                                     }
-                                    else if (PM_StatusID == 6)
+                                    else if (PM_StatusID == 6 && PJM_ActionType == "submit")
                                     {
                                         <label class="form-label">PM ส่งไปให้ PJM ตัดสินใจ</label>
 
@@ -384,11 +385,17 @@
                                         {
                                             <label class="form-label">PJM อนุมัติ</label>
                                         }
-                                        else if (PJM_StatusID == 8)
+                                        else if (PJM_StatusID == 8 && PJM_ActionType == "submit")
                                         {
-                                            <label class="form-label text-danger">PJM ไม่อนุมัติ</label>
-                                            <button class="btn btn-secondary" onclick="saveData()">Save</button>
-                                            <button type="button" class="btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-vendor">Submit</button>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <label class="form-label text-danger">PJM ไม่อนุมัติ</label>
+                                                </div>
+                                                <div class="col-12">
+                                                    <button class="btn btn-secondary" onclick="saveData()">Save</button>
+                                                    <button type="button" class="btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-vendor">Submit</button>
+                                                </div>
+                                            </div>
                                         }
                                     }
                                 }

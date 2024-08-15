@@ -1,4 +1,5 @@
 ﻿using Humanizer.Localisation;
+using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Project.ConstructionTracking.Web.Commons;
@@ -34,13 +35,16 @@ namespace Project.ConstructionTracking.Web.Repositories
                         from t5 in t5Group.Where(t => t.StatusID == 2).DefaultIfEmpty()
                         join t6 in _context.tr_UnitFormPassCondition.Where(p => p.FlagActive == true) on new { t4.UnitFormID, t4.GroupID } equals new { t6.UnitFormID, t6.GroupID } into t6Group
                         from t6 in t6Group.DefaultIfEmpty()
-                        group new { t3, t4, t5, t6 } by new { t1.ID, t1.FormID, t1.Name, t6.LockStatusID } into g
+                        join t7 in _context.tr_UnitFormAction on new { t4.UnitFormID, RoleID = (int?)2 } equals new { t7.UnitFormID, t7.RoleID } into t7Group
+                        from t7 in t7Group.DefaultIfEmpty()
+                        group new { t3, t4, t5, t6 ,t7 } by new { t1.ID, t1.FormID, t1.Name, t6.LockStatusID ,t7.StatusID} into g
                         select new FormGroupModel
                         {
                             GroupID = g.Key.ID,
                             FormID = g.Key.FormID,
                             GroupName = g.Key.Name,
                             LockStatusID = g.Key.LockStatusID,
+                            StatusID = g.Key.StatusID,
                             Cnt_CheckList_All = g.Count(x => x.t3 != null),
                             Cnt_CheckList_Unit = g.Count(x => x.t4 != null),
                             Cnt_CheckList_NotPass = g.Count(x => x.t5 != null),
@@ -51,43 +55,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         };
 
             var orderedQuery = query.OrderBy(fg => fg.GroupID).ToList();
-
-            //var query = from t0 in _context.tm_Form
-            //            where t0.ID == model.FormID
-            //            join t1 in _context.tm_FormGroup on t0.ID equals t1.FormID into t1Group
-            //            from t1 in t1Group.DefaultIfEmpty()
-            //            join t2 in _context.tm_FormPackage on t1.ID equals t2.GroupID into t2Group
-            //            from t2 in t2Group.DefaultIfEmpty()
-            //            join t3 in _context.tm_FormCheckList on t2.ID equals t3.PackageID into t3Group
-            //            from t3 in t3Group.DefaultIfEmpty()
-            //            join tUnitForm in _context.tr_UnitForm on t0.ID equals tUnitForm.FormID into tUnitFGroup
-            //            from tUnitForm in tUnitFGroup.Where(t => t.UnitID == model.UnitID).DefaultIfEmpty()
-            //            join t4 in _context.tr_UnitFormCheckList on new { t1.FormID, PackageID = t2.ID, CheckListID = t3.ID } equals new { t4.FormID, t4.PackageID, t4.CheckListID } into t4Group
-            //            from t4 in t4Group.Where(t => t.StatusID != null && t.UnitFormID == model.UnitFormID).DefaultIfEmpty()
-            //            join t5 in _context.tr_UnitFormCheckList on new { t1.FormID, PackageID = t2.ID, CheckListID = t3.ID } equals new { t5.FormID, t5.PackageID, t5.CheckListID } into t5Group
-            //            from t5 in t5Group.Where(t => t.StatusID == 2 && t.UnitFormID == model.UnitFormID).DefaultIfEmpty()
-            //            join t6 in _context.tr_UnitFormPassCondition on new { t4.UnitFormID, t4.GroupID } equals new { t6.UnitFormID, t6.GroupID } into t6Group
-            //            from t6 in t6Group.DefaultIfEmpty()
-            //            group new { t0, t1, t2, t3, t4, t5, tUnitForm, t6 } by new { t0.ID, t0.Name, GroupID = t1.ID, GroupName = t1.Name, tUnitForm.UnitID, t6.LockStatusID } into g
-            //            select new FormGroupModel
-            //            {
-            //                FormID = g.Key.ID,
-            //                UnitID = g.Key.UnitID,
-            //                GroupID = g.Key.GroupID,
-            //                GroupName = g.Key.GroupName,
-            //                LockStatusID = g.Key.LockStatusID,
-            //                Cnt_CheckList_All = g.Count(x => x.t3 != null),
-            //                Cnt_CheckList_Unit = g.Count(x => x.t4 != null),
-            //                Cnt_CheckList_NotPass = g.Count(x => x.t5 != null),
-            //                StatusUse = g.Count(x => x.t5 != null) > 0 && g.Count(x => x.t3 != null) == g.Count(x => x.t4 != null) ? "danger" :
-            //                                            g.Count(x => x.t4 != null) == 0 ? "secondary" :
-            //                                            g.Count(x => x.t3 != null) == g.Count(x => x.t4 != null) ? "success" :
-            //                                            g.Count(x => x.t3 != null) > g.Count(x => x.t4 != null) ? "warning" : ""
-            //            };
-
-            //var result = query.ToList();
             return orderedQuery;
-
         }
         public FormGroupDetail GetFormGroupDetail(Guid unitFormId)
         {
@@ -121,7 +89,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             // Step 2: Fetch the latest UnitFormResource and related Resource
             var latestResource = (from ure in _context.tr_UnitFormResource
-                                  where ure.UnitFormID == result.ID && ure.PassConditionID == null
+                                  where ure.UnitFormID == result.ID && ure.PassConditionID == null && ure.RoleID == 1 && ure.FormID == result.FormID
                                   orderby ure.CreateDate descending
                                   select new
                                   {
@@ -178,19 +146,20 @@ namespace Project.ConstructionTracking.Web.Repositories
                     unitForm.UpdateDate = DateTime.Now;
                     //unitForm.UpdateBy = 1 ;
                 }
+                InsertUnitFormActionLog(model.UnitFormID, "save");
             }
             else
             {
 
                 if (model.Sign != null)
                 {
-                    SaveSignature(model.Sign, model.ApplicationPath, model.UnitFormID, model.FormGrade, model.VendorID ,model.userID , model.RoleID);
+                    SaveSignature(model.Sign, model.ApplicationPath, model.UnitFormID, model.FormGrade, model.VendorID ,model.userID , model.RoleID , model.FormID);
                 }
             }
 
             _context.SaveChanges();
         }
-        private void SaveSignature(SignatureData signData, string? appPath, Guid? UnitFormID, string? FormGrade, int? VendorID, Guid? userID, int? RoleID)
+        private void SaveSignature(SignatureData signData, string? appPath, Guid? UnitFormID, string? FormGrade, int? VendorID, Guid? userID, int? RoleID ,int? FormID)
         {
             var resource = new FormGroupModel.Resources
             {
@@ -209,8 +178,10 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             ConvertByteToImage(resource);
             InsertResource(guidId, fileName, resource.ResourceStoragePath, "image/jpeg", userID);
-            InsertUnitFormResource(guidId, UnitFormID, userID, RoleID);
+            InsertUnitFormResource(guidId, UnitFormID, userID, RoleID , FormID);
             SubmitUpdateUnitForm(guidId, UnitFormID, FormGrade, VendorID, userID, RoleID);
+            UpdateUnitFormActionTypePM(UnitFormID);
+            InsertUnitFormActionLog(UnitFormID, "submit");
         }
         private void ConvertByteToImage(FormGroupModel.Resources item)
         {
@@ -269,11 +240,12 @@ namespace Project.ConstructionTracking.Web.Repositories
             _context.tm_Resource.Add(newResource);
             _context.SaveChanges();
         }
-        public bool InsertUnitFormResource(Guid ResourceID, Guid? UnitFormID ,Guid? userID ,int? RoleID)
+        public bool InsertUnitFormResource(Guid ResourceID, Guid? UnitFormID ,Guid? userID ,int? RoleID , int? FormID)
         {
             var newResource = new tr_UnitFormResource
             {
                 UnitFormID = UnitFormID,
+                FormID= FormID,
                 RoleID = RoleID,
                 ResourceID = ResourceID,
                 FlagActive = true,
@@ -316,6 +288,31 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
 
             return true;
+        }
+        private void UpdateUnitFormActionTypePM(Guid? UnitFormID)
+        {
+            var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == UnitFormID && a.RoleID == 2);
+            if (unitFormAction != null)
+            {
+                unitFormAction.ActionType = null;
+                unitFormAction.UpdateDate = DateTime.Now;
+                _context.tr_UnitFormAction.Update(unitFormAction);
+                _context.SaveChanges();
+            }
+        }
+        private void InsertUnitFormActionLog(Guid? UnitFormID , string ActionType)
+        {
+            var actionLog = new tr_UnitFormActionLog
+            {
+                UnitFormID = UnitFormID,
+                Remark = "PE " + ActionType + " UnitFormAction",
+                ActionDate = DateTime.Now,
+                CraeteDate = DateTime.Now,
+                // CreateBy = unitFormAction.CreateBy, // Uncomment and set appropriately if you have the CreateBy field
+            };
+
+            _context.tr_UnitFormActionLog.Add(actionLog);
+            _context.SaveChanges();
         }
     }
 }

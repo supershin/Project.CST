@@ -13,6 +13,8 @@ namespace Project.ConstructionTracking.Web.Models
         public string? StatusUse { get; set;}
         public string? FormGrade { get; set; }
         public int? LockStatusID { get; set; }
+        public int? StatusID { get; set; }
+        public string? ActionType { get; set; }
         public int? Cnt_CheckList_All { get; set; }
         public int? Cnt_CheckList_Unit { get; set; }
         public int? Cnt_CheckList_NotPass { get; set; }

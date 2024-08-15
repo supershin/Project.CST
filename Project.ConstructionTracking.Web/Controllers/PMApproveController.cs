@@ -34,7 +34,6 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.Grade = resultModel.Grade;
                 ViewBag.LockStatusID = resultModel.PM_getListgroup?.Any(l => l.LockStatusID != null) == true ? "NotNull" : null;
                 ViewBag.VenderName = resultModel.VenderName;
-                ViewBag.PM_StatusID = resultModel.PM_StatusID;
                 ViewBag.PM_Remarkaction = resultModel.PM_Remarkaction;
                 ViewBag.PM_Actiontype = resultModel.PM_Actiontype;
             }
@@ -43,14 +42,16 @@ namespace Project.ConstructionTracking.Web.Controllers
             return View(resultModel);
         }
 
-
         [HttpPost]
         public IActionResult SaveOrSubmit(ApproveFormcheckIUDModel model)
         {
             try
             {
                 var param = Request.Form["PassConditionsIUD"];
-                model.PassConditionsIUD = JsonConvert.DeserializeObject<List<PassConditions>>(param);
+                if (!string.IsNullOrEmpty(param))
+                {
+                    model.PassConditionsIUD = JsonConvert.DeserializeObject<List<PassConditions>>(param);
+                }
                 model.ApplicationPath = _hosting.ContentRootPath;
                 _PMApproveService.SaveOrUpdateUnitFormAction(model);
 
