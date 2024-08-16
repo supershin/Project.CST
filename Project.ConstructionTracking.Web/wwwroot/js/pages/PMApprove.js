@@ -191,7 +191,7 @@ function saveOrSubmit(actionType) {
 
     // Send the data using AJAX
     $.ajax({
-        url: '/PMApprove/SaveOrSubmit', // Replace with your actual controller action
+        url: baseUrl + 'PMApprove/SaveOrSubmit', // Replace with your actual controller action
         type: 'POST',
         contentType: false,
         processData: false,
