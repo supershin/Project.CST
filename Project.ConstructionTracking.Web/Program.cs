@@ -40,8 +40,12 @@ builder.Services.AddScoped<IFormGroupRepo, FormGroupRepo>();
 
 builder.Services.AddScoped<IFormChecklistService, FormChecklistService>();
 builder.Services.AddScoped<IFormChecklistRepo, FormChecklistRepo>();
+
 builder.Services.AddScoped<IMasterProjectService, MasterProjectService>();
 builder.Services.AddScoped<IMasterProjectRepo, MasterProjectRepo>();
+
+builder.Services.AddScoped<IPMApproveService, PMApproveService>();
+builder.Services.AddScoped<IPMApproveRepo, PMApproveRepo>();
 
 var app = builder.Build();
 

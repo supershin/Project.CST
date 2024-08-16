@@ -6,15 +6,17 @@ namespace Project.ConstructionTracking.Web.Models
     public class FormGroupModel
     {
         public Guid? UnitID { get; set; }
-        public int GroupID { get; set; }
+        public int? GroupID { get; set; }
         public int? FormID { get; set; }
         public Guid? UnitFormID { get; set; }
         public string? GroupName { get; set; }
         public string? StatusUse { get; set;}
         public string? FormGrade { get; set; }
         public int? LockStatusID { get; set; }
+        public int? StatusID { get; set; }
+        public string? ActionType { get; set; }
         public int? Cnt_CheckList_All { get; set; }
-        public int? Cnt_CheckList_Unit { get; set; }
+        public int? Cnt_CheckList_Pass { get; set; }
         public int? Cnt_CheckList_NotPass { get; set; }
 
         public class FormGroupIUDModel
@@ -58,6 +60,11 @@ namespace Project.ConstructionTracking.Web.Models
             public int? PE_StatusID { get; set; }
             public string? PM_ActionType { get; set; }
             public int? PM_StatusID { get; set; }
+            public string? PJM_ActionType { get; set; }
+            public int? PJM_StatusID { get; set; }
+            public string? FilePath { get; set; }
+            public string? FileName { get; set; }
+
         }
     }
 }

@@ -26,9 +26,47 @@ var unitEquipment = {
         unitEquipment.initSignaturePad_JM();
 
         $("#btn-vendor").click(() => {
-            $('#modal-sign').modal('show');
-            return false;
+            let allSuccess = true;
+            let radioSelected = false;
+
+            // Iterate through each item to check the status
+            $(".card-link").each(function () {
+                // Check the status of each item
+                let status = $(this).find("button.status-dot").hasClass("bg-success");
+                if (!status) {
+                    allSuccess = false;
+                    return false; // Exit the loop as soon as one item is not successful
+                }
+            });
+
+            // Check if at least one radio button is selected
+            radioSelected = $("input[name='radios-inline']:checked").length > 0;
+
+            if (!radioSelected) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'กรุณาระบุเกรดผู้รับเหมา',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return false; // Prevent the modal from showing
+            }
+
+            if (allSuccess && radioSelected) {
+                $('#modal-sign').modal('show');
+            } else if (!allSuccess) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'กรุณาตรวจผ่านทุกกลุ่มงานก่อนส่งขออนุมัติ',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+
+            return false; // Prevent the default button action
         });
+
+
 
         $("#btn-sign").click(() => {
             $('#modal-sign').modal();
@@ -86,20 +124,74 @@ var unitEquipment = {
         });
     },
     saveUnitEquipmentSign: () => {
-        
+
+        let isValid = true;
+        let validationMessage = '';
+
+        // Iterate through each card to validate
+        $('div.card-link').each(function () {
+            const statusUse = $(this).find('button.status-dot').data('status-use');
+            const cntCheckListAll = parseInt($(this).find('.text1').text().split(' ')[1]);
+            const cntCheckListUnit = parseInt($(this).find('.text2').text().split(' ')[1]);
+            const cntCheckListNotPass = parseInt($(this).find('.text3').text().split(' ')[1]);
+
+            // Validate the conditions
+            if (statusUse !== 'success' && !(cntCheckListAll === cntCheckListUnit && cntCheckListNotPass === 0)) {
+                isValid = false;
+                validationMessage = 'กรุณาตรวจสอบสถานะของรายการทั้งหมดก่อนบันทึกข้อมูล';
+                return false; // Exit loop early if validation fails
+            }
+        });
+
+        if (!isValid) {
+            Swal.fire({
+                title: 'ข้อผิดพลาด!',
+                text: validationMessage,
+                icon: 'warning',
+                confirmButtonText: 'ตกลง'
+            });
+            return;
+        }
+
+        var vendorId = document.getElementById('selectedVendorValue').value;
+        var signData = unitEquipment.getSignatureData();
+
+        // Validate if VendorID is null
+        if (!vendorId) {
+            Swal.fire({
+                title: 'กรุณาระบุผู้รับเหมา',
+                text: '',
+                icon: 'warning',
+                confirmButtonText: 'ตกลง'
+            });
+            return; // Stop execution if VendorID is null
+        }
+
+        // Validate if Sign is null or empty
+        if (!signData || !signData.MimeType || !signData.StorageBase64) {
+            Swal.fire({
+                title: 'กรุณาให้ผู้รับเหมาเซ็น',
+                text: '',
+                icon: 'warning',
+                confirmButtonText: 'ตกลง'
+            });
+            return; // Stop execution if Sign is invalid
+        }
+
         var data = {
             ProjectID: document.getElementById('projectId').value,
             FormID: document.getElementById('FormID').value,
             UnitFormID: document.getElementById('UnitFormID').value,
             UnitID: document.getElementById('unitId').value,
             FormGrade: selectedRadioValue,
-            Act: 'Submit',
-            VendorID: document.getElementById('selectedVendorValue').value,
-            Sign: unitEquipment.getSignatureData(),
-/*            SignJM: unitEquipment.getSignatureDataJM()*/
+            Act: 'submit',
+            VendorID: vendorId,
+            Sign: signData,
+            /*        SignJM: unitEquipment.getSignatureDataJM() */
         };
 
         console.log(data);
+
         $.ajax({
             url: baseUrl + 'FormGroup/UpdateSaveGrade',
             type: 'POST',
@@ -114,6 +206,7 @@ var unitEquipment = {
                         confirmButtonText: 'OK'
                     }).then((result) => {
                         if (result.isConfirmed) {
+                            window.location.reload();
                             $('#modal-sign').modal('hide');
                         }
                     });
@@ -169,15 +262,43 @@ var unitEquipment = {
 }
 
 function saveData() {
+    let isValid = true;
+    let validationMessage = '';
 
+    // Iterate through each card to validate
+    $('div.card-link').each(function () {
+        const statusUse = $(this).find('button.status-dot').data('status-use');
+        const cntCheckListAll = parseInt($(this).find('.text1').text().split(' ')[1]);
+        const cntCheckListUnit = parseInt($(this).find('.text2').text().split(' ')[1]);
+        const cntCheckListNotPass = parseInt($(this).find('.text3').text().split(' ')[1]);
+
+        // Validate the conditions
+        if (statusUse !== 'success' && !(cntCheckListAll === cntCheckListUnit && cntCheckListNotPass === 0)) {
+            isValid = false;
+            validationMessage = 'กรุณาตรวจสอบสถานะของรายการทั้งหมดก่อนบันทึกข้อมูล';
+            return false; // Exit loop early if validation fails
+        }
+    });
+
+    if (!isValid) {
+        Swal.fire({
+            title: 'ข้อผิดพลาด!',
+            text: validationMessage,
+            icon: 'warning',
+            confirmButtonText: 'ตกลง'
+        });
+        return;
+    }
+
+    // If validation passes, proceed to save data
     const data = {
         ProjectID: document.getElementById('projectId').value,
         FormID: document.getElementById('FormID').value,
         UnitFormID: document.getElementById('UnitFormID').value,
         UnitID: document.getElementById('unitId').value,
-        FormGrade: selectedRadioValue ,
-        Act:'Save'
-    };                    
+        FormGrade: selectedRadioValue,
+        Act: 'save'
+    };
 
     console.log(data);
 
@@ -189,30 +310,59 @@ function saveData() {
         success: function (res) {
             if (res.success) {
                 Swal.fire({
-                    title: 'Success!',
+                    title: 'สำเร็จ!',
                     text: 'บันทึกข้อมูลสำเร็จ',
                     icon: 'success',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'ตกลง'
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        // Optionally reload the page or perform any additional actions
                     }
                 });
             } else {
                 Swal.fire({
-                    title: 'Error!',
+                    title: 'ข้อผิดพลาด!',
                     text: 'บันทึกข้อมูลไม่สำเร็จ',
                     icon: 'error',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'ตกลง'
                 });
             }
         },
         error: function (xhr, status, error) {
             Swal.fire({
-                title: 'Error!',
-                text: 'An error occurred while saving the data.',
+                title: 'ข้อผิดพลาด!',
+                text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล',
                 icon: 'error',
-                confirmButtonText: 'OK'
+                confirmButtonText: 'ตกลง'
             });
         }
     });
 }
+
+function previewImage(event) {
+    var reader = new FileReader();
+    reader.onload = function () {
+        var output = document.getElementById('imagePreview');
+        output.src = reader.result;
+        output.style.display = 'block';
+    };
+    reader.readAsDataURL(event.target.files[0]);
+    document.getElementById('removeImage').style.display = 'inline-block';
+}
+
+function removeImage() {
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('imageUpload').value = null;
+    document.getElementById('removeImage').style.display = 'none';
+}
+
+window.onload = function () {
+    var radios = document.getElementsByName('radios-inline');
+    for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+            selectedRadioValue = radios[i].value; // Set the selected value based on the pre-checked radio
+            radios[i].dataset.wasChecked = "true"; // Mark it as checked
+            break;
+        }
+    }
+};
