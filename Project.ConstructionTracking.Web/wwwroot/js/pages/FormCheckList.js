@@ -130,48 +130,48 @@
         }
     });
 
-    document.addEventListener("DOMContentLoaded", function () {
-        var pcRadio = document.getElementById("pc-radio");
+    //document.addEventListener("DOMContentLoaded", function () {
+    //    var pcRadio = document.getElementById("pc-radio");
 
-        pcRadio.addEventListener("click", function (e) {
-            var allRadios = document.querySelectorAll(".form-check-input[type='radio']:not(#pc-radio)");
-            var allChecked = true;
+    //    pcRadio.addEventListener("click", function (e) {
+    //        var allRadios = document.querySelectorAll(".form-check-input[type='radio']:not(#pc-radio)");
+    //        var allChecked = true;
 
-            allRadios.forEach(function (radio) {
-                if (radio.value == "1" && !radio.checked) {
-                    allChecked = false;
-                }
-            });
+    //        allRadios.forEach(function (radio) {
+    //            if (radio.value == "1" && !radio.checked) {
+    //                allChecked = false;
+    //            }
+    //        });
 
-            if (!allChecked) {
-                e.preventDefault();
-                pcRadio.checked = false;
-                Swal.fire({
-                    title: 'Warning!',
-                    text: 'กรุณาเลือกการตรวจให้ผ่านทุกงาน',
-                    icon: 'warning',
-                    confirmButtonText: 'OK'
-                });
-            } else {
-                if (pcRadio.dataset.wasChecked) {
-                    pcRadio.checked = false;
-                    pcRadio.dataset.wasChecked = "";
-                    allRadios.forEach(function (radio) {
-                        radio.disabled = false;
-                    });
-                } else {
-                    var radios = document.getElementsByName(pcRadio.name);
-                    for (var i = 0; i < radios.length; i++) {
-                        radios[i].dataset.wasChecked = "";
-                    }
-                    pcRadio.dataset.wasChecked = "true";
-                    allRadios.forEach(function (radio) {
-                        radio.disabled = true;
-                    });
-                }
-            }
-        });
-    });
+    //        if (!allChecked) {
+    //            e.preventDefault();
+    //            pcRadio.checked = false;
+    //            Swal.fire({
+    //                title: 'Warning!',
+    //                text: 'กรุณาเลือกการตรวจให้ผ่านทุกงาน',
+    //                icon: 'warning',
+    //                confirmButtonText: 'OK'
+    //            });
+    //        } else {
+    //            if (pcRadio.dataset.wasChecked) {
+    //                pcRadio.checked = false;
+    //                pcRadio.dataset.wasChecked = "";
+    //                allRadios.forEach(function (radio) {
+    //                    radio.disabled = false;
+    //                });
+    //            } else {
+    //                var radios = document.getElementsByName(pcRadio.name);
+    //                for (var i = 0; i < radios.length; i++) {
+    //                    radios[i].dataset.wasChecked = "";
+    //                }
+    //                pcRadio.dataset.wasChecked = "true";
+    //                allRadios.forEach(function (radio) {
+    //                    radio.disabled = true;
+    //                });
+    //            }
+    //        }
+    //    });
+    //});
 
 //    $('#saveButton').on('click', function () {
 //        var packages = [];
@@ -290,6 +290,60 @@
 
 //        return false;
 //    });
+
+document.addEventListener("DOMContentLoaded", function () {
+    var pcRadio = document.getElementById("pc-radio");
+
+    pcRadio.addEventListener("click", function (e) {
+        var allRadios = document.querySelectorAll(".form-check-input[type='radio']:not(#pc-radio)");
+        var allChecked = true;
+
+        // Check if all other radios with value="1" are checked
+        allRadios.forEach(function (radio) {
+            if (radio.value == "1" && !radio.checked) {
+                allChecked = false;
+            }
+        });
+
+        if (!allChecked) {
+            e.preventDefault(); // Prevent the pc-radio from being checked
+            pcRadio.checked = false;
+            Swal.fire({
+                title: 'Warning!',
+                text: 'กรุณาเลือกการตรวจให้ผ่านทุกงาน',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+        } else {
+            if (pcRadio.dataset.wasChecked) {
+                pcRadio.checked = false;
+                pcRadio.dataset.wasChecked = "";
+                allRadios.forEach(function (radio) {
+                    radio.disabled = false; // Enable all radios
+                });
+            } else {
+                var radios = document.getElementsByName(pcRadio.name);
+                for (var i = 0; i < radios.length; i++) {
+                    radios[i].dataset.wasChecked = "";
+                }
+                pcRadio.dataset.wasChecked = "true";
+                allRadios.forEach(function (radio) {
+                    radio.disabled = true; // Disable all other radios
+                });
+            }
+        }
+    });
+
+    // Disable or enable radios based on pc-radio's initial state
+    if (pcRadio.checked) {
+        var allRadios = document.querySelectorAll(".form-check-input[type='radio']:not(#pc-radio)");
+        allRadios.forEach(function (radio) {
+            radio.disabled = true; // Disable all other radios if pc-radio is checked on page load
+        });
+    }
+});
+
+
 
 $('#saveButton').on('click', function () {
     var packages = [];

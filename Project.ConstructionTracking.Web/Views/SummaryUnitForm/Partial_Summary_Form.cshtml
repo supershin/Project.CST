@@ -118,7 +118,7 @@
                                     }
                                 </div>
                                 <div class="col">
-                                    <form action="@Url.Action("index", "PMApprove")" method="post">
+                                    <form action="@Url.Action("index", "PMApprove", new { unitId = @item.UnitID, formId = @item.FormID })" method="post">
                                         <button type="submit" class="status-dot bg-@item.PM @(item.PM == "danger" || item.PM == "warning" ? "status-dot-animated" : "")">
                                             <span class="status-text">
                                                 PM

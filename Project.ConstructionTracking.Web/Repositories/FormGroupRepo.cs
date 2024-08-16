@@ -30,14 +30,16 @@ namespace Project.ConstructionTracking.Web.Repositories
                         join t3 in _context.tm_FormCheckList.Where(c => c.FlagActive == true) on t2.ID equals t3.PackageID into t3Group
                         from t3 in t3Group.DefaultIfEmpty()
                         join t4 in _context.tr_UnitFormCheckList.Where(f => f.FlagActive == true) on new { t1.FormID, PackageID = (int?)t2.ID, CheckListID = (int?)t3.ID, model.UnitFormID } equals new { t4.FormID, t4.PackageID, t4.CheckListID, t4.UnitFormID } into t4Group
-                        from t4 in t4Group.Where(t => t.StatusID != null).DefaultIfEmpty()
+                        from t4 in t4Group.Where(t => t.StatusID == 1 || t.StatusID == 3).DefaultIfEmpty()
                         join t5 in _context.tr_UnitFormCheckList.Where(f => f.FlagActive == true) on new { t1.FormID, PackageID = (int?)t2.ID, CheckListID = (int?)t3.ID, model.UnitFormID } equals new { t5.FormID, t5.PackageID, t5.CheckListID, t5.UnitFormID } into t5Group
                         from t5 in t5Group.Where(t => t.StatusID == 2).DefaultIfEmpty()
+                        join t4All in _context.tr_UnitFormCheckList.Where(f => f.FlagActive == true) on new { t1.FormID, PackageID = (int?)t2.ID, CheckListID = (int?)t3.ID, model.UnitFormID } equals new { t4All.FormID, t4All.PackageID, t4All.CheckListID, t4All.UnitFormID } into t4AllGroup
+                        from t4All in t4AllGroup.Where(t => t.StatusID != null).DefaultIfEmpty()
                         join t6 in _context.tr_UnitFormPassCondition.Where(p => p.FlagActive == true) on new { t4.UnitFormID, t4.GroupID } equals new { t6.UnitFormID, t6.GroupID } into t6Group
                         from t6 in t6Group.DefaultIfEmpty()
                         join t7 in _context.tr_UnitFormAction on new { t4.UnitFormID, RoleID = (int?)2 } equals new { t7.UnitFormID, t7.RoleID } into t7Group
                         from t7 in t7Group.DefaultIfEmpty()
-                        group new { t3, t4, t5, t6 ,t7 } by new { t1.ID, t1.FormID, t1.Name, t6.LockStatusID ,t7.StatusID} into g
+                        group new { t3, t4, t4All, t5, t6 ,t7 } by new { t1.ID, t1.FormID, t1.Name, t6.LockStatusID ,t7.StatusID} into g
                         select new FormGroupModel
                         {
                             GroupID = g.Key.ID,
@@ -46,12 +48,12 @@ namespace Project.ConstructionTracking.Web.Repositories
                             LockStatusID = g.Key.LockStatusID,
                             StatusID = g.Key.StatusID,
                             Cnt_CheckList_All = g.Count(x => x.t3 != null),
-                            Cnt_CheckList_Unit = g.Count(x => x.t4 != null),
+                            Cnt_CheckList_Pass = g.Count(x => x.t4 != null),
                             Cnt_CheckList_NotPass = g.Count(x => x.t5 != null),
-                            StatusUse = g.Count(x => x.t5 != null) > 0 && g.Count(x => x.t3 != null) == g.Count(x => x.t4 != null) ? "danger" :
-                                        g.Count(x => x.t4 != null) == 0 ? "secondary" :
-                                        g.Count(x => x.t3 != null) == g.Count(x => x.t4 != null) ? "success" :
-                                        g.Count(x => x.t3 != null) > g.Count(x => x.t4 != null) ? "warning" : ""
+                            StatusUse = g.Count(x => x.t5 != null) > 0 ? "danger" :
+                                        g.Count(x => x.t4All != null) == 0 ? "secondary" :
+                                        g.Count(x => x.t4 != null) == g.Count(x => x.t3 != null) ? "success" :
+                                        g.Count(x => x.t4All != null) > 0 && g.Count(x => x.t3 != null) > 0 && g.Count(x => x.t5 != null) == 0 ? "warning" : ""
                         };
 
             var orderedQuery = query.OrderBy(fg => fg.GroupID).ToList();

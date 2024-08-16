@@ -26,9 +26,47 @@ var unitEquipment = {
         unitEquipment.initSignaturePad_JM();
 
         $("#btn-vendor").click(() => {
-            $('#modal-sign').modal('show');
-            return false;
+            let allSuccess = true;
+            let radioSelected = false;
+
+            // Iterate through each item to check the status
+            $(".card-link").each(function () {
+                // Check the status of each item
+                let status = $(this).find("button.status-dot").hasClass("bg-success");
+                if (!status) {
+                    allSuccess = false;
+                    return false; // Exit the loop as soon as one item is not successful
+                }
+            });
+
+            // Check if at least one radio button is selected
+            radioSelected = $("input[name='radios-inline']:checked").length > 0;
+
+            if (!radioSelected) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'กรุณาระบุเกรดผู้รับเหมา',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return false; // Prevent the modal from showing
+            }
+
+            if (allSuccess && radioSelected) {
+                $('#modal-sign').modal('show');
+            } else if (!allSuccess) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'กรุณาตรวจผ่านทุกกลุ่มงานก่อนส่งขออนุมัติ',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+
+            return false; // Prevent the default button action
         });
+
+
 
         $("#btn-sign").click(() => {
             $('#modal-sign').modal();
@@ -317,3 +355,14 @@ function removeImage() {
     document.getElementById('imageUpload').value = null;
     document.getElementById('removeImage').style.display = 'none';
 }
+
+window.onload = function () {
+    var radios = document.getElementsByName('radios-inline');
+    for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+            selectedRadioValue = radios[i].value; // Set the selected value based on the pre-checked radio
+            radios[i].dataset.wasChecked = "true"; // Mark it as checked
+            break;
+        }
+    }
+};

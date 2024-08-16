@@ -16,7 +16,7 @@ namespace Project.ConstructionTracking.Web.Models
         public int? StatusID { get; set; }
         public string? ActionType { get; set; }
         public int? Cnt_CheckList_All { get; set; }
-        public int? Cnt_CheckList_Unit { get; set; }
+        public int? Cnt_CheckList_Pass { get; set; }
         public int? Cnt_CheckList_NotPass { get; set; }
 
         public class FormGroupIUDModel

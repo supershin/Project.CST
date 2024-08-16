@@ -12,6 +12,12 @@ namespace Project.ConstructionTracking.Web.Services
             _IFormChecklistRepo = FormChecklistRepo;
         }
 
+        public FormCheckListModel.Form_getUnitFormData GetUnitFormData(FormCheckListModel.Form_getUnitFormData filterData)
+        {
+            var UnitFormData = _IFormChecklistRepo.GetUnitFormData(filterData);
+            return UnitFormData;
+        }
+
         public List<FormCheckListModel.Form_getListPackages> GetFormCheckList(FormCheckListModel.Form_getFilterData filterData)
         {
             var ListFormChecklist = _IFormChecklistRepo.GetFormCheckList(filterData);

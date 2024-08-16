@@ -22,28 +22,33 @@ namespace Project.ConstructionTracking.Web.Controllers
             var userName = Request.Cookies["CST.UserName"];
             var userRole = Request.Cookies["CST.Role"];
 
-            ViewBag.ProjectId = projectId;
-            ViewBag.ProjectName = projectName;
-            ViewBag.FormID = FormID;
-            ViewBag.UnitFormID = UnitFormID;
-            ViewBag.UnitFormName = UnitFormName;
-            ViewBag.UnitId = unitId;
-            ViewBag.UnitCode = UnitCode;
+            var filterunitData = new FormCheckListModel.Form_getUnitFormData { UnitID = unitId , FormID = FormID, GroupID = GroupID };
+
+            FormCheckListModel.Form_getUnitFormData UnitFormData = _FormChecklistService.GetUnitFormData(filterunitData);
+
+
+            ViewBag.ProjectId = UnitFormData.ProjectID;
+            ViewBag.ProjectName = UnitFormData.ProjectName;
+            ViewBag.FormID = UnitFormData.FormID;
+            ViewBag.UnitFormID = UnitFormData?.UnitFormID;
+            ViewBag.UnitFormName = UnitFormData.FormName;
+            ViewBag.UnitId = UnitFormData.UnitID;
+            ViewBag.UnitCode = UnitFormData.UnitCode;
             ViewBag.UnitStatusName = UnitStatusName;
-            ViewBag.GroupName = GroupName;
-            ViewBag.GroupID = GroupID;
+            ViewBag.GroupName = UnitFormData.GroupName;
+            ViewBag.GroupID = UnitFormData.GroupID;
             ViewBag.UserName = userName;
             ViewBag.UserRole = userRole;
 
-            var filterData = new FormCheckListModel.Form_getFilterData { GroupID = GroupID , UnitFormID = UnitFormID };
+            var filterData = new FormCheckListModel.Form_getFilterData { GroupID = GroupID , UnitFormID = UnitFormData?.UnitFormID };
             List<FormCheckListModel.Form_getListPackages> listChecklist = _FormChecklistService.GetFormCheckList(filterData);
 
             var statusFilterData = new FormCheckListModel.Form_getFilterData
             {
-                ProjectID = projectId,
-                UnitID = unitId,
-                GroupID = GroupID,
-                FormID = FormID
+                ProjectID = UnitFormData.ProjectID,
+                UnitID = UnitFormData.UnitID,
+                GroupID = UnitFormData.GroupID,
+                FormID = UnitFormData.FormID
             };
 
             List<FormCheckListModel.Form_getListStatus> listStatus = _FormChecklistService.GetFormCheckListStatus(statusFilterData);
@@ -51,16 +56,11 @@ namespace Project.ConstructionTracking.Web.Controllers
             if (listStatus != null && listStatus.Count > 0)
             {
                 var status = listStatus[0]; // Assuming there is only one row in listStatus
-                //ViewBag.StatusID = status.ID;
-                //ViewBag.StatusProjectID = status.ProjectID;
-                //ViewBag.StatusUnitID = status.UnitID;
-                //ViewBag.StatusFormID = status.FormID;
-                //ViewBag.StatusRoleID = status.RoleID;
-                //ViewBag.UnitFormID = status.ID;
-
                 ViewBag.LockStatusID = status.LockStatusID;
                 ViewBag.RemarkPassCondition = status.RemarkPassCondition;
                 ViewBag.UnitFormActionID = status.UnitFormActionID;
+                ViewBag.PM_StatusID = status.PM_StatusID;
+                ViewBag.PM_ActionType = status.PM_ActionType;
                 ViewBag.StatusActionType = status.ActionType;
                 ViewBag.StatusUpdateDate = status.UpdateDate;
             }
@@ -73,6 +73,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             return View(viewModel);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> UpdateStatus(FormChecklistIUDModel model,IFormFileCollection files)

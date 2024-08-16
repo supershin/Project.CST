@@ -15,10 +15,13 @@
     var LockStatusID = ViewBag.LockStatusID;
     var RemarkPassCondition = ViewBag.RemarkPassCondition;
     var StatusActionType = ViewBag.StatusActionType;
+    var PM_StatusID = ViewBag.PM_StatusID;
+    var PM_ActionType = ViewBag.PM_ActionType;
     var StatusUpdateDate = ViewBag.StatusUpdateDate;
     var UserName = ViewBag.UserName;
     var UserRole = ViewBag.UserRole;
 }
+
 
 @model Project.ConstructionTracking.Web.Models.FormChecklistViewModel
 
@@ -67,7 +70,7 @@
         display: none;
     }
 
-    .preview-container {
+/*     .preview-container {
         margin-top: 10px;
     }
 
@@ -97,7 +100,46 @@
         border: none;
         border-radius: 50%;
         cursor: pointer;
+    } */
+
+    .preview-container {
+        margin-top: 10px;
     }
+
+    .preview-image {
+        position: relative;
+        display: inline-block;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        max-width: 100px;
+        max-height: 100px;
+    }
+
+        .preview-image img {
+            max-width: 100%;
+            max-height: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: block;
+        }
+
+    .remove-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: rgba(255, 0, 0, 0.8);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 14px;
+        width: 24px;
+        height: 24px;
+        line-height: 18px;
+        text-align: center;
+        padding: 0;
+    }
+
 </style>
 <div class="page-wrapper">
     <!-- Page header -->
@@ -154,7 +196,11 @@
                 <div>
                     <div class="container-xl mb-3">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item active" aria-current="page">@item.PackagesName</li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <div style="background-color: palegoldenrod; font-size: 20px;">
+                                    <i class="fa fa-check-square" aria-hidden="true"></i> @item.PackagesName
+                                </div>
+                            </li>
                             <input type="hidden" id="UnitPackagesID" name="Packages[@packageIndex].UnitPackagesID" value="@item.UnitPackagesID">
                             <input type="hidden" id="PackagesID" name="Packages[@packageIndex].PackagesID" value="@item.PackagesID">
                             <input type="hidden" id="UnitFormID" name="Packages[@packageIndex].UnitFormID" value="@UnitFormID">
@@ -219,7 +265,12 @@
                             </svg>
                         </div>
                         <h3 class="card-title align-center">
-                            <button type="button" class="status-dot bg-secondary" onclick="openModal()"><i class="fa-regular fa-image"></i></button>
+                            <button type="button" 
+                                    class="status-dot bg-secondary" 
+                                    @*onclick="openModal()" *@
+                                    >
+                                <i class="fa-solid fa-user"></i>
+                            </button>
                             <div class="ms-2 c-details">
                                 <h3 class="mb-0">
                                     บันทึกผู้ตรวจ
@@ -229,6 +280,37 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
+                            <div class="col-12 mb-2">
+                                <!-- Profile Image -->
+                                @if (Model.ListStatus != null && Model.ListStatus.Count > 0)
+                                {
+                                    var imageList = Model.ListStatus.FirstOrDefault()?.Form_getListImagePasswithCondition;
+
+                                    if (imageList != null && imageList.Count > 0)
+                                    {
+                                        foreach (var image in imageList)
+                                        {
+                                            <div class="position-relative d-inline-block mb-3">
+                                                <a data-fslightbox="gallery" href="~/@image.FilePath">
+                                                    <img src="~/@image.FilePath" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                                </a>
+                                                @if (ViewBag.StatusActionType != "submit")
+                                                {
+                                                    <button type="button" class="remove-button" onclick="deleteImage('@image.ResourceID')">✖</button>
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>ไม่มีรูปภาพ</p>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>ไม่มีรูปภาพ</p>
+                                }
+                            </div>
                             <div class="col-12 mb-2">
                                 <div id="drop-zone" class="drop-zone">
                                     <p class="drop-zone-text">
@@ -255,7 +337,29 @@
                                 <label class="form-label"> แก้ไขล่าสุด @ViewBag.StatusUpdateDate</label>
                             </div>
                             <div class="col-6">
-                                @if (ViewBag.StatusActionType != "submit")
+                                @if (ViewBag.StatusActionType == "submit")
+                                {
+                                    if (PM_StatusID == null || PM_ActionType == "save" || PM_ActionType == null)
+                                    {
+                                        <label class="form-label">รอคำอนุมัติจาก PM</label>
+                                    }
+                                    else if (PM_StatusID == 4 && PM_ActionType == "submit")
+                                    {
+                                    }
+                                    else if (PM_StatusID == 5 && PM_ActionType == "submit")
+                                    {
+                                        <div class="btn-list justify-content-end">
+                                            <button type="button" class="btn btn-primary" id="saveButton">
+                                                บันทึก
+                                            </button>
+                                        </div>
+                                    }
+                                    else if (PM_StatusID == 6)
+                                    {
+
+                                    }
+                                }
+                                else
                                 {
                                     <div class="btn-list justify-content-end">
                                         <button type="button" class="btn btn-primary" id="saveButton">

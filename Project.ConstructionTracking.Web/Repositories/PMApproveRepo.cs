@@ -131,7 +131,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               PM_Remarkaction = PMUnitFormAction.Remark,
                               PM_Actiontype = PMUnitFormAction.ActionType,
                               PM_getListgroup = (from fg in _context.tm_FormGroup
-                                                 join t7 in _context.tr_UnitFormPassCondition on new { UnitFormID = (Guid?)t1.ID, GroupID = (int?)fg.ID } equals new { t7.UnitFormID, t7.GroupID } into unitFormPassConditions
+                                                 join t7 in _context.tr_UnitFormPassCondition on new { UnitFormID = (Guid?)t1.ID, GroupID = (int?)fg.ID , FlagActive = (bool?)true } equals new { t7.UnitFormID, t7.GroupID ,t7.FlagActive } into unitFormPassConditions
                                                  from passCondition in unitFormPassConditions.DefaultIfEmpty()
                                                  where fg.FormID == t1.FormID
                                                  select new PM_getListgroup
@@ -278,7 +278,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == model.UnitFormID && a.RoleID == 1);
             if (unitFormAction != null)
             {
-                unitFormAction.ActionType = null;
+                unitFormAction.StatusID = null;
                 unitFormAction.UpdateDate = DateTime.Now;
                 _context.tr_UnitFormAction.Update(unitFormAction);
                 _context.SaveChanges();

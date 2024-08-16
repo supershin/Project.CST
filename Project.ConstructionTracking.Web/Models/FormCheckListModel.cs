@@ -10,6 +10,18 @@
             public int? FormID { get; set; }
             public int GroupID { get; set; }
         }
+        public class Form_getUnitFormData
+        {
+            public Guid? ProjectID { get; set; }
+            public string? ProjectName { get; set; }
+            public Guid? UnitID { get; set; }
+            public string? UnitCode { get; set; }
+            public Guid? UnitFormID { get; set; }
+            public int? FormID { get; set; }
+            public string? FormName { get; set; }
+            public int GroupID { get; set; }
+            public string? GroupName { get; set; }
+        }
         public class Form_getListPackages
         {
             public int? UnitPackagesID { get; set; }
@@ -41,6 +53,8 @@
             public Guid? ProjectID { get; set; }
             public Guid? UnitID { get; set; }
             public int? UnitFormActionID { get; set; }
+            public int? PM_StatusID { get; set; }
+            public string? PM_ActionType { get; set; }
             public int? FormID { get; set; }
             public int? LockStatusID { get; set; }
             public string? RemarkPassCondition { get; set; }

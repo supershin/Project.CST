@@ -195,7 +195,7 @@
                         <div class="card p-3 mb-2">
                             <div class="d-flex justify-content-between">
                                 <div class="d-flex flex-row align-items-center">
-                                    <form action="@Url.Action("index","FormCheckList")" method="post">
+                                    <form action="@Url.Action("Index","FormCheckList" , new { unitId = Model.UnitID, FormID = Model.FormID , GroupID = group.Group_ID})" method="post">
                                         @{
                                             string buttonClass = "bg-green";
                                             string iconClass = "fa-solid fa-magnifying-glass";
@@ -300,10 +300,13 @@
                                 }
                                 <div class="col-12">
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="radios-inline-approval" value="4" 
-                                                @(Model.PM_StatusID == 4 ? "checked" : "") 
-                                                @(PM_Actiontype == "submit" ? "disabled" : "")>
-                                        <span class="form-check-label">อนุมัติ</span>
+                                        <input class="form-check-input" type="radio" name="radios-inline-approval"
+                                               value="@(LockStatusID != null ? 6 : 4)"
+                                               @(Model.PM_StatusID == (LockStatusID != null ? 6 : 4) ? "checked" : "")
+                                               @(PM_Actiontype == "submit" ? "disabled" : "")>
+                                        <span class="form-check-label">
+                                            @(LockStatusID != null ? "ผ่านเพื่อส่ง PJM Head" : "อนุมัติ")
+                                        </span>
                                     </label>
                                     <label class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="radios-inline-approval" value="5" 
