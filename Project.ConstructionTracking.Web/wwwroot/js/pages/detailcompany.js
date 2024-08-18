@@ -1,11 +1,10 @@
-﻿const vendor = {
-    init: () => {
-        vendor.AjaxGrid();
+﻿
 
-        $("#vendor-create").click(() => {
-            $("#modal-vendor-c").modal('show');
-            return false;
-        });
+const detailCom = {
+    init: () => {
+        detailCom.AjaxGrid();
+
+        $('#multiple-select-project').select2();
 
         $("#vendor-edit").click(() => {
             $("#modal-vendor-e").modal('show');

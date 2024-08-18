@@ -1,26 +1,35 @@
 ﻿const detail = {
     init: () => {
-        document.addEventListener("DOMContentLoaded", function () {
-            var coll = document.getElementsByClassName("collapsible");
-            for (var i = 0; i < coll.length; i++) {
-                coll[i].addEventListener("click", function () {
-                    this.classList.toggle("active");
-                    var content = this.nextElementSibling;
-                    if (content.style.display === "block") {
-                        content.style.display = "none";
-                    } else {
-                        content.style.display = "block";
-                    }
-                });
-            }
 
+        $('#multiple-select-field').select2({
+            dropdownParent: $("#partial-modal-form")
         });
 
-        document.querySelectorAll('.fixed-button .btn').forEach(button => {
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+            
+        const buttons = document.querySelectorAll('#section-button .btn');
+
+        buttons.forEach(button => {
             button.addEventListener('click', function () {
-                document.querySelector(this.getAttribute('data-bs-target')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                // Get the target section from the button's data-bs-target attribute
+                const targetSelector = button.getAttribute('data-bs-target');
+                const targetElement = document.querySelector(targetSelector);
+
+                if (targetElement) {
+                    // Scroll to the target element with smooth behavior
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
             });
         });
 
@@ -40,6 +49,26 @@
         });
 
         $("#modal-checklist").click(() => {
+            $("#partial-modal-checklist").modal('show');
+            return false;
+        });
+
+        $("#show-form-edit").click(() => {
+            $("#partial-modal-form").modal('show');
+            return false;
+        });
+
+        $("#show-group-edit").click(() => {
+            $("#partial-modal-group").modal('show');
+            return false;
+        });
+
+        $("#show-package-edit").click(() => {
+            $("#partial-modal-package").modal('show');
+            return false;
+        });
+
+        $("#show-checklist-edit").click(() => {
             $("#partial-modal-checklist").modal('show');
             return false;
         });
