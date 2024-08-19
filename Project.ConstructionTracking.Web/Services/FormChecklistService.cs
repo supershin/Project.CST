@@ -12,6 +12,12 @@ namespace Project.ConstructionTracking.Web.Services
             _IFormChecklistRepo = FormChecklistRepo;
         }
 
+        public FormCheckListModel.Form_getUnitFormData GetUnitFormData(FormCheckListModel.Form_getUnitFormData filterData)
+        {
+            var UnitFormData = _IFormChecklistRepo.GetUnitFormData(filterData);
+            return UnitFormData;
+        }
+
         public List<FormCheckListModel.Form_getListPackages> GetFormCheckList(FormCheckListModel.Form_getFilterData filterData)
         {
             var ListFormChecklist = _IFormChecklistRepo.GetFormCheckList(filterData);
@@ -24,9 +30,24 @@ namespace Project.ConstructionTracking.Web.Services
             return ListFormChecklistStatus;
         }
 
-        public void InsertOrUpdate(FormChecklistIUDModel model)
+        public void InsertOrUpdate(FormChecklistIUDModel model, Guid? userID, int RoleID)
         {
-            _IFormChecklistRepo.InsertOrUpdate(model);
+            _IFormChecklistRepo.InsertOrUpdate(model , userID , RoleID);
         }
+
+        public bool DeleteImage(Guid resourceId, string ApplicationPath)
+        {
+            var Result = _IFormChecklistRepo.DeleteImage(resourceId, ApplicationPath);
+            return Result;
+        }
+
+        //public async Task InsertOrUpdate(FormChecklistIUDModel model, IFormFileCollection files)
+        //{
+        //    var unitFormIDUse = _IFormChecklistRepo.InsertOrUpdate(model);
+        //    if (files != null && files.Count > 0)
+        //    {
+        //        await _IFormChecklistRepo.UploadFiles(unitFormIDUse, files);
+        //    }
+        //}
     }
 }

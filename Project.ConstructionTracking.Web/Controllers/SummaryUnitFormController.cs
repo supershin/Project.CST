@@ -26,5 +26,11 @@ namespace Project.ConstructionTracking.Web.Controllers
             List<SummeryUnitForm> listSummeryUnitForm = _SummeryUnitFormService.GetSummeryUnitFormList(Model);
             return View(listSummeryUnitForm);
         }
+
+        [HttpPost]
+        public IActionResult GoToFormGroup(Guid projectId, string projectName, int FormID, Guid UnitFormID, string UnitFormName, Guid unitId, string UnitCode, string UnitStatusName)
+        {
+            return RedirectToAction("Index", "FormGroup", new { projectId, projectName, FormID, UnitFormID, UnitFormName, unitId, UnitCode, UnitStatusName });
+        }
     }
 }
