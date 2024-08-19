@@ -19,6 +19,7 @@ function toggleRadio(radio) {
 let signaturePad;
 
 var unitEquipment = {
+
     init: () => {
         unitEquipment.initSignaturePad();
 

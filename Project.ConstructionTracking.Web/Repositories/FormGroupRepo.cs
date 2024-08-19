@@ -141,15 +141,28 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public void SubmitSaveFormGroup(FormGroupModel.FormGroupIUDModel model)
         {
-            var unitForm = _context.tr_UnitForm
-            .Where(uf => uf.ID == model.UnitFormID)
-            .FirstOrDefault();
+
+            var unitForm = _context.tr_UnitForm.Where(uf => uf.ID == model.UnitFormID).FirstOrDefault();
 
             if (unitForm != null)
             {
                 unitForm.Grade = model.FormGrade;
+                unitForm.StatusID = model.Act == "submit" ? 1 : 2;
                 unitForm.UpdateDate = DateTime.Now;
+                //unitForm.UpdateBy = userID;
             }
+
+            var unitFormAction = _context.tr_UnitFormAction
+            .Where(uf => uf.UnitFormID == model.UnitFormID && uf.RoleID == 1)
+            .FirstOrDefault();
+
+            if (unitFormAction != null)
+            {
+                unitFormAction.ActionType = model.Act;
+                unitFormAction.UpdateDate = DateTime.Now;
+                //unitFormAction.UpdateBy = userID;
+            }
+
 
             if (model.Act == "save")
             {               
@@ -190,7 +203,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             ConvertByteToImage(resource);
             InsertResource(guidId, fileName, resource.ResourceStoragePath, "image/jpeg", userID);
             InsertOrUpdateUnitFormResource(guidId, UnitFormID, userID, RoleID , FormID);
-            SubmitUpdateUnitForm(guidId, UnitFormID, FormGrade, VendorID, userID, RoleID , ActionType);
+            SubmitUpdateVendorUnitForm(guidId, UnitFormID, FormGrade, VendorID, userID, RoleID , ActionType);
             if (ActionType == "submit")
             {
                 UpdateUnitFormActionTypePM(UnitFormID);
@@ -293,7 +306,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return true;
         }
-        public bool SubmitUpdateUnitForm(Guid ResourceID, Guid? UnitFormID , string? FormGrade , int? VendorID, Guid? userID, int? RoleID ,string? ActionType)
+        public bool SubmitUpdateVendorUnitForm(Guid ResourceID, Guid? UnitFormID , string? FormGrade , int? VendorID, Guid? userID, int? RoleID ,string? ActionType)
         {
              var unitForm = _context.tr_UnitForm
             .Where(uf => uf.ID == UnitFormID)
@@ -303,22 +316,23 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 unitForm.VendorID = VendorID;
                 unitForm.VendorResourceID = ResourceID;
-                unitForm.Grade = FormGrade;
+                //unitForm.Grade = FormGrade;
+                //unitForm.StatusID = ActionType == "submit" ? 19 : 18;
                 unitForm.UpdateDate = DateTime.Now;
                 //unitForm.UpdateBy = userID;
             }
 
-            var unitFormAction = _context.tr_UnitFormAction
-            .Where(uf => uf.UnitFormID == UnitFormID && uf.RoleID == 1)
-            .FirstOrDefault();
+            //var unitFormAction = _context.tr_UnitFormAction
+            //.Where(uf => uf.UnitFormID == UnitFormID && uf.RoleID == 1)
+            //.FirstOrDefault();
 
-            if (unitFormAction != null)
-            {
-                unitFormAction.RoleID = RoleID;
-                unitFormAction.ActionType = ActionType;
-                unitFormAction.UpdateDate = DateTime.Now;
-                //unitFormAction.UpdateBy = userID;
-            }
+            //if (unitFormAction != null)
+            //{
+            //    unitFormAction.RoleID = RoleID;
+            //    unitFormAction.ActionType = ActionType;
+            //    unitFormAction.UpdateDate = DateTime.Now;
+            //    //unitFormAction.UpdateBy = userID;
+            //}
 
             return true;
         }
