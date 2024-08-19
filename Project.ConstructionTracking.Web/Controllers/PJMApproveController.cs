@@ -15,7 +15,14 @@ namespace Project.ConstructionTracking.Web.Controllers
         public IActionResult Index()
         {
             var filterData = new PJMApproveModel.filterData { ActionType = "submit", StatusID = 6 };
-            var ListPJMApprove = _PJMApproveService.GetListPJMApprove(filterData);
+            List<PJMApproveModel.GetlistUnitDetail> ListPJMApprove = _PJMApproveService.GetListPJMApprove(filterData);
+
+            if (ListPJMApprove != null)
+            {
+                // Set ViewBag properties based on the result
+                ViewBag.ProjectName = ListPJMApprove[0].ProjectName;
+            }
+
             return View(ListPJMApprove);
         }
     }
