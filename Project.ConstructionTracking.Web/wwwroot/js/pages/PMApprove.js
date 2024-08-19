@@ -1,6 +1,6 @@
 ﻿function openModal(UnitFormID, Group_ID) {
     $.ajax({
-        url: '/PMApprove/GetImages', // Replace with your actual controller and action
+        url: baseUrl + 'PMApprove/GetImages', // Replace with your actual controller and action
         type: 'GET',
         data: { UnitFormID: UnitFormID, GroupID: Group_ID, RoleID: 1 },
         success: function (images) {

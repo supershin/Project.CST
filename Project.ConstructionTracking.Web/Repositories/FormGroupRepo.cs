@@ -73,11 +73,15 @@ namespace Project.ConstructionTracking.Web.Repositories
                           join t4 in _context.tr_UnitFormAction.Where(a => a.RoleID == 3)
                               on t1.ID equals t4.UnitFormID into pjmActions
                           from pjmAction in pjmActions.DefaultIfEmpty()
+                          join t5 in _context.tm_Vendor.Where(a => a.FlagActive == true)
+                               on t1.VendorID equals t5.ID into venderNs
+                          from venderN in venderNs.DefaultIfEmpty()
                           select new
                           {
                               t1.ID,
                               t1.Grade,
                               t1.FormID,
+                              venderName = venderN.Name,
                               PE_ActionType = peAction != null ? peAction.ActionType : null,
                               PE_StatusID = peAction != null ? peAction.StatusID : null,
                               PM_ActionType = pmAction != null ? pmAction.ActionType : null,
@@ -122,6 +126,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 ID = result.ID,
                 Grade = result.Grade,
                 FormID = result.FormID,
+                VenderName = result.venderName,
                 PE_ActionType = result.PE_ActionType,
                 PE_StatusID = result.PE_StatusID,
                 PM_ActionType = result.PM_ActionType,
@@ -136,32 +141,36 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public void SubmitSaveFormGroup(FormGroupModel.FormGroupIUDModel model)
         {
-            if (model.Act == "save")
-            {
-                var unitForm = _context.tr_UnitForm
-               .Where(uf => uf.ID == model.UnitFormID)
-               .FirstOrDefault();
+            var unitForm = _context.tr_UnitForm
+            .Where(uf => uf.ID == model.UnitFormID)
+            .FirstOrDefault();
 
-                if (unitForm != null)
+            if (unitForm != null)
+            {
+                unitForm.Grade = model.FormGrade;
+                unitForm.UpdateDate = DateTime.Now;
+            }
+
+            if (model.Act == "save")
+            {               
+                if (model.Sign != null)
                 {
-                    unitForm.Grade = model.FormGrade;
-                    unitForm.UpdateDate = DateTime.Now;
-                    //unitForm.UpdateBy = 1 ;
+                    SaveSignature(model.Sign, model.ApplicationPath, model.UnitFormID, model.FormGrade, model.VendorID, model.userID, model.RoleID, model.FormID, "save");
                 }
                 InsertUnitFormActionLog(model.UnitFormID, "save");
             }
             else
             {
-
                 if (model.Sign != null)
                 {
-                    SaveSignature(model.Sign, model.ApplicationPath, model.UnitFormID, model.FormGrade, model.VendorID ,model.userID , model.RoleID , model.FormID);
+                    SaveSignature(model.Sign, model.ApplicationPath, model.UnitFormID, model.FormGrade, model.VendorID, model.userID, model.RoleID, model.FormID,"submit");
                 }
+                InsertUnitFormActionLog(model.UnitFormID, "submit");
             }
 
             _context.SaveChanges();
         }
-        private void SaveSignature(SignatureData signData, string? appPath, Guid? UnitFormID, string? FormGrade, int? VendorID, Guid? userID, int? RoleID ,int? FormID)
+        private void SaveSignature(SignatureData signData, string? appPath, Guid? UnitFormID, string? FormGrade, int? VendorID, Guid? userID, int? RoleID ,int? FormID ,string? ActionType)
         {
             var resource = new FormGroupModel.Resources
             {
@@ -180,10 +189,13 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             ConvertByteToImage(resource);
             InsertResource(guidId, fileName, resource.ResourceStoragePath, "image/jpeg", userID);
-            InsertUnitFormResource(guidId, UnitFormID, userID, RoleID , FormID);
-            SubmitUpdateUnitForm(guidId, UnitFormID, FormGrade, VendorID, userID, RoleID);
-            UpdateUnitFormActionTypePM(UnitFormID);
-            InsertUnitFormActionLog(UnitFormID, "submit");
+            InsertOrUpdateUnitFormResource(guidId, UnitFormID, userID, RoleID , FormID);
+            SubmitUpdateUnitForm(guidId, UnitFormID, FormGrade, VendorID, userID, RoleID , ActionType);
+            if (ActionType == "submit")
+            {
+                UpdateUnitFormActionTypePM(UnitFormID);
+            }
+
         }
         private void ConvertByteToImage(FormGroupModel.Resources item)
         {
@@ -242,27 +254,46 @@ namespace Project.ConstructionTracking.Web.Repositories
             _context.tm_Resource.Add(newResource);
             _context.SaveChanges();
         }
-        public bool InsertUnitFormResource(Guid ResourceID, Guid? UnitFormID ,Guid? userID ,int? RoleID , int? FormID)
+        public bool InsertOrUpdateUnitFormResource(Guid ResourceID, Guid? UnitFormID, Guid? userID, int? RoleID, int? FormID)
         {
-            var newResource = new tr_UnitFormResource
-            {
-                UnitFormID = UnitFormID,
-                FormID= FormID,
-                RoleID = RoleID,
-                ResourceID = ResourceID,
-                FlagActive = true,
-                CreateDate = DateTime.Now, // วันที่สร้าง
-                //CreateBy = userID, // ผู้สร้าง
-                UpdateDate = DateTime.Now, // วันที่อัพเดท
-                //UpdateBy = userID// ผู้ที่อัพเดท
-            };
+            // Check if a row already exists with the given UnitFormID, FormID, and RoleID
+            var existingResource = _context.tr_UnitFormResource.FirstOrDefault(r => r.UnitFormID == UnitFormID && r.FormID == FormID && r.RoleID == RoleID);
 
-            _context.tr_UnitFormResource.Add(newResource);
+            if (existingResource != null)
+            {
+                // If found, update the existing row
+                existingResource.ResourceID = ResourceID;
+                existingResource.FlagActive = true;
+                existingResource.UpdateDate = DateTime.Now;
+                //existingResource.UpdateBy = userID; // Update the user ID if applicable
+
+                _context.tr_UnitFormResource.Update(existingResource);
+            }
+            else
+            {
+                // If not found, insert a new row
+                var newResource = new tr_UnitFormResource
+                {
+                    UnitFormID = UnitFormID,
+                    FormID = FormID,
+                    RoleID = RoleID,
+                    ResourceID = ResourceID,
+                    FlagActive = true,
+                    CreateDate = DateTime.Now,
+                    //CreateBy = userID, // Set the user ID if applicable
+                    UpdateDate = DateTime.Now,
+                    //UpdateBy = userID // Set the user ID if applicable
+                };
+
+                _context.tr_UnitFormResource.Add(newResource);
+            }
+
+            // Save the changes to the database
             _context.SaveChanges();
 
             return true;
         }
-        public bool SubmitUpdateUnitForm(Guid ResourceID, Guid? UnitFormID , string? FormGrade , int? VendorID, Guid? userID, int? RoleID)
+        public bool SubmitUpdateUnitForm(Guid ResourceID, Guid? UnitFormID , string? FormGrade , int? VendorID, Guid? userID, int? RoleID ,string? ActionType)
         {
              var unitForm = _context.tr_UnitForm
             .Where(uf => uf.ID == UnitFormID)
@@ -284,7 +315,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             if (unitFormAction != null)
             {
                 unitFormAction.RoleID = RoleID;
-                unitFormAction.ActionType = "submit";
+                unitFormAction.ActionType = ActionType;
                 unitFormAction.UpdateDate = DateTime.Now;
                 //unitFormAction.UpdateBy = userID;
             }

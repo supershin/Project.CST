@@ -57,6 +57,7 @@ namespace Project.ConstructionTracking.Web.Models
             public string? Grade { get; set; }
             public int? FormID { get; set; }
             public string? PE_ActionType { get; set; }
+            public string? VenderName { get; set; }
             public int? PE_StatusID { get; set; }
             public string? PM_ActionType { get; set; }
             public int? PM_StatusID { get; set; }
