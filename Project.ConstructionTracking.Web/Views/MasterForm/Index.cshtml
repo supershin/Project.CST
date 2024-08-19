@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Project.ConstructionTracking.Web.Models.MFormModel.ProjectTypeListModel
+@{
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 
     ViewData["Title"] = "Master Form";
@@ -31,7 +32,7 @@
 <div class="container mt-3">
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">รายการยูนิต</h3>
+            <h3 class="card-title">รายการประเภทฟอร์ม</h3>
         </div>
         <div class="card-body border-bottom py-3">
             <div class="row d-flex align-items-center">
@@ -60,7 +61,7 @@
 
         <div class="table-responsive">
             <div class="card-table table-responsive">
-                <partial name="Partial_List_MForm" />
+                <partial name="Partial_List_MForm" model="Model" />
             </div>
         </div>
     </div>

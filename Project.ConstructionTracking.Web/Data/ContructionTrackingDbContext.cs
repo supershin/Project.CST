@@ -63,6 +63,7 @@ namespace Project.ConstructionTracking.Web.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Data Source=10.0.20.14;Initial Catalog=ConstructionTracking;User ID=constructiontracking;Password=constructiontracking@2024;TrustServerCertificate=True;");
             }
         }
@@ -623,11 +624,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_UnitFormAction>(entity =>
             {
-                entity.HasOne(d => d.PassCondition)
-                    .WithMany(p => p.tr_UnitFormAction)
-                    .HasForeignKey(d => d.PassConditionID)
-                    .HasConstraintName("FK_tr_UnitFormAction_tr_UnitFormPassCondition");
-
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.tr_UnitFormAction)
                     .HasForeignKey(d => d.RoleID)
@@ -646,8 +642,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_UnitFormActionLog>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.HasOne(d => d.Group)
                     .WithMany(p => p.tr_UnitFormActionLog)
                     .HasForeignKey(d => d.GroupID)

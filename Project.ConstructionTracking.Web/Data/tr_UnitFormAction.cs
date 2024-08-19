@@ -11,7 +11,6 @@ namespace Project.ConstructionTracking.Web.Data
         [Key]
         public int ID { get; set; }
         public Guid? UnitFormID { get; set; }
-        public int? PassConditionID { get; set; }
         public int? RoleID { get; set; }
         [StringLength(50)]
         [Unicode(false)]
@@ -28,9 +27,6 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? CraeteDate { get; set; }
         public Guid? CreateBy { get; set; }
 
-        [ForeignKey("PassConditionID")]
-        [InverseProperty("tr_UnitFormAction")]
-        public virtual tr_UnitFormPassCondition? PassCondition { get; set; }
         [ForeignKey("RoleID")]
         [InverseProperty("tr_UnitFormAction")]
         public virtual tm_Role? Role { get; set; }

@@ -43,6 +43,9 @@ builder.Services.AddScoped<IFormChecklistRepo, FormChecklistRepo>();
 builder.Services.AddScoped<IMasterProjectService, MasterProjectService>();
 builder.Services.AddScoped<IMasterProjectRepo, MasterProjectRepo>();
 
+builder.Services.AddScoped<IMasterFormService, MasterFormService>();
+builder.Services.AddScoped<IMasterFormRepo, MasterFormRepo>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

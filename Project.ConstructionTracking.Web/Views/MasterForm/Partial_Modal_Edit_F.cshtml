@@ -3,7 +3,7 @@
 *@
 @{
 }
-
+@model Project.ConstructionTracking.Web.Models.MFormModel.ProjectTypeListModel
 <div class="modal fade" id="modal-form-e" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg" role="document">
         <div id="modal-format" class="modal-content">
@@ -14,37 +14,38 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-lg-12 mb-3">
-                        <label class="form-label">ประเภทโครงการ</label>
-                        <select class="form-control" name="vendor">
+                        <label for="modalProjectType" class="form-label">ประเภทโครงการ</label>
+                        <select id="modalProjectType" class="form-control" name="vendor">
                             <option value="">Select Project Type</option>
-                            <!-- Add options here -->
-                            <option value="1" selected>แนวราบ</option>
-                            <option value="2" >แนวสูง</option>
-                            <!-- Add more options as needed -->
+                            @foreach (var projectType in Model.ProjectTypeList)
+                            {
+                                <option value="@projectType.ID">@projectType.Name</option>
+                            }
                         </select>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12 mb-3">
-                        <label class="form-label">ชื่อประเภทฟอร์ม</label>
-                        <input class="form-control" value="ASW01" placeholder="กรุณากรอกข้อมูลชื่อประเภทฟอร์ม">
+                        <label for="modalFormTypeName" class="form-label">ชื่อประเภทฟอร์ม</label>
+                        <input class="form-control" id="modalFormTypeName">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12 mb-3">
-                        <label class="form-label">รายละเอียด</label>
-                        <input class="form-control" value="บ้านเดี่ยวไซส์กลาง" placeholder="กรุณากรอกข้อมูลรายละเอียด">
+                        <label for="modalFormTypeDesc" class="form-label">รายละเอียด</label>
+                        <input class="form-control" id="modalFormTypeDesc">
                     </div>
                 </div>
+                <input type="hidden" id="modalFormTypeId">
             </div>
 
             <div class="modal-footer">
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     Cancel
                 </a>
-                <a href="#" class="btn btn-success ms-auto" data-bs-dismiss="modal">
+                <button id="editFormType" class="btn btn-success ms-auto" data-bs-dismiss="modal">
                     บันทึก
-                </a>
+                </button>
             </div>
         </div>
     </div>
