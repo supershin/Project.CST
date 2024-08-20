@@ -62,6 +62,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 orderby t1.UnitID, t1.FormID, formGroup.ID
                                 select new PJMApproveModel.GetlistChecklistPC
                                 {
+                                    UnitFormID = t1.ID,
                                     FormID = t1.FormID,
                                     GroupID = formGroup.ID,
                                     GroupName = formGroup.Name,

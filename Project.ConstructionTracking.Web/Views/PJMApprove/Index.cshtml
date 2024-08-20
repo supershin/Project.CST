@@ -77,9 +77,6 @@
                                         <div class="mb-2 row">
                                             <h2>
                                                 @item.FormName
-@*                                                 <small class="text-yellow">
-                                                    : @item2.GroupName
-                                                </small> *@
                                             </h2>
                                         </div>
                                         @foreach (var item2 in @item.ChecklistPC)
@@ -87,7 +84,8 @@
                                             <h3 class="text-yellow"> งาน : @item2.GroupName</h3>
                                             <div class="mb-3 row">
                                                 <label class="col-12 col-lg-3 col-form-label">
-                                                        <a href="#" onclick="openModal()"><i class="fa-regular fa-image"></i></a> ความเห็นจากวิศวกร : @item2.PE_ActionDate
+                                                    <a href="#" onclick="openModal('@item2.UnitFormID', '@item2.GroupID')"><i class="fa-regular fa-image"></i></a>
+                                                    ความเห็นจากวิศวกร : @item2.PE_ActionDate
                                                     <br>
                                                     นายสมชาย ใจดี
                                                 </label>
@@ -141,6 +139,7 @@
             </div>
         }
     </div>
+    <!-- Modal show image -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -149,30 +148,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row g-2 g-md-3">
-                        <div class="col-6">
-                            <a data-fslightbox="gallery" href="~/img/img11.jpg">
-                                <img src="~/img/img11.jpg" alt="..." class="img-thumbnail">
-                            </a>
-                        </div>
-                        <div class="col-6">
-                            <a data-fslightbox="gallery" href="~/img/img12.jpg">
-                                <img src="~/img/img12.jpg" alt="..." class="img-thumbnail">
-                            </a>
-                        </div>
-                        <div class="col-6">
-                            <a data-fslightbox="gallery" href="~/img/img13.jpg">
-                                <img src="~/img/img13.jpg" alt="..." class="img-thumbnail">
-                            </a>
-                        </div>
-                        <div class="col-6">
-                            <a data-fslightbox="gallery" href="~/img/img8.png">
-                                <img src="~/img/img8.png" alt="..." class="img-thumbnail">
-                            </a>
-                        </div>
+                    <div class="row g-2 g-md-3" id="image-container">
+                        <!-- Images will be injected here -->
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -197,11 +176,6 @@
             $(window).resize(adjustTextareaRows); // Call on window resize
         });
 
-        function openModal() {
-            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-            myModal.show();
-        }
-
         function toggleRadio(radio) {
             // Check if the radio button was already checked
             if (radio.checked && radio.dataset.wasChecked) {
@@ -219,6 +193,39 @@
             }
         }
 
+        function openModal(UnitFormID, Group_ID) {
+            $.ajax({
+                url: 'PMApprove/GetImages',
+                type: 'GET',
+                data: { UnitFormID: UnitFormID, GroupID: Group_ID, RoleID: 1 },
+                success: function (images) {
+                    // Update the modal with the fetched images
+                    var modalBody = $('#exampleModal .modal-body .row');
+                    modalBody.empty(); // Clear any previous images
+
+                    images.forEach(function (image) {
+                        var imageHtml = `
+                            <div class="col-6 position-relative">
+                                <a data-fslightbox="gallery" href="${image.FilePath}">
+                                    <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                                </a>
+                            </div>
+                        `;
+                        modalBody.append(imageHtml);
+                    });
+
+                    // Reinitialize fslightbox for the newly added images
+                    refreshFsLightbox(); // Call this function to reinitialize the lightbox
+
+                    // Show the modal
+                    var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+                    myModal.show();
+                },
+                error: function (error) {
+                    console.error('Failed to fetch images:', error);
+                }
+            });
+        }
 
     </script>
 }

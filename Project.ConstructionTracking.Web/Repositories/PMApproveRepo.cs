@@ -292,40 +292,11 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             if (UnitForm != null)  // Updated this condition to ensure it only proceeds if UnitForm is found
             {
-                int answer;
+                UnitForm.StatusID = StatusID;
+                UnitForm.UpdateDate = DateTime.Now;
 
-                if (actiontype == "save")
-                {
-                    answer = 3;
-                }
-                else if (actiontype == "submit")
-                {
-                    if (StatusID == 5)
-                    {
-                        answer = 5;
-                    }
-                    else if (StatusID == 4)
-                    {
-                        answer = 4;
-                    }
-                    else
-                    {
-                        answer = -1; 
-                    }
-                }
-                else
-                {
-                    answer = -1; 
-                }
-
-                if (answer != -1) 
-                {
-                    UnitForm.StatusID = answer;
-                    UnitForm.UpdateDate = DateTime.Now;
-
-                    _context.tr_UnitForm.Update(UnitForm);
-                    _context.SaveChanges(); 
-                }
+                _context.tr_UnitForm.Update(UnitForm);
+                _context.SaveChanges(); 
             }
         }
 
