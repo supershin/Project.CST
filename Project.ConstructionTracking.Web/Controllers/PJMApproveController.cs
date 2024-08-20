@@ -20,7 +20,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             if (ListPJMApprove != null)
             {
                 // Set ViewBag properties based on the result
-                ViewBag.ProjectName = ListPJMApprove[0].ProjectName;
+                ViewBag.ListPJMApprove = ListPJMApprove;
             }
 
             return View(ListPJMApprove);
