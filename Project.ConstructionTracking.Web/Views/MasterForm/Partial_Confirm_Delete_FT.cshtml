@@ -3,7 +3,7 @@
 *@
 @{
 }
-<div class="modal fade" id="partial-confirm-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="partial-confirm-delete-FT" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -14,19 +14,13 @@
                 <!-- Add the confirmation text here -->
                 <h3 style="padding-top: 10px;">ยืนยันการลบข้อมูล</h3>
                 <!-- Hidden input fields -->
-                <input type="hidden" id="formID" />
-                <input type="hidden" id="groupID" />
-                <input type="hidden" id="groupName" />
-                <input type="hidden" id="packageID" />
-                <input type="hidden" id="packageName" />
-                <input type="hidden" id="checklistID" />
-                <input type="hidden" id="checklistName" />
+                <input type="hidden" id="formTypeID" />
             </div>
             <div class="modal-footer">
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     ยกเลิก
                 </a>
-                <button id="btn-save" href="#" class="btn btn-danger ms-auto" data-bs-dismiss="modal">
+                <button id="delete-save" href="#" class="btn btn-danger ms-auto" data-bs-dismiss="modal">
                     ยืนยัน
                 </button>
             </div>

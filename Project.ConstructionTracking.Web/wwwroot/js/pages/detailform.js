@@ -61,42 +61,50 @@ const detail = {
         $("#btn-save").click(() => {
             let typeData = 3;
             var data = null;
-            if ($("#formID").val() !== null || $("#formID").val().trim() !== "") {
+            var formID = $('#formID').val();
+            var groupID = $('#groupID').val();
+            var packageID = $('#packageID').val();
+            var checklistID = $('#checklistID').val();
+
+            if ( packageID && checklistID) {
+                data = {
+                    TypeData: typeData,
+                    FormTypeID: id,
+                    CheckListID: $("#checklistID").val(),
+                    PackageID: $("#packageID").val(),
+                    PackageName: $("#packageName").val()
+                }
+                console.log('check')
+                detail.DeleteCheckList(data);
+            } else if ( groupID && packageID) {
+                data = {
+                    TypeData: typeData,
+                    FormTypeID: id,
+                    PackageID: $("#packageID").val(),
+                    GroupID: $("#groupID").val(),
+                    GroupName: $("#groupName").val(),
+                }
+                console.log('pack')
+                detail.DeletePackage(data);
+            } else if (formID && groupID) {
+                data = {
+                    TypeData: typeData,
+                    FormTypeID: id,
+                    GroupId: $("#groupID").val(),
+                    FormID: $("#formID").val(),
+                    FormName: $("#formName").val()
+                }
+                console.log('group')
+                detail.DeleteGroup(data);
+            } else if (formID) {
                 data = {
                     TypeData: typeData,
                     FormTypeID: id,
                     FormID: $("#formID").val()
                 }
-
+                console.log('form')
                 detail.DeleteForm(data);
-            }
-            else if ($("#groupID").val() !== null || $("#groupID").val().trim() !== "") {
-                data = {
-                    TypeData: typeData,
-                    FormTypeID: id,
-                    FormID: $("#groupID").val()
-                }
-
-                detail.DeleteGroup(data);
-            }
-            else if ($("#packageID").val() !== null || $("#packageID").val().trim() !== "") {
-                data = {
-                    TypeData: typeData,
-                    FormTypeID: id,
-                    FormID: $("#packageID").val()
-                }
-
-                detail.DeletePackage(data);
-            }
-            else if ($("#checkListID").val() !== null || $("#checkListID").val().trim() !== "") {
-                data = {
-                    TypeData: typeData,
-                    FormTypeID: id,
-                    FormID: $("#checkListID").val()
-                }
-
-                detail.DeleteCheckList(data);
-            }
+            } 
         })
 
         $('#form-save').click(() => {
@@ -128,6 +136,93 @@ const detail = {
                     QcList: $("#multiple-select-field").val()
                 }
                 detail.ActionForm(data);
+            }
+        })
+
+        $('#group-save').click(() => {
+            let typeData;
+            var data = null;
+            if ($('#group-id').val() === null || $('#group-id').val() === "") {
+                typeData = 1;
+                data = {
+                    TypeData: typeData,
+                    FormTypeID: id,
+                    FormName: $('#g-form-name').val(),
+                    FormID: $('#g-form-id').val(),
+                    GroupName: $('#group-name').val(),
+                    GroupID: $('#group-id').val()
+                }
+                detail.ActionGroup(data);
+            }
+            else {
+                typeData = 2;
+                data = {
+                    TypeData: typeData,
+                    FormTypeID: id,
+                    FormName: $('#g-form-name').val(),
+                    FormID: $('#g-form-id').val(),
+                    GroupName: $('#group-name').val(),
+                    GroupID: $('#group-id').val()
+                }
+                detail.ActionGroup(data);
+            }
+        })
+
+        $('#package-save').click(() => {
+            let typeData;
+            var data = null;
+            if ($('#package-id').val() === null || $('#package-id').val() === "") {
+                typeData = 1;
+                data = {
+                    TypeData: typeData,
+                    FormTypeID: id,
+                    PackageName: $('#package-name').val(),
+                    PackageID: $('#package-id').val(),
+                    GroupName: $('#p-form-name').val(),
+                    GroupID: $('#p-form-id').val()
+                }
+                detail.ActionPackage(data);
+            }
+            else {
+                typeData = 2;
+                data = {
+                    TypeData: typeData,
+                    FormTypeID: id,
+                    PackageName: $('#package-name').val(),
+                    PackageID: $('#package-id').val(),
+                    GroupName: $('#p-form-name').val(),
+                    GroupID: $('#p-form-id').val()
+                }
+                detail.ActionPackage(data);
+            }
+        })
+
+        $('#check-save').click(() => {
+            let typeData;
+            var data = null;
+            if ($('#check-id').val() === null || $('#check-id').val() === "") {
+                typeData = 1;
+                data = {
+                    TypeData: typeData,
+                    FormTypeID: id,
+                    PackageName: $('#c-form-name').val(),
+                    PackageID: $('#c-form-id').val(),
+                    CheckListName: $('#check-name').val(),
+                    CheckListID: $('#check-id').val()
+                }
+                detail.ActionCheckList(data);
+            }
+            else {
+                typeData = 2;
+                data = {
+                    TypeData: typeData,
+                    FormTypeID: id,
+                    PackageName: $('#c-form-name').val(),
+                    PackageID: $('#c-form-id').val(),
+                    CheckListName: $('#check-name').val(),
+                    CheckListID: $('#check-id').val()
+                }
+                detail.ActionCheckList(data);
             }
         })
     },
@@ -191,10 +286,15 @@ const detail = {
                     });
                     $(document).on('click', "button[data-action='form-delete']", function (e) {
                         //e.preventDefault(); // Prevent default action
+                        var formId = $(e.currentTarget).attr('data-id');
 
-                        var formTypeId = $(e.currentTarget).attr('data-id');
-                        
-                        $('#formID').val(formTypeId);
+                        $('#formID').val('');
+                        $('#groupID').val('');
+                        $('#packageID').val('');
+                        $('#checklistID').val('');
+
+                        $('#formID').val(formId);
+
                         $('#partial-confirm-delete').modal('show');
                     });
                 }
@@ -299,7 +399,15 @@ const detail = {
                     $(document).on('click', "button[data-action='form-g-delete']", function (e) {
                         var groupId = $(e.currentTarget).attr('data-id');
 
+                        //clear data in modal delete
+                        $('#formID').val('');
+                        $('#groupID').val('');
+                        $('#packageID').val('');
+                        $('#checklistID').val('');
+
                         $('#groupID').val(groupId);
+                        $('#formID').val(id);
+                        $('#formName').val(value);
                         $('#partial-confirm-delete').modal('show');
                     });
 
@@ -404,8 +512,16 @@ const detail = {
                         //e.preventDefault(); // Prevent default action
 
                         var packageId = $(e.currentTarget).attr('data-id');
+                        $('#formID').val('');
+                        $('#formName').val('')
+                        $('#groupID').val('');
+                        $('#packageID').val('');
+                        $('#checklistID').val('');
 
+                        $('#groupID').val(id);
+                        $('#groupName').val(value);
                         $('#packageID').val(packageId);
+                
                         $('#partial-confirm-delete').modal('show');
                     });
 
@@ -507,6 +623,15 @@ const detail = {
 
                         var checkId = $(e.currentTarget).attr('data-id');
 
+                        $('#formID').val('');
+                        $('#formName').val('')
+                        $('#groupID').val('');
+                        $('#groupName').val('')
+                        $('#packageID').val('');
+                        $('#checklistID').val('');
+
+                        $('#packageID').val(id);
+                        $('#packageName').val(value);
                         $('#checklistID').val(checkId);
                         $('#partial-confirm-delete').modal('show');
                     });
@@ -579,22 +704,19 @@ const detail = {
         });
         return false;
     },
-    ActionGroup: function (type, model) {
-        var data = {
-            TypeData: type,
-            ProjectTypeId: model.projectTypeId,
-            FormTypeID: model.formTypeID,
-            FormTypeName: model.formTypeName,
-            FormTypeDesc: model.formTypeDesc
-        };
+    ActionGroup: function (model) {
         $.ajax({
-            url: baseUrl + 'MasterForm/ActionFormType',
+            url: baseUrl + 'MasterForm/ActionGroup',
             type: 'post',
             dataType: 'json',
-            data: data,
+            data: model,
             success: function (resp) {
                 if (resp.success) {
-                    window.location.reload();
+                    if ($.fn.DataTable.isDataTable('#tbl-list-fg')) {
+                        $('#tbl-list-fg').DataTable().clear().destroy();
+                    }
+                    
+                    detail.FormGroup(model.FormID, model.FormName);
                 }
                 else {
                     alert("Error: " + resp.message);
@@ -615,7 +737,10 @@ const detail = {
             data: model,
             success: function (resp) {
                 if (resp.success) {
-                    window.location.reload();
+                    if ($.fn.DataTable.isDataTable('#tbl-list-fg')) {
+                        $('#tbl-list-fg').DataTable().clear().destroy();
+                    }
+                    detail.FormGroup(model.FormID, model.FormName);
                 }
                 else {
                     alert("Error: " + resp.message);
@@ -628,22 +753,18 @@ const detail = {
         });
         return false;
     },
-    ActionPackage: function (type, model) {
-        var data = {
-            TypeData: type,
-            ProjectTypeId: model.projectTypeId,
-            FormTypeID: model.formTypeID,
-            FormTypeName: model.formTypeName,
-            FormTypeDesc: model.formTypeDesc
-        };
+    ActionPackage: function (model) {
         $.ajax({
-            url: baseUrl + 'MasterForm/ActionFormType',
+            url: baseUrl + 'MasterForm/ActionPackage',
             type: 'post',
             dataType: 'json',
-            data: data,
+            data: model,
             success: function (resp) {
                 if (resp.success) {
-                    window.location.reload();
+                    if ($.fn.DataTable.isDataTable('#tbl-list-fp')) {
+                        $('#tbl-list-fp').DataTable().clear().destroy();
+                    }
+                    detail.FormPackage(model.GroupID, model.GroupName);
                 }
                 else {
                     alert("Error: " + resp.message);
@@ -664,7 +785,10 @@ const detail = {
             data: model,
             success: function (resp) {
                 if (resp.success) {
-                    
+                    if ($.fn.DataTable.isDataTable('#tbl-list-fp')) {
+                        $('#tbl-list-fp').DataTable().clear().destroy();
+                    }
+                    detail.FormPackage(model.GroupID, model.GroupName);
                 }
                 else {
                     alert("Error: " + resp.message);
@@ -677,22 +801,18 @@ const detail = {
         });
         return false;
     },
-    ActionCheckList: function (type, model) {
-        var data = {
-            TypeData: type,
-            ProjectTypeId: model.projectTypeId,
-            FormTypeID: model.formTypeID,
-            FormTypeName: model.formTypeName,
-            FormTypeDesc: model.formTypeDesc
-        };
+    ActionCheckList: function ( model) {
         $.ajax({
-            url: baseUrl + 'MasterForm/ActionFormType',
+            url: baseUrl + 'MasterForm/ActionCheckList',
             type: 'post',
             dataType: 'json',
-            data: data,
+            data: model,
             success: function (resp) {
                 if (resp.success) {
-                    window.location.reload();
+                    if ($.fn.DataTable.isDataTable('#tbl-list-fcl')) {
+                        $('#tbl-list-fcl').DataTable().clear().destroy();
+                    }
+                    detail.FormCheck(model.PackageID, model.PackageName);
                 }
                 else {
                     alert("Error: " + resp.message);
@@ -713,7 +833,10 @@ const detail = {
             data: model,
             success: function (resp) {
                 if (resp.success) {
-                    
+                    if ($.fn.DataTable.isDataTable('#tbl-list-fcl')) {
+                        $('#tbl-list-fcl').DataTable().clear().destroy();
+                    }
+                    detail.FormCheck(model.PackageID, model.PackageName);
                 }
                 else {
                     alert("Error: " + resp.message);
@@ -1086,7 +1209,7 @@ function FPCheckboxChange(checkboxes, prefixText) {
     });
 
     // Initial setup for modal click event
-    if (anyChecked2) {
+    if (anyChecked3) {
         $("#modal-checklist").on('click', () => {
             $("#partial-modal-checklist").modal('show');
             return false;

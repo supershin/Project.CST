@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.Data.SqlClient.Server;
+using Microsoft.EntityFrameworkCore;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
@@ -438,6 +439,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 // new create form 
                 tm_Form create = new tm_Form();
+                create.FormTypeID = model.FormTypeID;
                 create.Name = model.FormName;
                 create.Description = model.FormDesc;
                 create.Progress = model.Progress;
@@ -453,24 +455,29 @@ namespace Project.ConstructionTracking.Web.Repositories
                 _context.SaveChanges();
 
                 // add qc in form
-                if (model.QcList.Count > 0)
+                if (model.QcList != null)
                 {
+                    var qcCheckList = new List<tr_Form_QCCheckList>();
+
                     foreach (var qc in model.QcList)
                     {
-                        tr_Form_QCCheckList createQc = new tr_Form_QCCheckList();
-                        createQc.FormID = create.ID;
-                        createQc.CheckListID = qc;
-                        create.FlagActive = true;
-                        create.CreateDate = DateTime.Now;
-                        create.UpdateDate = DateTime.Now;
-                        //create.CreateBy = ;
-                        //create.UpdateBy = ;
-
-                        _context.tr_Form_QCCheckList.Add(createQc);
-                        _context.SaveChanges();
+                        tr_Form_QCCheckList createQc = new tr_Form_QCCheckList
+                        {
+                            FormID = create.ID,
+                            CheckListID = qc,
+                            FlagActive = true,
+                            CreateDate = DateTime.Now,
+                            UpdateDate = DateTime.Now,
+                            //CreateBy = ,
+                            //UpdateBy = ,
+                        };
+                        qcCheckList.Add(createQc);
                     }
+
+                    _context.tr_Form_QCCheckList.AddRange(qcCheckList);
+                    _context.SaveChanges();
                 }
-               
+
                 formResp = new FormResp()
                 {
                     FormTypeID = (int)model.FormTypeID,
@@ -498,20 +505,48 @@ namespace Project.ConstructionTracking.Web.Repositories
                 //edit.UpdateBy = ;
 
                 _context.tm_Form.Update(edit);
+                _context.SaveChanges();
 
                 // check qc in form 
-                if (model.QcList.Count > 0)
-                {
-                    List<int> qc = _context.tr_Form_QCCheckList
+                List<int> qc = _context.tr_Form_QCCheckList
                                             .Where(o => o.FormID == model.FormID && o.FlagActive == true)
                                             .Select(o => o.ID).ToList();
+                if (qc.Count > 0)
+                {
+                    // Check if model.QcList is null
+                    IEnumerable<int> checkQc;
+                    if (model.QcList == null)
+                    {
+                        // If model.QcList is null, remove all items in qc
+                        checkQc = qc;
+                    }
+                    else
+                    {
+                        checkQc = qc.Except(model.QcList);
 
-                    IEnumerable<int> checkQc = qc.Except(model.QcList);
+                        IEnumerable<int> newQcs = model.QcList.Except(qc);
 
-                    foreach(var data in checkQc)
+                        // Add these new items to `qc`
+                        foreach (var newItem in newQcs)
+                        {
+                            tr_Form_QCCheckList? qcForm = new tr_Form_QCCheckList
+                            {
+                                FormID = model.FormID,
+                                CheckListID = newItem,
+                                FlagActive = true,
+                                CreateDate = DateTime.Now,
+                                UpdateDate = DateTime.Now,
+                                //CreateBy = ,
+                                //UpdateBy = ,
+                            };
+
+                            _context.tr_Form_QCCheckList.Add(qcForm);
+                        }
+                    }
+                    foreach (var data in checkQc)
                     {
                         tr_Form_QCCheckList? qcForm = _context.tr_Form_QCCheckList
-                                                    .Where(o => o.CheckListID == data && o.FormID == model.FormID)
+                                                    .Where(o => o.ID == data && o.FormID == model.FormID)
                                                     .FirstOrDefault();
 
                         qcForm.FlagActive = false;
@@ -519,10 +554,32 @@ namespace Project.ConstructionTracking.Web.Repositories
                         qcForm.UpdateDate = DateTime.Now;
 
                         _context.tr_Form_QCCheckList.Update(qcForm);
+                        _context.SaveChanges();
                     }
                 }
+                else
+                {
+                    var qcCheckList = new List<tr_Form_QCCheckList>();
 
-                _context.SaveChanges();
+                    foreach (var value in model.QcList)
+                    {
+                        tr_Form_QCCheckList createQc = new tr_Form_QCCheckList
+                        {
+                            FormID = model.FormID,
+                            CheckListID = value,
+                            FlagActive = true,
+                            CreateDate = DateTime.Now,
+                            UpdateDate = DateTime.Now,
+                            //CreateBy = ,
+                            //UpdateBy = ,
+                        };
+                        qcCheckList.Add(createQc);
+                    }
+
+                    _context.tr_Form_QCCheckList.AddRange(qcCheckList);
+                    _context.SaveChanges();
+                }
+                
                 formResp = new FormResp()
                 {
                     FormTypeID = (int)model.FormTypeID,
@@ -552,18 +609,20 @@ namespace Project.ConstructionTracking.Web.Repositories
                                             .Where(o => o.FormID == delete.ID)
                                             .Select(o => o.ID)
                                             .ToList();
-
-                foreach ( var qc in formQcList)
+                if( formQcList != null)
                 {
-                    tr_Form_QCCheckList? formQc = _context.tr_Form_QCCheckList
-                                                .Where(o => o.ID == qc && o.FlagActive == true)
-                                                .FirstOrDefault();
+                    foreach (var qc in formQcList)
+                    {
+                        tr_Form_QCCheckList? formQc = _context.tr_Form_QCCheckList
+                                                    .Where(o => o.ID == qc && o.FlagActive == true)
+                                                    .FirstOrDefault();
 
-                    formQc.FlagActive = false;
-                    //formQc.UpdateBy = ;
-                    formQc.UpdateDate = DateTime.Now;
+                        formQc.FlagActive = false;
+                        //formQc.UpdateBy = ;
+                        formQc.UpdateDate = DateTime.Now;
 
-                    _context.tr_Form_QCCheckList.Update(formQc);
+                        _context.tr_Form_QCCheckList.Update(formQc);
+                    }
                 }
 
                 _context.SaveChanges();
@@ -652,6 +711,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                 delete.FlagActive = false;
                 //delete.UpdateBy =;
                 delete.UpdateDate = DateTime.Now;
+
+                _context.tm_FormGroup.Update(delete);
+                _context.SaveChanges();
 
                 groupResp = new GroupResp()
                 {

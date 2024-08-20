@@ -26,8 +26,18 @@
                 formTypeName: $('#modalFormTypeName').val(),
                 formTypeDesc: $('#modalFormTypeDesc').val(),
             }
+            console.log(model)
             form.ActionFormType(type, model) 
         });
+
+        $('#delete-save').click(() => {
+            let type = 3;
+            var model = {
+                TypeData: type,
+                FormTypeID: $('#formTypeID').val()
+            }
+            form.DeleteFormType(model);
+        })
     },
     AjaxGrid: function () {
         tblUnit = $('#tbl-table-mform').dataTable({
@@ -96,12 +106,10 @@
 
                         var formTypeId = $(e.currentTarget).attr('data-id');
 
-                        var data = {
-                            TypeData: 3,
-                            FormTypeId: formTypeId,
-                        };
+                        $('#formTypeID').val(formTypeId);
 
-                        form.DeleteFormType(data);
+                        $('#partial-confirm-delete-FT').modal('show');
+                        
                     });
 
                 }
@@ -142,7 +150,7 @@
         var data = {
             TypeData: type,
             ProjectTypeId: model.projectTypeId,
-            FormTypeID: model.formTypeID,
+            FormTypeID: model.formTypeId,
             FormTypeName: model.formTypeName,
             FormTypeDesc: model.formTypeDesc
         };
