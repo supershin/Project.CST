@@ -1,9 +1,12 @@
-﻿@{
+﻿@model Project.ConstructionTracking.Web.Models.MFormModel.FormTypeDetailModel
+@{
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 
     ViewData["Title"] = "Detail Form";
 }
-
+@section Styles{
+    <link href="~/lib/datatable/jquery.datatables.min.css?ver=@DateTime.Now.Ticks.ToString()" rel="stylesheet" />
+}
 <body data-bs-spy="scroll" data-bs-target="#scrollspy-nav" data-bs-offset="0">
 
     <div class="page-wrapper">
@@ -40,7 +43,11 @@
                                     </button>
                                 </div>
                                 <div class="content-cl" style="display:block">
-                                    <partial name="Partial_List_Form" />
+                                    <div class="table-responsive">
+                                        <div class="card-table table-responsive">
+                                            <partial name="Partial_List_Form" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -55,7 +62,11 @@
                                     </button>
                                 </div>
                                 <div class="content-cl" style="display: none">
-                                    <partial name="Partial_List_Group" />
+                                    <div class="table-responsive">
+                                        <div class="card-table table-responsive">
+                                            <partial name="Partial_List_Group" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -70,7 +81,11 @@
                                     </button>
                                 </div>
                                 <div class="content-cl" style="display: none">
-                                    <partial name="Partial_List_Package" />
+                                    <div class="table-responsive">
+                                        <div class="card-table table-responsive">
+                                            <partial name="Partial_List_Package" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -85,7 +100,11 @@
                                     </button>
                                 </div>
                                 <div class="content-cl" style="display: none">
-                                    <partial name="Partial_List_Check" />
+                                    <div class="table-responsive">
+                                        <div class="card-table table-responsive">
+                                            <partial name="Partial_List_Check" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -107,6 +126,7 @@
 <partial name="Partial_MasterGroup" />
 <partial name="Partial_MasterPackage" />
 <partial name="Partial_MasterCheckList" />
+<partial name="Partial_Confirm_Delete"/>
 
 <style>
     .status-dot-animated {
@@ -163,7 +183,7 @@
     }
 
     .highlight {
-        background-color: #EADBC8; /* Highlight color */
+        background-color: #EADBC8 !important; /* Highlight color */
     }
 
     .btn-search {
@@ -214,15 +234,15 @@
 </style>
 
 @section scripts{
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css"/>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
-    <script src="~/js/pages/detailform.js?ver=@DateTime.Now.Ticks.ToString()"></script>
+    <script src="~/lib/datatable/jquery.datatables.min.js"></script>
+    <script src="~/js/pages/detailform.js?version=@DateTime.Now.Ticks.ToString()"></script>
 
-    <script>$(document).ready(function () {
-            detail.init();
-        });</script>
+    <script>
+        $(document).ready(function () {
+            var formTypeID = "@ViewBag.ID";
+            detail.init(formTypeID);
+        });
+    </script>
 }

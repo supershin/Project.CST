@@ -46,6 +46,8 @@ builder.Services.AddScoped<IMasterProjectRepo, MasterProjectRepo>();
 
 builder.Services.AddScoped<IPMApproveService, PMApproveService>();
 builder.Services.AddScoped<IPMApproveRepo, PMApproveRepo>();
+builder.Services.AddScoped<IMasterFormService, MasterFormService>();
+builder.Services.AddScoped<IMasterFormRepo, MasterFormRepo>();
 
 var app = builder.Build();
 

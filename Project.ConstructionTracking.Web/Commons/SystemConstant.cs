@@ -8,5 +8,11 @@
             public const int FORM_TYPE_QC = 4;
             public const int SAVE_DARF_PE = 8;
         }
+
+        public static class Ext_Type
+        {
+            public const int PROJECT_TYPE = 1;
+        }
     }
+
 }

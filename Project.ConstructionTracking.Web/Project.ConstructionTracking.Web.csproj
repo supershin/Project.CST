@@ -18,6 +18,7 @@
     <Folder Include="Views\MasterUnit\" />
     <Folder Include="Views\MasterCompany\" />
     <Folder Include="Views\MasterUser\" />
+    <Folder Include="Models\MFormModel\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +48,7 @@
     <None Remove="Views\MasterUnit\" />
     <None Remove="Views\MasterCompany\" />
     <None Remove="Views\MasterUser\" />
+    <None Remove="Models\MFormModel\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="Views\FormOverall\PartialFormList.cshtml" />
