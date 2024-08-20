@@ -147,6 +147,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             if (unitForm != null)
             {
                 unitForm.Grade = model.FormGrade;
+                unitForm.VendorID = model.VendorID ?? unitForm.VendorID;
                 unitForm.StatusID = model.Act == "submit" ? 1 : 2;
                 unitForm.UpdateDate = DateTime.Now;
                 //unitForm.UpdateBy = userID;
@@ -162,7 +163,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                 unitFormAction.UpdateDate = DateTime.Now;
                 //unitFormAction.UpdateBy = userID;
             }
-
 
             if (model.Act == "save")
             {               
@@ -316,26 +316,13 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 unitForm.VendorID = VendorID;
                 unitForm.VendorResourceID = ResourceID;
-                //unitForm.Grade = FormGrade;
-                //unitForm.StatusID = ActionType == "submit" ? 19 : 18;
                 unitForm.UpdateDate = DateTime.Now;
-                //unitForm.UpdateBy = userID;
             }
-
-            //var unitFormAction = _context.tr_UnitFormAction
-            //.Where(uf => uf.UnitFormID == UnitFormID && uf.RoleID == 1)
-            //.FirstOrDefault();
-
-            //if (unitFormAction != null)
-            //{
-            //    unitFormAction.RoleID = RoleID;
-            //    unitFormAction.ActionType = ActionType;
-            //    unitFormAction.UpdateDate = DateTime.Now;
-            //    //unitFormAction.UpdateBy = userID;
-            //}
 
             return true;
         }
+
+
         private void UpdateUnitFormActionTypePM(Guid? UnitFormID)
         {
             var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == UnitFormID && a.RoleID == 2);

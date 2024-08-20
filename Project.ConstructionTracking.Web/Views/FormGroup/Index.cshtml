@@ -341,22 +341,6 @@
                                 <label class="form-label">วิศวะกรผู้ควบคุมงาน</label>
                                 <input type="text" class="form-control" name="example-disabled-input" placeholder="Disabled..." value="นาย สมชาย ใจดี" disabled>
                             </div>
-@*                             @if (@PE_ActionType != "submit")
-                            {
-                                <div class="col-sm-12 mt-1 mb-2" style="position: relative;">
-                                    <label for="ddlList" class="form-label">เลือกผู้รับเหมา</label>
-                                    <input id="ddlList" name="unitStatusId" class="form-control" autocomplete="off">
-                                    <div id="autocomplete-list" class="autocomplete-items"></div>
-                                    <input type="hidden" id="selectedVendorValue" name="selectedVendorValue">
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="mt-3">
-                                    <label class="form-label">ผู้รับเหมา</label>
-                                    <input type="text" class="form-control" name="example-disabled-input" placeholder="Disabled..." value="@VenderName" disabled>
-                                </div>
-                            } *@
                             <!-- Card A -->
                             <div id="cardA" class="col-sm-12 mt-1 mb-2">
                                 <div class="col-sm-12 mt-1 mb-2" style="position: relative;">
@@ -380,16 +364,35 @@
                             <div id="cardB" class="col-sm-12 mt-1 mb-2">
                                 <div class="col-sm-12 mt-1 mb-2" style="position: relative;">
                                     <label class="form-label">ผู้รับเหมา</label>
-                                    <input type="text" class="form-control" name="example-disabled-input" placeholder="Disabled..." value="@VenderName" disabled>
+                                    <input type="text" class="form-control" name="example-disabled-input" placeholder="Disabled..."
+                                           value="@(!string.IsNullOrEmpty(VenderName) ? VenderName : "ยังไม่ได้เลือกผู้รับเหมา")" disabled>
+
+                                    <!-- Hidden input for VenderName -->
+                                    <input type="hidden" id="hiddenVenderName" name="hiddenVenderName" value="@VenderName">
                                 </div>
                                 <label class="form-label">ลายเซ็นผู้รับเหมา</label>
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal1">
-                                    <img src="~/@FilePath" alt="Gallery Image 1" class="rounded" style="width:340px;height:260px;">
-                                </a>
+                                @if (!string.IsNullOrEmpty(FilePath))
+                                {
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal1">
+                                        <img src="~/@FilePath" alt="Gallery Image 1" class="rounded" style="width:340px;height:260px;">
+                                    </a>
+
+                                    <!-- Hidden input for FilePath -->
+                                    <input type="hidden" id="hiddenFilePath" name="hiddenFilePath" value="@FilePath">
+                                }
+                                else
+                                {
+                                    <label class="form-label text-danger">ผู้รับเหมายังไม่ได้เซ็น</label>
+
+                                    <!-- Hidden input for FilePath when it's null -->
+                                    <input type="hidden" id="hiddenFilePath" name="hiddenFilePath" value="Noimage">
+                                }
                                 <div class="col-12 text-center">
-                          
+                                    <!-- Add any additional content or buttons here -->
                                 </div>
                             </div>
+
+
 
                         </div>
                         <!-- Card footer -->
@@ -478,41 +481,6 @@
             </div>
         </div>
     </div>
-    <!-- Modal -->
-  @*   <div id="modal-sign" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id=""><i class="fas fa-signature"></i> ผู้รับเหมาลงนาม</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="sign-body modal-body">
-                    <div class="row">
-                        <div class="col-sm-12 mt-1 mb-2" style="position: relative;">
-                            <label for="ddlList" class="form-label">เลือกผู้รับเหมา</label>
-                            <input id="ddlList" name="unitStatusId" class="form-control" autocomplete="off">
-                            <div id="autocomplete-list" class="autocomplete-items"></div>
-                            <input type="hidden" id="selectedVendorValue" name="selectedVendorValue">
-                        </div>
-                        <div class="col-sm-12 mt-1 mb-2">
-                            <label for="signature-pad" class="form-label">ลงลายเซ็นผู้รับเหมา</label>
-                            <div id="signature-pad" class="signature-pad" style="justify-content:center;align-items:center;display:flex;">
-                                <div class="signature-pad--body" style="width:350px;height:260px">
-                                    <canvas></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="col-md-12 col-sm-12 col-xs-12 text-center">
-                        <button type="button" class="clear btn btn-default"><i class="fas fa-reply"></i> เคลียร์</button>
-                        <button id="btn-submit-form" type="button" class="permission btn btn-success"><i class="fas fa-check"></i> บันทึก</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> *@
     <!-- Modal -->
     <div class="modal modal-blur fade" id="imageModal1" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
