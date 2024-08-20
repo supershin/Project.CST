@@ -49,6 +49,10 @@ builder.Services.AddScoped<IPMApproveRepo, PMApproveRepo>();
 builder.Services.AddScoped<IMasterFormService, MasterFormService>();
 builder.Services.AddScoped<IMasterFormRepo, MasterFormRepo>();
 
+
+builder.Services.AddScoped<IPJMApproveService, PJMApproveService>();
+builder.Services.AddScoped<IPJMApproveRepo, PJMApproveRepo>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
