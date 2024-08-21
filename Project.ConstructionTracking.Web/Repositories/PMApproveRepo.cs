@@ -14,7 +14,6 @@ namespace Project.ConstructionTracking.Web.Repositories
         {
             _context = context;
         }
-
         public List<PMApproveModel> GetPMApproveFormList()
         {
             var result = (from t1 in _context.tr_UnitForm
@@ -32,9 +31,14 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from unit in units.DefaultIfEmpty()
                           join t6 in _context.tm_Form on t1.FormID equals t6.ID into forms
                           from form in forms.DefaultIfEmpty()
-                          where actionPE.ActionType == "submit"
+                          let passCondition = _context.tr_UnitFormPassCondition
+                                                 .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true)
+                                                 .OrderBy(pc => pc.ID)
+                                                 .FirstOrDefault()
+                          where t1.StatusID > 1
                           select new
                           {
+                              t1.StatusID,
                               UnitFormID = t1.ID,
                               UnitFormActionID = actionPE.ID,
                               t1.ProjectID,
@@ -46,8 +50,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                               t1.Grade,
                               t1.FormID,
                               FormName = form.Name,
-                              t1.StatusID,
-                              //actionPE.PassConditionID,
                               RoleID_PE = actionPE.RoleID,
                               ActionType_PE = actionPE.ActionType,
                               StatusID_PE = actionPE.StatusID,
@@ -57,44 +59,50 @@ namespace Project.ConstructionTracking.Web.Repositories
                               ActionType_PM = actionPM.ActionType,
                               StatusID_PM = actionPM.StatusID,
                               Remark_PM = actionPM.Remark,
-                              ActionDate_PM = actionPM.ActionDate
+                              ActionDate_PM = actionPM.ActionDate,
+                              PassCondition = passCondition.LockStatusID
                           })
-                          .OrderBy(item => item.ActionType_PE == "submit" && item.ActionType_PM == null ? 0 : 1)
+                          .OrderBy(item => item.StatusID)
                           .ThenBy(item => item.UnitFormID)
                           .ToList();
 
-            // Format the date after retrieving the data from the database
-            var formattedResult = result.Select(item => new PMApproveModel
-            {
-                UnitFormID = item.UnitFormID,
-                UnitFormActionID = item.UnitFormActionID,
-                ProjectID = item.ProjectID,
-                ProjectName = item.ProjectName,
-                UnitID = item.UnitID,
-                UnitCode = item.UnitCode,
-                VendorID = item.VendorID,
-                VenderName = item.VenderName,
-                Grade = item.Grade,
-                FormID = item.FormID,
-                FormName = item.FormName,
-                StatusID = item.StatusID,
-                //PassConditionID = item.PassConditionID,
-                RoleID_PE = item.RoleID_PE,
-                ActionType_PE = item.ActionType_PE,
-                StatusID_PE = item.StatusID_PE,
-                Remark_PE = item.Remark_PE,
-                ActionDate_PE = item.ActionDate_PE.HasValue
-                                ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PE.Value.ToString("dd/MM/yyyy"))
-                                : null,
-                RoleID_PM = item.RoleID_PM,
-                ActionType_PM = item.ActionType_PM,
-                StatusID_PM = item.StatusID_PM,
-                Remark_PM = item.Remark_PM,
-                ActionDate_PM = item.ActionDate_PM
-            }).ToList();
+            // Apply formatting after ordering is ensured
+            var formattedResult = result
+                .Select(item => new PMApproveModel
+                {
+                    UnitFormID = item.UnitFormID,
+                    UnitFormActionID = item.UnitFormActionID,
+                    ProjectID = item.ProjectID,
+                    ProjectName = item.ProjectName,
+                    UnitID = item.UnitID,
+                    UnitCode = item.UnitCode,
+                    VendorID = item.VendorID,
+                    VenderName = item.VenderName,
+                    Grade = item.Grade,
+                    FormID = item.FormID,
+                    FormName = item.FormName,
+                    StatusID = item.StatusID,
+                    RoleID_PE = item.RoleID_PE,
+                    ActionType_PE = item.ActionType_PE,
+                    StatusID_PE = item.StatusID_PE,
+                    Remark_PE = item.Remark_PE,
+                    ActionDate_PE = item.ActionDate_PE.HasValue
+                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PE.Value.ToString("dd/MM/yyyy"))
+                                    : null,
+                    RoleID_PM = item.RoleID_PM,
+                    ActionType_PM = item.ActionType_PM,
+                    StatusID_PM = item.StatusID_PM,
+                    Remark_PM = item.Remark_PM,
+                    ActionDate_PM = item.ActionDate_PM,
+                    PassConditionID = item.PassCondition,
+                })
+                .ToList();
 
             return formattedResult;
         }
+
+
+
 
         public ApproveFormcheckModel GetApproveFormcheck(ApproveFormcheckModel model)
         {

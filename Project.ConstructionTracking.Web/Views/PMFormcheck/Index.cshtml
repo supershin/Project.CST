@@ -53,10 +53,32 @@
     color: #a5aec0
 }
 
-    .fixed-size-btn {
+.fixed-size-btn {
 /*        width: 80px;*/
-        height: 30px;
-    }
+    height: 30px;
+}
+
+.btn-yellow {
+    background-color: yellow;
+    color: black; /* Ensure readability */
+}
+
+.btn-red {
+    background-color: red;
+    color: white; /* White text for contrast */
+}
+
+.btn-green {
+    background-color: green;
+    color: white; /* White text for contrast */
+}
+
+.btn-grey {
+    background-color: grey;
+    color: white; /* White text for contrast */
+}
+
+
 </style>
 
 
@@ -97,32 +119,47 @@
                                 </div>
                                 <form action="@Url.Action("index", "PMApprove", new { unitId = item.UnitID, formId = item.FormID })" method="post">
                                     @{
-                                        // Initialize variables with default values
                                         string buttonText = "รออนุมัติ";
                                         string buttonColor = "secondary";
 
-                                        if (string.IsNullOrEmpty(item.StatusID_PM?.ToString()) || item.StatusID_PM == 0)
+                                        if (item.ActionType_PM == "save")
+                                        {
+                                            buttonText = "กำลังตรวจ";
+                                            buttonColor = "yellow";
+                                        }
+                                        else if (item.StatusID == 2)
                                         {
                                             buttonText = "รออนุมัติ";
-                                            buttonColor = "secondary";
+                                            buttonColor = "grey";
                                         }
-                                        else if (item.StatusID_PM == 4)
-                                        {
-                                            buttonText = "อนุมัติ";
-                                            buttonColor = "success";
-                                        }
-                                        else if (item.StatusID_PM == 5)
+                                        else if (item.ActionType_PM == "submit" && item.StatusID == 5)
                                         {
                                             buttonText = "ไม่อนุมัติ";
-                                            buttonColor = "danger";
+                                            buttonColor = "red";
                                         }
-                                        else if (item.StatusID_PM == 6)
+                                        else if (item.ActionType_PM == "submit" && item.StatusID == 4)
+                                        {
+                                            buttonText = "อนุมัติ";
+                                            buttonColor = "green";
+                                        }
+                                        else if (item.ActionType_PM == "submit" && item.StatusID == 6)
                                         {
                                             buttonText = "รอผล PJM Head";
                                             buttonColor = "primary";
                                         }
+                                        else if (item.ActionType_PM == "submit" && item.StatusID == 7)
+                                        {
+                                            buttonText = "PJM ไม่อนุมัติ";
+                                            buttonColor = "red";
+                                        }
+                                        else if (item.ActionType_PM == "submit" && item.StatusID == 8)
+                                        {
+                                            buttonText = "PJM อนุมัติ";
+                                            buttonColor = "green";
+                                        }
                                     }
-                                    <button class="btn fixed-size-btn btn-@buttonColor" style="color: white;">
+
+                                    <button class="btn fixed-size-btn btn-@buttonColor">
                                         @buttonText
                                     </button>
                                 </form>

@@ -10,6 +10,7 @@
     var UnitFormActionID = ViewBag.UnitFormActionID;
     var UnitCode = ViewBag.UnitCode;
     var UnitStatusName = ViewBag.UnitStatusName;
+    var UnitFormStatusID = ViewBag.UnitFormStatusID;
     var GroupName = ViewBag.GroupName;
     var GroupID = ViewBag.GroupID;
     var LockStatusID = ViewBag.LockStatusID;
@@ -17,6 +18,8 @@
     var StatusActionType = ViewBag.StatusActionType;
     var PM_StatusID = ViewBag.PM_StatusID;
     var PM_ActionType = ViewBag.PM_ActionType;
+    var PJM_StatusID = ViewBag.PJM_StatusID;
+    var PJM_ActionType = ViewBag.PJM_ActionType;
     var StatusUpdateDate = ViewBag.StatusUpdateDate;
     var UserName = ViewBag.UserName;
     var UserRole = ViewBag.UserRole;
@@ -45,9 +48,9 @@
         align-items: center;
     }
 
-        .align-center .material-icons {
-            margin-right: 8px;
-        }
+    .align-center .material-icons {
+        margin-right: 8px;
+    }
 
     .card {
         border: none;
@@ -70,38 +73,6 @@
         display: none;
     }
 
-/*     .preview-container {
-        margin-top: 10px;
-    }
-
-    .preview-image {
-        position: relative;
-        display: inline-block;
-        margin-right: 10px;
-        margin-bottom: 10px;
-        max-width: 100px;
-        max-height: 100px;
-    }
-
-        .preview-image img {
-            max-width: 100%;
-            max-height: 100%;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            display: block;
-        }
-
-    .remove-button {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background: rgba(0, 0, 0, 0.5);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-    } */
-
     .preview-container {
         margin-top: 10px;
     }
@@ -115,13 +86,13 @@
         max-height: 100px;
     }
 
-        .preview-image img {
-            max-width: 100%;
-            max-height: 100%;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            display: block;
-        }
+    .preview-image img {
+        max-width: 100%;
+        max-height: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        display: block;
+    }
 
     .remove-button {
         position: absolute;
@@ -198,7 +169,7 @@
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item active" aria-current="page">
                                 <div style="background-color: palegoldenrod; font-size: 20px;">
-                                    <i class="fa fa-check-square" aria-hidden="true"></i> @item.PackagesName
+                                    <i class="fa-solid fa-list-check"></i> @item.PackagesName
                                 </div>
                             </li>
                             <input type="hidden" id="UnitPackagesID" name="Packages[@packageIndex].UnitPackagesID" value="@item.UnitPackagesID">
@@ -247,7 +218,14 @@
                             }
                             <div class="col-md-12">
                                 <label class="form-label">ความคิดเห็น</label>
-                                <textarea rows="1" class="form-control" id="input-remark-@item.PackagesID" name="Packages[@packageIndex].Remark" placeholder="ความคิดเห็น">@item.Remark</textarea>
+                                <textarea rows="1"
+                                          class="form-control"
+                                          id="input-remark-@item.PackagesID"
+                                          name="Packages[@packageIndex].Remark"
+                                          placeholder="ความคิดเห็น"
+                                          data-package-id="@item.PackagesID">
+                                    @item.Remark
+                                </textarea>
                             </div>
                         </div>
                     </div>
@@ -267,7 +245,6 @@
                         <h3 class="card-title align-center">
                             <button type="button" 
                                     class="status-dot bg-secondary" 
-                                    @*onclick="openModal()" *@
                                     >
                                 <i class="fa-solid fa-user"></i>
                             </button>
@@ -294,7 +271,18 @@
                                                 <a data-fslightbox="gallery" href="~/@image.FilePath">
                                                     <img src="~/@image.FilePath" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                                 </a>
-                                                @if (ViewBag.StatusActionType != "submit")
+                                                @if (ViewBag.StatusActionType == "submit")
+                                                {
+                                                    if (UnitFormStatusID == 5 && PM_ActionType == "submit")
+                                                    {
+                                                        <button type="button" class="remove-button" onclick="deleteImage('@image.ResourceID')">✖</button>
+                                                    }
+                                                    else if (UnitFormStatusID == 8 && PJM_ActionType == "submit")
+                                                    {
+                                                        <button type="button" class="remove-button" onclick="deleteImage('@image.ResourceID')">✖</button>
+                                                    }
+                                                }
+                                                else
                                                 {
                                                     <button type="button" class="remove-button" onclick="deleteImage('@image.ResourceID')">✖</button>
                                                 }
@@ -312,13 +300,42 @@
                                 }
                             </div>
                             <div class="col-12 mb-2">
-                                <div id="drop-zone" class="drop-zone">
-                                    <p class="drop-zone-text">
-                                        <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
-                                    </p>
-                                    <input type="file" id="file-input" class="drop-zone-input" name="PcCheck.Images" multiple>
-                                </div>
-                                <div id="preview-container" class="row preview-container"></div>
+                                @if (ViewBag.StatusActionType == "submit")
+                                {
+                                    if (UnitFormStatusID == 5 && PM_ActionType == "submit")
+                                    {
+
+                                        <div id="drop-zone" class="drop-zone">
+                                            <p class="drop-zone-text">
+                                                <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                            </p>
+                                            <input type="file" id="file-input" class="drop-zone-input" name="PcCheck.Images" multiple>
+                                        </div>
+                                        <div id="preview-container" class="row preview-container"></div>
+                                    }
+                                    else if (UnitFormStatusID == 8 && PJM_ActionType == "submit")
+                                    {
+
+                                        <div id="drop-zone" class="drop-zone">
+                                            <p class="drop-zone-text">
+                                                <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                            </p>
+                                            <input type="file" id="file-input" class="drop-zone-input" name="PcCheck.Images" multiple>
+                                        </div>
+                                        <div id="preview-container" class="row preview-container"></div>
+                                    }
+                                }
+                                else
+                                {
+
+                                    <div id="drop-zone" class="drop-zone">
+                                        <p class="drop-zone-text">
+                                            <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                        </p>
+                                        <input type="file" id="file-input" class="drop-zone-input" name="PcCheck.Images" multiple>
+                                    </div>
+                                    <div id="preview-container" class="row preview-container"></div>
+                                }
                             </div>
                             <div class="col-12">
                                 <label class="form-check form-check-inline">
@@ -335,18 +352,13 @@
                         <div class="row">
                             <div class="col-6">
                                 <label class="form-label"> แก้ไขล่าสุด @ViewBag.StatusUpdateDate</label>
+                                <input type="hidden" name="PM_StatusActionType" value="@ViewBag.StatusActionType" ID="PM_StatusActionType"/>
+                                <input type="hidden" name="UnitFormStatusIDchk" value="@UnitFormStatusID" ID="UnitFormStatusIDchk" />
                             </div>
                             <div class="col-6">
                                 @if (ViewBag.StatusActionType == "submit")
                                 {
-                                    if (PM_StatusID == null || PM_ActionType == "save" || PM_ActionType == null)
-                                    {
-                                        <label class="form-label">รอคำอนุมัติจาก PM</label>
-                                    }
-                                    else if (PM_StatusID == 4 && PM_ActionType == "submit")
-                                    {
-                                    }
-                                    else if (PM_StatusID == 5 && PM_ActionType == "submit")
+                                    if (UnitFormStatusID == 5 && PM_ActionType == "submit")
                                     {
                                         <div class="btn-list justify-content-end">
                                             <button type="button" class="btn btn-primary" id="saveButton">
@@ -354,9 +366,13 @@
                                             </button>
                                         </div>
                                     }
-                                    else if (PM_StatusID == 6)
+                                    else if (UnitFormStatusID == 8 && PJM_ActionType == "submit")
                                     {
-
+                                        <div class="btn-list justify-content-end">
+                                            <button type="button" class="btn btn-primary" id="saveButton">
+                                                บันทึก
+                                            </button>
+                                        </div>
                                     }
                                 }
                                 else
@@ -372,49 +388,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">รูปภาพ</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row g-2 g-md-3">
-                                @if (Model.ListStatus != null && Model.ListStatus.Count > 0)
-                                {
-                                    var imageList = Model.ListStatus.FirstOrDefault()?.Form_getListImagePasswithCondition;
-
-                                    if (imageList != null && imageList.Count > 0)
-                                    {
-                                        foreach (var image in imageList)
-                                        {
-                                            <div class="col-6 position-relative">
-                                                <a data-fslightbox="gallery" href="~/@image.FilePath">
-                                                    <img src="~/@image.FilePath" alt="..." class="img-thumbnail">
-                                                </a>
-                                                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0" onclick="deleteImage('@image.ResourceID')">
-                                                    ลบรูปภาพ
-                                                </button>
-                                            </div>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <p>ไม่มีรูปภาพ</p>
-                                    }
-                                }
-                                else
-                                {
-                                    <p>ไม่มีรูปภาพ</p>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </form>
     </div>
 </div>

@@ -27,9 +27,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                       from formGroup in formGroups.DefaultIfEmpty()
                       join t6 in _context.tr_UnitForm on new { ProjectID = (Guid?)t1.ProjectID, UnitID = (Guid?)unit.UnitID, FormID = (int?)form.ID } equals new { t6.ProjectID, t6.UnitID, t6.FormID } into unitForms
                       from unitForm in unitForms.DefaultIfEmpty()
-                      where unit.UnitID == filterData.UnitID
-                        && form.ID == filterData.FormID
-                        && formGroup.ID == filterData.GroupID
+                      where unit.UnitID == filterData.UnitID && form.ID == filterData.FormID && formGroup.ID == filterData.GroupID
                       select new FormCheckListModel.Form_getUnitFormData
                       {
                           ProjectID = t1.ProjectID,
@@ -40,38 +38,12 @@ public class FormChecklistRepo : IFormChecklistRepo
                           FormName = form.Name,
                           GroupID = formGroup.ID,
                           GroupName = formGroup.Name,
-                          UnitFormID = unitForm.ID
+                          UnitFormID = unitForm.ID,
+                          UnitFormStatusID = unitForm.StatusID
                       }).FirstOrDefault();
 
 
         return result;
-
-        //var result = (from t1 in _context.tr_UnitForm
-        //                  join t2 in _context.tm_Project on t1.ProjectID equals t2.ProjectID into projects
-        //                  from project in projects.DefaultIfEmpty()
-        //                  join t3 in _context.tm_Unit on t1.UnitID equals t3.UnitID into units
-        //                  from unit in units.DefaultIfEmpty()
-        //                  join t4 in _context.tm_Form on t1.FormID equals t4.ID into forms
-        //                  from form in forms.DefaultIfEmpty()
-        //                  join t5 in _context.tm_FormGroup on t1.FormID equals t5.FormID into formGroups
-        //                  from formGroup in formGroups.DefaultIfEmpty()
-        //                  where t1.UnitID == filterData.UnitID
-        //                        && t1.FormID == filterData.FormID
-        //                        && (filterData.GroupID == 0 || formGroup.ID == filterData.GroupID)
-        //                  select new FormCheckListModel.Form_getUnitFormData
-        //                  {
-        //                      UnitFormID = t1.ID,
-        //                      ProjectID = t1.ProjectID,
-        //                      ProjectName = project.ProjectName,
-        //                      UnitID = t1.UnitID,
-        //                      UnitCode = unit.UnitCode,
-        //                      FormID = t1.FormID,
-        //                      FormName = form.Name,
-        //                      GroupID = formGroup.ID,
-        //                      GroupName = formGroup.Name
-        //                  }).FirstOrDefault();
-
-        //    return result;
     }
 
     public List<FormCheckListModel.Form_getListPackages> GetFormCheckList(FormCheckListModel.Form_getFilterData filterData)
@@ -154,6 +126,10 @@ public class FormChecklistRepo : IFormChecklistRepo
             .Where(t2 => unitFormIds.Contains(t2.UnitFormID.Value) && t2.RoleID == 2)
             .ToList();
 
+        var unitFormActionsPJM = _context.tr_UnitFormAction
+            .Where(t2 => unitFormIds.Contains(t2.UnitFormID.Value) && t2.RoleID == 3)
+            .ToList();
+
         var unitFormPassConditions = _context.tr_UnitFormPassCondition
             .Where(t3 => unitFormIds.Contains(t3.UnitFormID.Value) && t3.FlagActive == true && t3.GroupID == filterData.GroupID)
             .ToList();
@@ -179,6 +155,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                 t1.FormID,
                 UnitFormAction = unitFormActions.FirstOrDefault(t2 => t2.UnitFormID == t1.ID),
                 UnitFormActionPM = unitFormActionsPM.FirstOrDefault(t2 => t2.UnitFormID == t1.ID),
+                UnitFormActionPJM = unitFormActionsPJM.FirstOrDefault(t2 => t2.UnitFormID == t1.ID),
                 UnitFormPassCondition = unitFormPassConditions.FirstOrDefault(t3 => t3.UnitFormID == t1.ID),
                 Form_getListImagePasswithCondition = unitFormImages
                     .Where(img => img.UnitFormID == t1.ID)
@@ -197,6 +174,8 @@ public class FormChecklistRepo : IFormChecklistRepo
                 UnitFormActionID = x.UnitFormAction?.ID,
                 PM_StatusID = x.UnitFormActionPM?.StatusID,
                 PM_ActionType = x.UnitFormActionPM?.ActionType,
+                PJM_StatusID = x.UnitFormActionPJM?.StatusID,
+                PJM_ActionType = x.UnitFormActionPJM?.ActionType,
                 FormID = x.FormID,
                 LockStatusID = x.UnitFormPassCondition?.LockStatusID,
                 RemarkPassCondition = x.UnitFormPassCondition?.PE_Remark,
@@ -403,7 +382,7 @@ public class FormChecklistRepo : IFormChecklistRepo
             {
                 UnitFormID = unitFormIDUse,
                 GroupID = pcCheck.GroupID,
-                LockStatusID = 1,
+                LockStatusID = 7,
                 PE_Remark = pcCheck.Remark,
                 FlagActive = true,
                 ActionDate = DateTime.Now,

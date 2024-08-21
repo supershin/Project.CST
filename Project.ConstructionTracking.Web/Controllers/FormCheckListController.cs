@@ -31,12 +31,13 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.ProjectName = UnitFormData.ProjectName;
             ViewBag.FormID = UnitFormData.FormID;
             ViewBag.UnitFormID = UnitFormData?.UnitFormID;
-            ViewBag.UnitFormName = UnitFormData.FormName;
-            ViewBag.UnitId = UnitFormData.UnitID;
-            ViewBag.UnitCode = UnitFormData.UnitCode;
+            ViewBag.UnitFormName = UnitFormData?.FormName;
+            ViewBag.UnitId = UnitFormData?.UnitID;
+            ViewBag.UnitFormStatusID = UnitFormData?.UnitFormStatusID;
+            ViewBag.UnitCode = UnitFormData?.UnitCode;
             ViewBag.UnitStatusName = UnitStatusName;
-            ViewBag.GroupName = UnitFormData.GroupName;
-            ViewBag.GroupID = UnitFormData.GroupID;
+            ViewBag.GroupName = UnitFormData?.GroupName;
+            ViewBag.GroupID = UnitFormData?.GroupID;
             ViewBag.UserName = userName;
             ViewBag.UserRole = userRole;
 
@@ -61,6 +62,8 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.UnitFormActionID = status.UnitFormActionID;
                 ViewBag.PM_StatusID = status.PM_StatusID;
                 ViewBag.PM_ActionType = status.PM_ActionType;
+                ViewBag.PJM_StatusID = status.PJM_StatusID;
+                ViewBag.PJM_ActionType = status.PJM_ActionType;
                 ViewBag.StatusActionType = status.ActionType;
                 ViewBag.StatusUpdateDate = status.UpdateDate;
             }

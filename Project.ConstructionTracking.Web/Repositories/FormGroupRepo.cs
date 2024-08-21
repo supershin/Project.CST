@@ -39,13 +39,16 @@ namespace Project.ConstructionTracking.Web.Repositories
                         from t6 in t6Group.DefaultIfEmpty()
                         join t7 in _context.tr_UnitFormAction on new { t4.UnitFormID, RoleID = (int?)2 } equals new { t7.UnitFormID, t7.RoleID } into t7Group
                         from t7 in t7Group.DefaultIfEmpty()
-                        group new { t3, t4, t4All, t5, t6 ,t7 } by new { t1.ID, t1.FormID, t1.Name, t6.LockStatusID ,t7.StatusID} into g
+                        group new { t3, t4, t4All, t5, t6 ,t7 } by new { t1.ID, t1.FormID, t1.Name, t6.LockStatusID, t6.PE_Remark, t6.PM_Remark, t6.PJM_Remark, t7.StatusID} into g
                         select new FormGroupModel
                         {
                             GroupID = g.Key.ID,
                             FormID = g.Key.FormID,
                             GroupName = g.Key.Name,
                             LockStatusID = g.Key.LockStatusID,
+                            PC_Remark_PE = g.Key.PE_Remark,
+                            PC_Remark_PM = g.Key.PM_Remark,
+                            PC_Remark_PJM = g.Key.PJM_Remark,
                             StatusID = g.Key.StatusID,
                             Cnt_CheckList_All = g.Count(x => x.t3 != null),
                             Cnt_CheckList_Pass = g.Count(x => x.t4 != null),
@@ -82,10 +85,12 @@ namespace Project.ConstructionTracking.Web.Repositories
                               t1.Grade,
                               t1.FormID,
                               venderName = venderN.Name,
+                              UnitFormstatus = t1.StatusID,
                               PE_ActionType = peAction != null ? peAction.ActionType : null,
                               PE_StatusID = peAction != null ? peAction.StatusID : null,
                               PM_ActionType = pmAction != null ? pmAction.ActionType : null,
                               PM_StatusID = pmAction != null ? pmAction.StatusID : null,
+                              PM_Remark = pmAction != null ? pmAction.Remark : null,
                               PJM_ActionType = pjmAction != null ? pjmAction.ActionType : null,
                               PJM_StatusID = pjmAction != null ? pjmAction.StatusID : null
                           }).FirstOrDefault();
@@ -127,10 +132,24 @@ namespace Project.ConstructionTracking.Web.Repositories
                 Grade = result.Grade,
                 FormID = result.FormID,
                 VenderName = result.venderName,
+                UnitFormstatusID = result.UnitFormstatus,
+                UnitFormstatus = result.UnitFormstatus switch
+                {
+                    1 => "บันทึกร่าง",
+                    2 => "ส่งเรื่องขอ PM อนุมัติ",
+                    3 => "PM กำลังตรวจสอบ",
+                    4 => "PM อนุมัติคำขอ",
+                    5 => "PM ไม่อนุมัติคำขอ",
+                    6 => "PM ส่งเรื่องอนุมัติการผ่านแบบมีเงื่อนไขให้ PJM พิจารณา",
+                    7 => "PJM อนุมัติคำขอ",
+                    8 => "PJM ไม่อนุมัติคำขอ",
+                    _ => "สถานะไม่ทราบ"
+                },
                 PE_ActionType = result.PE_ActionType,
                 PE_StatusID = result.PE_StatusID,
                 PM_ActionType = result.PM_ActionType,
                 PM_StatusID = result.PM_StatusID,
+                PM_Remark = result.PM_Remark,
                 PJM_ActionType = result.PJM_ActionType,
                 PJM_StatusID = result.PJM_StatusID,
                 FilePath = filePath,
@@ -148,7 +167,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 unitForm.Grade = model.FormGrade;
                 unitForm.VendorID = model.VendorID ?? unitForm.VendorID;
-                unitForm.StatusID = model.Act == "submit" ? 1 : 2;
+                unitForm.StatusID = model.Act == "submit" ? 2 : 1;
                 unitForm.UpdateDate = DateTime.Now;
                 //unitForm.UpdateBy = userID;
             }
@@ -321,8 +340,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return true;
         }
-
-
         private void UpdateUnitFormActionTypePM(Guid? UnitFormID)
         {
             var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == UnitFormID && a.RoleID == 2);

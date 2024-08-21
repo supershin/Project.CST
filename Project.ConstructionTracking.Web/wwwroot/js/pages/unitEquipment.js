@@ -104,7 +104,7 @@ var unitEquipment = {
             return;
         }
 
-        if (checkdata == false || oldsignData == "Noimage") {
+        if (checkdata == false && oldsignData == "Noimage") {
             Swal.fire({
                 title: 'กรุณาให้ผู้รับเหมาเซ็น',
                 text: '',
@@ -125,41 +125,41 @@ var unitEquipment = {
             Sign: signData,
         };
 
-        //$.ajax({
-        //    url: baseUrl + 'FormGroup/UpdateSaveGrade',
-        //    type: 'POST',
-        //    dataType: 'json',
-        //    data: data,
-        //    success: function (res) {
-        //        if (res.success) {
-        //            Swal.fire({
-        //                title: 'Success!',
-        //                text: 'บันทึกข้อมูลสำเร็จ',
-        //                icon: 'success',
-        //                confirmButtonText: 'OK'
-        //            }).then((result) => {
-        //                if (result.isConfirmed) {
-        //                    window.location.reload();
-        //                }
-        //            });
-        //        } else {
-        //            Swal.fire({
-        //                title: 'Error!',
-        //                text: 'บันทึกข้อมูลไม่สำเร็จ',
-        //                icon: 'error',
-        //                confirmButtonText: 'OK'
-        //            });
-        //        }
-        //    },
-        //    error: function (xhr, status, error) {
-        //        Swal.fire({
-        //            title: 'Error!',
-        //            text: 'An error occurred while saving the data.',
-        //            icon: 'error',
-        //            confirmButtonText: 'OK'
-        //        });
-        //    }
-        //});
+        $.ajax({
+            url: baseUrl + 'FormGroup/UpdateSaveGrade',
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: function (res) {
+                if (res.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'บันทึกข้อมูลสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'บันทึกข้อมูลไม่สำเร็จ',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'บันทึกข้อมูลไม่สำเร็จ',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
     },
 
     saveUnitEquipmentSign: () => {
