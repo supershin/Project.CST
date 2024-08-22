@@ -5,6 +5,19 @@
 @model List<Project.ConstructionTracking.Web.Models.PMApproveModel>
 
 <style>
+.status-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    border: none;
+    outline: none;
+    font-size: 18px;
+}
 
 .card {
     border: none;
@@ -72,15 +85,12 @@
     background-color: green;
     color: white; /* White text for contrast */
 }
-
 .btn-grey {
     background-color: grey;
     color: white; /* White text for contrast */
 }
 
-
 </style>
-
 
 <div class="page-wrapper">
     <div class="page-header d-print-none">
@@ -103,100 +113,196 @@
         </div>
     </div>
     <div class="page-body">
-        <div class="container mb-3">
+@*         <div class="container mt-1 mb-2">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <input type="text" id="projectNameSearch" class="form-control" placeholder="Search by Project Name">
+                    <div class="autocomplete-dropdown"></div>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" id="unitCodeSearch" class="form-control" placeholder="Search by Unit Code">
+                    <div class="autocomplete-dropdown"></div>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" id="statusIdSearch" class="form-control" placeholder="Search by Status ID">
+                    <div class="autocomplete-dropdown"></div>
+                </div>
+            </div>
+        </div> *@
+        <div class="container mt-1 mb-2">
             <div class="row">
                 @foreach (var item in Model)
                 {
                     <div class="col-md-4">
-                        <div class="card p-3 mb-2">
-                            <div class="d-flex justify-content-between">
-                                <div class="d-flex flex-row align-items-center">
-                                    <div class="ms-2 c-details p-2">
-                                        <h3 class="mb-0 text-primary">
-                                            @item.UnitCode <small class="text-yellow"> @item.ProjectName </small>
-                                        </h3>
-                                    </div>
-                                </div>
-                                <form action="@Url.Action("index", "PMApprove", new { unitId = item.UnitID, formId = item.FormID })" method="post">
-                                    @{
-                                        string buttonText = "รออนุมัติ";
-                                        string buttonColor = "secondary";
+                        <form action="@Url.Action("index", "PMApprove", new { unitId = item.UnitID, formId = item.FormID })" method="post">
+                            <div class="card card-link card-link-pop p-3 mb-2" onclick="this.closest('form').submit();">
+                                <div class="d-flex justify-content-between">
+                                    <div class="d-flex flex-row align-items-center">
+                                        @{
+                                            string buttonText = "fa-solid fa-magnifying-glass";
+                                            string statusText = "รออนุมัติ";
+                                            string buttonColor = "secondary";
 
-                                        if (item.ActionType_PM == "save")
-                                        {
-                                            buttonText = "กำลังตรวจ";
-                                            buttonColor = "yellow";
-                                        }
-                                        else if (item.StatusID == 2)
-                                        {
-                                            buttonText = "รออนุมัติ";
-                                            buttonColor = "grey";
-                                        }
-                                        else if (item.ActionType_PM == "submit" && item.StatusID == 5)
-                                        {
-                                            buttonText = "ไม่อนุมัติ";
-                                            buttonColor = "red";
-                                        }
-                                        else if (item.ActionType_PM == "submit" && item.StatusID == 4)
-                                        {
-                                            buttonText = "อนุมัติ";
-                                            buttonColor = "green";
-                                        }
-                                        else if (item.ActionType_PM == "submit" && item.StatusID == 6)
-                                        {
-                                            buttonText = "รอผล PJM Head";
-                                            buttonColor = "primary";
-                                        }
-                                        else if (item.ActionType_PM == "submit" && item.StatusID == 7)
-                                        {
-                                            buttonText = "PJM ไม่อนุมัติ";
-                                            buttonColor = "red";
-                                        }
-                                        else if (item.ActionType_PM == "submit" && item.StatusID == 8)
-                                        {
-                                            buttonText = "PJM อนุมัติ";
-                                            buttonColor = "green";
-                                        }
-                                    }
-
-                                    <button class="btn fixed-size-btn btn-@buttonColor">
-                                        @buttonText
-                                    </button>
-                                </form>
-                                @if (@item.PassConditionID != null)
-                                {
-                                    <button class="btn fixed-size-btn" style="background-color: blue; color: white;">
-                                        <i class="fa-solid fa-lock"></i>
-                                    </button>
-                                }
-                            </div>
-                            <div class="mt-1">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <div class="row">
-                                            <div class="col-12 mb-1">
-                                                <button type="button" class="btn btn-outline-secondary">@item.FormName</button>
-                                            </div>
-                                            @if (@item.ActionType_PM != null)
+                                            if (item.ActionType_PM == "save")
                                             {
-                                                <div class="col-12">
-                                                    <button type="button" class="btn btn-outline-secondary">@item.ActionType_PM</button>
-                                                </div>
+                                                buttonText = "fa-solid fa-file-pen";
+                                                statusText = "กำลังตรวจ";
+                                                buttonColor = "yellow";
                                             }
-                                        </div>                                       
+                                            else if (item.StatusID == 2)
+                                            {
+                                                buttonText = (item.ActionType_PM == "submit") ? "fa-solid fa-reply" : "fa-solid fa-magnifying-glass";
+                                                statusText = (item.ActionType_PM == "submit") ? "ขออนุมัติใหม่" : "รออนุมัติ";
+                                                buttonColor = "grey";
+                                            }
+                                            else if (item.ActionType_PM == "submit" && item.StatusID == 5)
+                                            {
+                                                buttonText = "fa-regular fa-circle-xmark";
+                                                statusText = "ไม่อนุมัติ";
+                                                buttonColor = "red";
+                                            }
+                                            else if (item.ActionType_PM == "submit" && item.StatusID == 4)
+                                            {
+                                                buttonText = "fa-regular fa-circle-check";
+                                                statusText = "อนุมัติ";
+                                                buttonColor = "green";
+                                            }
+                                            else if (item.ActionType_PM == "submit" && item.StatusID == 6)
+                                            {
+                                                buttonText = "fa-solid fa-user-pen";
+                                                statusText = "รอผล PJM Head";
+                                                buttonColor = "primary";
+                                            }
+                                            else if (item.ActionType_PM == "submit" && item.StatusID == 7)
+                                            {
+                                                buttonText = "fa-solid fa-user-xmark";
+                                                statusText = "PJM ไม่อนุมัติ";
+                                                buttonColor = "red";
+                                            }
+                                            else if (item.ActionType_PM == "submit" && item.StatusID == 8)
+                                            {
+                                                buttonText = "fa-solid fa-user-check";
+                                                statusText = "PJM อนุมัติ";
+                                                buttonColor = "green";
+                                            }
+                                        }
+
+                                        <button type="button" class="status-dot bg-@buttonColor @(buttonColor == "red" || buttonColor== "yellow" ? "status-dot-animated" : "")">
+                                            <i class="@buttonText"></i>
+                                        </button>
+
+                                        <div class="ms-2 c-details">
+                                            <h3 class="mb-0 text-primary">
+                                                @item.UnitCode <small class="text-yellow"> @item.ProjectName </small>
+                                            </h3>
+                                        </div>
                                     </div>
-                                    <div class="col-8">
-                                        <h3 class="heading"> สร้างโดย @item.VenderName </h3>
-                                        <h5>วันที่ submit @item.ActionDate_PE</h5>
-                                    </div>
+                                    @if (item.PassConditionID != null)
+                                    {
+                                        <div class="ms-auto">
+                                            <button type="button" class="status-dot bg-secondary ms-auto">
+                                                <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="mt-3">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1">@item.FormName</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">สร้างโดย @item.VenderName</span></li>
+                                    </ol>
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1">สถานะ</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">@statusText</span></li>
+                                    </ol>
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1">วันที่วิศวะกรขออนุมัติ</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">@item.ActionDate_PE</span></li>
+                                    </ol>
+
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 }
-            </div>
+            </div>                                
         </div>
     </div>
 </div>
 
 <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+
+@* <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get the search input elements
+        const projectNameSearch = document.getElementById('projectNameSearch');
+        const unitCodeSearch = document.getElementById('unitCodeSearch');
+        const statusIdSearch = document.getElementById('statusIdSearch');
+
+        // Store the data from the model for auto-complete
+        const projectNames = [...new Set(@Html.Raw(Json.Serialize(Model.Select(m => m.ProjectName).Where(p => p != null))))];
+        const unitCodes = [...new Set(@Html.Raw(Json.Serialize(Model.Select(m => m.UnitCode).Where(u => u != null))))];
+        const statusIds = [...new Set(@Html.Raw(Json.Serialize(Model.Select(m => m.StatusID).Where(s => s != null))))];
+
+        function setupAutocomplete(inputElement, dataList) {
+            inputElement.addEventListener("input", function () {
+                let dropdownContent = "";
+                const value = this.value.toLowerCase();
+                if (value.length > 0) {
+                    dropdownContent = dataList.filter(item => item.toLowerCase().includes(value))
+                        .map(item => `<div class="autocomplete-item">${item}</div>`)
+                        .join('');
+                }
+                // Create a dropdown below the input
+                this.nextElementSibling.innerHTML = dropdownContent;
+                this.nextElementSibling.style.display = dropdownContent ? 'block' : 'none';
+
+                // Add click event listener to each item
+                const items = this.nextElementSibling.querySelectorAll('.autocomplete-item');
+                items.forEach(item => {
+                    item.addEventListener('click', function () {
+                        inputElement.value = this.innerText;
+                        inputElement.nextElementSibling.style.display = 'none';
+                        applyFilters();
+                    });
+                });
+            });
+        }
+
+        // Apply auto-complete to each search field
+        setupAutocomplete(projectNameSearch, projectNames);
+        setupAutocomplete(unitCodeSearch, unitCodes);
+        setupAutocomplete(statusIdSearch, statusIds);
+
+        // Apply filters to the displayed list
+        function applyFilters() {
+            const projectNameValue = projectNameSearch.value.toLowerCase();
+            const unitCodeValue = unitCodeSearch.value.toLowerCase();
+            const statusIdValue = statusIdSearch.value.toLowerCase();
+
+            const cards = document.querySelectorAll('.card-link-pop');
+
+            cards.forEach(card => {
+                const projectName = card.querySelector('.text-primary small').innerText.toLowerCase();
+                const unitCode = card.querySelector('.text-primary').innerText.toLowerCase();
+                const statusId = card.querySelector('.text2:nth-child(2)').innerText.toLowerCase(); // Assuming this is the status text
+
+                const matchesProjectName = projectName.includes(projectNameValue);
+                const matchesUnitCode = unitCode.includes(unitCodeValue);
+                const matchesStatusId = statusId.includes(statusIdValue);
+
+                if (matchesProjectName && matchesUnitCode && matchesStatusId) {
+                    card.closest('.col-md-4').style.display = 'block';
+                } else {
+                    card.closest('.col-md-4').style.display = 'none';
+                }
+            });
+        }
+
+        // Apply filters when input fields lose focus
+        projectNameSearch.addEventListener('blur', applyFilters);
+        unitCodeSearch.addEventListener('blur', applyFilters);
+        statusIdSearch.addEventListener('blur', applyFilters);
+    });
+
+</script> *@

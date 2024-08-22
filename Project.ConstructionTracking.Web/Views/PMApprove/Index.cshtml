@@ -224,6 +224,10 @@
                                 </div>
                             </div>
                             <input type="hidden" id="Group_ID_@group.Group_ID" value="@group.Group_ID" />
+                            @foreach (var Listpackage in group.PM_getListpackage)
+                            {
+                                <p class="text-start">@Listpackage.Package_Name : @Listpackage.Package_Remark</p>
+                            }
                             @if (group.LockStatusID != null)
                             {
                                 <label class="form-label">
@@ -264,7 +268,7 @@
                         </svg>
                     </div>
                     <h3 class="card-title align-center">
-                        <span class="material-icons"> account_circle </span> บันทึกผลการอนุมัติ
+                        <span class="material-icons"> account_circle </span> บันทึกผลการอนุมัติในงวดนี้
                     </h3>
                 </div>
                 <div class="card-body">

@@ -34,9 +34,15 @@
         public Guid? ResourceID { get; set; }
         public string? FileName { get; set; }
         public string? FilePath { get; set; }
-
+        public List<PM_getListpackage>? PM_getListpackage { get; set; }
     }
 
+    public class PM_getListpackage
+    {
+        public int? Package_ID { get; set; }
+        public string? Package_Name { get; set; }
+        public string? Package_Remark { get; set; }
+    }
     public class PM_getListImage
     {
         public Guid? ResourceID { get; set; }

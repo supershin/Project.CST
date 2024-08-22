@@ -16,6 +16,11 @@ namespace Project.ConstructionTracking.Web.Services
             var ListPJMApprove = _IPJMApproveRepo.GetListPJMApprove(filterData);
             return ListPJMApprove;
         }
+        public List<PJMApproveModel.GetlistChecklistPC> GetChecklistPJMApprove(PJMApproveModel.GetlistChecklistPC filterData)
+        {
+            var ListChecklistPJMApprove = _IPJMApproveRepo.GetChecklistPJMApprove(filterData);
+            return ListChecklistPJMApprove;
+        }
 
     }
 }

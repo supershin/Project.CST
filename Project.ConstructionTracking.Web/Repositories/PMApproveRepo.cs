@@ -101,9 +101,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             return formattedResult;
         }
 
-
-
-
         public ApproveFormcheckModel GetApproveFormcheck(ApproveFormcheckModel model)
         {
             var result = (from t1 in _context.tr_UnitForm
@@ -150,7 +147,17 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                      PC_StatusID = passCondition.StatusID,
                                                      LockStatusID = passCondition.LockStatusID,
                                                      PE_Remark = passCondition.PE_Remark,
-                                                     PM_Remark = passCondition.PM_Remark
+                                                     PM_Remark = passCondition.PM_Remark,
+                                                     PM_getListpackage = (from tpk in _context.tr_UnitFormPackage
+                                                                          join ftpk in _context.tm_FormPackage on new { tpk.GroupID , tpk.PackageID } equals new { ftpk.GroupID , PackageID = (int?)ftpk.ID }  into FormPackages
+                                                                          from FormPackage in FormPackages.DefaultIfEmpty()
+                                                                          where tpk.UnitFormID == PEUnitFormAction.UnitFormID && tpk.FormID == t1.FormID && tpk.GroupID == fg.ID
+                                                                          select new PM_getListpackage
+                                                                          { 
+                                                                              Package_ID = tpk.PackageID,
+                                                                              Package_Name = FormPackage.Name,
+                                                                              Package_Remark = tpk.Remark
+                                                                          }).ToList(),
                                                  }).ToList(),
                               PM_getListImage = (from img in _context.tr_UnitFormResource
                                                  join res in _context.tm_Resource on img.ResourceID equals res.ID
@@ -220,11 +227,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             // Save changes to UnitFormAction
             _context.SaveChanges();
-
-            //if (model.ActionType == "submit" && model.UnitFormStatus == 5)
-            //{
-            //    UpdateUnitFormActionTypePE(model);
-            //}
 
             bool PC = model.PassConditionsIUD != null && model.PassConditionsIUD.Count > 0;
 
@@ -298,13 +300,13 @@ namespace Project.ConstructionTracking.Web.Repositories
             var UnitForm = _context.tr_UnitForm
                 .FirstOrDefault(tr => tr.ID == unitformID);
 
-            if (UnitForm != null)  // Updated this condition to ensure it only proceeds if UnitForm is found
+            if (UnitForm != null)  // Ensure UnitForm is found
             {
-                UnitForm.StatusID = StatusID;
+                UnitForm.StatusID = actiontype == "save" ? 3 : StatusID;
                 UnitForm.UpdateDate = DateTime.Now;
 
                 _context.tr_UnitForm.Update(UnitForm);
-                _context.SaveChanges(); 
+                _context.SaveChanges();
             }
         }
 

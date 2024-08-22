@@ -1,11 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
-    var ProjectName = ViewBag.ProjectName;
-    var UnitCode = ViewBag.UnitCode;
-    var FormName = ViewBag.FormName;
-    var ListChecklistPJMApprove = ViewBag.ListChecklistPJMApprove;
+    var ListPJMApprove = ViewBag.ListPJMApprove;
 }
+
 
 <style>
     .status-dot {
@@ -20,6 +18,26 @@
         border: none;
         outline: none;
         font-size: 18px;
+    }
+
+    .btn-yellow {
+        background-color: yellow;
+        color: black; /* Ensure readability */
+    }
+
+    .btn-red {
+        background-color: red;
+        color: white; /* White text for contrast */
+    }
+
+    .btn-green {
+        background-color: green;
+        color: white; /* White text for contrast */
+    }
+
+    .btn-grey {
+        background-color: grey;
+        color: white; /* White text for contrast */
     }
 
     .card {
@@ -43,45 +61,80 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex flex-row align-items-baseline">
-                        <form action="@Url.Action("index","PJMFormcheck")" method="post">
-                            <button class="status-dot bg-transparent">
-                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
-                            </button>
-                        </form>
-                    </div>
-                    <div class="d-block d-sm-flex align-items-baseline custom-heading">
-                        <h1 class="mb-0 header-text">@UnitCode</h1>
-                        <div class="text-muted">
-                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@ProjectName</h5>
-                        </div>
-                    </div>
-                    <div class="align-items-right">
-                        <button class="status-dot bg-transparent">
-                        </button>
-                    </div>
-                </div>
+                <h1>
+                    รายการขออนุมัติผ่านงานแบบมีเงื่อนไข
+                </h1>
             </div>
         </div>
     </div>
     <div class="page-body">
         <div class="container mt-1 mb-2">
             <div class="row">
-                @foreach (var item in @ListChecklistPJMApprove)
-                {
-                    <div class="col-md-4">
-                        <div id="in-progress-card" class="card">
+            @foreach (var item in @ListPJMApprove)
+            {
+                <div class="col-md-4">
+                        <form action="@Url.Action("index", "PJMApprove",new { UnitFormID = item.UnitFormID})" method="post">
+                            <div class="card card-link card-link-pop mb-2" onclick="this.closest('form').submit();">
+                            <div class="card-header">
+                                <div class="d-flex flex-row align-items-center">
+                                    @{
+                                        string buttonText = "fa-solid fa-magnifying-glass";
+                                        string statusText = "รออนุมัติ";
+                                        string buttonColor = "secondary";
+
+                                        if (item.StatusID == 6)
+                                        {
+                                            buttonText = (item.PJMActionType == "submit") ? "fa-solid fa-reply" : "fa-solid fa-magnifying-glass";
+                                            statusText = (item.PJMActionType == "submit") ? "ขออนุมัติใหม่" : "รออนุมัติ";
+                                            buttonColor = "primary";
+                                        }
+                                        else if (item.StatusID == 7)
+                                        {
+                                            buttonText = "fa-solid fa-user-xmark";
+                                            statusText = "PJM ไม่อนุมัติ";
+                                            buttonColor = "red";
+                                        }
+                                        else if (item.StatusID == 8)
+                                        {
+                                            buttonText = "fa-solid fa-user-check";
+                                            statusText = "PJM อนุมัติ";
+                                            buttonColor = "green";
+                                        }
+                                    }
+                                    <button type="button" class="status-dot bg-@buttonColor @(buttonColor == "red" || buttonColor== "yellow" ? "status-dot-animated" : "")">
+                                        <i class="@buttonText"></i>
+                                    </button>
+                                </div>
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="#"> โครงการ : @item.ProjectName</a></li>
+                                    <li class="breadcrumb-item" aria-current="page">Unit : @item.UnitCode</li>
+                                    <li class="breadcrumb-item" aria-current="page">ผู้รับเหมา : @item.VendorName </li>
+                                    <li class="breadcrumb-item" aria-current="page">@item.FormName </li>
+                                </ol>
+                            </div>
                             <div class="card-body">
-                                <h3 id="progress-title" class="card-title">@item.GroupName</h3>
-                                <p id="progress-text" class="card-text">ความคิดเห็น PE : @item.PE_Remark </p>
-                                <p id="progress-text" class="card-text">ความคิดเห็น PM : @item.PM_Remark </p>
+                                <label class="form-label mb-0">
+                                    <i class="fa-solid fa-list-check"></i> สถานะ : @statusText
+                                </label>
+                                    <br>
+                                <label class="form-label mb-0">
+                                    <i class="fas fa-user-tie"></i> วิศวกรผู้ควบคุมงาน : นายสมชาย ใจดี
+                                </label>
+                                <br>
+                                <label class="form-label mb-0">
+                                    <i class="fas fa-project-diagram"></i> PM โครงการ : นายสุทธิชัย วงค์ใหญ่
+                                </label>
+                                <br>
+                                <label class="form-label mb-0">
+                                    <i class="fas fa-calendar-alt"></i> วันที่ส่งงาน : @item.ActionDate
+                                </label>
                             </div>
                         </div>
-                    </div>           
-                }
+                    </form>
+                </div>
+            }
             </div>
-        </div>
+        </div>      
     </div>
     <!-- Modal show image -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -103,7 +156,7 @@
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-@section scripts{
+@section scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
     <script>

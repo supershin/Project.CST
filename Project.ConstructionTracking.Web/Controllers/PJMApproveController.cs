@@ -12,18 +12,19 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             _PJMApproveService = PJMApproveService;
         }
-        public IActionResult Index()
+        public IActionResult Index(Guid UnitFormID)
         {
-            var filterData = new PJMApproveModel.filterData { ActionType = "submit", StatusID = 6 };
-            List<PJMApproveModel.GetlistUnitDetail> ListPJMApprove = _PJMApproveService.GetListPJMApprove(filterData);
-
-            if (ListPJMApprove != null)
+            var filterData = new PJMApproveModel.GetlistChecklistPC { UnitFormID = UnitFormID };
+            List<PJMApproveModel.GetlistChecklistPC> ListChecklistPJMApprove = _PJMApproveService.GetChecklistPJMApprove(filterData);
+            if (ListChecklistPJMApprove != null && ListChecklistPJMApprove.Count > 0)
             {
-                // Set ViewBag properties based on the result
-                ViewBag.ListPJMApprove = ListPJMApprove;
+                var listPJMApprove = ListChecklistPJMApprove[0]; // Assuming there is only one row in listStatus
+                ViewBag.ProjectName = listPJMApprove.ProjectName;
+                ViewBag.UnitCode = listPJMApprove.UnitCode;
+                ViewBag.FormName = listPJMApprove.FormName;
             }
-
-            return View(ListPJMApprove);
+            ViewBag.ListChecklistPJMApprove = ListChecklistPJMApprove;
+            return View(ListChecklistPJMApprove);
         }
     }
 }
