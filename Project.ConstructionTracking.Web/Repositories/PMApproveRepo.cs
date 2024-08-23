@@ -178,7 +178,9 @@ namespace Project.ConstructionTracking.Web.Repositories
             var result = (from t1 in _context.tr_UnitFormResource
                           join t2 in _context.tm_Resource on t1.ResourceID equals t2.ID into resources
                           from resource in resources.DefaultIfEmpty()
-                          where t1.UnitFormID == model.UnitFormID && t1.GroupID == model.GroupID && t1.RoleID == model.RoleID
+                          where t1.UnitFormID == model.UnitFormID
+                                && (model.RoleID > 1 ? t1.FormID == model.FormID : t1.GroupID == model.GroupID)
+                                && t1.RoleID == model.RoleID
                           select new UnitFormResourceModel
                           {
                               UnitFormResourceID = t1.ID,
@@ -190,6 +192,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return result;
         }
+
 
         public void SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
         {

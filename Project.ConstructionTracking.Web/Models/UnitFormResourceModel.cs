@@ -10,5 +10,6 @@
         public int RoleID { get; set; }
         public Guid? UnitFormID { get; set; }
         public int? GroupID { get; set; }
+        public int? FormID { get; set; }
     }
 }

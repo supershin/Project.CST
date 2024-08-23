@@ -218,12 +218,12 @@
                             }
                             <div class="col-md-12">
                                 <label class="form-label">ความคิดเห็น</label>
-                                <textarea rows="1"
-                                          class="form-control"
+                                <textarea class="form-control"
                                           id="input-remark-@item.PackagesID"
                                           name="Packages[@packageIndex].Remark"
                                           placeholder="ความคิดเห็น"
-                                          data-package-id="@item.PackagesID">
+                                          data-package-id="@item.PackagesID"
+                                >
                                     @item.Remark
                                 </textarea>
                             </div>
@@ -396,4 +396,18 @@
 <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
 @section scripts{
     <script src="~/js/pages/FormCheckList.js?ver=@DateTime.Now.Ticks.ToString()"></script>
+    <script>
+        $(document).ready(function () {
+            function adjustTextareaRows() {
+                if ($(window).width() <= 576) {
+                    $('textarea.form-control').attr('rows', 4);
+                } else {
+                    $('textarea.form-control').attr('rows', 2);
+                }
+            }
+
+            adjustTextareaRows(); // Initial call
+            $(window).resize(adjustTextareaRows); // Call on window resize
+        });
+    </script>
 }

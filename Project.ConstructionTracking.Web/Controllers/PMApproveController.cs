@@ -64,13 +64,14 @@ namespace Project.ConstructionTracking.Web.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetImages(Guid UnitFormID, int GroupID ,int RoleID)
+        public JsonResult GetImages(Guid UnitFormID, int GroupID, int FormID, int RoleID)
         {
             // Prepare the model to send to the service
             var model = new UnitFormResourceModel
             {
                 UnitFormID = UnitFormID,
                 GroupID = GroupID,
+                FormID = FormID,    
                 RoleID= RoleID
             };
 

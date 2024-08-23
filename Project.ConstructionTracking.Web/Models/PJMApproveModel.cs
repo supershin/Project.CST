@@ -28,7 +28,9 @@
             public Guid? UnitFormID { get; set; }
             public Guid? ProjectID { get; set; }
             public string? ProjectName { get; set; }
+            public Guid? UnitID { get; set; }
             public string? UnitCode { get; set; }
+            public int? FormID { get; set; }
             public string? FormName { get; set; }
             public string? Grade { get; set; }
             public int? GroupID { get; set; }
@@ -39,8 +41,31 @@
             public string? PE_Remark { get; set; }
             public string? PM_Remark { get; set; }
             public string? PJM_Remark { get; set; }
+            public string? PJM_Actiontype { get; set; }
+            public DateTime? PJM_ActionDate { get; set; }
             public int? PJM_StatusID { get; set; }
             public string? PJMUnitFormRemark { get; set; }
         }
+        public class PJMApproveIU
+        {
+            public Guid? UnitFormID { get; set; }
+            public Guid? ProjectID { get; set; }
+            public Guid? UnitID { get; set; }
+            public int? FormID { get; set; }
+            public string? ActionType { get; set; }
+            public string? Remark { get; set; }
+            public List<PJMIUPC>? ListPCIC { get; set; }
+            public string? ApplicationPath { get; set; }
+            public List<IFormFile>? Images { get; set; }
+        }
+        public class PJMIUPC
+        {
+            public Guid? UnitFormID { get; set; }
+            public int? PC_ID { get; set; }
+            public int? Group_ID { get; set; }
+            public int? StatusID { get; set; }
+            public string? PJM_Remark { get; set; }
+        }
+
     }
 }

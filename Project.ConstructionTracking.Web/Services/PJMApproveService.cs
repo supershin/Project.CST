@@ -21,6 +21,9 @@ namespace Project.ConstructionTracking.Web.Services
             var ListChecklistPJMApprove = _IPJMApproveRepo.GetChecklistPJMApprove(filterData);
             return ListChecklistPJMApprove;
         }
-
+        public void SaveOrUpdateUnitFormAction(PJMApproveModel.PJMApproveIU model)
+        {
+            _IPJMApproveRepo.SaveOrUpdateUnitFormAction(model);
+        }
     }
 }

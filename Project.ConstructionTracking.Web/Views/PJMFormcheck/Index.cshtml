@@ -88,17 +88,23 @@
                                             statusText = (item.PJMActionType == "submit") ? "ขออนุมัติใหม่" : "รออนุมัติ";
                                             buttonColor = "primary";
                                         }
-                                        else if (item.StatusID == 7)
+                                        else if (item.StatusID == 8)
                                         {
                                             buttonText = "fa-solid fa-user-xmark";
                                             statusText = "PJM ไม่อนุมัติ";
                                             buttonColor = "red";
                                         }
-                                        else if (item.StatusID == 8)
+                                        else if (item.StatusID == 7)
                                         {
                                             buttonText = "fa-solid fa-user-check";
                                             statusText = "PJM อนุมัติ";
                                             buttonColor = "green";
+                                        }
+                                        else if (item.StatusID == 9)
+                                        {
+                                            buttonText = "fa-solid fa-file-pen";
+                                            statusText = "กำลังตรวจ";
+                                            buttonColor = "yellow";
                                         }
                                     }
                                     <button type="button" class="status-dot bg-@buttonColor @(buttonColor == "red" || buttonColor== "yellow" ? "status-dot-animated" : "")">
@@ -134,7 +140,7 @@
                 </div>
             }
             </div>
-        </div>      
+        </div>
     </div>
     <!-- Modal show image -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
