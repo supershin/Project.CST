@@ -322,7 +322,7 @@
                                 </button> *@
                                 <br>
                                 <h3 id="progress-title" class="card-title">@UnitFormstatus</h3>
-                                    <p id="progress-text" class="card-text">ความคิดเห็น PM : @PM_Remark </p>
+                                <p id="progress-text" class="card-text">ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "")</p>
                             </div>
                         </div>
                     </div>
@@ -337,7 +337,7 @@
                                     <span class="status-text"><i class="fa-regular fa-circle-check"></i></span>
                                 </button>
                                 <h3 id="approved-title" class="card-title">@UnitFormstatus</h3>
-                                    <p id="approved-text" class="card-text">ความคิดเห็น PM : @PM_Remark </p>
+                                <p id="progress-text" class="card-text">ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "")</p>
                             </div>
                         </div>
                     </div>
@@ -352,7 +352,7 @@
                                     <span class="status-text"><i class="fa-regular fa-circle-xmark"></i></span>
                                 </button>
                                 <h3 id="rejected-title" class="card-title">@UnitFormstatus</h3>
-                                    <p id="rejected-text" class="card-text">ความคิดเห็น PM : @PM_Remark </p>
+                                        <p id="progress-text" class="card-text">ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "")</p>
                             </div>
                         </div>
                     </div>
@@ -407,13 +407,13 @@
                                         <div class="ms-auto">
                                             @if (item.LockStatusID == 7)
                                             {
-                                                @if (item.StatusID == 5)
+                                                @if (item.StatusID == 7 && PM_ActionType == "submit" || item.StatusID == 9 && PJM_ActionType == "submit")
                                                 {
                                                     <button type="button" class="status-dot bg-danger ms-auto">
                                                         <span class="status-text"><i class="fa-solid fa-lock"></i></span>
                                                     </button>
                                                 }
-                                                else if (item.StatusID == 6 || item.StatusID == 8)
+                                                else if (item.StatusID == 6 && PM_ActionType == "submit" || item.StatusID == 8 && PJM_ActionType == "submit")
                                                 {
                                                     <button type="button" class="status-dot bg-success ms-auto">
                                                         <span class="status-text"><i class="fa-solid fa-lock"></i></span>
@@ -453,19 +453,23 @@
                                     </ol>
                                 </div>
                                 <div class="mt-3">
-                                    <div class="mt-3">
-                                        @if (item.LockStatusID != null)
-                                        {
-                                            <div class="mb-3">
-                                                <label class="form-label">ความคิดเห็น:</label>
-                                                <textarea class="form-control" rows="4" style="text-align: left; white-space: pre-wrap;"
-                                                          disabled> ความเห็นจาก PE : @item.PC_Remark_PE &#013; ความเห็นจาก PM : @item.PC_Remark_PM &#013; ความเห็นจาก PJM : @item.PC_Remark_PJM</textarea>
+                                    @if (item.LockStatusID != null)
+                                    {
+                                        <div class="mb-3">
+                                            <a href="#!" class="form-label" onclick="toggleComments(event, '@item.GroupID')">
+                                                ความคิดเห็น:
+                                            </a>
+                                            <div class="collapse" id="collapseComments_@item.GroupID">
+                                                <textarea class="form-control mt-2" 
+                                                          rows="4" 
+                                                          style="text-align: left; white-space: pre-wrap;" 
+                                                          disabled
+                                                >ความเห็นจาก PE : @item.PC_Remark_PE &#013;ความเห็นจาก PM : @(PM_ActionType == "submit" ? item.PC_Remark_PM : "") &#013;ความเห็นจาก PJM : @(PJM_ActionType == "submit" ? item.PC_Remark_PJM : "")</textarea>
                                             </div>
-                                        }
-                                    </div>
+                                        </div>
 
+                                    }
                                 </div>
-
                             </div>
                         </form>
                     </div>
@@ -740,6 +744,19 @@
 
             autocomplete(document.getElementById("ddlList"), availableVendors);
         });
+
+        function toggleComments(event, groupId) {
+            event.stopPropagation(); // Prevent the event from bubbling up and triggering form submission
+
+            var collapseElement = document.getElementById('collapseComments_' + groupId);
+            if (collapseElement.classList.contains('show')) {
+                // Collapse is currently shown, hide it
+                collapseElement.classList.remove('show');
+            } else {
+                // Collapse is currently hidden, show it
+                collapseElement.classList.add('show');
+            }
+        }
 
 
     </script>

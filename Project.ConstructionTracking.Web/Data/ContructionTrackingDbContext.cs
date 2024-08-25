@@ -18,6 +18,7 @@ namespace Project.ConstructionTracking.Web.Data
 
         public virtual DbSet<temp_unit_400H007> temp_unit_400H007 { get; set; } = null!;
         public virtual DbSet<tm_BU> tm_BU { get; set; } = null!;
+        public virtual DbSet<tm_CompanyVendor> tm_CompanyVendor { get; set; } = null!;
         public virtual DbSet<tm_DefectArea> tm_DefectArea { get; set; } = null!;
         public virtual DbSet<tm_DefectAreaType_Mapping> tm_DefectAreaType_Mapping { get; set; } = null!;
         public virtual DbSet<tm_DefectDescription> tm_DefectDescription { get; set; } = null!;
@@ -41,6 +42,8 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tm_UnitType> tm_UnitType { get; set; } = null!;
         public virtual DbSet<tm_User> tm_User { get; set; } = null!;
         public virtual DbSet<tm_Vendor> tm_Vendor { get; set; } = null!;
+        public virtual DbSet<tr_CompanyVendor> tr_CompanyVendor { get; set; } = null!;
+        public virtual DbSet<tr_CompanyVendorProject> tr_CompanyVendorProject { get; set; } = null!;
         public virtual DbSet<tr_Form_QCCheckList> tr_Form_QCCheckList { get; set; } = null!;
         public virtual DbSet<tr_ProjectModelForm> tr_ProjectModelForm { get; set; } = null!;
         public virtual DbSet<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; } = null!;
@@ -53,6 +56,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tr_UnitFormAction> tr_UnitFormAction { get; set; } = null!;
         public virtual DbSet<tr_UnitFormActionLog> tr_UnitFormActionLog { get; set; } = null!;
         public virtual DbSet<tr_UnitFormCheckList> tr_UnitFormCheckList { get; set; } = null!;
+        public virtual DbSet<tr_UnitFormInbox> tr_UnitFormInbox { get; set; } = null!;
         public virtual DbSet<tr_UnitFormPackage> tr_UnitFormPackage { get; set; } = null!;
         public virtual DbSet<tr_UnitFormPassCondition> tr_UnitFormPassCondition { get; set; } = null!;
         public virtual DbSet<tr_UnitFormResource> tr_UnitFormResource { get; set; } = null!;
@@ -394,6 +398,32 @@ namespace Project.ConstructionTracking.Web.Data
                     .HasConstraintName("FK_tm_User_tm_Ext");
             });
 
+            modelBuilder.Entity<tr_CompanyVendor>(entity =>
+            {
+                entity.HasOne(d => d.CompanyVendor)
+                    .WithMany(p => p.tr_CompanyVendor)
+                    .HasForeignKey(d => d.CompanyVendorID)
+                    .HasConstraintName("FK_tr_CompanyVendor_tm_CompanyVendor");
+
+                entity.HasOne(d => d.Vendor)
+                    .WithMany(p => p.tr_CompanyVendor)
+                    .HasForeignKey(d => d.VendorID)
+                    .HasConstraintName("FK_tr_CompanyVendor_tm_Vendor");
+            });
+
+            modelBuilder.Entity<tr_CompanyVendorProject>(entity =>
+            {
+                entity.HasOne(d => d.CompanyVendor)
+                    .WithMany(p => p.tr_CompanyVendorProject)
+                    .HasForeignKey(d => d.CompanyVendorID)
+                    .HasConstraintName("FK_tr_CompanyProject_tm_CompanyVendor");
+
+                entity.HasOne(d => d.Project)
+                    .WithMany(p => p.tr_CompanyVendorProject)
+                    .HasForeignKey(d => d.ProjectID)
+                    .HasConstraintName("FK_tr_CompanyProject_tm_Project");
+            });
+
             modelBuilder.Entity<tr_Form_QCCheckList>(entity =>
             {
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
@@ -683,6 +713,11 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tr_UnitFormCheckList)
                     .HasForeignKey(d => d.UnitFormID)
                     .HasConstraintName("FK_tr_UnitForm_Detail_tr_UnitForm");
+            });
+
+            modelBuilder.Entity<tr_UnitFormInbox>(entity =>
+            {
+                entity.Property(e => e.ID).ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<tr_UnitFormPackage>(entity =>

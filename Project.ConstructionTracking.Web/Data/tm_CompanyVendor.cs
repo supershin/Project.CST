@@ -6,23 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Project.ConstructionTracking.Web.Data
 {
-    public partial class tm_Vendor
+    public partial class tm_CompanyVendor
     {
-        public tm_Vendor()
+        public tm_CompanyVendor()
         {
-            tm_Unit = new HashSet<tm_Unit>();
             tr_CompanyVendor = new HashSet<tr_CompanyVendor>();
-            tr_UnitForm = new HashSet<tr_UnitForm>();
+            tr_CompanyVendorProject = new HashSet<tr_CompanyVendorProject>();
         }
 
         [Key]
         public int ID { get; set; }
-        [StringLength(200)]
+        [StringLength(500)]
         [Unicode(false)]
         public string? Name { get; set; }
-        [StringLength(100)]
-        [Unicode(false)]
-        public string? Email { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
@@ -31,11 +27,9 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
 
-        [InverseProperty("Vendor")]
-        public virtual ICollection<tm_Unit> tm_Unit { get; set; }
-        [InverseProperty("Vendor")]
+        [InverseProperty("CompanyVendor")]
         public virtual ICollection<tr_CompanyVendor> tr_CompanyVendor { get; set; }
-        [InverseProperty("Vendor")]
-        public virtual ICollection<tr_UnitForm> tr_UnitForm { get; set; }
+        [InverseProperty("CompanyVendor")]
+        public virtual ICollection<tr_CompanyVendorProject> tr_CompanyVendorProject { get; set; }
     }
 }

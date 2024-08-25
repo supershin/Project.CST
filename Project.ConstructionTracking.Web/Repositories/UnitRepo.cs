@@ -24,27 +24,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                     FormID = g.Max(f => f.FormID)
                 });
 
-            //var query = from t1 in _context.tm_Unit
-            //            join t2 in _context.tm_Ext on t1.UnitStatusID equals t2.ID into gj
-            //            from subT2 in gj.DefaultIfEmpty()
-            //            join t3 in maxFormIds on t1.UnitID equals t3.UnitID into gMaxFormIds
-            //            from subT3 in gMaxFormIds.DefaultIfEmpty()
-            //            join t4 in _context.tm_Form on subT3.FormID equals t4.ID into gForm
-            //            from subT4 in gForm.DefaultIfEmpty()
-            //            where t1.ProjectID == Model.ProjectID &&
-            //                  (string.IsNullOrEmpty(Search) || t1.UnitCode.Contains(Search)) &&
-            //                  (!Model.UnitStatusID.HasValue || t1.UnitStatusID == Model.UnitStatusID)
-            //            select new UnitModel
-            //            {
-            //                UnitID = t1.UnitID,
-            //                ProjectID = t1.ProjectID,
-            //                UnitCode = t1.UnitCode,
-            //                UnitStatusID = t1.UnitStatusID,
-            //                UnitStatusName = subT2.Name,
-            //                FormID = subT3.FormID,
-            //                FormName = subT4.Name
-            //            };
-
             var query = from t1 in _context.tm_Unit
                         where t1.FlagActive == true
                         join t2 in _context.tm_Ext on t1.UnitStatusID equals t2.ID into gj
@@ -58,7 +37,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         where t1.ProjectID == Model.ProjectID &&
                               (string.IsNullOrEmpty(Search) || t1.UnitCode.Contains(Search)) &&
                               (!Model.UnitStatusID.HasValue || t1.UnitStatusID == Model.UnitStatusID)
-                        orderby t1.UnitCode descending
+                        orderby t1.UnitCode ascending
                         select new UnitModel
                         {
                             UnitID = t1.UnitID,

@@ -37,9 +37,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         from t4All in t4AllGroup.Where(t => t.StatusID != null).DefaultIfEmpty()
                         join t6 in _context.tr_UnitFormPassCondition.Where(p => p.FlagActive == true) on new { t4.UnitFormID, t4.GroupID } equals new { t6.UnitFormID, t6.GroupID } into t6Group
                         from t6 in t6Group.DefaultIfEmpty()
-                        join t7 in _context.tr_UnitFormAction on new { t4.UnitFormID, RoleID = (int?)2 } equals new { t7.UnitFormID, t7.RoleID } into t7Group
-                        from t7 in t7Group.DefaultIfEmpty()
-                        group new { t3, t4, t4All, t5, t6 ,t7 } by new { t1.ID, t1.FormID, t1.Name, t6.LockStatusID, t6.PE_Remark, t6.PM_Remark, t6.PJM_Remark, t7.StatusID} into g
+                        group new { t3, t4, t4All, t5, t6  } by new { t1.ID, t1.FormID, t1.Name, t6.LockStatusID, t6.PE_Remark, t6.PM_Remark, t6.PJM_Remark, t6.StatusID} into g
                         select new FormGroupModel
                         {
                             GroupID = g.Key.ID,

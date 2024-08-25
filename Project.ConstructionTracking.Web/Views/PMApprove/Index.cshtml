@@ -224,10 +224,26 @@
                                 </div>
                             </div>
                             <input type="hidden" id="Group_ID_@group.Group_ID" value="@group.Group_ID" />
-                            @foreach (var Listpackage in group.PM_getListpackage)
+                            @if (group.PM_getListpackage != null)
                             {
-                                <p class="text-start">@Listpackage.Package_Name : @Listpackage.Package_Remark</p>
+                                <div class="mb-3">
+                                    <label class="form-label">ความเห็นจากวิศวกร</label>
+                                    @* Build the content first *@
+                                    @{
+                                        var textareaContent = new System.Text.StringBuilder();
+                                        foreach (var Listpackage in group.PM_getListpackage)
+                                        {
+                                            textareaContent.AppendLine($"{Listpackage.Package_Name} : {Listpackage.Package_Remark}");
+                                        }
+                                    }
+
+                                    <textarea class="form-control mt-2"
+                                              rows="4"
+                                              style="text-align: left; white-space: pre-wrap;"
+                                              disabled>@textareaContent.ToString()</textarea>
+                                </div>
                             }
+
                             @if (group.LockStatusID != null)
                             {
                                 <label class="form-label">
