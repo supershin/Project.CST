@@ -15,7 +15,8 @@
         public string? FormName { get; set; }
         public int? StatusID { get; set; }
         public int FlagActive { get; set; }
-        public int? PassConditionID { get; set; }
+        public int? PC_LockID { get; set; }
+        public int? PC_StatusID{ get; set; }
         public int? RoleID_PE { get; set; }
         public string? ActionType_PE { get; set; }
         public int? StatusID_PE { get; set; }
@@ -25,6 +26,11 @@
         public string? ActionType_PM { get; set; }
         public int? StatusID_PM { get; set; }
         public string? Remark_PM { get; set; }
-        public DateTime? ActionDate_PM { get; set; }
+        public string? ActionDate_PM { get; set; }
+        public int? RoleID_PJM { get; set; }
+        public string? ActionType_PJM { get; set; }
+        public int? StatusID_PJM { get; set; }
+        public string? Remark_PJM { get; set; }
+        public string? ActionDate_PJM { get; set; }
     }
 }

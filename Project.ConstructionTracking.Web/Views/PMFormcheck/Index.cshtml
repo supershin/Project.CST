@@ -151,9 +151,9 @@
                                             }
                                             else if (item.StatusID == 2)
                                             {
-                                                buttonText = (item.ActionType_PM == "submit") ? "fa-solid fa-reply" : "fa-solid fa-magnifying-glass";
-                                                statusText = (item.ActionType_PM == "submit") ? "ขออนุมัติใหม่" : "รออนุมัติ";
-                                                buttonColor = "grey";
+                                                buttonText = (item.ActionType_PM == "submit" || item.ActionType_PJM == "submit") ? "fa-solid fa-reply" : "fa-solid fa-magnifying-glass";
+                                                statusText = (item.ActionType_PM == "submit") ? "ขออนุมัติใหม่" : (item.ActionType_PM == "submit" && item.ActionType_PJM == "submit") ? "รออนุมัติหลัง PJM ไม่อนุมัติ" : "รออนุมัติ";
+                                                buttonColor = (item.ActionType_PM == "submit" && item.ActionType_PJM == "submit") ? "red" : "grey" ;
                                             }
                                             else if (item.ActionType_PM == "submit" && item.StatusID == 5)
                                             {
@@ -173,19 +173,19 @@
                                                 statusText = "รอผล PJM Head";
                                                 buttonColor = "primary";
                                             }
-                                            else if (item.ActionType_PM == "submit" && item.StatusID == 7)
+                                            else if (item.ActionType_PJM == "submit" && item.StatusID == 7)
                                             {
                                                 buttonText = "fa-solid fa-user-check";
                                                 statusText = "PJM อนุมัติ";
                                                 buttonColor = "green";
                                             }
-                                            else if (item.ActionType_PM == "submit" && item.StatusID == 8)
+                                            else if (item.ActionType_PJM == "submit" && item.StatusID == 8)
                                             {
                                                 buttonText = "fa-solid fa-user-xmark";
                                                 statusText = "PJM ไม่อนุมัติ";
                                                 buttonColor = "red";
                                             }
-                                            else if (item.ActionType_PM == "submit" && item.StatusID == 9)
+                                            else if (item.ActionType_PJM == "save" || item.StatusID == 9)
                                             {
                                                 buttonText = "fa-solid fa-user-pen";
                                                 statusText = "PJM Head กำลังตรวจ";
@@ -203,14 +203,17 @@
                                             </h3>
                                         </div>
                                     </div>
-                                    @if (item.PassConditionID != null)
+                                    @if (item.PC_LockID != null)
                                     {
                                         <div class="ms-auto">
-                                            <button type="button" class="status-dot bg-secondary ms-auto">
-                                                <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                            <button type="button" class="status-dot @(item.PC_StatusID == 6 || item.PC_StatusID == 8 ? "bg-success" : item.PC_StatusID == 7 || item.PC_StatusID == 9 ? "bg-danger" : "bg-primary") ms-auto">
+                                                <span class="status-text">
+                                                    <i class="fa-solid @(item.PC_LockID == 7 ? "fa-lock" : item.PC_LockID == 8 ? "fa-unlock" : "")"></i>
+                                                </span>
                                             </button>
                                         </div>
                                     }
+
                                 </div>
                                 <div class="mt-3">
                                     <ol class="breadcrumb">

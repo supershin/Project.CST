@@ -77,12 +77,30 @@
                             <div class="card card-link card-link-pop mb-2" onclick="this.closest('form').submit();">
                             <div class="card-header">
                                 <div class="d-flex flex-row align-items-center">
-                                    @{
-                                        string buttonText = "fa-solid fa-magnifying-glass";
-                                        string statusText = "รออนุมัติ";
-                                        string buttonColor = "secondary";
+                                        @{
+                                            string buttonText = "fa-solid fa-magnifying-glass";
+                                            string statusText = "รออนุมัติ";
+                                            string buttonColor = "secondary";
 
-                                        if (item.StatusID == 6)
+                                        if (item.StatusID == 2)
+                                        {
+                                            buttonText = "fa-solid fa-user-xmark";
+                                            statusText = "PE ส่งมาให้ผม PM ตรวจสอบใหม่";
+                                            buttonColor = "red";
+                                        }
+                                        else if (item.StatusID == 3)
+                                        {
+                                            buttonText = "fa-solid fa-user-xmark";
+                                            statusText = "PM กำลังตรวจก่อนส่งใหม่";
+                                            buttonColor = "red";
+                                        }
+                                        else if (item.StatusID == 5)
+                                        {
+                                            buttonText = "fa-solid fa-user-xmark";
+                                            statusText = "PM ไม่ให้ผ่าน";
+                                            buttonColor = "red";
+                                        }
+                                        else if (item.StatusID == 6)
                                         {
                                             buttonText = (item.PJMActionType == "submit") ? "fa-solid fa-reply" : "fa-solid fa-magnifying-glass";
                                             statusText = (item.PJMActionType == "submit") ? "ขออนุมัติใหม่" : "รออนุมัติ";

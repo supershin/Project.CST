@@ -221,10 +221,10 @@ namespace Project.ConstructionTracking.Web.Repositories
             InsertResource(guidId, fileName, resource.ResourceStoragePath, "image/jpeg", userID);
             InsertOrUpdateUnitFormResource(guidId, UnitFormID, userID, RoleID , FormID);
             SubmitUpdateVendorUnitForm(guidId, UnitFormID, FormGrade, VendorID, userID, RoleID , ActionType);
-            if (ActionType == "submit")
-            {
-                UpdateUnitFormActionTypePM(UnitFormID);
-            }
+            //if (ActionType == "submit")
+            //{
+            //    UpdateUnitFormActionTypePM(UnitFormID);
+            //}
 
         }
         private void ConvertByteToImage(FormGroupModel.Resources item)
@@ -343,7 +343,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == UnitFormID && a.RoleID == 2);
             if (unitFormAction != null)
             {
-                unitFormAction.ActionType = null;
                 unitFormAction.UpdateDate = DateTime.Now;
                 _context.tr_UnitFormAction.Update(unitFormAction);
                 _context.SaveChanges();

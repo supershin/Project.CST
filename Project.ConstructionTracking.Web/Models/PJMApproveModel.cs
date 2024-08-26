@@ -30,6 +30,7 @@
             public string? ProjectName { get; set; }
             public Guid? UnitID { get; set; }
             public string? UnitCode { get; set; }
+            public int? UnitFormStatus { get; set; }
             public int? FormID { get; set; }
             public string? FormName { get; set; }
             public string? Grade { get; set; }

@@ -35,13 +35,14 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.UnitID = listPJMApprove.UnitID;
                 ViewBag.UnitCode = listPJMApprove.UnitCode;
                 ViewBag.UnitFormID = listPJMApprove.UnitFormID;
-                ViewBag.FormID = listPJMApprove.FormID;
-                ViewBag.FormName = listPJMApprove.FormName;
+                ViewBag.UnitFormStatus = listPJMApprove?.UnitFormStatus?.ToString() ?? "";
+                ViewBag.FormID = listPJMApprove?.FormID;
+                ViewBag.FormName = listPJMApprove?.FormName;
                 ViewBag.PJM_Actiontype = listPJMApprove?.PJM_Actiontype ?? string.Empty;
                 ViewBag.PJM_ActionDate = listPJMApprove?.PJM_ActionDate?.ToString("dd/MM/yyyy") ?? string.Empty;
                 ViewBag.PJM_StatusID = listPJMApprove?.PJM_StatusID ?? (int?)null;
                 ViewBag.PJMUnitFormRemark = listPJMApprove?.PJMUnitFormRemark ?? string.Empty;
-                _FormID = listPJMApprove.FormID;
+                _FormID = listPJMApprove?.FormID;
             }
             ViewBag.ListChecklistPJMApprove = ListChecklistPJMApprove;
 

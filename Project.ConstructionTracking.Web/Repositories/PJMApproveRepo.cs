@@ -29,7 +29,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 from PJmunitFormAction in PJmunitFormActions.DefaultIfEmpty()
                                 join t7 in _context.tm_Form on t1.FormID equals t7.ID into forms
                                 from form in forms.DefaultIfEmpty()
-                                where unitFormAction.ActionType == filterData.ActionType && t1.StatusID > filterData.StatusID
+                                where unitFormAction.StatusID == 6 || PJmunitFormAction.StatusID == 8 || PJmunitFormAction.StatusID == 9
                                 orderby unit.UnitCode, t1.FormID
                                 select new PJMApproveModel.GetlistUnitDetail
                                 {
@@ -68,14 +68,15 @@ namespace Project.ConstructionTracking.Web.Repositories
                           join t8 in _context.tr_UnitFormAction.Where(a => a.RoleID == 3)
                               on t1.ID equals t8.UnitFormID into actions
                           from t8 in actions.DefaultIfEmpty()
-                          where t1.ID == filterData.UnitFormID && t3.ID != null && t1.StatusID > 5
+                          where t1.ID == filterData.UnitFormID && t3.ID != null
                           select new GetlistChecklistPC
                           {
                               UnitFormID = t1.ID,
                               ProjectID = t1.ProjectID,
                               ProjectName = t4.ProjectName,
                               UnitID = t1.UnitID,
-                              UnitCode = t5.UnitCode, 
+                              UnitCode = t5.UnitCode,
+                              UnitFormStatus = t1.StatusID,
                               FormID = t1.FormID,
                               FormName = t6.Name,
                               Grade = t1.Grade,

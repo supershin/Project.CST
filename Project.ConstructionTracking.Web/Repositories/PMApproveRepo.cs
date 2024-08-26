@@ -25,6 +25,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                           join t3m in _context.tr_UnitFormAction.Where(a => a.RoleID == 2)
                               on t1.ID equals t3m.UnitFormID into unitFormActionsPM
                           from actionPM in unitFormActionsPM.DefaultIfEmpty()
+                          join t3J in _context.tr_UnitFormAction.Where(a => a.RoleID == 3)
+                              on t1.ID equals t3J.UnitFormID into unitFormActionsPJM
+                          from actionPJM in unitFormActionsPJM.DefaultIfEmpty()
                           join t4 in _context.tm_Project on t1.ProjectID equals t4.ProjectID into projects
                           from project in projects.DefaultIfEmpty()
                           join t5 in _context.tm_Unit on t1.UnitID equals t5.UnitID into units
@@ -60,7 +63,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                               StatusID_PM = actionPM.StatusID,
                               Remark_PM = actionPM.Remark,
                               ActionDate_PM = actionPM.ActionDate,
-                              PassCondition = passCondition.LockStatusID
+                              RoleID_PJM = actionPJM.RoleID,
+                              ActionType_PJM = actionPJM.ActionType,
+                              StatusID_PJM = actionPJM.StatusID,
+                              Remark_PJM = actionPJM.Remark,
+                              ActionDate_PJM = actionPJM.ActionDate,
+                              PC_LockID = passCondition.LockStatusID,
+                              PC_StatusID = passCondition.StatusID
                           })
                           .OrderBy(item => item.StatusID)
                           .ThenBy(item => item.UnitFormID)
@@ -93,8 +102,18 @@ namespace Project.ConstructionTracking.Web.Repositories
                     ActionType_PM = item.ActionType_PM,
                     StatusID_PM = item.StatusID_PM,
                     Remark_PM = item.Remark_PM,
-                    ActionDate_PM = item.ActionDate_PM,
-                    PassConditionID = item.PassCondition,
+                    ActionDate_PM = item.ActionDate_PM.HasValue
+                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PM.Value.ToString("dd/MM/yyyy"))
+                                    : null,
+                    RoleID_PJM = item.RoleID_PJM,
+                    ActionType_PJM = item.ActionType_PJM,
+                    StatusID_PJM = item.StatusID_PJM,
+                    Remark_PJM = item.Remark_PJM,
+                    ActionDate_PJM = item.ActionDate_PJM.HasValue
+                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PJM.Value.ToString("dd/MM/yyyy"))
+                                    : null,
+                    PC_LockID = item.PC_LockID,
+                    PC_StatusID = item.PC_StatusID
                 })
                 .ToList();
 
@@ -116,6 +135,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from PEUnitFormAction in PEUnitFormActions.DefaultIfEmpty()
                           join t11 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)2 } equals new { t11.UnitFormID, t11.RoleID } into PMUnitFormActions
                           from PMUnitFormAction in PMUnitFormActions.DefaultIfEmpty()
+                          join t12 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)3 } equals new { t12.UnitFormID, t12.RoleID } into PJMUnitFormActions
+                          from PJMUnitFormAction in PJMUnitFormActions.DefaultIfEmpty()
                           where t1.UnitID == model.UnitID && t1.FormID == model.FormID
                           select new ApproveFormcheckModel
                           {
@@ -128,13 +149,18 @@ namespace Project.ConstructionTracking.Web.Repositories
                               VenderName = vendor.Name,
                               VendorResourceID = t1.VendorResourceID,
                               Grade = t1.Grade,
+                              UnitFormStatusID = t1.StatusID,
                               FormID = t1.FormID,
                               FormName = form.Name,
                               Actiondate = PEUnitFormAction.ActionDate,
                               ActiondatePm = PMUnitFormAction.ActionDate,
+                              ActiondatePJm = PJMUnitFormAction.ActionDate,
                               PM_StatusID = PMUnitFormAction.StatusID,
                               PM_Remarkaction = PMUnitFormAction.Remark,
                               PM_Actiontype = PMUnitFormAction.ActionType,
+                              PJM_StatusID = PJMUnitFormAction.StatusID,
+                              PJM_Remarkaction = PJMUnitFormAction.Remark,
+                              PJM_Actiontype = PJMUnitFormAction.ActionType,
                               PM_getListgroup = (from fg in _context.tm_FormGroup
                                                  join t7 in _context.tr_UnitFormPassCondition on new { UnitFormID = (Guid?)t1.ID, GroupID = (int?)fg.ID , FlagActive = (bool?)true } equals new { t7.UnitFormID, t7.GroupID ,t7.FlagActive } into unitFormPassConditions
                                                  from passCondition in unitFormPassConditions.DefaultIfEmpty()

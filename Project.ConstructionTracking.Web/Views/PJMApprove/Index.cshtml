@@ -6,6 +6,7 @@
     var UnitID = ViewBag.UnitID;
     var UnitCode = ViewBag.UnitCode;
     var UnitFormID = ViewBag.UnitFormID;
+    var UnitFormStatus = ViewBag.UnitFormStatus;
     var FormID = ViewBag.FormID;
     var FormName = ViewBag.FormName;
     var PJM_Actiontype = ViewBag.PJM_Actiontype;
@@ -177,16 +178,16 @@
                                         อนุมัติการผ่านแบบมีเงื่อนไข
                                     </label>
                                     <label class="form-check form-check-inline">
-                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="8" @(item.PC_StatusID == 8 ? "checked" : "") @(PJM_Actiontype == "submit" ? "disabled" : "") onclick="toggleRadio(this)">
+                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="8" @(item.PC_StatusID == 8 ? "checked" : "") @(PJM_Actiontype == "submit" && UnitFormStatus != "6" ? "disabled" : "") onclick="toggleRadio(this)">
                                         <span class="form-check-label">อนุมัติ</span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="9" @(item.PC_StatusID == 9 ? "checked" : "") @(PJM_Actiontype == "submit" ? "disabled" : "") onclick="toggleRadio(this)">
+                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="9" @(item.PC_StatusID == 9 ? "checked" : "") @(PJM_Actiontype == "submit" && UnitFormStatus != "6"  ? "disabled" : "") onclick="toggleRadio(this)">
                                         <span class="form-check-label">ไม่อนุมัติ</span>
                                     </label>
                                 </div>
                                 <div class="col-12 p-1 mb-2">
-                                <textarea id="remark_@item.GroupID" rows="1" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ" @(item.PJM_Actiontype == "submit" ? "disabled" : "")>@item.PJM_Remark</textarea>
+                                <textarea id="remark_@item.GroupID" rows="1" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ" @(item.PJM_Actiontype == "submit" && UnitFormStatus != "6" ? "disabled" : "")>@item.PJM_Remark</textarea>
                                 </div>
                         </div>
                     </div>
@@ -217,7 +218,14 @@
                                     <a data-fslightbox="gallery" href="~/@listimage.FilePath">
                                         <img src="~/@listimage.FilePath" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                     </a>
-                                    @if (PJM_Actiontype != "submit")
+                                    @if (PJM_Actiontype == "submit")
+                                    {
+                                        if (UnitFormStatus == "6")
+                                        {
+                                            <button type="button" class="remove-button" onclick="deleteImage('@listimage.ResourceID')">✖</button>
+                                        }                                    
+                                    }
+                                    else
                                     {
                                         <button type="button" class="remove-button" onclick="deleteImage('@listimage.ResourceID')">✖</button>
                                     }
@@ -226,9 +234,24 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="row">
-                                @if (PJM_Actiontype != "submit")
+                                @if (PJM_Actiontype == "submit")
                                 {
-                                    <div class="col-12 p-3">
+                                    if (UnitFormStatus == "6")
+                                    {
+                                        <div class="col-12 p-3">
+                                            <div id="drop-zone" class="drop-zone">
+                                                <p class="drop-zone-text">
+                                                    <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                                </p>
+                                                <input type="file" id="file-input" class="drop-zone-input" multiple>
+                                                <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
+                                            </div>
+                                        </div>
+                                    }   
+                                }
+                                else
+                                {
+                                      <div class="col-12 p-3">
                                         <div id="drop-zone" class="drop-zone">
                                             <p class="drop-zone-text">
                                                 <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
@@ -236,10 +259,10 @@
                                             <input type="file" id="file-input" class="drop-zone-input" multiple>
                                             <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
                                         </div>
-                                    </div>
+                                    </div>                                  
                                 }
                                 <div class="col-12">
-                                    <textarea id="mainRemark" rows="2" class="form-control" placeholder="หมายเหตุ" @(PJM_Actiontype == "submit" ? "disabled" : "")> @PJMUnitFormRemark </textarea>
+                                    <textarea id="mainRemark" rows="2" class="form-control" placeholder="หมายเหตุ" @(PJM_Actiontype == "submit" && UnitFormStatus != "6" ? "disabled" : "")> @PJMUnitFormRemark </textarea>
                                 </div>
                             </div>
                         </div>
@@ -252,7 +275,20 @@
                         </div>
                         <div class="col-6">
                             <div class="justify-content-end">
-                                @if (PJM_Actiontype != "submit")
+                                @if (PJM_Actiontype == "submit")
+                                {
+                                    if (UnitFormStatus == "6")
+                                    {
+                                         <input type="hidden" id="UnitFormID" value="@UnitFormID" />
+                                        <input type="hidden" id="ProjectID" value="@ProjectID" />
+                                        <input type="hidden" id="UnitID" value="@UnitID" />
+                                        <input type="hidden" id="UnitCode" value="@UnitCode" />
+                                        <input type="hidden" id="FormID" value="@FormID" />
+                                        <button class="btn" onclick="saveOrSubmit('save')">Save</button>
+                                        <button class="btn btn-primary" onclick="saveOrSubmit('submit')">Submit</button>                                       
+                                    }
+                                }
+                                else
                                 {
                                     <input type="hidden" id="UnitFormID" value="@UnitFormID" />
                                     <input type="hidden" id="ProjectID" value="@ProjectID" />

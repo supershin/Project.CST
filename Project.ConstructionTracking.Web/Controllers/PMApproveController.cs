@@ -29,13 +29,17 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.ProjectName = resultModel.ProjectName;
                 ViewBag.UnitCode = resultModel.UnitCode;
                 ViewBag.FormName = resultModel.FormName;
+                ViewBag.UnitFormStatusID = resultModel.UnitFormStatusID;
                 ViewBag.Actiondate = resultModel.Actiondate?.ToString("dd/MM/yyyy") ?? "";
                 ViewBag.ActiondatePm = resultModel.ActiondatePm?.ToString("dd/MM/yyyy") ?? "";
+                ViewBag.ActiondatePJm = resultModel.ActiondatePJm?.ToString("dd/MM/yyyy") ?? "";
                 ViewBag.Grade = resultModel.Grade;
                 ViewBag.LockStatusID = resultModel.PM_getListgroup?.Any(l => l.LockStatusID != null) == true ? "NotNull" : null;
                 ViewBag.VenderName = resultModel.VenderName;
                 ViewBag.PM_Remarkaction = resultModel.PM_Remarkaction;
                 ViewBag.PM_Actiontype = resultModel.PM_Actiontype;
+                ViewBag.PJM_Remarkaction = resultModel.PJM_Remarkaction;
+                ViewBag.PJM_Actiontype = resultModel.PJM_Actiontype;
             }
 
             // Pass the resultModel to the view

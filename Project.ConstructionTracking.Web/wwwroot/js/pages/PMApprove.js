@@ -139,23 +139,23 @@ function saveOrSubmit(actionType) {
     data.append("UnitID", document.getElementById("UnitID").value);
     data.append("UnitCode", document.getElementById("UnitCode").value);
     data.append("FormID", document.getElementById("FormID").value);
-
+   
     // Add ActionType (save or submit)
     data.append("ActionType", actionType);
 
+  
     // Add main form status and remark
     var mainStatus = document.querySelector('input[name="radios-inline-approval"]:checked');
     if (mainStatus) {
         data.append("UnitFormStatus", mainStatus.value);
     }
     data.append("Remark", document.getElementById("mainRemark").value);
-
+    
     // Collect images if any
     var files = document.getElementById("file-input").files;
     for (var i = 0; i < files.length; i++) {
         data.append("Images", files[i]);
     }
-
     var passConditions = [];
     $("input[data-action='gr-pass']").each(function () {
         let group_id = $(this).attr("group-id");
@@ -188,7 +188,7 @@ function saveOrSubmit(actionType) {
     }
 
     //console.log(data);
-
+    
     // Send the data using AJAX
     $.ajax({
         url: baseUrl + 'PMApprove/SaveOrSubmit', // Replace with your actual controller action

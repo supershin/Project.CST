@@ -12,12 +12,17 @@
         public Guid? VendorResourceID { get; set; }
         public string? Grade { get; set; }
         public int? FormID { get; set; }
+        public int? UnitFormStatusID { get; set; }
         public string? FormName { get; set; }
         public DateTime? Actiondate { get; set; }
         public DateTime? ActiondatePm { get; set; }
+        public DateTime? ActiondatePJm { get; set; }
         public int? PM_StatusID { get; set; }
         public string? PM_Remarkaction { get; set; }
         public string? PM_Actiontype { get; set; }
+        public int? PJM_StatusID { get; set; }
+        public string? PJM_Remarkaction { get; set; }
+        public string? PJM_Actiontype { get; set; }
         public List<PM_getListgroup>? PM_getListgroup { get; set; }
         public List<PM_getListImage>? PM_getListImage { get; set; }
     }
