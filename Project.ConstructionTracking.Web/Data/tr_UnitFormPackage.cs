@@ -21,8 +21,7 @@ namespace Project.ConstructionTracking.Web.Data
         public Guid? CreateBy { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? UpdateDate { get; set; }
-        [StringLength(10)]
-        public string? UpdateBy { get; set; }
+        public Guid? UpdateBy { get; set; }
 
         [ForeignKey("FormID")]
         [InverseProperty("tr_UnitFormPackage")]

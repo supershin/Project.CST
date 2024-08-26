@@ -722,8 +722,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_UnitFormPackage>(entity =>
             {
-                entity.Property(e => e.UpdateBy).IsFixedLength();
-
                 entity.HasOne(d => d.Form)
                     .WithMany(p => p.tr_UnitFormPackage)
                     .HasForeignKey(d => d.FormID)
