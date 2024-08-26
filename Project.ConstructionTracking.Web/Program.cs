@@ -53,6 +53,9 @@ builder.Services.AddScoped<IMasterFormRepo, MasterFormRepo>();
 builder.Services.AddScoped<IPJMApproveService, PJMApproveService>();
 builder.Services.AddScoped<IPJMApproveRepo, PJMApproveRepo>();
 
+builder.Services.AddScoped<IUnLockPassConditionService, UnLockPassConditionService>();
+builder.Services.AddScoped<IUnLockPassConditionRepo, UnLockPassConditionRepo>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

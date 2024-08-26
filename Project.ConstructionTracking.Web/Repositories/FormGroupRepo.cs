@@ -30,9 +30,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                         join t3 in _context.tm_FormCheckList.Where(c => c.FlagActive == true) on t2.ID equals t3.PackageID into t3Group
                         from t3 in t3Group.DefaultIfEmpty()
                         join t4 in _context.tr_UnitFormCheckList.Where(f => f.FlagActive == true) on new { t1.FormID, PackageID = (int?)t2.ID, CheckListID = (int?)t3.ID, model.UnitFormID } equals new { t4.FormID, t4.PackageID, t4.CheckListID, t4.UnitFormID } into t4Group
-                        from t4 in t4Group.Where(t => t.StatusID == 1 || t.StatusID == 3).DefaultIfEmpty()
+                        from t4 in t4Group.Where(t => t.StatusID == 9 || t.StatusID == 11).DefaultIfEmpty()
                         join t5 in _context.tr_UnitFormCheckList.Where(f => f.FlagActive == true) on new { t1.FormID, PackageID = (int?)t2.ID, CheckListID = (int?)t3.ID, model.UnitFormID } equals new { t5.FormID, t5.PackageID, t5.CheckListID, t5.UnitFormID } into t5Group
-                        from t5 in t5Group.Where(t => t.StatusID == 2).DefaultIfEmpty()
+                        from t5 in t5Group.Where(t => t.StatusID == 10).DefaultIfEmpty()
                         join t4All in _context.tr_UnitFormCheckList.Where(f => f.FlagActive == true) on new { t1.FormID, PackageID = (int?)t2.ID, CheckListID = (int?)t3.ID, model.UnitFormID } equals new { t4All.FormID, t4All.PackageID, t4All.CheckListID, t4All.UnitFormID } into t4AllGroup
                         from t4All in t4AllGroup.Where(t => t.StatusID != null).DefaultIfEmpty()
                         join t6 in _context.tr_UnitFormPassCondition.Where(p => p.FlagActive == true) on new { t4.UnitFormID, t4.GroupID } equals new { t6.UnitFormID, t6.GroupID } into t6Group
