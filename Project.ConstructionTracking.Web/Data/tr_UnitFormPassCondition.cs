@@ -22,6 +22,8 @@ namespace Project.ConstructionTracking.Web.Data
         public string? PE_Remark { get; set; }
         public string? PM_Remark { get; set; }
         public string? PJM_Remark { get; set; }
+        public string? PEUnLockRemark { get; set; }
+        public string? PMUnLockRemark { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? ActionDate { get; set; }
