@@ -13,6 +13,9 @@ namespace Project.ConstructionTracking.Web.Models
         public string? StatusUse { get; set;}
         public string? FormGrade { get; set; }
         public int? LockStatusID { get; set; }
+        public string? PC_Remark_PE { get; set; }
+        public string? PC_Remark_PM { get; set; }
+        public string? PC_Remark_PJM { get; set; }
         public int? StatusID { get; set; }
         public string? ActionType { get; set; }
         public int? Cnt_CheckList_All { get; set; }
@@ -56,10 +59,14 @@ namespace Project.ConstructionTracking.Web.Models
             public Guid ID { get; set; }
             public string? Grade { get; set; }
             public int? FormID { get; set; }
+            public int? UnitFormstatusID { get; set; }
+            public string? UnitFormstatus { get; set; }
             public string? PE_ActionType { get; set; }
+            public string? VenderName { get; set; }
             public int? PE_StatusID { get; set; }
             public string? PM_ActionType { get; set; }
             public int? PM_StatusID { get; set; }
+            public string? PM_Remark { get; set; }
             public string? PJM_ActionType { get; set; }
             public int? PJM_StatusID { get; set; }
             public string? FilePath { get; set; }

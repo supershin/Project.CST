@@ -12,12 +12,17 @@
         public Guid? VendorResourceID { get; set; }
         public string? Grade { get; set; }
         public int? FormID { get; set; }
+        public int? UnitFormStatusID { get; set; }
         public string? FormName { get; set; }
         public DateTime? Actiondate { get; set; }
         public DateTime? ActiondatePm { get; set; }
+        public DateTime? ActiondatePJm { get; set; }
         public int? PM_StatusID { get; set; }
         public string? PM_Remarkaction { get; set; }
         public string? PM_Actiontype { get; set; }
+        public int? PJM_StatusID { get; set; }
+        public string? PJM_Remarkaction { get; set; }
+        public string? PJM_Actiontype { get; set; }
         public List<PM_getListgroup>? PM_getListgroup { get; set; }
         public List<PM_getListImage>? PM_getListImage { get; set; }
     }
@@ -34,9 +39,15 @@
         public Guid? ResourceID { get; set; }
         public string? FileName { get; set; }
         public string? FilePath { get; set; }
-
+        public List<PM_getListpackage>? PM_getListpackage { get; set; }
     }
 
+    public class PM_getListpackage
+    {
+        public int? Package_ID { get; set; }
+        public string? Package_Name { get; set; }
+        public string? Package_Remark { get; set; }
+    }
     public class PM_getListImage
     {
         public Guid? ResourceID { get; set; }

@@ -56,6 +56,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tr_UnitFormAction> tr_UnitFormAction { get; set; } = null!;
         public virtual DbSet<tr_UnitFormActionLog> tr_UnitFormActionLog { get; set; } = null!;
         public virtual DbSet<tr_UnitFormCheckList> tr_UnitFormCheckList { get; set; } = null!;
+        public virtual DbSet<tr_UnitFormInbox> tr_UnitFormInbox { get; set; } = null!;
         public virtual DbSet<tr_UnitFormPackage> tr_UnitFormPackage { get; set; } = null!;
         public virtual DbSet<tr_UnitFormPassCondition> tr_UnitFormPassCondition { get; set; } = null!;
         public virtual DbSet<tr_UnitFormResource> tr_UnitFormResource { get; set; } = null!;
@@ -714,10 +715,13 @@ namespace Project.ConstructionTracking.Web.Data
                     .HasConstraintName("FK_tr_UnitForm_Detail_tr_UnitForm");
             });
 
+            modelBuilder.Entity<tr_UnitFormInbox>(entity =>
+            {
+                entity.Property(e => e.ID).ValueGeneratedOnAdd();
+            });
+
             modelBuilder.Entity<tr_UnitFormPackage>(entity =>
             {
-                entity.Property(e => e.UpdateBy).IsFixedLength();
-
                 entity.HasOne(d => d.Form)
                     .WithMany(p => p.tr_UnitFormPackage)
                     .HasForeignKey(d => d.FormID)

@@ -14,7 +14,6 @@ namespace Project.ConstructionTracking.Web.Repositories
         {
             _context = context;
         }
-
         public List<PMApproveModel> GetPMApproveFormList()
         {
             var result = (from t1 in _context.tr_UnitForm
@@ -26,15 +25,23 @@ namespace Project.ConstructionTracking.Web.Repositories
                           join t3m in _context.tr_UnitFormAction.Where(a => a.RoleID == 2)
                               on t1.ID equals t3m.UnitFormID into unitFormActionsPM
                           from actionPM in unitFormActionsPM.DefaultIfEmpty()
+                          join t3J in _context.tr_UnitFormAction.Where(a => a.RoleID == 3)
+                              on t1.ID equals t3J.UnitFormID into unitFormActionsPJM
+                          from actionPJM in unitFormActionsPJM.DefaultIfEmpty()
                           join t4 in _context.tm_Project on t1.ProjectID equals t4.ProjectID into projects
                           from project in projects.DefaultIfEmpty()
                           join t5 in _context.tm_Unit on t1.UnitID equals t5.UnitID into units
                           from unit in units.DefaultIfEmpty()
                           join t6 in _context.tm_Form on t1.FormID equals t6.ID into forms
                           from form in forms.DefaultIfEmpty()
-                          where actionPE.ActionType == "submit"
+                          let passCondition = _context.tr_UnitFormPassCondition
+                                                 .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true)
+                                                 .OrderBy(pc => pc.ID)
+                                                 .FirstOrDefault()
+                          where t1.StatusID > 1
                           select new
                           {
+                              t1.StatusID,
                               UnitFormID = t1.ID,
                               UnitFormActionID = actionPE.ID,
                               t1.ProjectID,
@@ -46,8 +53,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                               t1.Grade,
                               t1.FormID,
                               FormName = form.Name,
-                              t1.StatusID,
-                              //actionPE.PassConditionID,
                               RoleID_PE = actionPE.RoleID,
                               ActionType_PE = actionPE.ActionType,
                               StatusID_PE = actionPE.StatusID,
@@ -57,41 +62,60 @@ namespace Project.ConstructionTracking.Web.Repositories
                               ActionType_PM = actionPM.ActionType,
                               StatusID_PM = actionPM.StatusID,
                               Remark_PM = actionPM.Remark,
-                              ActionDate_PM = actionPM.ActionDate
+                              ActionDate_PM = actionPM.ActionDate,
+                              RoleID_PJM = actionPJM.RoleID,
+                              ActionType_PJM = actionPJM.ActionType,
+                              StatusID_PJM = actionPJM.StatusID,
+                              Remark_PJM = actionPJM.Remark,
+                              ActionDate_PJM = actionPJM.ActionDate,
+                              PC_LockID = passCondition.LockStatusID,
+                              PC_StatusID = passCondition.StatusID
                           })
-                          .OrderBy(item => item.ActionType_PE == "submit" && item.ActionType_PM == null ? 0 : 1)
+                          .OrderBy(item => item.StatusID)
                           .ThenBy(item => item.UnitFormID)
                           .ToList();
 
-            // Format the date after retrieving the data from the database
-            var formattedResult = result.Select(item => new PMApproveModel
-            {
-                UnitFormID = item.UnitFormID,
-                UnitFormActionID = item.UnitFormActionID,
-                ProjectID = item.ProjectID,
-                ProjectName = item.ProjectName,
-                UnitID = item.UnitID,
-                UnitCode = item.UnitCode,
-                VendorID = item.VendorID,
-                VenderName = item.VenderName,
-                Grade = item.Grade,
-                FormID = item.FormID,
-                FormName = item.FormName,
-                StatusID = item.StatusID,
-                //PassConditionID = item.PassConditionID,
-                RoleID_PE = item.RoleID_PE,
-                ActionType_PE = item.ActionType_PE,
-                StatusID_PE = item.StatusID_PE,
-                Remark_PE = item.Remark_PE,
-                ActionDate_PE = item.ActionDate_PE.HasValue
-                                ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PE.Value.ToString("dd/MM/yyyy"))
-                                : null,
-                RoleID_PM = item.RoleID_PM,
-                ActionType_PM = item.ActionType_PM,
-                StatusID_PM = item.StatusID_PM,
-                Remark_PM = item.Remark_PM,
-                ActionDate_PM = item.ActionDate_PM
-            }).ToList();
+            // Apply formatting after ordering is ensured
+            var formattedResult = result
+                .Select(item => new PMApproveModel
+                {
+                    UnitFormID = item.UnitFormID,
+                    UnitFormActionID = item.UnitFormActionID,
+                    ProjectID = item.ProjectID,
+                    ProjectName = item.ProjectName,
+                    UnitID = item.UnitID,
+                    UnitCode = item.UnitCode,
+                    VendorID = item.VendorID,
+                    VenderName = item.VenderName,
+                    Grade = item.Grade,
+                    FormID = item.FormID,
+                    FormName = item.FormName,
+                    StatusID = item.StatusID,
+                    RoleID_PE = item.RoleID_PE,
+                    ActionType_PE = item.ActionType_PE,
+                    StatusID_PE = item.StatusID_PE,
+                    Remark_PE = item.Remark_PE,
+                    ActionDate_PE = item.ActionDate_PE.HasValue
+                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PE.Value.ToString("dd/MM/yyyy"))
+                                    : null,
+                    RoleID_PM = item.RoleID_PM,
+                    ActionType_PM = item.ActionType_PM,
+                    StatusID_PM = item.StatusID_PM,
+                    Remark_PM = item.Remark_PM,
+                    ActionDate_PM = item.ActionDate_PM.HasValue
+                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PM.Value.ToString("dd/MM/yyyy"))
+                                    : null,
+                    RoleID_PJM = item.RoleID_PJM,
+                    ActionType_PJM = item.ActionType_PJM,
+                    StatusID_PJM = item.StatusID_PJM,
+                    Remark_PJM = item.Remark_PJM,
+                    ActionDate_PJM = item.ActionDate_PJM.HasValue
+                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PJM.Value.ToString("dd/MM/yyyy"))
+                                    : null,
+                    PC_LockID = item.PC_LockID,
+                    PC_StatusID = item.PC_StatusID
+                })
+                .ToList();
 
             return formattedResult;
         }
@@ -111,6 +135,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from PEUnitFormAction in PEUnitFormActions.DefaultIfEmpty()
                           join t11 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)2 } equals new { t11.UnitFormID, t11.RoleID } into PMUnitFormActions
                           from PMUnitFormAction in PMUnitFormActions.DefaultIfEmpty()
+                          join t12 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)3 } equals new { t12.UnitFormID, t12.RoleID } into PJMUnitFormActions
+                          from PJMUnitFormAction in PJMUnitFormActions.DefaultIfEmpty()
                           where t1.UnitID == model.UnitID && t1.FormID == model.FormID
                           select new ApproveFormcheckModel
                           {
@@ -123,13 +149,18 @@ namespace Project.ConstructionTracking.Web.Repositories
                               VenderName = vendor.Name,
                               VendorResourceID = t1.VendorResourceID,
                               Grade = t1.Grade,
+                              UnitFormStatusID = t1.StatusID,
                               FormID = t1.FormID,
                               FormName = form.Name,
                               Actiondate = PEUnitFormAction.ActionDate,
                               ActiondatePm = PMUnitFormAction.ActionDate,
+                              ActiondatePJm = PJMUnitFormAction.ActionDate,
                               PM_StatusID = PMUnitFormAction.StatusID,
                               PM_Remarkaction = PMUnitFormAction.Remark,
                               PM_Actiontype = PMUnitFormAction.ActionType,
+                              PJM_StatusID = PJMUnitFormAction.StatusID,
+                              PJM_Remarkaction = PJMUnitFormAction.Remark,
+                              PJM_Actiontype = PJMUnitFormAction.ActionType,
                               PM_getListgroup = (from fg in _context.tm_FormGroup
                                                  join t7 in _context.tr_UnitFormPassCondition on new { UnitFormID = (Guid?)t1.ID, GroupID = (int?)fg.ID , FlagActive = (bool?)true } equals new { t7.UnitFormID, t7.GroupID ,t7.FlagActive } into unitFormPassConditions
                                                  from passCondition in unitFormPassConditions.DefaultIfEmpty()
@@ -142,7 +173,17 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                      PC_StatusID = passCondition.StatusID,
                                                      LockStatusID = passCondition.LockStatusID,
                                                      PE_Remark = passCondition.PE_Remark,
-                                                     PM_Remark = passCondition.PM_Remark
+                                                     PM_Remark = passCondition.PM_Remark,
+                                                     PM_getListpackage = (from tpk in _context.tr_UnitFormPackage
+                                                                          join ftpk in _context.tm_FormPackage on new { tpk.GroupID , tpk.PackageID } equals new { ftpk.GroupID , PackageID = (int?)ftpk.ID }  into FormPackages
+                                                                          from FormPackage in FormPackages.DefaultIfEmpty()
+                                                                          where tpk.UnitFormID == PEUnitFormAction.UnitFormID && tpk.FormID == t1.FormID && tpk.GroupID == fg.ID
+                                                                          select new PM_getListpackage
+                                                                          { 
+                                                                              Package_ID = tpk.PackageID,
+                                                                              Package_Name = FormPackage.Name,
+                                                                              Package_Remark = tpk.Remark
+                                                                          }).ToList(),
                                                  }).ToList(),
                               PM_getListImage = (from img in _context.tr_UnitFormResource
                                                  join res in _context.tm_Resource on img.ResourceID equals res.ID
@@ -163,7 +204,9 @@ namespace Project.ConstructionTracking.Web.Repositories
             var result = (from t1 in _context.tr_UnitFormResource
                           join t2 in _context.tm_Resource on t1.ResourceID equals t2.ID into resources
                           from resource in resources.DefaultIfEmpty()
-                          where t1.UnitFormID == model.UnitFormID && t1.GroupID == model.GroupID && t1.RoleID == model.RoleID
+                          where t1.UnitFormID == model.UnitFormID
+                                && (model.RoleID > 1 ? t1.FormID == model.FormID : t1.GroupID == model.GroupID)
+                                && t1.RoleID == model.RoleID
                           select new UnitFormResourceModel
                           {
                               UnitFormResourceID = t1.ID,
@@ -175,6 +218,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return result;
         }
+
 
         public void SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
         {
@@ -212,11 +256,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             // Save changes to UnitFormAction
             _context.SaveChanges();
-
-            //if (model.ActionType == "submit" && model.UnitFormStatus == 5)
-            //{
-            //    UpdateUnitFormActionTypePE(model);
-            //}
 
             bool PC = model.PassConditionsIUD != null && model.PassConditionsIUD.Count > 0;
 
@@ -290,42 +329,13 @@ namespace Project.ConstructionTracking.Web.Repositories
             var UnitForm = _context.tr_UnitForm
                 .FirstOrDefault(tr => tr.ID == unitformID);
 
-            if (UnitForm != null)  // Updated this condition to ensure it only proceeds if UnitForm is found
+            if (UnitForm != null)  // Ensure UnitForm is found
             {
-                int answer;
+                UnitForm.StatusID = actiontype == "save" ? 3 : StatusID;
+                UnitForm.UpdateDate = DateTime.Now;
 
-                if (actiontype == "save")
-                {
-                    answer = 3;
-                }
-                else if (actiontype == "submit")
-                {
-                    if (StatusID == 5)
-                    {
-                        answer = 5;
-                    }
-                    else if (StatusID == 4)
-                    {
-                        answer = 4;
-                    }
-                    else
-                    {
-                        answer = -1; 
-                    }
-                }
-                else
-                {
-                    answer = -1; 
-                }
-
-                if (answer != -1) 
-                {
-                    UnitForm.StatusID = answer;
-                    UnitForm.UpdateDate = DateTime.Now;
-
-                    _context.tr_UnitForm.Update(UnitForm);
-                    _context.SaveChanges(); 
-                }
+                _context.tr_UnitForm.Update(UnitForm);
+                _context.SaveChanges();
             }
         }
 

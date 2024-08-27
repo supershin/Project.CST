@@ -1,0 +1,252 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+    var ListPJMApprove = ViewBag.ListPJMApprove;
+}
+
+
+<style>
+    .status-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        border: none;
+        outline: none;
+        font-size: 18px;
+    }
+
+    .btn-yellow {
+        background-color: yellow;
+        color: black; /* Ensure readability */
+    }
+
+    .btn-red {
+        background-color: red;
+        color: white; /* White text for contrast */
+    }
+
+    .btn-green {
+        background-color: green;
+        color: white; /* White text for contrast */
+    }
+
+    .btn-grey {
+        background-color: grey;
+        color: white; /* White text for contrast */
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px
+    }
+
+</style>
+
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-home-heart">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M21 12l-9 -9l-9 9h2v7a2 2 0 0 0 2 2h6" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.39 0 .754 .112 1.061 .304" />
+                        <path d="M19 21.5l2.518 -2.58a1.74 1.74 0 0 0 0 -2.413a1.627 1.627 0 0 0 -2.346 0l-.168 .172l-.168 -.172a1.627 1.627 0 0 0 -2.346 0a1.74 1.74 0 0 0 0 2.412l2.51 2.59z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="card-body">
+                <h1>
+                    รายการขออนุมัติผ่านงานแบบมีเงื่อนไข
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="page-body">
+        <div class="container mt-1 mb-2">
+            <div class="row">
+            @foreach (var item in @ListPJMApprove)
+            {
+                <div class="col-md-4">
+                        <form action="@Url.Action("index", "PJMApprove",new { UnitFormID = item.UnitFormID})" method="post">
+                            <div class="card card-link card-link-pop mb-2" onclick="this.closest('form').submit();">
+                            <div class="card-header">
+                                <div class="d-flex flex-row align-items-center">
+                                        @{
+                                            string buttonText = "fa-solid fa-magnifying-glass";
+                                            string statusText = "รออนุมัติ";
+                                            string buttonColor = "secondary";
+
+                                        if (item.StatusID == 2)
+                                        {
+                                            buttonText = "fa-solid fa-user-xmark";
+                                            statusText = "PE ส่งมาให้ผม PM ตรวจสอบใหม่";
+                                            buttonColor = "red";
+                                        }
+                                        else if (item.StatusID == 3)
+                                        {
+                                            buttonText = "fa-solid fa-user-xmark";
+                                            statusText = "PM กำลังตรวจก่อนส่งใหม่";
+                                            buttonColor = "red";
+                                        }
+                                        else if (item.StatusID == 5)
+                                        {
+                                            buttonText = "fa-solid fa-user-xmark";
+                                            statusText = "PM ไม่ให้ผ่าน";
+                                            buttonColor = "red";
+                                        }
+                                        else if (item.StatusID == 6)
+                                        {
+                                            buttonText = (item.PJMActionType == "submit") ? "fa-solid fa-reply" : "fa-solid fa-magnifying-glass";
+                                            statusText = (item.PJMActionType == "submit") ? "ขออนุมัติใหม่" : "รออนุมัติ";
+                                            buttonColor = "primary";
+                                        }
+                                        else if (item.StatusID == 8)
+                                        {
+                                            buttonText = "fa-solid fa-user-xmark";
+                                            statusText = "PJM ไม่อนุมัติ";
+                                            buttonColor = "red";
+                                        }
+                                        else if (item.StatusID == 7)
+                                        {
+                                            buttonText = "fa-solid fa-user-check";
+                                            statusText = "PJM อนุมัติ";
+                                            buttonColor = "green";
+                                        }
+                                        else if (item.StatusID == 9)
+                                        {
+                                            buttonText = "fa-solid fa-file-pen";
+                                            statusText = "กำลังตรวจ";
+                                            buttonColor = "yellow";
+                                        }
+                                    }
+                                    <button type="button" class="status-dot bg-@buttonColor @(buttonColor == "red" || buttonColor== "yellow" ? "status-dot-animated" : "")">
+                                        <i class="@buttonText"></i>
+                                    </button>
+                                </div>
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="#"> โครงการ : @item.ProjectName</a></li>
+                                    <li class="breadcrumb-item" aria-current="page">Unit : @item.UnitCode</li>
+                                    <li class="breadcrumb-item" aria-current="page">ผู้รับเหมา : @item.VendorName </li>
+                                    <li class="breadcrumb-item" aria-current="page">@item.FormName </li>
+                                </ol>
+                            </div>
+                            <div class="card-body">
+                                <label class="form-label mb-0">
+                                    <i class="fa-solid fa-list-check"></i> สถานะ : @statusText
+                                </label>
+                                    <br>
+                                <label class="form-label mb-0">
+                                    <i class="fas fa-user-tie"></i> วิศวกรผู้ควบคุมงาน : นายสมชาย ใจดี
+                                </label>
+                                <br>
+                                <label class="form-label mb-0">
+                                    <i class="fas fa-project-diagram"></i> PM โครงการ : นายสุทธิชัย วงค์ใหญ่
+                                </label>
+                                <br>
+                                <label class="form-label mb-0">
+                                    <i class="fas fa-calendar-alt"></i> วันที่ส่งงาน : @item.ActionDate
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            }
+            </div>
+        </div>
+    </div>
+    <!-- Modal show image -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">รูปภาพ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2 g-md-3" id="image-container">
+                        <!-- Images will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            function adjustTextareaRows() {
+                if ($(window).width() <= 576) {
+                    $('textarea.form-control').attr('rows', 4);
+                } else {
+                    $('textarea.form-control').attr('rows', 2);
+                }
+            }
+
+            adjustTextareaRows(); // Initial call
+            $(window).resize(adjustTextareaRows); // Call on window resize
+        });
+
+        function toggleRadio(radio) {
+            // Check if the radio button was already checked
+            if (radio.checked && radio.dataset.wasChecked) {
+                // If so, uncheck it
+                radio.checked = false;
+                radio.dataset.wasChecked = "";
+            } else {
+                // Uncheck all radios in the same group
+                var radios = document.getElementsByName(radio.name);
+                for (var i = 0; i < radios.length; i++) {
+                    radios[i].dataset.wasChecked = "";
+                }
+                // Set the current radio as checked
+                radio.dataset.wasChecked = "true";
+            }
+        }
+
+        function openModal(UnitFormID, Group_ID) {
+            $.ajax({
+                url: 'PMApprove/GetImages',
+                type: 'GET',
+                data: { UnitFormID: UnitFormID, GroupID: Group_ID, RoleID: 1 },
+                success: function (images) {
+                    // Update the modal with the fetched images
+                    var modalBody = $('#exampleModal .modal-body .row');
+                    modalBody.empty(); // Clear any previous images
+
+                    images.forEach(function (image) {
+                        var imageHtml = `
+                            <div class="col-6 position-relative">
+                                <a data-fslightbox="gallery" href="${image.FilePath}">
+                                    <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                                </a>
+                            </div>
+                        `;
+                        modalBody.append(imageHtml);
+                    });
+
+                    // Reinitialize fslightbox for the newly added images
+                    refreshFsLightbox(); // Call this function to reinitialize the lightbox
+
+                    // Show the modal
+                    var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+                    myModal.show();
+                },
+                error: function (error) {
+                    console.error('Failed to fetch images:', error);
+                }
+            });
+        }
+
+    </script>
+}
