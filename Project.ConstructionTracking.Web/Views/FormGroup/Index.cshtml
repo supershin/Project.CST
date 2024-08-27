@@ -464,17 +464,16 @@
                                     {
                                         <div class="mb-3">
                                             <a href="#!" class="form-label" onclick="toggleComments(event, '@item.GroupID')">
-                                                ความคิดเห็น:
+                                                ความคิดเห็นการผ่านแบบมีเงื่อนไข:
                                             </a>
-                                            <div class="collapse" id="collapseComments_@item.GroupID">
-                                                <textarea class="form-control mt-2" 
-                                                          rows="4" 
-                                                          style="text-align: left; white-space: pre-wrap;" 
-                                                          disabled
-                                                >ความเห็นจาก PE : @item.PC_Remark_PE &#013;ความเห็นจาก PM : @(PM_ActionType == "submit" ? item.PC_Remark_PM : "") &#013;ความเห็นจาก PJM : @(PJM_ActionType == "submit" ? item.PC_Remark_PJM : "")</textarea>
+                                            <div class="collapse show" id="collapseComments_@item.GroupID">
+                                                <!-- Added the 'show' class here -->
+                                                <textarea class="form-control mt-2"
+                                                          rows="4"
+                                                          style="text-align: left; white-space: pre-wrap;"
+                                                          disabled>ความเห็นจาก PE : @item.PC_Remark_PE &#013;ความเห็นจาก PM : @(PM_ActionType == "submit" ? item.PC_Remark_PM : "") &#013;ความเห็นจาก PJM : @(PJM_ActionType == "submit" ? item.PC_Remark_PJM : "")</textarea>
                                             </div>
                                         </div>
-
                                     }
                                 </div>
                             </div>
@@ -756,15 +755,8 @@
             event.stopPropagation(); // Prevent the event from bubbling up and triggering form submission
 
             var collapseElement = document.getElementById('collapseComments_' + groupId);
-            if (collapseElement.classList.contains('show')) {
-                // Collapse is currently shown, hide it
-                collapseElement.classList.remove('show');
-            } else {
-                // Collapse is currently hidden, show it
-                collapseElement.classList.add('show');
-            }
+            collapseElement.classList.toggle('show'); // Toggle the 'show' class
         }
-
 
     </script>
 

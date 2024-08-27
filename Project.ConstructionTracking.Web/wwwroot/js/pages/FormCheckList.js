@@ -244,17 +244,28 @@ $('#saveButton').on('click', function () {
 
     var pcRadioChecked = $('#pc-radio').is(':checked');
     if (pcRadioChecked) {
-        pcCheck = {
-            UnitFormID: packages[0]?.UnitFormID,
-            GroupID: packages[0]?.GroupID,
-            Remark: $('#Remark-PC').val(),
-            IsChecked: true
-        };
+        var remarkPC = $('#Remark-PC').val();
+        if (!remarkPC) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'กรุณาระบุเหตุผลเพื่อขออนุมัติการผ่านแบบมีเงื่อนไข.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            valid = false; // Mark the validation as failed
+        } else {
+            pcCheck = {
+                UnitFormID: packages[0]?.UnitFormID,
+                GroupID: packages[0]?.GroupID,
+                Remark: remarkPC,
+                IsChecked: true
+            };
+        }
     }
 
-    var data = new FormData();
-
     if (valid) {
+        var data = new FormData();
+
         packages.forEach((pkg, index) => {
             for (const key in pkg) {
                 data.append(`Packages[${index}].${key}`, pkg[key]);
@@ -317,6 +328,7 @@ $('#saveButton').on('click', function () {
 
     return false;
 });
+
 
 function deleteImage(resourceId) {
     Swal.fire({

@@ -260,8 +260,11 @@
                                                passconID="@group.PassConditionsID"
                                                value="6"
                                                onclick="toggleRadio(this, '@Model.ID')"
-                                        @(group.PC_StatusID == 6 ? "checked" : "")
-                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>
+                                               @(group.PC_StatusID == 6  || group.PC_StatusID == 8  || group.PC_StatusID == 9  ||
+                                                 group.PC_StatusID == 10 || group.PC_StatusID == 11 || group.PC_StatusID == 12 ||
+                                                 group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "checked" : "")
+                                               @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")
+                                        >
                                         <span class="form-check-label">ผ่านเพื่อส่ง PJM Head</span>
                                     </label>
                                     <label class="form-check form-check-inline">
@@ -269,8 +272,9 @@
                                                name="radios-inline-@Model.ID-@group.Group_ID"
                                                value="7"
                                                onclick="toggleRadio(this, '@Model.ID')"
-                                        @(group.PC_StatusID == 7 ? "checked" : "")
-                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>
+                                               @(group.PC_StatusID == 7 ? "checked" : "")
+                                               @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")
+                                        >
                                         <span class="form-check-label">ไม่ผ่าน</span>
                                     </label>
                                 </div>
