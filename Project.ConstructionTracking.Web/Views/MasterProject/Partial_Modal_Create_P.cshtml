@@ -1,8 +1,10 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@{
-}
+@{}
+
+@model Project.ConstructionTracking.Web.Models.MProjectModel.InformationProjectResp
+
 
 <div class="modal fade" id="modal-c" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg" role="document">
@@ -17,30 +19,35 @@
                         <label class="form-label">BU</label>
                         <select class="form-control" id="bu-type" name="bu-type">
                             <option value="0">กรุณาเลือก BU</option>
-                            <option value="1">BUG 1</option>
-                            <option value="2">BUG 2</option>
-                            <option value="3">BUG 3</option>
-                            <option value="4">BUG 4</option>
-                            <option value="5">SE</option>
+                            @foreach (var data in Model.BUList)
+                            {
+                                <option value="@data.BUID">@data.BUName</option>
+                            }
                         </select>
+                        <div class="invalid-feedback" id="bu-type-error"></div>
                     </div>
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">ประเภทโครงการ</label>
                         <select class="form-control" id="project-type" name="project-type">
                             <option value="0">กรุณาเลือกประเภทโครงการ</option>
-                            <option value="1">แนวราบ</option>
-                            <option value="2">แนวสูง</option>
+                            @foreach (var data in Model.ProjectTypeList)
+                            {
+                                <option value="@data.ProjectTypeID">@data.ProjectTypeName</option>
+                            }
                         </select>
+                        <div class="invalid-feedback" id="project-type-error"></div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">รหัสโครงการ</label>
-                        <input type="text" class="form-control" name="project-code">
+                        <input type="text" class="form-control" id="project-code" name="project-code">
+                        <div class="invalid-feedback" id="project-code-error"></div>
                     </div>
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">ชื่อโครงการ</label>
-                        <input type="text" class="form-control" name="project-name" >
+                        <input type="text" class="form-control" id="project-name" name="project-name">
+                        <div class="invalid-feedback" id="project-name-error"></div>
                     </div>
                 </div>
             </div>
@@ -59,21 +66,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>EST-BN-SH2101</td>
-                                    <td>SERENE</td>
-                                    <td>SDH2</td>
-                                    <td>บ้านเดี่ยว 2 ชั้น</td>
-                                    <td>
-                                        <select class="form-select">
-                                            <option value="1">S</option>
-                                            <option value="2">M</option>
-                                            <option value="3">L</option>
-                                            <option value="3">XL</option>
-                                            <!-- Add more options as needed -->
-                                        </select>
-                                    </td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -83,9 +75,9 @@
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     Cancel
                 </a>
-                <a href="#" class="btn btn-success ms-auto" data-bs-dismiss="modal">
+                <button id="project-create-save" class="btn btn-success ms-auto">
                     บันทึก
-                </a>
+                </button>
             </div>
         </div>
     </div>

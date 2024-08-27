@@ -108,122 +108,223 @@ const detail = {
         })
 
         $('#form-save').click(() => {
-            let typeData;
-            var data = null;
-            if ($('#form-id').val() === null || $('#form-id').val() === "") {
-                typeData = 1;
-                data = {
-                    TypeData: typeData,
-                    FormTypeID: id,
-                    FormName: $("#form-name").val(),
-                    FormDesc: $("#form-description").val(),
-                    Progress: $("#form-progress").val(),
-                    Duration: $("#form-duration").val(),
-                    QcList: $("#multiple-select-field").val()
-                }
-                detail.ActionForm(data);
+            event.preventDefault();
+
+            // Get the values from the input fields
+            var formName = document.getElementById('form-name').value;
+            var formDescription = document.getElementById('form-description').value;
+            var formProgress = document.getElementById('form-progress').value;
+            var formDuration = document.getElementById('form-duration').value;
+            var qcSelection = document.getElementById('multiple-select-field').selectedOptions;
+
+            // Clear previous error messages and styles
+            clearErrorsForm();
+
+            // Initialize validation flag
+            var isValid = true;
+
+            // Validate the input fields
+            if (formName.trim() === "") {
+                showError('form-name', 'formNameError', "กรุณากรอกข้อมูลชื่อฟอร์ม");
+                isValid = false;
             }
-            else {
-                typeData = 2;
-                data = {
-                    TypeData: typeData,
-                    FormTypeID: id,
-                    FormID: $('#form-id').val(),
-                    FormName: $("#form-name").val(),
-                    FormDesc: $("#form-description").val(),
-                    Progress: $("#form-progress").val(),
-                    Duration: $("#form-duration").val(),
-                    QcList: $("#multiple-select-field").val()
-                }
-                detail.ActionForm(data);
+            if (formDescription.trim() === "") {
+                showError('form-description', 'formDescriptionError', "กรุณากรอกข้อมูลรายละเอียด");
+                isValid = false;
             }
+            if (formProgress.trim() === "" || isNaN(formProgress) || formProgress < 0 || formProgress > 100) {
+                showError('form-progress', 'formProgressError', "กรุณากรอกข้อมูลที่ถูกต้องสำหรับ Progress (0-100%)");
+                isValid = false;
+            }
+            if (formDuration.trim() === "" || isNaN(formDuration) || formDuration <= 0) {
+                showError('form-duration', 'formDurationError', "กรุณากรอกข้อมูลที่ถูกต้องสำหรับ Duration (จำนวนวันมากกว่า 0)");
+                isValid = false;
+            }
+
+            // If all validations pass, proceed with form submission or further actions
+            if (isValid) {
+                let typeData;
+                var data = null;
+                if ($('#form-id').val() === null || $('#form-id').val() === "") {
+                    typeData = 1;
+                    data = {
+                        TypeData: typeData,
+                        FormTypeID: id,
+                        FormName: $("#form-name").val(),
+                        FormDesc: $("#form-description").val(),
+                        Progress: $("#form-progress").val(),
+                        Duration: $("#form-duration").val(),
+                        QcList: $("#multiple-select-field").val()
+                    }
+                    detail.ActionForm(data);
+                }
+                else {
+                    typeData = 2;
+                    data = {
+                        TypeData: typeData,
+                        FormTypeID: id,
+                        FormID: $('#form-id').val(),
+                        FormName: $("#form-name").val(),
+                        FormDesc: $("#form-description").val(),
+                        Progress: $("#form-progress").val(),
+                        Duration: $("#form-duration").val(),
+                        QcList: $("#multiple-select-field").val()
+                    }
+                    detail.ActionForm(data);
+                }
+            }
+            
         })
 
         $('#group-save').click(() => {
-            let typeData;
-            var data = null;
-            if ($('#group-id').val() === null || $('#group-id').val() === "") {
-                typeData = 1;
-                data = {
-                    TypeData: typeData,
-                    FormTypeID: id,
-                    FormName: $('#g-form-name').val(),
-                    FormID: $('#g-form-id').val(),
-                    GroupName: $('#group-name').val(),
-                    GroupID: $('#group-id').val()
-                }
-                detail.ActionGroup(data);
+            event.preventDefault();
+
+            // Get the values from the input fields
+            var groupName = document.getElementById('group-name').value;
+
+            // Clear previous error messages and styles
+            clearErrorsGroup();
+
+            // Initialize validation flag
+            var isValid = true;
+
+            // Validate the input fields
+            if (groupName.trim() === "") {
+                showError('group-name', 'groupNameError', "กรุณากรอกข้อมูลชื่อกลุ่มฟอร์ม");
+                isValid = false;
             }
-            else {
-                typeData = 2;
-                data = {
-                    TypeData: typeData,
-                    FormTypeID: id,
-                    FormName: $('#g-form-name').val(),
-                    FormID: $('#g-form-id').val(),
-                    GroupName: $('#group-name').val(),
-                    GroupID: $('#group-id').val()
+
+            // If all validations pass, proceed with form submission or further actions
+            if (isValid) {
+                let typeData;
+                var data = null;
+                if ($('#group-id').val() === null || $('#group-id').val() === "") {
+                    typeData = 1;
+                    data = {
+                        TypeData: typeData,
+                        FormTypeID: id,
+                        FormName: $('#g-form-name').val(),
+                        FormID: $('#g-form-id').val(),
+                        GroupName: $('#group-name').val(),
+                        GroupID: $('#group-id').val()
+                    }
+                    detail.ActionGroup(data);
                 }
-                detail.ActionGroup(data);
+                else {
+                    typeData = 2;
+                    data = {
+                        TypeData: typeData,
+                        FormTypeID: id,
+                        FormName: $('#g-form-name').val(),
+                        FormID: $('#g-form-id').val(),
+                        GroupName: $('#group-name').val(),
+                        GroupID: $('#group-id').val()
+                    }
+                    detail.ActionGroup(data);
+                }
             }
+            
         })
 
         $('#package-save').click(() => {
-            let typeData;
-            var data = null;
-            if ($('#package-id').val() === null || $('#package-id').val() === "") {
-                typeData = 1;
-                data = {
-                    TypeData: typeData,
-                    FormTypeID: id,
-                    PackageName: $('#package-name').val(),
-                    PackageID: $('#package-id').val(),
-                    GroupName: $('#p-form-name').val(),
-                    GroupID: $('#p-form-id').val()
-                }
-                detail.ActionPackage(data);
+            event.preventDefault();
+
+            // Get the values from the input fields
+            var packageName = document.getElementById('package-name').value;
+
+            // Clear previous error messages and styles
+            clearErrorsPackage();
+
+            // Initialize validation flag
+            var isValid = true;
+
+            // Validate the input fields
+            if (packageName.trim() === "") {
+                showError('package-name', 'packageNameError', "กรุณากรอกข้อมูลชื่อแพ็คเกจฟอร์ม");
+                isValid = false;
             }
-            else {
-                typeData = 2;
-                data = {
-                    TypeData: typeData,
-                    FormTypeID: id,
-                    PackageName: $('#package-name').val(),
-                    PackageID: $('#package-id').val(),
-                    GroupName: $('#p-form-name').val(),
-                    GroupID: $('#p-form-id').val()
+
+            // If all validations pass, proceed with form submission or further actions
+            if (isValid) {
+                let typeData;
+                var data = null;
+                if ($('#package-id').val() === null || $('#package-id').val() === "") {
+                    typeData = 1;
+                    data = {
+                        TypeData: typeData,
+                        FormTypeID: id,
+                        PackageName: $('#package-name').val(),
+                        PackageID: $('#package-id').val(),
+                        GroupName: $('#p-form-name').val(),
+                        GroupID: $('#p-form-id').val()
+                    }
+                    detail.ActionPackage(data);
                 }
-                detail.ActionPackage(data);
+                else {
+                    typeData = 2;
+                    data = {
+                        TypeData: typeData,
+                        FormTypeID: id,
+                        PackageName: $('#package-name').val(),
+                        PackageID: $('#package-id').val(),
+                        GroupName: $('#p-form-name').val(),
+                        GroupID: $('#p-form-id').val()
+                    }
+                    detail.ActionPackage(data);
+                }
             }
+            
         })
 
         $('#check-save').click(() => {
-            let typeData;
-            var data = null;
-            if ($('#check-id').val() === null || $('#check-id').val() === "") {
-                typeData = 1;
-                data = {
-                    TypeData: typeData,
-                    FormTypeID: id,
-                    PackageName: $('#c-form-name').val(),
-                    PackageID: $('#c-form-id').val(),
-                    CheckListName: $('#check-name').val(),
-                    CheckListID: $('#check-id').val()
-                }
-                detail.ActionCheckList(data);
+            // Prevent the modal from closing immediately
+            event.preventDefault();
+
+            // Get the values from the input fields
+            var checkName = document.getElementById('check-name').value;
+
+            // Clear previous error messages and styles
+            clearErrorsChecklist();
+
+            // Initialize validation flag
+            var isValid = true;
+
+            // Validate the input fields
+            if (checkName.trim() === "") {
+                showError('check-name', 'checkNameError', "กรุณากรอกข้อมูลชื่อฟอร์มรายการตรวจสอบ");
+                isValid = false;
             }
-            else {
-                typeData = 2;
-                data = {
-                    TypeData: typeData,
-                    FormTypeID: id,
-                    PackageName: $('#c-form-name').val(),
-                    PackageID: $('#c-form-id').val(),
-                    CheckListName: $('#check-name').val(),
-                    CheckListID: $('#check-id').val()
+
+            // If all validations pass, proceed with form submission or further actions
+            if (isValid) {
+                let typeData;
+                var data = null;
+                if ($('#check-id').val() === null || $('#check-id').val() === "") {
+                    typeData = 1;
+                    data = {
+                        TypeData: typeData,
+                        FormTypeID: id,
+                        PackageName: $('#c-form-name').val(),
+                        PackageID: $('#c-form-id').val(),
+                        CheckListName: $('#check-name').val(),
+                        CheckListID: $('#check-id').val()
+                    }
+                    detail.ActionCheckList(data);
                 }
-                detail.ActionCheckList(data);
+                else {
+                    typeData = 2;
+                    data = {
+                        TypeData: typeData,
+                        FormTypeID: id,
+                        PackageName: $('#c-form-name').val(),
+                        PackageID: $('#c-form-id').val(),
+                        CheckListName: $('#check-name').val(),
+                        CheckListID: $('#check-id').val()
+                    }
+                    detail.ActionCheckList(data);
+                }
             }
+            
         })
     },
     AjaxGrid: function (id) {
@@ -273,6 +374,7 @@ const detail = {
                                     var qcSelect = $('#multiple-select-field');
                                     qcSelect.val(resp.data.QcLists.map(qc => qc.ID)).trigger('change');
 
+                                    clearErrorsForm();
                                     // Show the modal
                                     $("#partial-modal-form").modal('show');
                                 }
@@ -361,7 +463,7 @@ const detail = {
                         $('#g-form-id').val('');
                         $('#group-name').val('');
                         $('#group-id').val('');
-
+                    
                         // Retrieve data
                         var groupId = $(e.currentTarget).attr('data-id');
                         console.log(id ,value)
@@ -384,6 +486,7 @@ const detail = {
                                     $('#group-name').val(resp.data.Name);
                                     $('#group-id').val(resp.data.ID);
 
+                                    clearErrorsGroup();
                                     // Show the modal
                                     $("#partial-modal-group").modal('show');
                                 }
@@ -497,6 +600,7 @@ const detail = {
                                     $('#package-name').val(resp.data.Name);
                                     $('#package-id').val(resp.data.ID);
 
+                                    clearErrorsPackage();
                                     // Show the modal
                                     $("#partial-modal-package").modal('show');
                                 }
@@ -607,6 +711,7 @@ const detail = {
                                     $('#check-name').val(resp.data.Name);
                                     $('#check-id').val(resp.data.ID);
 
+                                    clearErrorsChecklist();
                                     // Show the modal
                                     $("#partial-modal-checklist").modal('show');
                                 }
@@ -1217,4 +1322,74 @@ function FPCheckboxChange(checkboxes, prefixText) {
     } else {
         $("#modal-checklist").off('click');
     }
+}
+
+function showError(inputId, errorId, errorMessage) {
+    // Apply red border to the input field
+    document.getElementById(inputId).classList.add('is-invalid');
+
+    // Display the error message below the input field
+    var errorElement = document.getElementById(errorId);
+    errorElement.style.display = 'block';
+    errorElement.textContent = errorMessage;
+}
+
+function clearErrorsForm() {
+    // Remove error styles and hide error messages
+    var inputs = ['form-name', 'form-description', 'form-progress', 'form-duration', 'multiple-select-field'];
+    inputs.forEach(function (inputId) {
+        document.getElementById(inputId).classList.remove('is-invalid');
+    });
+
+    var errorIds = ['formNameError', 'formDescriptionError', 'formProgressError', 'formDurationError', 'qcError'];
+    errorIds.forEach(function (errorId) {
+        var errorElement = document.getElementById(errorId);
+        errorElement.style.display = 'none';
+        errorElement.textContent = '';
+    });
+}
+
+function clearErrorsGroup() {
+    // Remove error styles and hide error messages
+    var inputs = ['group-name'];
+    inputs.forEach(function (inputId) {
+        document.getElementById(inputId).classList.remove('is-invalid');
+    });
+
+    var errorIds = ['groupNameError'];
+    errorIds.forEach(function (errorId) {
+        var errorElement = document.getElementById(errorId);
+        errorElement.style.display = 'none';
+        errorElement.textContent = '';
+    });
+}
+
+function clearErrorsPackage() {
+    // Remove error styles and hide error messages
+    var inputs = ['package-name'];
+    inputs.forEach(function (inputId) {
+        document.getElementById(inputId).classList.remove('is-invalid');
+    });
+
+    var errorIds = ['packageNameError'];
+    errorIds.forEach(function (errorId) {
+        var errorElement = document.getElementById(errorId);
+        errorElement.style.display = 'none';
+        errorElement.textContent = '';
+    });
+}
+
+function clearErrorsChecklist() {
+    // Remove error styles and hide error messages
+    var inputs = ['check-name'];
+    inputs.forEach(function (inputId) {
+        document.getElementById(inputId).classList.remove('is-invalid');
+    });
+
+    var errorIds = ['checkNameError'];
+    errorIds.forEach(function (errorId) {
+        var errorElement = document.getElementById(errorId);
+        errorElement.style.display = 'none';
+        errorElement.textContent = '';
+    });
 }

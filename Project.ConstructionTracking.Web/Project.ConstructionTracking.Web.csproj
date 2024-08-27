@@ -19,6 +19,8 @@
     <Folder Include="Views\MasterCompany\" />
     <Folder Include="Views\MasterUser\" />
     <Folder Include="Models\MFormModel\" />
+    <Folder Include="Models\MCompanyModel\" />
+    <Folder Include="Models\MUnitModel\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,6 +51,8 @@
     <None Remove="Views\MasterCompany\" />
     <None Remove="Views\MasterUser\" />
     <None Remove="Models\MFormModel\" />
+    <None Remove="Models\MCompanyModel\" />
+    <None Remove="Models\MUnitModel\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="Views\FormOverall\PartialFormList.cshtml" />

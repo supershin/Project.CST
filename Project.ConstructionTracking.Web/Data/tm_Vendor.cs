@@ -11,6 +11,7 @@ namespace Project.ConstructionTracking.Web.Data
         public tm_Vendor()
         {
             tm_Unit = new HashSet<tm_Unit>();
+            tr_CompanyVendor = new HashSet<tr_CompanyVendor>();
             tr_UnitForm = new HashSet<tr_UnitForm>();
         }
 
@@ -19,9 +20,9 @@ namespace Project.ConstructionTracking.Web.Data
         [StringLength(200)]
         [Unicode(false)]
         public string? Name { get; set; }
-        [StringLength(20)]
+        [StringLength(100)]
         [Unicode(false)]
-        public string? TaxNo { get; set; }
+        public string? Email { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
@@ -32,6 +33,8 @@ namespace Project.ConstructionTracking.Web.Data
 
         [InverseProperty("Vendor")]
         public virtual ICollection<tm_Unit> tm_Unit { get; set; }
+        [InverseProperty("Vendor")]
+        public virtual ICollection<tr_CompanyVendor> tr_CompanyVendor { get; set; }
         [InverseProperty("Vendor")]
         public virtual ICollection<tr_UnitForm> tr_UnitForm { get; set; }
     }

@@ -22,7 +22,8 @@
                 <div class="form-selectgroup-boxes row mb-3">
                     <div class="col-lg-12">
                         <label class="form-label">ชื่อแพ็คเกจฟอร์ม</label>
-                        <input id="check-name" type="text" class="form-control" placeholder="Your Form Group Name">
+                        <input id="check-name" type="text" class="form-control" placeholder="Your Form Package Name">
+                        <div id="checkNameError" class="text-danger" style="display:none;"></div>
                         <input type="hidden" id="check-id" />
                     </div>
                 </div>
@@ -31,7 +32,7 @@
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     ยกเลิก
                 </a>
-                <button id="check-save" href="#" class="btn btn-success ms-auto" data-bs-dismiss="modal">
+                <button id="check-save" href="#" class="btn btn-success ms-auto">
                     บันทึก
                 </button>
             </div>
