@@ -20,6 +20,7 @@
     var PM_StatusID = FormGroupDetail?.PM_StatusID;
     var PM_Remark = FormGroupDetail?.PM_Remark;
     var PJM_ActionType = FormGroupDetail?.PJM_ActionType;
+    var PJM_Remark = FormGroupDetail?.PJM_Remark;
     var PJM_StatusID = FormGroupDetail?.PJM_StatusID;
     var FilePath = FormGroupDetail?.FilePath;
 
@@ -139,7 +140,7 @@
         display: none;
     }
 
-    .custom-btn {
+  .custom-btn {
     width: 100px;  /* Ensures consistent width */
     height: 45px;  /* Ensures consistent height */
     padding: 10px;  /* Adjust padding for a consistent look */
@@ -148,7 +149,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-}
+  }
 
 .custom-btn i {
     margin-right: 5px; /* Optional: spacing for icons if text is also present */
@@ -311,7 +312,7 @@
         {
             <div class="container mt-1 mb-2">
             <div class="row">
-                @if (UnitFormstatusID == 2 || UnitFormstatusID == 3 || UnitFormstatusID == 6)
+                    @if (UnitFormstatusID == 2 || UnitFormstatusID == 3 || UnitFormstatusID == 6 || UnitFormstatusID == 9)
                 {
                     <!-- In Progress Card -->
                     <div class="col-md-4">
@@ -322,7 +323,7 @@
                                 </button> *@
                                 <br>
                                 <h3 id="progress-title" class="card-title">@UnitFormstatus</h3>
-                                <p id="progress-text" class="card-text">ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "")</p>
+                                    <p id="progress-text" class="card-text">ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "")</p>
                             </div>
                         </div>
                     </div>
@@ -337,7 +338,10 @@
                                     <span class="status-text"><i class="fa-regular fa-circle-check"></i></span>
                                 </button>
                                 <h3 id="approved-title" class="card-title">@UnitFormstatus</h3>
-                                <p id="progress-text" class="card-text">ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "")</p>
+                                    <p id="progress-text" class="card-text">
+                                        ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "ไม่มีความคิดเห็น") <br>
+                                        ความคิดเห็น PJM : @(PJM_ActionType == "submit" ? PJM_Remark : "ไม่มีความคิดเห็น")
+                                    </p>
                             </div>
                         </div>
                     </div>
@@ -352,7 +356,10 @@
                                     <span class="status-text"><i class="fa-regular fa-circle-xmark"></i></span>
                                 </button>
                                 <h3 id="rejected-title" class="card-title">@UnitFormstatus</h3>
-                                        <p id="progress-text" class="card-text">ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "")</p>
+                                <p id="progress-text" class="card-text">
+                                    ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "ไม่มีความคิดเห็น") <br>
+                                    ความคิดเห็น PJM : @(PJM_ActionType == "submit" ? PJM_Remark : "ไม่มีความคิดเห็น")
+                                </p>
                             </div>
                         </div>
                     </div>

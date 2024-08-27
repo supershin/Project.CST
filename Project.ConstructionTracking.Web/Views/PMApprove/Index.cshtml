@@ -324,6 +324,27 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="row">
+                                <div class="col-12">
+                                    <label class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="radios-inline-approval"
+                                               value="@(LockStatusID != null ? 6 : 4)"
+                                        @(Model.PM_StatusID == (LockStatusID != null ? 6 : 4) ? "checked" : "")
+                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>
+                                        <span class="form-check-label">
+                                            @(LockStatusID != null ? "ผ่านเพื่อส่ง PJM Head" : "อนุมัติ")
+                                        </span>
+                                    </label>
+                                    <label class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="radios-inline-approval" value="5"
+                                        @(Model.PM_StatusID == 5 ? "checked" : "")
+                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>
+                                        <span class="form-check-label">ไม่อนุมัติ</span>
+                                    </label>
+                                </div>
+                                <div class="col-12">
+                                    <textarea id="mainRemark" rows="2" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ"
+                                    @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>@Model.PM_Remarkaction</textarea>
+                                </div>
                                 @if (PM_Actiontype == "submit")
                                 {
                                     if (UnitFormStatusID == 2)
@@ -351,28 +372,6 @@
                                         </div>
                                     </div>
                                 }
-                                <div class="col-12">
-                                    <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="radios-inline-approval"
-                                               value="@(LockStatusID != null ? 6 : 4)"
-                                        @(Model.PM_StatusID == (LockStatusID != null ? 6 : 4) ? "checked" : "")
-                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>
-                                        <span class="form-check-label">
-                                            @(LockStatusID != null ? "ผ่านเพื่อส่ง PJM Head" : "อนุมัติ")
-                                        </span>
-                                    </label>
-                                    <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="radios-inline-approval" value="5"
-                                        @(Model.PM_StatusID == 5 ? "checked" : "")
-                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>
-                                        <span class="form-check-label">ไม่อนุมัติ</span>
-                                    </label>
-                                </div>
-                                <div class="col-12">
-                                    <textarea id="mainRemark" rows="2" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ"
-                                    @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>@Model.PM_Remarkaction</textarea>
-                                </div>
-
                             </div>
                         </div>
                     </div>

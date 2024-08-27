@@ -90,6 +90,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               PM_StatusID = pmAction != null ? pmAction.StatusID : null,
                               PM_Remark = pmAction != null ? pmAction.Remark : null,
                               PJM_ActionType = pjmAction != null ? pjmAction.ActionType : null,
+                              PJM_Remark = pjmAction != null ? pjmAction.Remark : null,
                               PJM_StatusID = pjmAction != null ? pjmAction.StatusID : null
                           }).FirstOrDefault();
 
@@ -141,6 +142,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     6 => "PM ส่งเรื่องอนุมัติการผ่านแบบมีเงื่อนไขให้ PJM พิจารณา",
                     7 => "PJM อนุมัติคำขอ",
                     8 => "PJM ไม่อนุมัติคำขอ",
+                    9 => "PJM กำลังตรวจ",
                     _ => "สถานะไม่ทราบ"
                 },
                 PE_ActionType = result.PE_ActionType,
@@ -149,6 +151,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 PM_StatusID = result.PM_StatusID,
                 PM_Remark = result.PM_Remark,
                 PJM_ActionType = result.PJM_ActionType,
+                PJM_Remark = result.PJM_Remark,
                 PJM_StatusID = result.PJM_StatusID,
                 FilePath = filePath,
                 FileName = fileName

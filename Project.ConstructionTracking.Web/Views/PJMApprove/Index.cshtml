@@ -470,146 +470,226 @@
                 });
             }
 
-            document.addEventListener("DOMContentLoaded", function () {
-                var dropZone = document.getElementById("drop-zone");
-                var fileInput = document.getElementById("file-input");
-                var previewContainer = document.getElementById("preview-container");
+        // document.addEventListener("DOMContentLoaded", function () {
+        //     var dropZone = document.getElementById("drop-zone");
+        //     var fileInput = document.getElementById("file-input");
+        //     var previewContainer = document.getElementById("preview-container");
 
-                dropZone.addEventListener("click", function (e) {
-                    // Prevent triggering file input click when clicking the remove button
-                    if (e.target.classList.contains("remove-button")) {
-                        return;
-                    }
-                    fileInput.click();
-                });
+        //     dropZone.addEventListener("click", function (e) {
+        //         // Prevent triggering file input click when clicking the remove button
+        //         if (e.target.classList.contains("remove-button")) {
+        //             return;
+        //         }
+        //         fileInput.click();
+        //     });
 
-                fileInput.addEventListener("change", function () {
-                    if (fileInput.files.length) {
-                        previewFiles(fileInput.files);
-                    }
-                });
+        //     fileInput.addEventListener("change", function () {
+        //         if (fileInput.files.length) {
+        //             previewFiles(fileInput.files);
+        //         }
+        //     });
 
-                dropZone.addEventListener("dragover", function (e) {
-                    e.preventDefault();
-                    dropZone.classList.add("drop-zone--over");
-                });
+        //     dropZone.addEventListener("dragover", function (e) {
+        //         e.preventDefault();
+        //         dropZone.classList.add("drop-zone--over");
+        //     });
 
-                dropZone.addEventListener("dragleave", function () {
-                    dropZone.classList.remove("drop-zone--over");
-                });
+        //     dropZone.addEventListener("dragleave", function () {
+        //         dropZone.classList.remove("drop-zone--over");
+        //     });
 
-                dropZone.addEventListener("drop", function (e) {
-                    e.preventDefault();
-                    fileInput.files = e.dataTransfer.files;
-                    previewFiles(fileInput.files);
-                });
+        //     dropZone.addEventListener("drop", function (e) {
+        //         e.preventDefault();
+        //         fileInput.files = e.dataTransfer.files;
+        //         previewFiles(fileInput.files);
+        //     });
 
-                function previewFiles(files) {
-                    previewContainer.innerHTML = ""; // Clear previous previews
-                    Array.from(files).forEach(file => {
-                        if (file.type.startsWith("image/")) {
-                            const reader = new FileReader();
-                            reader.readAsDataURL(file);
-                            reader.onload = function (event) {
-                                const img = document.createElement("img");
-                                img.src = event.target.result;
-                                const previewImage = document.createElement("div");
-                                previewImage.className = "col-4 preview-image";
+        //     function previewFiles(files) {
+        //         previewContainer.innerHTML = ""; // Clear previous previews
+        //         Array.from(files).forEach(file => {
+        //             if (file.type.startsWith("image/")) {
+        //                 const reader = new FileReader();
+        //                 reader.readAsDataURL(file);
+        //                 reader.onload = function (event) {
+        //                     const img = document.createElement("img");
+        //                     img.src = event.target.result;
+        //                     const previewImage = document.createElement("div");
+        //                     previewImage.className = "col-4 preview-image";
 
-                                const removeButton = document.createElement("button");
-                                removeButton.className = "remove-button";
-                                removeButton.innerHTML = "&times;";
-                                removeButton.addEventListener("click", function (e) {
-                                    e.stopPropagation(); // Stop event from bubbling up to the dropzone
-                                    previewImage.remove();
-                                });
+        //                     const removeButton = document.createElement("button");
+        //                     removeButton.className = "remove-button";
+        //                     removeButton.innerHTML = "&times;";
+        //                     removeButton.addEventListener("click", function (e) {
+        //                         e.stopPropagation(); // Stop event from bubbling up to the dropzone
+        //                         previewImage.remove();
 
-                                previewImage.appendChild(img);
-                                previewImage.appendChild(removeButton);
-                                previewContainer.appendChild(previewImage);
-                            };
-                        }
-                    });
+        //                         // Check if all images are removed, and if so, reset the file input
+        //                         if (previewContainer.children.length === 0) {
+        //                             fileInput.value = ""; // Reset the file input
+        //                         }
+        //                     });
+
+        //                     previewImage.appendChild(img);
+        //                     previewImage.appendChild(removeButton);
+        //                     previewContainer.appendChild(previewImage);
+        //                 };
+        //             }
+        //         });
+        //     }
+        // });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var dropZone = document.getElementById("drop-zone");
+            var fileInput = document.getElementById("file-input");
+            var previewContainer = document.getElementById("preview-container");
+            var filesArray = [];
+
+            dropZone.addEventListener("click", function (e) {
+                if (e.target.classList.contains("remove-button")) {
+                    return;
+                }
+                fileInput.click();
+            });
+
+            fileInput.addEventListener("change", function () {
+                if (fileInput.files.length) {
+                    addFilesToPreview(fileInput.files);
                 }
             });
 
-
-    function saveOrSubmit(actionType) {
-        var data = new FormData();
-
-        data.append("ActionType", actionType);
-        data.append("Remark", document.getElementById("mainRemark").value);
-        data.append("UnitFormID", document.getElementById("UnitFormID").value);
-        data.append("ProjectID", document.getElementById("ProjectID").value);
-        data.append("UnitID", document.getElementById("UnitID").value);
-        data.append("FormID", document.getElementById("FormID").value);
-
-        var passConditions = [];
-        $("input[data-action='gr-pass']:checked").each(function () {
-            let group_id = $(this).attr("group-id");
-            let passconID = $(this).attr("passconID");
-            let statusID = $(this).val();
-            let remark = document.getElementById(`remark_${group_id}`).value;
-
-            passConditions.push({
-                PC_ID: passconID,
-                Group_ID: group_id,
-                StatusID: statusID,
-                PJM_Remark: remark
+            dropZone.addEventListener("dragover", function (e) {
+                e.preventDefault();
+                dropZone.classList.add("drop-zone--over");
             });
+
+            dropZone.addEventListener("dragleave", function () {
+                dropZone.classList.remove("drop-zone--over");
+            });
+
+            dropZone.addEventListener("drop", function (e) {
+                e.preventDefault();
+                addFilesToPreview(e.dataTransfer.files);
+            });
+
+            function addFilesToPreview(files) {
+                Array.from(files).forEach(file => {
+                    // Check if the file is already in the array
+                    if (!filesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
+                        filesArray.push(file);
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = function (event) {
+                            const img = document.createElement("img");
+                            img.src = event.target.result;
+                            const previewImage = document.createElement("div");
+                            previewImage.className = "col-4 preview-image";
+
+                            const removeButton = document.createElement("button");
+                            removeButton.className = "remove-button";
+                            removeButton.innerHTML = "&times;";
+                            removeButton.addEventListener("click", function (e) {
+                                e.stopPropagation(); // Stop event from bubbling up to the dropzone
+                                filesArray = filesArray.filter(f => f !== file);
+                                updateFileInput();
+                                previewImage.remove();
+                            });
+
+                            previewImage.appendChild(img);
+                            previewImage.appendChild(removeButton);
+                            previewContainer.appendChild(previewImage);
+                        };
+                    }
+                });
+                updateFileInput();
+            }
+
+            function updateFileInput() {
+                // Clear the file input so that it can be used to add more files
+                fileInput.value = '';
+
+                // Create a new DataTransfer object to hold the remaining files
+                const dataTransfer = new DataTransfer();
+                filesArray.forEach(file => dataTransfer.items.add(file));
+                fileInput.files = dataTransfer.files;
+            }
         });
 
-        if (passConditions.length > 0) {
-            data.append("PassConditionsIUD", JSON.stringify(passConditions));
-        }
 
-        // Collect images if any
-        var files = document.getElementById("file-input").files;
-        for (var i = 0; i < files.length; i++) {
-            data.append("Images", files[i]);
-        }
+        function saveOrSubmit(actionType) {
+            var data = new FormData();
 
-        console.log(data);
+            data.append("ActionType", actionType);
+            data.append("Remark", document.getElementById("mainRemark").value);
+            data.append("UnitFormID", document.getElementById("UnitFormID").value);
+            data.append("ProjectID", document.getElementById("ProjectID").value);
+            data.append("UnitID", document.getElementById("UnitID").value);
+            data.append("FormID", document.getElementById("FormID").value);
 
-        // Send the data using AJAX
-        $.ajax({
-            url: '@ViewBag.baseUrl' + '/PJMApprove/SaveOrSubmit', // Ensure the URL matches your controller action
-            type: 'POST',
-            contentType: false,
-            processData: false,
-            data: data,
-            success: function (res) {
-                if (res.success) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Data has been successfully ' + actionType + 'd.',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.reload();
-                        }
-                    });
-                } else {
+            var passConditions = [];
+            $("input[data-action='gr-pass']:checked").each(function () {
+                let group_id = $(this).attr("group-id");
+                let passconID = $(this).attr("passconID");
+                let statusID = $(this).val();
+                let remark = document.getElementById(`remark_${group_id}`).value;
+
+                passConditions.push({
+                    PC_ID: passconID,
+                    Group_ID: group_id,
+                    StatusID: statusID,
+                    PJM_Remark: remark
+                });
+            });
+
+            if (passConditions.length > 0) {
+                data.append("PassConditionsIUD", JSON.stringify(passConditions));
+            }
+
+            // Collect images if any
+            var files = document.getElementById("file-input").files;
+            for (var i = 0; i < files.length; i++) {
+                data.append("Images", files[i]);
+            }
+
+            console.log(data);
+
+            // Send the data using AJAX
+            $.ajax({
+                url: '@ViewBag.baseUrl' + 'PJMApprove/SaveOrSubmit', // Ensure the URL matches your controller action
+                type: 'POST',
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (res) {
+                    if (res.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Data has been successfully ' + actionType + 'd.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to ' + actionType + ' the data.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
                     Swal.fire({
                         title: 'Error!',
-                        text: 'Failed to ' + actionType + ' the data.',
+                        text: 'An error occurred while processing the request.',
                         icon: 'error',
                         confirmButtonText: 'OK'
                     });
                 }
-            },
-            error: function (xhr, status, error) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'An error occurred while processing the request.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
-        });
-    }
-
+            });
+        }
 
     </script>
 }

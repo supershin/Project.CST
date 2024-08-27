@@ -247,16 +247,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                     //UpdateBy = package.UserID
                 };
                 _context.tr_UnitForm.Add(unitForm);
-                //UnitFormIDUse = unitForm.ID;
             }
-            //else
-            //{
-            //    unitForm.StatusID = 18;
-            //    unitForm.UpdateDate = DateTime.Now;
-            //    unitForm.UpdateBy = package.UserID;
-            //    UnitFormIDUse = unitForm.ID;
-            //}
-
             UnitFormIDUse = unitForm.ID;
             _context.SaveChanges();
         }
@@ -406,25 +397,6 @@ public class FormChecklistRepo : IFormChecklistRepo
             InsertUnitFormActionLogPassCondition(passCondition, "Checked");
         }
         _context.SaveChanges();
-
-
-        //var passConditionID = passCondition.ID;
-
-        //// Update tr_UnitFormAction 
-        //var unitFormAction = _context.tr_UnitFormAction
-        //    .Where(ua => ua.UnitFormID == unitFormIDUse)
-        //    .FirstOrDefault();
-
-        //if (unitFormAction != null)
-        //{
-        //    // Update existing record
-        //    //unitFormAction.PassConditionID = passConditionID;
-        //    unitFormAction.ActionDate = DateTime.Now;
-        //    unitFormAction.UpdateDate = DateTime.Now;
-        //    //unitFormAction.Remark = pcCheck.Remark; 
-
-        //    _context.SaveChanges();
-        //}
     }
 
     private void InsertOrUpdatePassConditionUnCheck(PackageModel pcCheck, Guid unitFormIDUse)
@@ -446,21 +418,6 @@ public class FormChecklistRepo : IFormChecklistRepo
             }
         }       
         _context.SaveChanges();
-
-        // Update tr_UnitFormAction 
-        //var unitFormAction = _context.tr_UnitFormAction
-        //    .Where(ua => ua.UnitFormID == unitFormIDUse)
-        //    .FirstOrDefault();
-
-        //if (unitFormAction != null)
-        //{
-        //    // Update existing record
-        //    //unitFormAction.PassConditionID = null;
-        //    unitFormAction.UpdateDate = DateTime.Now;
-        //    //unitFormAction.Remark = null;
-
-        //    _context.SaveChanges();
-        //}
     }
 
     private void InsertImagesPE(FormChecklistIUDModel model, int formID , int groupID ,Guid unitFormIDUse, Guid? userID, int RoleID)

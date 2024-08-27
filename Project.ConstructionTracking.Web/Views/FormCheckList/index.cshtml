@@ -86,13 +86,13 @@
         max-height: 100px;
     }
 
-    .preview-image img {
-        max-width: 100%;
-        max-height: 100%;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        display: block;
-    }
+        .preview-image img {
+            max-width: 100%;
+            max-height: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: block;
+        }
 
     .remove-button {
         position: absolute;
@@ -260,6 +260,7 @@
                                 @if (Model.ListStatus != null && Model.ListStatus.Count > 0)
                                 {
                                     var imageList = Model.ListStatus.FirstOrDefault()?.Form_getListImagePasswithCondition;
+                                    <input type="hidden" name="hd_imageListcnt" value="@imageList.Count" ID="hd_imageListcnt" />
 
                                     if (imageList != null && imageList.Count > 0)
                                     {
@@ -307,32 +308,31 @@
                                             <p class="drop-zone-text">
                                                 <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
                                             </p>
-                                            <input type="file" id="file-input" class="drop-zone-input" name="PcCheck.Images" multiple>
+                                            <input type="file" id="file-input" class="drop-zone-input" multiple>
+                                            <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
                                         </div>
-                                        <div id="preview-container" class="row preview-container"></div>
                                     }
-                                    else if (UnitFormStatusID == 8 && PJM_ActionType == "submit")
+                                    else if (UnitFormStatusID == 8 && PJM_ActionType == "submit" || UnitFormStatusID == 9 && PJM_ActionType == "save")
                                     {
 
                                         <div id="drop-zone" class="drop-zone">
                                             <p class="drop-zone-text">
                                                 <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
                                             </p>
-                                            <input type="file" id="file-input" class="drop-zone-input" name="PcCheck.Images" multiple>
+                                            <input type="file" id="file-input" class="drop-zone-input" multiple>
+                                            <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
                                         </div>
-                                        <div id="preview-container" class="row preview-container"></div>
                                     }
                                 }
                                 else
                                 {
-
                                     <div id="drop-zone" class="drop-zone">
                                         <p class="drop-zone-text">
                                             <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
                                         </p>
-                                        <input type="file" id="file-input" class="drop-zone-input" name="PcCheck.Images" multiple>
+                                        <input type="file" id="file-input" class="drop-zone-input" multiple>
+                                        <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
                                     </div>
-                                    <div id="preview-container" class="row preview-container"></div>
                                 }
                             </div>
                             <div class="col-12">
