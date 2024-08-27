@@ -4,6 +4,7 @@
 @{
 }
 @model Project.ConstructionTracking.Web.Models.MFormModel.FormTypeDetailModel
+
 <div class="modal fade" id="partial-modal-form" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -15,27 +16,31 @@
                 <div class="row mb-3">
                     <div class="col-lg-12">
                         <label class="form-label">ชื่อฟอร์ม</label>
-                        <input id="form-id" type="hidden"/>
+                        <input id="form-id" type="hidden" />
                         <input id="form-name" type="text" class="form-control" placeholder="กรุณากรอกข้อมูลชื่อฟอร์ม">
+                        <div id="formNameError" class="text-danger" style="display:none;"></div>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-lg-12">
                         <label class="form-label">รายละเอียด</label>
                         <input id="form-description" type="text" class="form-control" placeholder="กรุณากรอกข้อมูลรายละเอียด">
+                        <div id="formDescriptionError" class="text-danger" style="display:none;"></div>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-lg-6">
                         <div class="mb-3">
                             <label class="form-label">Progress</label>
-                            <input id="form-progress" type="text" class="form-control" placeholder="เปอเซ็นต์การทำงาน(%)">
+                            <input id="form-progress" type="number" class="form-control" placeholder="เปอเซ็นต์การทำงาน(%)" step="0.01">
+                            <div id="formProgressError" class="text-danger" style="display:none;"></div>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="mb-3">
                             <label class="form-label">Duration</label>
-                            <input id ="form-duration" type="text" class="form-control" placeholder="ระยะเวลาทำงาน (วัน)">
+                            <input id="form-duration" type="number" class="form-control" placeholder="ระยะเวลาทำงาน (วัน)">
+                            <div id="formDurationError" class="text-danger" style="display:none;"></div>
                         </div>
                     </div>
                 </div>
@@ -51,6 +56,7 @@
                             }
                             <!-- Add more options as needed -->
                         </select>
+                        <div id="qcError" class="text-danger" style="display:none;"></div>
                     </div>
                 </div>
             </div>
@@ -58,7 +64,7 @@
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     ยกเลิก
                 </a>
-                <button id="form-save" class="btn btn-success ms-auto" data-bs-dismiss="modal">
+                <button id="form-save" class="btn btn-success ms-auto">
                     บันทึก
                 </button>
             </div>

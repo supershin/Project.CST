@@ -22,15 +22,16 @@ namespace Project.ConstructionTracking.Web.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            InformationProjectResp modelResp = _masterProjectService.InfomationForProejct();
+            return View(modelResp);
         }
 
         [HttpPost]
-        public JsonResult JsonAjaxGridProjectList(DTParamModel param)
+        public JsonResult JsonAjaxGridProjectList(DTParamModel param, MasterProjectModel criteria)
         {
             try
             {
-                var resultData = _masterProjectService.ListMasterProject(param);
+                var resultData = _masterProjectService.ListMasterProject(param, criteria);
 
                 return Json(
                           new
@@ -54,6 +55,118 @@ namespace Project.ConstructionTracking.Web.Controllers
                                 param.draw,
                                 iTotalRecords = 0,
                                 iTotalDisplayRecords = 0
+                            }
+               );
+            }
+        }
+
+        [HttpPost]
+        public JsonResult CreateProject(CreateProjectModel model)
+        {
+            try
+            {
+                var resultData = _masterProjectService.CreateProject(model);
+
+                return Json(
+                          new
+                          {
+                              success = true,
+                              data = resultData,
+                          }
+                );
+            }
+            catch (Exception ex)
+            {
+                return Json(
+                            new
+                            {
+                                success = false,
+                                message = ex.Message, //InnerException(ex),
+                                data = new[] { ex.Message },
+                            }
+               );
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DetailProject(DetailProjectModel model)
+        {
+            try
+            {
+                var resultData = _masterProjectService.DetailProjectInformation(model.ProjectID);
+
+                return Json(
+                          new
+                          {
+                              success = true,
+                              data = resultData,
+                          }
+                );
+            }
+            catch (Exception ex)
+            {
+                return Json(
+                            new
+                            {
+                                success = false,
+                                message = ex.Message, //InnerException(ex),
+                                data = new[] { ex.Message },
+                            }
+               );
+            }
+        }
+
+        [HttpPost]
+        public JsonResult EditProject(EditProjectModel model)
+        {
+            try
+            {
+                var resultData = _masterProjectService.EditProject(model);
+
+                return Json(
+                          new
+                          {
+                              success = true,
+                              data = resultData,
+                          }
+                );
+            }
+            catch (Exception ex)
+            {
+                return Json(
+                            new
+                            {
+                                success = false,
+                                message = ex.Message, //InnerException(ex),
+                                data = new[] { ex.Message },
+                            }
+               );
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DeleteProject(Guid projectId)
+        {
+            try
+            {
+                var resultData = _masterProjectService.DeleteProject(projectId);
+
+                return Json(
+                          new
+                          {
+                              success = true,
+                              data = resultData,
+                          }
+                );
+            }
+            catch (Exception ex)
+            {
+                return Json(
+                            new
+                            {
+                                success = false,
+                                message = ex.Message, //InnerException(ex),
+                                data = new[] { ex.Message },
                             }
                );
             }

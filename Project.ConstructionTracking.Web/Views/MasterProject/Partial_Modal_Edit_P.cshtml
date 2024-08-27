@@ -4,48 +4,47 @@
 @{
 }
 
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+@model Project.ConstructionTracking.Web.Models.MProjectModel.InformationProjectResp
 
 <div class="modal fade" id="modal-e" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg" role="document">
         <div id="modal-format" class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Create Project</h5>
+                <h5 class="modal-title">Edit Project</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">BU</label>
-                        <select class="form-control" id="bu-type" name="bu-type">
+                        <select class="form-control" id="e-bu-type" name="bu-type">
                             <option value="0">กรุณาเลือก BU</option>
-                            <option value="1">BUG 1</option>
-                            <option value="2" selected>BUG 2</option>
-                            <option value="3">BUG 3</option>
-                            <option value="4">BUG 4</option>
-                            <option value="5">SE</option>
+                            @foreach (var data in Model.BUList)
+                            {
+                                <option value="@data.BUID">@data.BUName</option>
+                            }
                         </select>
                     </div>
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">ประเภทโครงการ</label>
-                        <select class="form-control" id="project-type" name="project-type">
-                            <option value="1">แนวราบ</option>
-                            <option value="2" selected>แนวสูง</option>
+                        <select class="form-control" id="e-project-type" name="project-type">
+                            <option value="0">กรุณาเลือกประเภทโครงการ</option>
+                            @foreach (var data in Model.ProjectTypeList)
+                            {
+                                <option value="@data.ProjectTypeID">@data.ProjectTypeName</option>
+                            }
                         </select>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">รหัสโครงการ</label>
-                        <input type="text" class="form-control" name="project-code" value="401H001">
+                        <input type="text" class="form-control" id="e-project-code">
+                        <input type="hidden" id="e-project-id" />
                     </div>
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">ชื่อโครงการ</label>
-                        <input type="text" class="form-control" name="project-name" value="ดิ ออเนอร์ โยธินพัฒนา">
+                        <input type="text" class="form-control" id="e-project-name">
                     </div>
                 </div>
             </div>
@@ -56,6 +55,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
+                                    <th hidden>ID</th>
                                     <th>รหัสโมเดล</th>
                                     <th>ชื่อโมเดล</th>
                                     <th>รหัสประเภทโมเดล</th>
@@ -64,21 +64,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>EST-BN-SH2101</td>
-                                    <td>SERENE</td>
-                                    <td>SDH2</td>
-                                    <td>บ้านเดี่ยว 2 ชั้น</td>
-                                    <td>
-                                        <select class="form-select">
-                                            <option value="1">S</option>
-                                            <option value="2">M</option>
-                                            <option value="3">L</option>
-                                            <option value="3">XL</option>
-                                            <!-- Add more options as needed -->
-                                        </select>
-                                    </td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -88,9 +73,9 @@
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     Cancel
                 </a>
-                <a href="#" class="btn btn-success ms-auto" data-bs-dismiss="modal">
+                <button id="project-edit-save" class="btn btn-success ms-auto">
                     บันทึก
-                </a>
+                </button>
             </div>
         </div>
     </div>

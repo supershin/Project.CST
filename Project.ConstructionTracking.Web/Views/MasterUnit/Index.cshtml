@@ -4,6 +4,8 @@
     ViewData["Title"] = "Master Unit";
 }
 
+@model Project.ConstructionTracking.Web.Models.MUnitModel.MasterUnitResp
+
 @section Styles{
     <link href="~/lib/datatable/jquery.datatables.min.css?ver=@DateTime.Now.Ticks.ToString()" rel="stylesheet" />
 }
@@ -39,9 +41,12 @@
                 <!-- First column: Dropdown -->
                 <div class="col-md-4 mb-3 mb-md-0">
                     <div class="input-group">
-                        <select class="form-select" id="dropdown-select">
-                            <option value="1">ดิ ออเนอร์ โยธินพัฒนา</option>
-                            <option value="2">เอสต้า ซีรีนิตี้ บรมราชชนนี</option>
+                        <select class="form-select" id="dropdown-select-project">
+                            <option value="">โครงการทั้งหมด</option>
+                            @foreach(var data in Model.ProjectList)
+                            {
+                                <option value="@data.ProjectID">@data.ProjectName</option>
+                            }
                         </select>
                     </div>
                 </div>
