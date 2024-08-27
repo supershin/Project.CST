@@ -1,4 +1,5 @@
-﻿using Project.ConstructionTracking.Web.Data;
+﻿using Microsoft.Data.SqlClient.Server;
+using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 
 namespace Project.ConstructionTracking.Web.Repositories
@@ -25,16 +26,22 @@ namespace Project.ConstructionTracking.Web.Repositories
                               from t5 in forms.DefaultIfEmpty()
                               join t6 in _context.tm_Vendor on t2.VendorID equals t6.ID into vendors
                               from t6 in vendors.DefaultIfEmpty()
-                              where t1.UnitFormID == filterData.UnitFormID  && (filterData.GroupID == -1 || t1.GroupID == filterData.GroupID)
+                              join t7 in _context.tm_FormGroup on t1.GroupID equals t7.ID into groups
+                              from t7 in groups.DefaultIfEmpty()
+                              where t1.UnitFormID == filterData.UnitFormID  
+                                  && (filterData.GroupID == -1 || t1.GroupID == filterData.GroupID)
+                                  && (t1.StatusID == 8 || t1.StatusID == 12 || t1.StatusID == 13 || t1.StatusID == 14)
                               select new UnLockPassConditionModel.GetDataUnlockPC
                               {
                                   PC_ID = t1.ID,
                                   ProjectName = t3.ProjectName,
                                   UnitCode = t4.UnitCode,
+                                  FormID = t2.FormID,
                                   FormName = t5.Name,
                                   VenderName = t6.Name,
                                   UnitFormID = t1.UnitFormID,
                                   GroupID = t1.GroupID,
+                                  GroupName = t7.Name,
                                   LockStatusID = t1.LockStatusID,
                                   StatusID = t1.StatusID,
                                   PE_Remark = t1.PE_Remark,

@@ -32,5 +32,22 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             return RedirectToAction("Index", "FormGroup", new { projectId, projectName, FormID, UnitFormID, UnitFormName, unitId, UnitCode, UnitStatusName });
         }
+
+        [HttpPost]
+        public IActionResult GoToPC(Guid UnitFormID, int GroupID)
+        {
+            var RoleID = Request.Cookies["CST.Role"];
+            GroupID = (GroupID == 0) ? -1 : GroupID;
+
+            if (RoleID == "1")
+            {
+                return RedirectToAction("Index", "UnLockPassCondition", new { UnitFormID, GroupID });
+            }
+            else
+            {
+                return RedirectToAction("Index", "FormGroup");
+            }
+            
+        }
     }
 }
