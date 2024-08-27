@@ -34,10 +34,19 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from unit in units.DefaultIfEmpty()
                           join t6 in _context.tm_Form on t1.FormID equals t6.ID into forms
                           from form in forms.DefaultIfEmpty()
-                          let passCondition = _context.tr_UnitFormPassCondition
-                                                 .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true)
-                                                 .OrderBy(pc => pc.ID)
-                                                 .FirstOrDefault()
+                          let allpassConditionCount = _context.tr_UnitFormPassCondition
+                                                                  .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true)
+                                                                  .Count()
+
+                          let passConditionCount = _context.tr_UnitFormPassCondition
+                                                      .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true
+                                                                && (pc.StatusID == 6 || pc.StatusID == 8))
+                                                      .Count()
+
+                          let notpassConditionCount = _context.tr_UnitFormPassCondition
+                                                      .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true
+                                                                && (pc.StatusID == 7 || pc.StatusID == 9))
+                                                      .Count()
                           where t1.StatusID > 1
                           select new
                           {
@@ -68,8 +77,16 @@ namespace Project.ConstructionTracking.Web.Repositories
                               StatusID_PJM = actionPJM.StatusID,
                               Remark_PJM = actionPJM.Remark,
                               ActionDate_PJM = actionPJM.ActionDate,
-                              PC_LockID = passCondition.LockStatusID,
-                              PC_StatusID = passCondition.StatusID
+                              PC_Cnt = allpassConditionCount,
+                              //PC_StatusID = passCondition.StatusID,
+                              AnswerColor = notpassConditionCount > 0 ? "bg-danger"
+                                          : (notpassConditionCount == 0 && passConditionCount == allpassConditionCount && allpassConditionCount > 0) ? "bg-success"
+                                          : (allpassConditionCount == 0) ? ""
+                                          : (notpassConditionCount == 0 && allpassConditionCount > 0) ? "bg-primary"
+                                          : "" //
+
+
+
                           })
                           .OrderBy(item => item.StatusID)
                           .ThenBy(item => item.UnitFormID)
@@ -112,8 +129,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                     ActionDate_PJM = item.ActionDate_PJM.HasValue
                                     ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PJM.Value.ToString("dd/MM/yyyy"))
                                     : null,
-                    PC_LockID = item.PC_LockID,
-                    PC_StatusID = item.PC_StatusID
+                    PC_CNT = item.PC_Cnt,
+                    PC_Color = item.AnswerColor
                 })
                 .ToList();
 

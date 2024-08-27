@@ -60,6 +60,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tr_UnitFormPackage> tr_UnitFormPackage { get; set; } = null!;
         public virtual DbSet<tr_UnitFormPassCondition> tr_UnitFormPassCondition { get; set; } = null!;
         public virtual DbSet<tr_UnitFormResource> tr_UnitFormResource { get; set; } = null!;
+        public virtual DbSet<tr_UnitFormUnLockPassCondition> tr_UnitFormUnLockPassCondition { get; set; } = null!;
         public virtual DbSet<vw_UnitForm_Action> vw_UnitForm_Action { get; set; } = null!;
         public virtual DbSet<vw_UnitQC_Action> vw_UnitQC_Action { get; set; } = null!;
 
@@ -788,6 +789,11 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tr_UnitFormResource)
                     .HasForeignKey(d => d.UnitFormID)
                     .HasConstraintName("FK_tr_UnitForm_Resource_tr_UnitForm");
+            });
+
+            modelBuilder.Entity<tr_UnitFormUnLockPassCondition>(entity =>
+            {
+                entity.Property(e => e.ID).ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<vw_UnitForm_Action>(entity =>

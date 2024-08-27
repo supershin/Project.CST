@@ -15,8 +15,8 @@
         public string? FormName { get; set; }
         public int? StatusID { get; set; }
         public int FlagActive { get; set; }
-        public int? PC_LockID { get; set; }
-        public int? PC_StatusID{ get; set; }
+        public int? PC_CNT { get; set; }
+        public string? PC_Color{ get; set; }
         public int? RoleID_PE { get; set; }
         public string? ActionType_PE { get; set; }
         public int? StatusID_PE { get; set; }

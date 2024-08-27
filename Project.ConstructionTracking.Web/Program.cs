@@ -59,6 +59,9 @@ builder.Services.AddScoped<IMasterCompanyRepo, MasterCompanyRepo>();
 builder.Services.AddScoped<IMasterUnitService, MasterUnitService>();
 builder.Services.AddScoped<IMasterUnitRepo, MasterUnitRepo>();
 
+builder.Services.AddScoped<IUnLockPassConditionService, UnLockPassConditionService>();
+builder.Services.AddScoped<IUnLockPassConditionRepo, UnLockPassConditionRepo>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

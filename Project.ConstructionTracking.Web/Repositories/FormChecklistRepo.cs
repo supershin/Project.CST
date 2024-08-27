@@ -93,8 +93,8 @@ public class FormChecklistRepo : IFormChecklistRepo
                                       StatusCheck = cg.Key.StatusID, // กำหนดค่า StatusCheck
 
                                       // สร้าง ListRadioCheck สำหรับแต่ละ CheckList
-                                      ListRadioCheck = (from rc in _context.tr_RoleActionStatus
-                                                        where rc.RoleID == 1
+                                      ListRadioCheck = (from rc in _context.tm_Ext
+                                                        where rc.ExtTypeID == 6
                                                         select new FormCheckListModel.Form_getRadioCheckLists
                                                         {
                                                             RadioCheck_ID = rc.ID, // กำหนดค่า RadioCheck_ID

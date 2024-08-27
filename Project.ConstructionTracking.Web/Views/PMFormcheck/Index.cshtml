@@ -203,12 +203,12 @@
                                             </h3>
                                         </div>
                                     </div>
-                                    @if (item.PC_LockID != null)
+                                    @if (item.PC_CNT > 0)
                                     {
                                         <div class="ms-auto">
-                                            <button type="button" class="status-dot @(item.PC_StatusID == 6 || item.PC_StatusID == 8 ? "bg-success" : item.PC_StatusID == 7 || item.PC_StatusID == 9 ? "bg-danger" : "bg-primary") ms-auto">
+                                            <button type="button" class="status-dot @item.PC_Color" ms-auto">
                                                 <span class="status-text">
-                                                    <i class="fa-solid @(item.PC_LockID == 7 ? "fa-lock" : item.PC_LockID == 8 ? "fa-unlock" : "")"></i>
+                                                    <i class="fa-solid @(item.PC_CNT == 7 ? "fa-lock" : item.PC_CNT == 8 ? "fa-unlock" : "fa-lock")"></i>
                                                 </span>
                                             </button>
                                         </div>
