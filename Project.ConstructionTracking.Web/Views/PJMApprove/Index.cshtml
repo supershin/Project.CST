@@ -141,7 +141,7 @@
                                             string buttonClass = "bg-green";
                                             string iconClass = "fa-solid fa-magnifying-glass";
 
-                                            if (item.LockStatusID != null)
+                                            if (item.LockStatusID != null && item.PC_FlagActive == true)
                                             {
                                                 buttonClass = "bg-primary";
                                                 iconClass = "fa-solid fa-lock";
@@ -178,17 +178,24 @@
                                         อนุมัติการผ่านแบบมีเงื่อนไข
                                     </label>
                                     <label class="form-check form-check-inline">
-                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="8" @(item.PC_StatusID == 8 ? "checked" : "") @(PJM_Actiontype == "submit" && UnitFormStatus != "6" ? "disabled" : "") onclick="toggleRadio(this)">
+                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="8" @(item.PC_StatusID == 8 ? "checked" : "") @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || item.PC_FlagActive == false ? "disabled" : "") onclick="toggleRadio(this)">
                                         <span class="form-check-label">อนุมัติ</span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="9" @(item.PC_StatusID == 9 ? "checked" : "") @(PJM_Actiontype == "submit" && UnitFormStatus != "6"  ? "disabled" : "") onclick="toggleRadio(this)">
+                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="9" @(item.PC_StatusID != 8 ? "checked" : "") @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || item.PC_FlagActive == false ? "disabled" : "") onclick="toggleRadio(this)">
                                         <span class="form-check-label">ไม่อนุมัติ</span>
                                     </label>
                                 </div>
                                 <div class="col-12 p-1 mb-2">
-                                <textarea id="remark_@item.GroupID" rows="1" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ" @(item.PJM_Actiontype == "submit" && UnitFormStatus != "6" ? "disabled" : "")>@item.PJM_Remark</textarea>
+                                <textarea id="remark_@item.GroupID" rows="1" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ" @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || item.PC_FlagActive == false ? "disabled" : "")>@item.PJM_Remark</textarea>
                                 </div>
+                                <input type="hidden" id="Flag-Active-@item.GroupID" value="@(item.PC_FlagActive == true ? 1 : 0)" />
+                                @if (item.PC_FlagActive == false)
+                                {
+                                <label class="form-label">
+                                    งานนี้ผ่านแบบปกติแล้ว
+                                </label>
+                            }
                         </div>
                     </div>
                 }
@@ -279,7 +286,7 @@
                                 {
                                     if (UnitFormStatus == "6")
                                     {
-                                         <input type="hidden" id="UnitFormID" value="@UnitFormID" />
+                                        <input type="hidden" id="UnitFormID" value="@UnitFormID" />
                                         <input type="hidden" id="ProjectID" value="@ProjectID" />
                                         <input type="hidden" id="UnitID" value="@UnitID" />
                                         <input type="hidden" id="UnitCode" value="@UnitCode" />
@@ -631,11 +638,12 @@
                 let passconID = $(this).attr("passconID");
                 let statusID = $(this).val();
                 let remark = document.getElementById(`remark_${group_id}`).value;
-
+                let FlagActive = document.getElementById(`Flag-Active-${group_id}`).value;
                 passConditions.push({
                     PC_ID: passconID,
                     Group_ID: group_id,
                     StatusID: statusID,
+                    PC_FlagActive: FlagActive,
                     PJM_Remark: remark
                 });
             });

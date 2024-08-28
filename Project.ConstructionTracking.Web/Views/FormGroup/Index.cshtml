@@ -158,6 +158,18 @@
     font-size: 20px; /* Adjust icon size */
 }
 
+.fixedButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px; 
+    padding: 20px;
+    z-index: 9999; 
+    background-color: white; 
+    border-radius: 50%; 
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); 
+    border: none;
+}
+
 </style>
 
 <style>
@@ -264,6 +276,11 @@
         font-weight: bold;
     }
 </style>
+
+<button class="fixedButton" onclick="openModalChat('XXXX')">
+    <i class="fa-solid fa-message fa-xl" style="color: #74C0FC;"></i>
+</button>
+
 <div class="page-wrapper">
     <!-- Page header -->
     <div class="page-header d-print-none">
@@ -436,15 +453,21 @@
                                                 }
                                                 else if (item.LockStatusID == 8)
                                                 {
-                                                    @if (item.StatusID == 5)
+                                                    @if (item.StatusID == 14)
                                                     {
                                                         <button type="button" class="status-dot bg-danger ms-auto">
                                                             <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
                                                         </button>
                                                     }
-                                                    else if (item.StatusID == 6 || item.StatusID == 8)
+                                                    else if (item.StatusID == 13)
                                                     {
                                                         <button type="button" class="status-dot bg-success ms-auto">
+                                                            <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="button" class="status-dot bg-primary ms-auto">
                                                             <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
                                                         </button>
                                                     }

@@ -88,6 +88,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               PC_ID = t3.ID,
                               LockStatusID = t3.LockStatusID,
                               PC_StatusID = t3.StatusID,
+                              PC_FlagActive = t3.FlagActive,
                               PE_Remark = t3.PE_Remark,
                               PM_Remark = t3.PM_Remark,
                               PJM_Remark = t3.PJM_Remark,
@@ -104,7 +105,7 @@ namespace Project.ConstructionTracking.Web.Repositories
         {
 
             // Determine the StatusID based on the ListPCIC
-            int? statusToUpdate = model.ListPCIC != null && model.ListPCIC.Any(pc => pc.StatusID == 9) ? 9 : 8;
+            int? statusToUpdate = model.ListPCIC != null && model.ListPCIC.Any(pc => pc.StatusID == 9 && pc.PC_FlagActive != 0) ? 9 : 8;
 
             var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == model.UnitFormID && a.RoleID == 3);
 
@@ -147,7 +148,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 foreach (var passConditionModel in model.ListPCIC)
                 {
                     var passCondition = _context.tr_UnitFormPassCondition
-                        .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID & pc.ID == passConditionModel.PC_ID);
+                        .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.ID == passConditionModel.PC_ID && pc.FlagActive == true && pc.StatusID != 8);
 
                     if (passCondition != null)
                     {

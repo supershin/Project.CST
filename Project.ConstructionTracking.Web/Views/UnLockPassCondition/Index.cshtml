@@ -165,7 +165,7 @@
                                             statusText = "อนุมัติปลดล็อค";
                                             buttonColor = "green";
                                         }
-                                        else if (item.StatusID == 12)
+                                        else if (item.StatusID == 14)
                                         {
                                             statusText = "ไม่อนุมัติปลดล็อค";
                                             buttonColor = "red";
@@ -206,19 +206,51 @@
                                     ความเห็นจาก PJM Head
                                 </label>
                                 <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PJM_Remark</textarea>
+                                <br>
+                                @foreach (var listimage in item.listImageUnlock)
+                                {
+                                    <div class="position-relative d-inline-block mb-3">
+                                        <a data-fslightbox="gallery" href="~/@listimage.FilePath">
+                                            <img src="~/@listimage.FilePath" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                        </a>                                       
+                                        @if (item.StatusID == 8 || item.StatusID == 14)
+                                        {
+                                            <button type="button" class="remove-button" onclick="deleteImage('@listimage.ResourceID')">✖</button>
+                                        }
+                                    </div>
+                                }
+                                @if (item.StatusID == 8 || item.StatusID == 14)
+                                {
+                                    <div id="drop-zone-@item.GroupID" class="drop-zone">
+                                        <p class="drop-zone-text">
+                                            <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                        </p>
+                                        <input type="file" id="file-input-@item.GroupID" class="drop-zone-input" multiple>
+                                        <div id="preview-container-@item.GroupID" class="row preview-container"></div>
+                                    </div>
+                                    <br>
+                                }
+                                <label class="form-label">
+                                    ความคิดเห็น PM
+                                </label>
+                                <textarea id="remark_pm" 
+                                          rows="2" 
+                                          class="form-control" 
+                                          disabled
+                                >@item.PMUnLock_Remark</textarea>
                                 <label class="form-label">
                                     ระบุคำขอปลดล็อค
                                 </label>
-                                <div id="drop-zone-@item.GroupID" class="drop-zone">
-                                    <p class="drop-zone-text">
-                                        <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
-                                    </p>
-                                    <input type="file" id="file-input-@item.GroupID" class="drop-zone-input" multiple>
-                                    <div id="preview-container-@item.GroupID" class="row preview-container"></div>
-                                </div>
-                                <br>
-                                <textarea id="remark_@item.GroupID" rows="2" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติปลดล็อค"></textarea>
-                                <button type="button" class="btn btn-primary" style="margin-top: 15px; float: right;" onclick="saveData('@item.PC_ID','@item.UnitFormID','@item.GroupID')">ขออนุมัติปลดล็อค</button>
+                                <textarea id="remark_@item.GroupID" 
+                                          rows="2" 
+                                          class="form-control" 
+                                          placeholder="ระบุเหตุผลเพื่อขออนุมัติปลดล็อค" 
+                                          @(item.StatusID != 8 && item.StatusID != 14 ? "disabled" : "")
+                                >@item.PEUnLock_Remark</textarea>
+                                @if (item.StatusID == 8 || item.StatusID == 14)
+                                {
+                                    <button type="button" class="btn btn-primary" style="margin-top: 15px; float: right;" onclick="saveData('@item.PC_ID','@item.UnitFormID','@item.GroupID')">ขออนุมัติปลดล็อค</button>
+                                }
                             </div>
                         </div>
                     </div>
@@ -348,26 +380,26 @@
             }
         });
 
-          function saveData(PC_ID,UnitFormID,groupId) {
+        function saveData(PC_ID, UnitFormID, groupId) {
             var remark = document.getElementById(`remark_${groupId}`).value;
-            var files = document.getElementById(`file-input_${groupId}`).files;
+            var files = document.getElementById(`file-input-${groupId}`).files;
 
             var formData = new FormData();
+            formData.append("PC_ID", PC_ID);
+            formData.append("UnitFormID", UnitFormID);
             formData.append("GroupID", groupId);
-            formData.append("Remark", remark);
+            formData.append("PEUnLock_Remark", remark);
 
-            // Append each file to the form data
             for (var i = 0; i < files.length; i++) {
-                formData.append("Files", files[i]);
+                formData.append("Images", files[i]);
             }
 
-            // Send the data to the server via AJAX
             $.ajax({
-                url: '/YourController/YourAction', // Replace with your actual controller and action
+                url: '/UnLockPassCondition/RequestUnlock',
                 type: 'POST',
                 data: formData,
-                contentType: false, // Needed for FormData
-                processData: false, // Needed for FormData
+                contentType: false,
+                processData: false,
                 success: function(response) {
                     if (response.success) {
                         Swal.fire({
@@ -375,6 +407,10 @@
                             text: 'Data saved successfully!',
                             icon: 'success',
                             confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload(); // Reload the page when "OK" is clicked
+                            }
                         });
                     } else {
                         Swal.fire({
@@ -396,7 +432,8 @@
             });
         }
 
-             function openModal(UnitFormID, GroupID, FormID) {
+
+        function openModal(UnitFormID, GroupID, FormID) {
             // Fetch images for RoleID = 1
             $.ajax({
                 url: '@ViewBag.baseUrl' + 'PMApprove/GetImages',
@@ -498,6 +535,39 @@
             myModal.show();
         }
 
+        function deleteImage(resourceId) {
+            Swal.fire({
+                title: '',
+                text: "ต้องการลลบรูปภาพหรือไม่?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'ลบรูปภาพ',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Perform the deletion via an AJAX call
+                    $.ajax({
+                        url: baseUrl + 'FormCheckList/DeleteImage',
+                        type: 'POST',
+                        data: { resourceId: resourceId },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire('ลบรูปภาพสำเร็จ', '', 'success');
+                                // Remove the image from the DOM
+                                $(`[onclick="deleteImage('${resourceId}')"]`).closest('.position-relative').remove();
+                            } else {
+                                Swal.fire('Error!', response.message, 'error');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire('Error!', 'An error occurred while processing your request.', 'error');
+                        }
+                    });
+                }
+            });
+        }
 
     </script>
 }

@@ -220,8 +220,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
-
-
         public List<UnitFormResourceModel> GetImage(UnitFormResourceModel model)
         {
             var result = (from t1 in _context.tr_UnitFormResource
@@ -241,7 +239,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return result;
         }
-
 
         public void SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
         {

@@ -12,10 +12,107 @@
         z-index: 9999;
     }
 
-        #loading img {
-            width: 100px;
-            height: 100px;
-        }
+    #loading img {
+        width: 100px;
+        height: 100px;
+    }
+
+    /* Styles for Modal Chatbox */
+    .modal {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        overflow: auto;
+        display: flex;
+        align-items: center; /* Center vertically */
+        justify-content: center; /* Center horizontally */
+    }
+
+    .modal-dialog {
+        position: relative;
+        margin: 0 auto; /* Auto margins to center horizontally */
+        max-width: none; /* Prevent Bootstrap's default max-width */
+        transform: translateY(20%); /* Position a bit lower (20% from center) */
+    }
+
+    .modal-content {
+        background-color: #fff;
+        padding: 0;
+        border: 1px solid #888;
+        border-radius: 5px;
+        width: 100%; /* Ensures it respects col-md-4 size */
+    }
+
+    .modal-header, .modal-footer {
+        padding: 10px;
+        background-color: #f1f1f1;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .modal-header h4 {
+        margin: 0;
+    }
+
+    .modal-body {
+        padding: 15px;
+        height: 300px;
+        overflow-y: auto;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .sendButton {
+        background-color: #74C0FC; /* Button background color */
+        border: none; /* Remove default border */
+        color: white; /* Icon color */
+        padding: 10px; /* Padding around the icon */
+        border-radius: 50%; /* Make the button circular */
+        cursor: pointer; /* Pointer cursor on hover */
+        font-size: 16px; /* Font size for the icon */
+        width: 40px; /* Width of the button */
+        height: 40px; /* Height of the button */
+        display: flex; /* Flexbox for centering the icon */
+        align-items: center; /* Center icon vertically */
+        justify-content: center; /* Center icon horizontally */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional shadow for a raised effect */
+    }
+
+.sendButton:hover {
+    background-color: #5a9edb; /* Slightly darker blue on hover */
+}
+
+
+    .close:hover {
+        color: #000;
+    }
+
+    #chatInput {
+        width: calc(100% - 80px);
+        margin-right: 5px;
+        padding: 5px;
+        resize: none;
+    }
+
+    .fixedButton {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
 </style>
 <head>
     <meta charset="utf-8" />
@@ -261,6 +358,30 @@
                 <main role="main" class="pb-3">
                     @RenderBody()
                 </main>
+                <!-- Modal Inbox -->
+                <div id="chatModal" class="modal">
+                    <div class="modal-dialog">
+                        <div class="modal-content col-md-4">
+                            <div class="modal-header">
+                                <span class="close" onclick="closeModalChat()">&times;</span>
+                                <h4>Chat with Support</h4>
+                            </div>
+                            <div class="modal-body" id="chatMessages">
+                                <!-- Chat messages will be appended here dynamically -->
+                                <input type="hidden" name="hdname" id="hdname"/>
+                                <p><strong>Jane:</strong> Hello! How can I help you today?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <textarea id="chatInput" placeholder="Type your message..."></textarea>
+                                <button class="sendButton" onclick="sendMessage()">
+                                    <i class="fa-regular fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Inbox -->
+
             </div>
 
             <footer class="footer footer-transparent d-print-none">
@@ -287,6 +408,31 @@
 
     <!-- Libs JS -->
     <script src="~/lib/core-ui/dist/libs/nouislider/dist/nouislider.min.js?1692870487" defer></script>
+
+    <script> 
+        function openModalChat(username) {
+            document.getElementById("hdname").value = username; // Set the username in the hidden input
+            document.getElementById("chatModal").style.display = "block"; // Show the modal
+        }
+
+        function closeModalChat() {
+            document.getElementById("chatModal").style.display = "none"; // Hide the modal
+        }
+
+        function sendMessage() {
+            var message = document.getElementById("chatInput").value;
+            var username = document.getElementById("hdname").value; // Get the username from the hidden input
+    
+            if (message.trim() !== "") {
+                var chatMessages = document.getElementById("chatMessages");
+                var newMessage = document.createElement("p");
+                newMessage.innerHTML = `<strong>${username}:</strong> ${message}`; // Use the username in the message
+                chatMessages.appendChild(newMessage);
+                document.getElementById("chatInput").value = ""; // Clear the input field
+                chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the latest message
+            }
+        }
+    </script>
 
     <!-- Tabler Core -->
     <script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>

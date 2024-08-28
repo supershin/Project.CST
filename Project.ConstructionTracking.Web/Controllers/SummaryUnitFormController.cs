@@ -45,7 +45,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "FormGroup");
+                return RedirectToAction("Index", "ApproveUnLockPassCondition", new { UnitFormID, GroupID });
             }
             
         }
