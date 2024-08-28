@@ -23,7 +23,6 @@
     var PJM_Remark = FormGroupDetail?.PJM_Remark;
     var PJM_StatusID = FormGroupDetail?.PJM_StatusID;
     var FilePath = FormGroupDetail?.FilePath;
-
     var ListVender = ViewBag.ListVender;
     
 }
@@ -412,40 +411,43 @@
                                     @if (item.LockStatusID != null)
                                     {
                                         <div class="ms-auto">
-                                            @if (item.LockStatusID == 7)
+                                            @if (item.PCFlagActive == true)
                                             {
-                                                @if (item.StatusID == 7 && PM_ActionType == "submit" || item.StatusID == 9 && PJM_ActionType == "submit")
+                                                @if (item.LockStatusID == 7)
                                                 {
-                                                    <button type="button" class="status-dot bg-danger ms-auto">
-                                                        <span class="status-text"><i class="fa-solid fa-lock"></i></span>
-                                                    </button>
+                                                    @if (item.StatusID == 7 && PM_ActionType == "submit" || item.StatusID == 9 && PJM_ActionType == "submit")
+                                                    {
+                                                        <button type="button" class="status-dot bg-danger ms-auto">
+                                                            <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                                        </button>
+                                                    }
+                                                    else if (item.StatusID == 6 && PM_ActionType == "submit" || item.StatusID == 8 && PJM_ActionType == "submit")
+                                                    {
+                                                        <button type="button" class="status-dot bg-success ms-auto">
+                                                            <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="button" class="status-dot bg-primary ms-auto">
+                                                            <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                                        </button>
+                                                    }
                                                 }
-                                                else if (item.StatusID == 6 && PM_ActionType == "submit" || item.StatusID == 8 && PJM_ActionType == "submit")
+                                                else if (item.LockStatusID == 8)
                                                 {
-                                                    <button type="button" class="status-dot bg-success ms-auto">
-                                                        <span class="status-text"><i class="fa-solid fa-lock"></i></span>
-                                                    </button>
-                                                }
-                                                else
-                                                {
-                                                    <button type="button" class="status-dot bg-primary ms-auto">
-                                                        <span class="status-text"><i class="fa-solid fa-lock"></i></span>
-                                                    </button>
-                                                }
-                                            }
-                                            else if (item.LockStatusID == 8)
-                                            {
-                                                @if (item.StatusID == 5)
-                                                {
-                                                    <button type="button" class="status-dot bg-danger ms-auto">
-                                                        <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
-                                                    </button>
-                                                }
-                                                else if (item.StatusID == 6 || item.StatusID == 8)
-                                                {
-                                                    <button type="button" class="status-dot bg-success ms-auto">
-                                                        <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
-                                                    </button>
+                                                    @if (item.StatusID == 5)
+                                                    {
+                                                        <button type="button" class="status-dot bg-danger ms-auto">
+                                                            <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
+                                                        </button>
+                                                    }
+                                                    else if (item.StatusID == 6 || item.StatusID == 8)
+                                                    {
+                                                        <button type="button" class="status-dot bg-success ms-auto">
+                                                            <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
+                                                        </button>
+                                                    }
                                                 }
                                             }
                                         </div>
@@ -458,6 +460,31 @@
                                         <li class="breadcrumb-item" aria-current="page"><span class="text2">ผ่านแล้ว @item.Cnt_CheckList_Pass </span></li>
                                         <li class="breadcrumb-item" aria-current="page"><span class="text3">ไม่ผ่าน @item.Cnt_CheckList_NotPass</span></li>
                                     </ol>
+                                    @if (item.LockStatusID != null)
+                                    {
+                                        <ol class="breadcrumb">
+                                            <li class="breadcrumb-item"><span class="text1">สถานะการผ่านแบบมีเงื่อนไข</span></li>
+                                            <li class="breadcrumb-item" aria-current="page">
+                                                <span class="@(item.StatusID == 8 || item.StatusID == 13 ? "text-success" :
+                                                   (item.StatusID == 6 || item.StatusID == 12 ||
+                                                    item.StatusID != 7 && item.StatusID != 9 && item.StatusID != 14 ? "text-warning" : "text-danger"))">
+                                                    @(
+                                                        item.StatusID == 6 ? "PM ส่งให้ PJM พิจารณา" :
+                                                        item.StatusID == 7 ? "PM ไม่อนุมัติ" :
+                                                        item.StatusID == 8 ? "PJM อนุมัติ" :
+                                                        item.StatusID == 9 ? "PJM ไม่อนุมัติ" :
+                                                        item.StatusID == 12 ? "ขออนุมัติ Unlock" :
+                                                        item.StatusID == 13 ? "อนุมัติ Unlock" :
+                                                        item.StatusID == 14 ? "ไม่อนุมัติ Unlock" : "ส่งให้ PM พิจารณา"
+                                                     )
+                                                </span>
+                                            </li>
+                                            @if (item.PCFlagActive == false)
+                                            {
+                                                <li class="breadcrumb-item" aria-current="page"><span class="text3">ยกเลิก PC</span></li>
+                                            }
+                                        </ol>
+                                    }
                                 </div>
                                 <div class="mt-3">
                                     @if (item.LockStatusID != null)
@@ -589,7 +616,7 @@
                                         </div>
                                     </div>
                                 }
-                                else if (UnitFormstatusID == 8 && PJM_ActionType == "submit")
+                                else if (UnitFormstatusID == 8 && PJM_ActionType == "submit" )
                                 {
                                     <div class="col-12">
                                         <div class="d-flex justify-content-between">

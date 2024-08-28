@@ -58,6 +58,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             {
                 var status = listStatus[0]; // Assuming there is only one row in listStatus
                 ViewBag.LockStatusID = status.LockStatusID;
+                ViewBag.PCStatusID = status.PCStatusID;
                 ViewBag.RemarkPassCondition = status.RemarkPassCondition;
                 ViewBag.UnitFormActionID = status.UnitFormActionID;
                 ViewBag.PM_StatusID = status.PM_StatusID;

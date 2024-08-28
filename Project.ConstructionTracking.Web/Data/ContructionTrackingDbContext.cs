@@ -444,8 +444,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_ProjectModelForm>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");

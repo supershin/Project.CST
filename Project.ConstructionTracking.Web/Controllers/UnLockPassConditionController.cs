@@ -23,9 +23,9 @@ namespace Project.ConstructionTracking.Web.Controllers
             var resultModel = _UnLockPassConditionService.GetListUnlockPC(model);
             if (resultModel != null && resultModel.Count > 0)
             {
-                ViewBag.ProjectName = resultModel[0].ProjectName;
-                ViewBag.UnitCode = resultModel[0].UnitCode;
-                ViewBag.FormName = resultModel[0].FormName;
+                ViewBag.ProjectName = resultModel[0].ProjectName != null ? resultModel[0].ProjectName : string.Empty;
+                ViewBag.UnitCode = resultModel[0].UnitCode != null ? resultModel[0].UnitCode : string.Empty;
+                ViewBag.FormName = resultModel[0].FormName != null ? resultModel[0].FormName : string.Empty;
                 ViewBag.ListGroupPC = resultModel;
             }
 

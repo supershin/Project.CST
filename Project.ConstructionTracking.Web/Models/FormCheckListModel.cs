@@ -60,6 +60,7 @@
             public string? PJM_ActionType { get; set; }
             public int? FormID { get; set; }
             public int? LockStatusID { get; set; }
+            public int? PCStatusID { get; set; }
             public string? RemarkPassCondition { get; set; }
             public int? RoleID { get; set; }
             public List<Form_getListImagePasswithCondition>? Form_getListImagePasswithCondition { get; set; }

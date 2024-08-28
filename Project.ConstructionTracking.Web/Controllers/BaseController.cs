@@ -21,7 +21,6 @@ namespace Project.ConstructionTracking.Web.Controllers
             url = url.EndsWith("/") ? url : string.Concat(url, "/");
             BaseUrl = url;
             ViewBag.baseUrl = BaseUrl;
-
             base.OnActionExecuting(context);
         }
 

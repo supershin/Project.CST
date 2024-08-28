@@ -92,6 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var remarkPC = document.getElementById("Remark-PC");
     var PM_StatusActionType = document.getElementById("PM_StatusActionType").value;
     var UnitFormStatusIDchk = document.getElementById("UnitFormStatusIDchk").value;
+    var PC_StatusID = document.getElementById("PC_StatusID").value;
 
     function disableAllRadios() {
         var allRadios = document.querySelectorAll(".form-check-input[type='radio']:not(#pc-radio)");
@@ -159,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (PM_StatusActionType === "submit") {
-        if (["2", "3", "4", "6", "7", "9"].includes(UnitFormStatusIDchk)) {
+        if (["2", "3", "4", "6", "7", "9"].includes(UnitFormStatusIDchk) || PC_StatusID === "8") {
             document.querySelectorAll('textarea[data-package-id]').forEach(function (textarea) {
                 textarea.disabled = true;
             });

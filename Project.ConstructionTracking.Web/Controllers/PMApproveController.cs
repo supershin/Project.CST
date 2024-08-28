@@ -41,6 +41,13 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.PJM_Remarkaction = resultModel.PJM_Remarkaction;
                 ViewBag.PJM_Actiontype = resultModel.PJM_Actiontype;
             }
+            var listpass = resultModel?.PM_getListgroup;
+            if (listpass != null)
+            {
+                int? PCAll = listpass.Count;
+                int? PCPass = listpass.Count(item => item.PC_StatusID == 8 || item.PCFlageActive == false);
+                ViewBag.PCALLPASS = (PCAll == PCPass) ? "yes" : "no";
+            }
 
             // Pass the resultModel to the view
             return View(resultModel);
@@ -57,6 +64,8 @@ namespace Project.ConstructionTracking.Web.Controllers
                     model.PassConditionsIUD = JsonConvert.DeserializeObject<List<PassConditions>>(param);
                 }
                 model.ApplicationPath = _hosting.ContentRootPath;
+                model.UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                model.RoleID = int.TryParse(Request.Cookies["CST.Role"], out var tempRoleInt) ? tempRoleInt : -1;
                 _PMApproveService.SaveOrUpdateUnitFormAction(model);
 
                 return Ok(new { success = true });

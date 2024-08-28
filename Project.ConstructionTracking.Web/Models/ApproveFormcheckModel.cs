@@ -23,6 +23,8 @@
         public int? PJM_StatusID { get; set; }
         public string? PJM_Remarkaction { get; set; }
         public string? PJM_Actiontype { get; set; }
+        public int? PCAllcount { get; set; }
+        public int? PCPassCount { get; set; }
         public List<PM_getListgroup>? PM_getListgroup { get; set; }
         public List<PM_getListImage>? PM_getListImage { get; set; }
     }
@@ -34,8 +36,12 @@
         public int? PassConditionsID { get; set; }
         public int? PC_StatusID { get; set; }
         public int? LockStatusID { get; set; }
-        public string? PE_Remark { get; set; }
-        public string? PM_Remark { get; set; }
+        public string? PE_RemarkPC { get; set; }
+        public string? PM_RemarkPC { get; set; }
+        public string? PJM_RemarkPC { get; set; }
+        public int? PCAllcount { get; set; }
+        public int? PCPassCount { get; set; }
+        public bool? PCFlageActive { get; set; }
         public Guid? ResourceID { get; set; }
         public string? FileName { get; set; }
         public string? FilePath { get; set; }

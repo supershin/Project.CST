@@ -57,8 +57,11 @@ namespace Project.ConstructionTracking.Web.Repositories
             var result = (from t1 in _context.tr_UnitForm
                           join t2 in _context.tm_FormGroup on t1.FormID equals t2.FormID into formGroups
                           from t2 in formGroups.DefaultIfEmpty()
-                          join t3 in _context.tr_UnitFormPassCondition on new { UnitFormID = (Guid?)t1.ID, GroupID = (int?)t2.ID } equals new { t3.UnitFormID, t3.GroupID } into passConditions
-                          from t3 in passConditions.Where(pc => pc.FlagActive == true).DefaultIfEmpty()
+                          join t3 in _context.tr_UnitFormPassCondition
+                              on new { UnitFormID = (Guid?)t1.ID, GroupID = (int?)t2.ID }
+                              equals new { t3.UnitFormID, t3.GroupID }
+                              into passConditions
+                          from t3 in passConditions.DefaultIfEmpty()
                           join t4 in _context.tm_Project on t1.ProjectID equals t4.ProjectID into projects
                           from t4 in projects.DefaultIfEmpty()
                           join t5 in _context.tm_Unit on t1.UnitID equals t5.UnitID into units

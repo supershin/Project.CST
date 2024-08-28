@@ -35,6 +35,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 };
                 Response.Cookies.Append("CST.ID", userProfile.ID.ToString(), option);
                 Response.Cookies.Append("CST.UserName", userProfile.UserName, option);
+                Response.Cookies.Append("CST.Name", userProfile.Name, option);
                 Response.Cookies.Append("CST.Role", userProfile.Role?.ToString(), option);
 
                 // Set another session cookie
