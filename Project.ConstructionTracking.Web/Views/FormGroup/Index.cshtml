@@ -473,19 +473,22 @@
                                         <ol class="breadcrumb">
                                             <li class="breadcrumb-item"><span class="text1">สถานะการผ่านแบบมีเงื่อนไข</span></li>
                                             <li class="breadcrumb-item" aria-current="page">
-                                                <span class="@(item.StatusID == 8 || item.StatusID == 13 ? "text-success" :
-                                                   (item.StatusID == 6 || item.StatusID == 12 ||
+                                                @if (PE_ActionType == "submit")
+                                                {
+                                                    <span class="@(item.StatusID == 8 || item.StatusID == 13 ? "text-success" :
+                                                    (item.StatusID == 6 || item.StatusID == 12 ||
                                                     item.StatusID != 7 && item.StatusID != 9 && item.StatusID != 14 ? "text-warning" : "text-danger"))">
-                                                    @(
-                                                        item.StatusID == 6 ? "PM ส่งให้ PJM พิจารณา" :
-                                                        item.StatusID == 7 ? "PM ไม่อนุมัติ" :
-                                                        item.StatusID == 8 ? "PJM อนุมัติ" :
-                                                        item.StatusID == 9 ? "PJM ไม่อนุมัติ" :
-                                                        item.StatusID == 12 ? "ขออนุมัติ Unlock" :
-                                                        item.StatusID == 13 ? "อนุมัติ Unlock" :
-                                                        item.StatusID == 14 ? "ไม่อนุมัติ Unlock" : "ส่งให้ PM พิจารณา"
-                                                     )
-                                                </span>
+                                                        @(
+                                                            item.StatusID == 6 ? "PM ส่งให้ PJM พิจารณา" :
+                                                            item.StatusID == 7 ? "PM ไม่อนุมัติ" :
+                                                            item.StatusID == 8 ? "PJM อนุมัติ" :
+                                                            item.StatusID == 9 ? "PJM ไม่อนุมัติ" :
+                                                            item.StatusID == 12 ? "ขออนุมัติ Unlock" :
+                                                            item.StatusID == 13 ? "อนุมัติ Unlock" :
+                                                            item.StatusID == 14 ? "ไม่อนุมัติ Unlock" : "ส่งให้ PM พิจารณา"
+                                                            )
+                                                    </span>
+                                                }
                                             </li>
                                         </ol>
                                     }
@@ -529,19 +532,19 @@
                             </div>
                             <div class="d-flex justify-content-center">
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="radios-inline" value="A" onclick="toggleRadio(this)" @(grade == "A" ? "checked" : "")>
+                                    <input class="form-check-input" type="radio" name="radios-inline" value="A" onclick="toggleRadio(this)" @(grade == "A" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "") >
                                     <span class="form-check-label">A</span>
                                 </label>
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="radios-inline" value="B" onclick="toggleRadio(this)" @(grade == "B" ? "checked" : "")>
+                                    <input class="form-check-input" type="radio" name="radios-inline" value="B" onclick="toggleRadio(this)" @(grade == "B" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "") >
                                     <span class="form-check-label">B</span>
                                 </label>
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="radios-inline" value="C" onclick="toggleRadio(this)" @(grade == "C" ? "checked" : "")>
+                                    <input class="form-check-input" type="radio" name="radios-inline" value="C" onclick="toggleRadio(this)" @(grade == "C" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "") >
                                     <span class="form-check-label">C</span>
                                 </label>
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="radios-inline" value="D" onclick="toggleRadio(this)" @(grade == "D" ? "checked" : "")>
+                                    <input class="form-check-input" type="radio" name="radios-inline" value="D" onclick="toggleRadio(this)" @(grade == "D" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "") >
                                     <span class="form-check-label">D</span>
                                 </label>
                             </div>
@@ -550,23 +553,26 @@
                                 <input type="text" class="form-control" name="example-disabled-input" placeholder="Disabled..." value="นาย สมชาย ใจดี" disabled>
                             </div>
                             <!-- Card A -->
-                            <div id="cardA" class="col-sm-12 mt-1 mb-2">
-                                <div class="col-sm-12 mt-1 mb-2" style="position: relative;">
-                                    <label for="ddlList" class="form-label">เลือกผู้รับเหมา</label>
-                                    <input id="ddlList" name="unitStatusId" class="form-control" autocomplete="off">
-                                    <div id="autocomplete-list" class="autocomplete-items"></div>
-                                    <input type="hidden" id="selectedVendorValue" name="selectedVendorValue">
-                                </div>
-                                <label for="signature-pad" class="form-label">ลงลายเซ็นผู้รับเหมา</label>
-                                <div id="signature-pad" class="signature-pad" style="justify-content:center;align-items:center;display:flex;">
-                                    <div class="signature-pad--body" style="width:340px;height:260px; background-color: grey;">
-                                        <canvas></canvas>
+                            @if (ViewBag.UserRole == "1")
+                            {
+                                <div id="cardA" class="col-sm-12 mt-1 mb-2">
+                                    <div class="col-sm-12 mt-1 mb-2" style="position: relative;">
+                                        <label for="ddlList" class="form-label">เลือกผู้รับเหมา</label>
+                                        <input id="ddlList" name="unitStatusId" class="form-control" autocomplete="off">
+                                        <div id="autocomplete-list" class="autocomplete-items"></div>
+                                        <input type="hidden" id="selectedVendorValue" name="selectedVendorValue">
+                                    </div>
+                                    <label for="signature-pad" class="form-label">ลงลายเซ็นผู้รับเหมา</label>
+                                    <div id="signature-pad" class="signature-pad" style="justify-content:center;align-items:center;display:flex;">
+                                        <div class="signature-pad--body" style="width:340px;height:260px; background-color: grey;">
+                                            <canvas></canvas>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 text-center">
+                                        <button type="button" class="clear btn btn-default"><i class="fas fa-reply"></i> เคลียร์</button>
                                     </div>
                                 </div>
-                                <div class="col-12 text-center">
-                                    <button type="button" class="clear btn btn-default"><i class="fas fa-reply"></i> เคลียร์</button>
-                                </div>
-                            </div>
+                            }
 
                             <!-- Card B -->
                             <div id="cardB" class="col-sm-12 mt-1 mb-2">
@@ -602,54 +608,57 @@
                         </div>
                         <!-- Card footer -->
                         <div class="card-footer">
-                            @if (PE_ActionType == "submit")
+                            @if (ViewBag.UserRole == "1")
                             {
-                                if (UnitFormstatusID == 5 && PM_ActionType == "submit")
+                                @if (PE_ActionType == "submit")
                                 {
-                                    <div class="col-12">
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <button class="btn custom-btn btn-secondary" data-bs-toggle="modal" id="btn-save-form">Save</button>
+                                    if (UnitFormstatusID == 5 && PM_ActionType == "submit")
+                                    {
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <button class="btn custom-btn btn-secondary" data-bs-toggle="modal" id="btn-save-form">Save</button>
+                                                </div>
+                                                <div class="text-center">
+                                                    <button type="button" class="btn custom-btn btn-warning" id="btn-toggle-card"><i class="fa-solid fa-signature"></i></button>
+                                                </div>
+                                                <div>
+                                                    <button type="button" class="btn custom-btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-submit-form">Submit</button>
+                                                </div>
                                             </div>
-                                            <div class="text-center">
-                                                <button type="button" class="btn custom-btn btn-warning" id="btn-toggle-card"><i class="fa-solid fa-signature"></i></button>
+                                        </div>
+                                    }
+                                    else if (UnitFormstatusID == 8 && PJM_ActionType == "submit")
+                                    {
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <button class="btn custom-btn btn-secondary" data-bs-toggle="modal" id="btn-save-form">Save</button>
+                                                </div>
+                                                <div class="text-center">
+                                                    <button type="button" class="btn custom-btn btn-warning" id="btn-toggle-card"><i class="fa-solid fa-signature"></i></button>
+                                                </div>
+                                                <div>
+                                                    <button type="button" class="btn custom-btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-submit-form">Submit</button>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <button type="button" class="btn custom-btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-submit-form">Submit</button>
-                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <button class="btn custom-btn btn-secondary" data-bs-toggle="modal" id="btn-save-form">Save</button>
+                                        </div>
+                                        <div class="text-center">
+                                            <button type="button" class="btn custom-btn btn-warning" id="btn-toggle-card"><i class="fa-solid fa-signature"></i></button>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="btn custom-btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-submit-form">Submit</button>
                                         </div>
                                     </div>
                                 }
-                                else if (UnitFormstatusID == 8 && PJM_ActionType == "submit" )
-                                {
-                                    <div class="col-12">
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <button class="btn custom-btn btn-secondary" data-bs-toggle="modal" id="btn-save-form">Save</button>
-                                            </div>
-                                            <div class="text-center">
-                                                <button type="button" class="btn custom-btn btn-warning" id="btn-toggle-card"><i class="fa-solid fa-signature"></i></button>
-                                            </div>
-                                            <div>
-                                                <button type="button" class="btn custom-btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-submit-form">Submit</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                            }
-                            else
-                            {
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <button class="btn custom-btn btn-secondary" data-bs-toggle="modal" id="btn-save-form">Save</button>
-                                    </div>
-                                    <div class="text-center">
-                                        <button type="button" class="btn custom-btn btn-warning" id="btn-toggle-card"><i class="fa-solid fa-signature"></i></button>
-                                    </div>
-                                    <div>
-                                        <button type="button" class="btn custom-btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-submit-form">Submit</button>
-                                    </div>
-                                </div>
                             }
                         </div>
                     </div>

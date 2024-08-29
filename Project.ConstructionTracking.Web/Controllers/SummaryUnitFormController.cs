@@ -6,7 +6,7 @@ using Project.ConstructionTracking.Web.Services;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class SummaryUnitFormController : Controller
+    public class SummaryUnitFormController : BaseController
     {
         private readonly ISummeryUnitFormService _SummeryUnitFormService;
 

@@ -4,7 +4,7 @@ using Project.ConstructionTracking.Web.Services;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class PJMFormcheckController : Controller
+    public class PJMFormcheckController : BaseController
     {
         private readonly IPJMApproveService _PJMApproveService;
         public PJMFormcheckController(IPJMApproveService PJMApproveService)

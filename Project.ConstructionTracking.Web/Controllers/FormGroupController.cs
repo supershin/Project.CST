@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class FormGroupController : Controller
+    public class FormGroupController : BaseController
     {
         private readonly IFormGroupService _FormGroupService;
         private readonly IFormChecklistService _FormChecklistService;

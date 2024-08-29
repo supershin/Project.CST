@@ -394,43 +394,57 @@
                 formData.append("Images", files[i]);
             }
 
-            $.ajax({
-                url: '@ViewBag.baseUrl' + 'UnLockPassCondition/RequestUnlock',
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'Data saved successfully!',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload(); // Reload the page when "OK" is clicked
+            // Show SweetAlert confirmation before making AJAX request
+            Swal.fire({
+                title: 'Confirm Unlock Request',
+                text: 'ต้องการขอปลดล็อกหรือไม่',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Unlock',
+                cancelButtonText: 'No, Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // User confirmed, proceed with AJAX request
+                    $.ajax({
+                        url: '@ViewBag.baseUrl' + 'UnLockPassCondition/RequestUnlock',
+                        type: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Data saved successfully!',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload(); // Reload the page when "OK" is clicked
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Failed to save data: ' + response.message,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
                             }
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Failed to save data: ' + response.message,
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                },
-                error: function(xhr, status, error) {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'An error occurred while saving data.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred while saving data.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
                     });
                 }
             });
         }
+
 
 
         function openModal(UnitFormID, GroupID, FormID) {

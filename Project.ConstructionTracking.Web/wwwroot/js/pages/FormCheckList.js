@@ -153,14 +153,14 @@ document.addEventListener("DOMContentLoaded", function () {
         toggleRemarkPC(); // Call function to toggle Remark-PC based on pc-radio state
     });
 
-    if (pcRadio.checked || PM_StatusActionType === "submit") {
+    if (pcRadio.checked || PM_StatusActionType === "submit" || userRole !== "1") {
         disableAllRadios();
     } else {
         enableAllRadios();
     }
 
-    if (PM_StatusActionType === "submit") {
-        if (["2", "3", "4", "6", "7", "9"].includes(UnitFormStatusIDchk) || PC_StatusID === "8") {
+    if (PM_StatusActionType === "submit" || userRole !== "1") {
+        if (["2", "3", "4", "6", "7", "9"].includes(UnitFormStatusIDchk) || PC_StatusID === "8" || userRole !== "1") {
             document.querySelectorAll('textarea[data-package-id]').forEach(function (textarea) {
                 textarea.disabled = true;
             });

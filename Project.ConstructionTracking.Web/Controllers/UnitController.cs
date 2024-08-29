@@ -4,7 +4,7 @@ using Project.ConstructionTracking.Web.Services;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class UnitController : Controller
+    public class UnitController : BaseController
     {
         private readonly IUnitService _unitService;
 

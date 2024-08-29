@@ -294,20 +294,23 @@
                                                 <a data-fslightbox="gallery" href="~/@image.FilePath">
                                                     <img src="~/@image.FilePath" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                                 </a>
-                                                @if (ViewBag.StatusActionType == "submit")
+                                                @if (ViewBag.UserRole == "1")
                                                 {
-                                                    if (UnitFormStatusID == 5 && PM_ActionType == "submit")
+                                                    @if (ViewBag.StatusActionType == "submit")
+                                                    {
+                                                        if (UnitFormStatusID == 5 && PM_ActionType == "submit")
+                                                        {
+                                                            <button type="button" class="remove-button" onclick="deleteImage('@image.ResourceID')">✖</button>
+                                                        }
+                                                        else if (UnitFormStatusID == 8 && PCStatusID != 8 && PJM_ActionType == "submit")
+                                                        {
+                                                            <button type="button" class="remove-button" onclick="deleteImage('@image.ResourceID')">✖</button>
+                                                        }
+                                                    }
+                                                    else
                                                     {
                                                         <button type="button" class="remove-button" onclick="deleteImage('@image.ResourceID')">✖</button>
                                                     }
-                                                    else if (UnitFormStatusID == 8 && PCStatusID != 8 && PJM_ActionType == "submit")
-                                                    {
-                                                        <button type="button" class="remove-button" onclick="deleteImage('@image.ResourceID')">✖</button>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <button type="button" class="remove-button" onclick="deleteImage('@image.ResourceID')">✖</button>
                                                 }
                                             </div>
                                         }
@@ -323,6 +326,8 @@
                                 }
                             </div>
                             <div class="col-12 mb-2">
+                            @if (ViewBag.UserRole == "1")
+                            {
                                 @if (ViewBag.StatusActionType == "submit")
                                 {
                                     if (UnitFormStatusID == 5 && PM_ActionType == "submit")
@@ -358,6 +363,7 @@
                                         <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
                                     </div>
                                 }
+                            }
                             </div>
                             <div class="col-12">
                                 <label class="form-check form-check-inline">
@@ -379,6 +385,8 @@
                                 <input type="hidden" name="UnitFormStatusIDchk" value="@UnitFormStatusID" ID="UnitFormStatusIDchk" />
                             </div>
                             <div class="col-6">
+                            @if (ViewBag.UserRole == "1")
+                            {
                                 @if (ViewBag.StatusActionType == "submit")
                                 {
                                     if (UnitFormStatusID == 5 && PM_ActionType == "submit")
@@ -406,6 +414,7 @@
                                         </button>
                                     </div>
                                 }
+                            }
                             </div>
                         </div>
                     </div>

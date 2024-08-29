@@ -5,7 +5,7 @@ using Project.ConstructionTracking.Web.Services;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class UnLockPassConditionController : Controller
+    public class UnLockPassConditionController : BaseController
     {
         private readonly IUnLockPassConditionService _UnLockPassConditionService;
         private readonly IHostEnvironment _hosting;

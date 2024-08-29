@@ -2,7 +2,7 @@
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class UnitStatusByProjectController : Controller
+    public class UnitStatusByProjectController : BaseController
     {
         public IActionResult Index()
         {

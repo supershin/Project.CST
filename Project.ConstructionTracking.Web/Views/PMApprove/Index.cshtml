@@ -283,8 +283,7 @@
                                                onclick="toggleRadio(this, '@Model.ID')"
                                                @(group.PC_StatusID == 7 ? "checked" : "")
                                                 @(
-                                                (PJM_Actiontype == "submit" && group.PC_StatusID == 8) ||
-                                                (PM_Actiontype == "submit" && (UnitFormStatusID != 2 || group.PCFlageActive == false))
+                                                (PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (PM_Actiontype == "submit" && (UnitFormStatusID != 2) || group.PCFlageActive == false)
                                                 ? "disabled"
                                                 : ""
                                                 )

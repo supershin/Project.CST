@@ -7,7 +7,7 @@ using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class PMApproveController : Controller
+    public class PMApproveController : BaseController
     {
         private readonly IPMApproveService _PMApproveService;
         private readonly IHostEnvironment _hosting;
