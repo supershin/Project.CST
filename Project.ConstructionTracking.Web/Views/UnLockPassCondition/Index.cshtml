@@ -395,7 +395,7 @@
             }
 
             $.ajax({
-                url: '/UnLockPassCondition/RequestUnlock',
+                url: '@ViewBag.baseUrl' + 'UnLockPassCondition/RequestUnlock',
                 type: 'POST',
                 data: formData,
                 contentType: false,

@@ -1,7 +1,9 @@
 ﻿<!DOCTYPE html>
 
 <html lang="en">
-<style>
+
+<head>
+    <style>
     /* Loading Animation */
     #loading {
         display: none;
@@ -26,11 +28,11 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
+        z-index: 9999;
         overflow: auto;
         display: flex;
-        align-items: center; /* Center vertically */
-        justify-content: center; /* Center horizontally */
+        align-items: center; 
+        justify-content: center; 
     }
 
     .modal-dialog {
@@ -58,7 +60,7 @@
         margin: 0;
     }
 
-    .modal-body {
+    #chatMessages {
         padding: 15px;
         height: 300px;
         overflow-y: auto;
@@ -88,10 +90,9 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional shadow for a raised effect */
     }
 
-.sendButton:hover {
-    background-color: #5a9edb; /* Slightly darker blue on hover */
-}
-
+    .sendButton:hover {
+        background-color: #5a9edb; /* Slightly darker blue on hover */
+    }
 
     .close:hover {
         color: #000;
@@ -108,13 +109,16 @@
         position: fixed;
         bottom: 20px;
         right: 20px;
-        background-color: transparent;
+        padding: 20px;
+        z-index: 1000;
+        background-color: white;
+        border-radius: 50%;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         border: none;
-        cursor: pointer;
     }
 
 </style>
-<head>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
@@ -208,7 +212,45 @@
                                     </span>
                                 </a>
                             </li>
-                            <li class="nav-item dropdown">
+                            @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="PMFormcheck" asp-action="Index">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M3.5 11.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M3.5 17.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M11 6l9 0" />
+                                            <path d="M11 12l9 0" />
+                                            <path d="M11 18l9 0" />
+                                        </svg>
+                                        <span class="nav-link-title">
+                                            My Task
+                                        </span>
+                                    </a>
+                                </li>                              
+                            }
+                            @if (ViewBag.UserRole == SystemConstant.UserRole.PJM.ToString())
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="PJMFormcheck" asp-action="Index">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M3.5 11.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M3.5 17.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M11 6l9 0" />
+                                            <path d="M11 12l9 0" />
+                                            <path d="M11 18l9 0" />
+                                        </svg>
+                                        <span class="nav-link-title">
+                                            My Task
+                                        </span>
+                                    </a>
+                                </li>
+                            }
+                            @* <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -235,7 +277,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </li>
+                            </li> *@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-device-desktop">
@@ -410,8 +452,8 @@
     <script src="~/lib/core-ui/dist/libs/nouislider/dist/nouislider.min.js?1692870487" defer></script>
 
     <script> 
-        function openModalChat(username) {
-            document.getElementById("hdname").value = username; // Set the username in the hidden input
+        function openModalChat(UnitFormID, FormID, RoleID) {
+            document.getElementById("hdname").value = UnitFormID; // Set the username in the hidden input
             document.getElementById("chatModal").style.display = "block"; // Show the modal
         }
 

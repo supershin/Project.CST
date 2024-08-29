@@ -216,7 +216,7 @@
 
         function openModal(UnitFormID, Group_ID) {
             $.ajax({
-                url: 'PMApprove/GetImages',
+                url: '@ViewBag.baseUrl'+'PMApprove/GetImages',
                 type: 'GET',
                 data: { UnitFormID: UnitFormID, GroupID: Group_ID, RoleID: 1 },
                 success: function (images) {

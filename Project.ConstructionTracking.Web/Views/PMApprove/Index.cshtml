@@ -195,7 +195,7 @@
                         <div class="card p-3 mb-2">
                             <div class="d-flex justify-content-between">
                                 <div class="d-flex flex-row align-items-center">
-                                    <form action="@Url.Action("Index","FormCheckList" , new { unitId = Model.UnitID, FormID = Model.FormID , GroupID = group.Group_ID})" method="post">
+                                    <form action="@Url.Action("Index","FormCheckList" , new { unitId = Model.UnitID, FormID = Model.FormID , GroupID = group.Group_ID , GobackTo = "PMApprove"})" method="post">
                                         @{
                                             string buttonClass = "bg-green";
                                             string iconClass = "fa-solid fa-magnifying-glass";
@@ -281,13 +281,13 @@
                                                name="radios-inline-@Model.ID-@group.Group_ID"
                                                value="7"
                                                onclick="toggleRadio(this, '@Model.ID')"
-                                        @(group.PC_StatusID == 7 ? "checked" : "")
-                                        @(
-                                            (PJM_Actiontype == "submit" && group.PC_StatusID == 8) ||
-                                            (PM_Actiontype == "submit" && (UnitFormStatusID != 2 || group.PCFlageActive == false))
-                                            ? "disabled"
-                                            : ""
-                                            )
+                                               @(group.PC_StatusID == 7 ? "checked" : "")
+                                                @(
+                                                (PJM_Actiontype == "submit" && group.PC_StatusID == 8) ||
+                                                (PM_Actiontype == "submit" && (UnitFormStatusID != 2 || group.PCFlageActive == false))
+                                                ? "disabled"
+                                                : ""
+                                                )
                                         >
                                       <span class="form-check-label">ไม่ผ่าน</span>
                                     </label>
@@ -340,6 +340,7 @@
                     <div class="row">
                         <div class="col-12 col-sm-6">
                             <!-- Profile Image -->
+                           <input type="hidden" id="listimagecnt" value="@Model.PM_getListImage.Count" />
                             @foreach (var listimage in Model.PM_getListImage)
                             {
                                 <div class="position-relative d-inline-block mb-3">
@@ -368,6 +369,7 @@
                                                value="@(LockStatusID != null && PCALLPASS != "yes" ? 6 : 4)"
                                                 @(Model.PM_StatusID == (LockStatusID != null ? 6 : 4) ? "checked" : "")
                                                 @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")
+                                                 onclick="toggleRadio(this, '@Model.ID')"
                                         >
                                         <span class="form-check-label">
                                             @(LockStatusID != null && PCALLPASS != "yes" ? "อนุมัติผ่านแบบมีเงื่อนไข" : "อนุมัติ")
@@ -376,12 +378,14 @@
                                     <label class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="radios-inline-approval" value="5"
                                         @(Model.PM_StatusID == 5 ? "checked" : "")
-                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>
+                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")
+                                         onclick="toggleRadio(this, '@Model.ID')"
+                                        >
                                         <span class="form-check-label">ไม่อนุมัติ</span>
                                     </label>
                                 </div>
                                 <div class="col-12">
-                                    <textarea id="mainRemark" rows="2" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ"
+                                    <textarea id="mainRemark" rows="2" class="form-control" placeholder=""
                                     @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>@Model.PM_Remarkaction</textarea>
                                 </div>
                                 @if (PM_Actiontype == "submit")

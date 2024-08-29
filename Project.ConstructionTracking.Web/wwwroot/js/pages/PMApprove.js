@@ -55,7 +55,7 @@ function toggleRadio(radio, itemId) {
     }
 
     // Prevent checking "อนุมัติหลัก" if any "ไม่อนุมัติPC" is selected
-    if (radio.value === "4") {
+    if (radio.value === "4"|| radio.value === "6") {
         var conditionalRadios = document.querySelectorAll('input[type="radio"][value="7"]');
         for (var k = 0; k < conditionalRadios.length; k++) {
             if (conditionalRadios[k].checked) {
@@ -131,6 +131,45 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function saveOrSubmit(actionType) {
+
+    var remarkElement = document.getElementById("mainRemark").value;
+    var listimagecnt = document.getElementById("listimagecnt").value;
+    var files = document.getElementById("file-input").files;
+    var mainStatus = document.querySelector('input[name="radios-inline-approval"]:checked');
+
+    if (actionType === "submit") {       
+        if (!mainStatus) {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'กรุณาระบุตัวเลือกอนุมัติหรือไม่อนุมัติ',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+    }
+    if (actionType === "submit" && mainStatus && mainStatus.value === "5") {
+        if (remarkElement.trim() === "") {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'กรุณาระบุหมายเหตุ เมื่อไม่อนุมัติงวดงานนี้',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+        if (files.length === 0 && listimagecnt === "0") {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'กรุณาแนบไฟล์ภาพ เมื่อไม่อนุมัติงวดงานนี้',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+    }
+
+
     var data = new FormData();
 
     // Option 1: Getting values from hidden fields
@@ -139,23 +178,21 @@ function saveOrSubmit(actionType) {
     data.append("UnitID", document.getElementById("UnitID").value);
     data.append("UnitCode", document.getElementById("UnitCode").value);
     data.append("FormID", document.getElementById("FormID").value);
-   
+
     // Add ActionType (save or submit)
     data.append("ActionType", actionType);
 
-  
     // Add main form status and remark
-    var mainStatus = document.querySelector('input[name="radios-inline-approval"]:checked');
     if (mainStatus) {
         data.append("UnitFormStatus", mainStatus.value);
     }
     data.append("Remark", document.getElementById("mainRemark").value);
-    
+
     // Collect images if any
-    var files = document.getElementById("file-input").files;
     for (var i = 0; i < files.length; i++) {
         data.append("Images", files[i]);
     }
+
     var passConditions = [];
     $("input[data-action='gr-pass']").each(function () {
         let group_id = $(this).attr("group-id");
@@ -182,14 +219,10 @@ function saveOrSubmit(actionType) {
         }
     });
 
-
     if (passConditions.length > 0) {
         data.append("PassConditionsIUD", JSON.stringify(passConditions));
     }
 
-    //console.log(data);
-    
-    // Send the data using AJAX
     $.ajax({
         url: baseUrl + 'PMApprove/SaveOrSubmit', // Replace with your actual controller action
         type: 'POST',
@@ -227,6 +260,7 @@ function saveOrSubmit(actionType) {
         }
     });
 }
+
 
 function deleteImage(resourceId) {
     Swal.fire({

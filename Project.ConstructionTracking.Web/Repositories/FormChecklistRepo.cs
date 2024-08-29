@@ -20,6 +20,8 @@ public class FormChecklistRepo : IFormChecklistRepo
         var result = (from t1 in _context.tm_Project
                       join t2 in _context.tm_Unit on t1.ProjectID equals t2.ProjectID into units
                       from unit in units.DefaultIfEmpty()
+                      join t2sub in _context.tm_Ext on unit.UnitStatusID equals t2sub.ID into gj
+                      from subT2 in gj.DefaultIfEmpty()
                       join t3 in _context.tr_ProjectModelForm on t1.ProjectID equals t3.ProjectID into projectModelForms
                       from projectModelForm in projectModelForms.DefaultIfEmpty()
                       join t4 in _context.tm_Form on projectModelForm.FormTypeID equals t4.FormTypeID into forms
@@ -40,7 +42,8 @@ public class FormChecklistRepo : IFormChecklistRepo
                           GroupID = formGroup.ID,
                           GroupName = formGroup.Name,
                           UnitFormID = unitForm.ID,
-                          UnitFormStatusID = unitForm.StatusID
+                          UnitFormStatusID = unitForm.StatusID,
+                          UnitStatusName = subT2.Name,
                       }).FirstOrDefault();
 
 

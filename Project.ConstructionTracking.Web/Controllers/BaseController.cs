@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Storage;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Services;
+using static Project.ConstructionTracking.Web.Commons.SystemConstant;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
@@ -21,9 +22,15 @@ namespace Project.ConstructionTracking.Web.Controllers
             url = url.EndsWith("/") ? url : string.Concat(url, "/");
             BaseUrl = url;
             ViewBag.baseUrl = BaseUrl;
+
+            setUserProfile();
             base.OnActionExecuting(context);
         }
-
+        private void setUserProfile() {
+            var userName = Request.Cookies["CST.UserName"];
+            var userRole = Request.Cookies["CST.Role"];
+            ViewBag.UserRole = userRole;
+        }
     }
 
 }

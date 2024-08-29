@@ -148,7 +148,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 foreach (var passConditionModel in model.ListPCIC)
                 {
                     var passCondition = _context.tr_UnitFormPassCondition
-                        .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.ID == passConditionModel.PC_ID && pc.FlagActive == true && pc.StatusID != 8);
+                        .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.ID == passConditionModel.PC_ID && pc.FlagActive == true);
 
                     if (passCondition != null)
                     {

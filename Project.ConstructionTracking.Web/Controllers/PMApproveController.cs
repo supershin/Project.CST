@@ -45,7 +45,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             if (listpass != null)
             {
                 int? PCAll = listpass.Count;
-                int? PCPass = listpass.Count(item => item.PC_StatusID == 8 || item.PCFlageActive == false);
+                int? PCPass = listpass.Count(item => item.PC_StatusID == 8 || item.PCFlageActive == false || item.PassConditionsID == null);
                 ViewBag.PCALLPASS = (PCAll == PCPass) ? "yes" : "no";
             }
 

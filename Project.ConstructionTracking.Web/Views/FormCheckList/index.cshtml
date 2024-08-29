@@ -6,6 +6,7 @@
     var FormID = ViewBag.FormID;
     var UnitFormName = ViewBag.UnitFormName;
     var unitId = ViewBag.unitId;
+    var GobackTo = ViewBag.GobackTo;
     var UnitFormID = ViewBag.UnitFormID;
     var UnitFormActionID = ViewBag.UnitFormActionID;
     var UnitCode = ViewBag.UnitCode;
@@ -130,19 +131,41 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        <form asp-controller="FormGroup" asp-action="Index" method="post">
-                            <input type="hidden" name="projectId" value="@projectId" id="hd_projectId" />
-                            <input type="hidden" name="projectName" value="@projectName" />
-                            <input type="hidden" name="FormID" value="@FormID" id="hd_FormID" />
-                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
-                            <input type="hidden" name="UnitFormName" value="@UnitFormName" />
-                            <input type="hidden" name="unitId" value="@unitId" id="hd_unitId" />
-                            <input type="hidden" name="UnitCode" value="@UnitCode" />
-                            <input type="hidden" name="UnitStatusName" value="@UnitStatusName" />
-                            <button class="status-dot bg-transparent">
-                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
-                            </button>
-                        </form>
+                        @if (GobackTo == "Forgroup")
+                        {
+                            <form asp-controller="FormGroup" asp-action="Index" method="post">
+                                <input type="hidden" name="projectId" value="@projectId" id="hd_projectId" />
+                                <input type="hidden" name="projectName" value="@projectName" />
+                                <input type="hidden" name="FormID" value="@FormID" id="hd_FormID" />
+                                <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                <input type="hidden" name="UnitFormName" value="@UnitFormName" />
+                                <input type="hidden" name="unitId" value="@unitId" id="hd_unitId" />
+                                <input type="hidden" name="UnitCode" value="@UnitCode" />
+                                <input type="hidden" name="UnitStatusName" value="@UnitStatusName" />
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
+                        else if (GobackTo == "PMApprove")
+                        {
+                            <form asp-controller="PMApprove" asp-action="Index" method="post">
+                                <input type="hidden" name="unitId" value="@unitId" id="unitId" />
+                                <input type="hidden" name="formId" value="@FormID" id="formId" />
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
+                        else if (GobackTo == "PJMApprove")
+                        {
+                            <form asp-controller="PJMApprove" asp-action="Index" method="post">
+                                <input type="hidden" name="UnitFormID" value="@UnitFormID" id="UnitFormID" />
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
                         <h3 class="mb-0 header-text"> @GroupName</h3>

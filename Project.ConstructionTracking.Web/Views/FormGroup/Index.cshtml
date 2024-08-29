@@ -10,6 +10,8 @@
     var UnitCode = ViewBag.UnitCode;
     var UnitStatusName = ViewBag.UnitStatusName;
     var FormGroupDetail = ViewBag.FormGroupDetail;
+    var GobackTo = ViewBag.GobackTo;
+    var RoleID = ViewBag.RoleID;
     var grade = FormGroupDetail?.Grade;
     var VenderName = FormGroupDetail?.VenderName;
     var UnitFormstatusID = FormGroupDetail?.UnitFormstatusID;
@@ -158,18 +160,6 @@
     font-size: 20px; /* Adjust icon size */
 }
 
-.fixedButton {
-    position: fixed;
-    bottom: 20px;
-    right: 20px; 
-    padding: 20px;
-    z-index: 9999; 
-    background-color: white; 
-    border-radius: 50%; 
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); 
-    border: none;
-}
-
 </style>
 
 <style>
@@ -277,7 +267,7 @@
     }
 </style>
 
-<button class="fixedButton" onclick="openModalChat('XXXX')">
+<button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@RoleID')">
     <i class="fa-solid fa-message fa-xl" style="color: #74C0FC;"></i>
 </button>
 
@@ -296,10 +286,11 @@
                 </div>
             </div>
             <div class="card-body">
+                <input type="hidden" name="UnitFormID" id="UnitFormID" value="@UnitFormID" />
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
                         <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
-                            <input type="hidden" name="projectId" value="@projectId" />
+                            <input type="hidden" name="projectId" id="projectId" value="@projectId" />
                             <input type="hidden" name="projectName" value="@projectName" />
                             <input type="hidden" name="unitId" value="@unitId" />
                             <input type="hidden" name="UnitCode" value="@UnitCode" />
@@ -389,15 +380,9 @@
                 {
                     <div class="col-md-4">
                         <form asp-controller="FormGroup" asp-action="GoToFormChecklist" method="post">
-                            <input type="hidden" id="projectId" name="projectId" value="@projectId" />
-                            <input type="hidden" id="projectName" name="projectName" value="@projectName" />
                             <input type="hidden" id="FormID" name="FormID" value="@FormID" />
-                            <input type="hidden" id="UnitFormID" name="UnitFormID" value="@UnitFormID" />
-                            <input type="hidden" name="UnitFormName" value="@UnitFormName" />
                             <input type="hidden" id="unitId" name="unitId" value="@unitId" />
-                            <input type="hidden" name="UnitCode" value="@UnitCode" />
-                            <input type="hidden" name="UnitStatusName" value="@UnitStatusName" />
-                            <input type="hidden" name="GroupName" value="@item.GroupName" />
+                            <input type="hidden" name="GobackTo" value="@GobackTo" />
                             <input type="hidden" name="GroupID" value="@item.GroupID" />
 
                             <div class="card card-link card-link-pop p-3 mb-2" onclick="this.closest('form').submit();">
@@ -502,10 +487,6 @@
                                                      )
                                                 </span>
                                             </li>
-                                            @if (item.PCFlagActive == false)
-                                            {
-                                                <li class="breadcrumb-item" aria-current="page"><span class="text3">ยกเลิก PC</span></li>
-                                            }
                                         </ol>
                                     }
                                 </div>

@@ -17,7 +17,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             _hosting = hosting;
         }
 
-        public IActionResult Index(Guid projectId, string projectName, int FormID, Guid UnitFormID, string UnitFormName, Guid unitId, string UnitCode, string UnitStatusName , string GroupName , int GroupID)
+        public IActionResult Index(int FormID,Guid unitId,int GroupID,string GobackTo)
         {
             var userName = Request.Cookies["CST.UserName"];
             var userRole = Request.Cookies["CST.Role"];
@@ -35,9 +35,10 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.UnitId = UnitFormData?.UnitID;
             ViewBag.UnitFormStatusID = UnitFormData?.UnitFormStatusID;
             ViewBag.UnitCode = UnitFormData?.UnitCode;
-            ViewBag.UnitStatusName = UnitStatusName;
+            ViewBag.UnitStatusName = UnitFormData?.UnitStatusName;
             ViewBag.GroupName = UnitFormData?.GroupName;
             ViewBag.GroupID = UnitFormData?.GroupID;
+            ViewBag.GobackTo = GobackTo;
             ViewBag.UserName = userName;
             ViewBag.UserRole = userRole;
 

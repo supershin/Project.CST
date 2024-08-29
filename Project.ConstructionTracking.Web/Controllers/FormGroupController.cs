@@ -29,6 +29,10 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.unitId = unitId;
             ViewBag.UnitCode = UnitCode;
             ViewBag.UnitStatusName = UnitStatusName;
+            ViewBag.GobackTo = "Forgroup";
+
+            var userRole = Request.Cookies["CST.Role"];
+            ViewBag.RoleID = userRole;
 
             var filterunitData = new FormCheckListModel.Form_getUnitFormData { UnitID = unitId, FormID = FormID};
 
@@ -73,9 +77,9 @@ namespace Project.ConstructionTracking.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult GoToFormChecklist(Guid projectId, string projectName, int FormID, Guid UnitFormID, string UnitFormName, Guid unitId, string UnitCode, string UnitStatusName, string GroupName, int GroupID)
+        public IActionResult GoToFormChecklist(int FormID,Guid unitId,int GroupID ,string GobackTo)
         {
-            return RedirectToAction("Index", "FormCheckList", new { projectId, projectName, FormID, UnitFormID, UnitFormName, unitId, UnitCode, UnitStatusName , GroupName , GroupID });
+            return RedirectToAction("Index", "FormCheckList", new { FormID,unitId,GroupID,GobackTo });
         }
     }
 }
