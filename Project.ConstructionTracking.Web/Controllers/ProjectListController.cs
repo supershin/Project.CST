@@ -3,7 +3,7 @@ using Project.ConstructionTracking.Web.Services;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class ProjectListController : Controller
+    public class ProjectListController : BaseController
     {
         private readonly IProjectService _ProjectService;
 

@@ -35,11 +35,15 @@ namespace Project.ConstructionTracking.Web.Controllers
                 };
                 Response.Cookies.Append("CST.ID", userProfile.ID.ToString(), option);
                 Response.Cookies.Append("CST.UserName", userProfile.UserName, option);
+                Response.Cookies.Append("CST.Name", userProfile.Name, option);
                 Response.Cookies.Append("CST.Role", userProfile.Role?.ToString(), option);
 
                 // Set another session cookie
                 var sessionId = Guid.NewGuid().ToString(); // Example session ID
                 Response.Cookies.Append("CST.SessionID", sessionId, option);
+
+                var userRole = Request.Cookies["CST.Role"];
+                ViewBag.UserRole = userRole;
 
                 // Handle successful login (e.g., redirect to a dashboard)
                 return RedirectToAction("Index", "Dashboard");

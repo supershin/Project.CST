@@ -15,14 +15,18 @@ document.addEventListener("DOMContentLoaded", function () {
     var dropZone = document.getElementById("drop-zone");
     var fileInput = document.getElementById("file-input");
     var previewContainer = document.getElementById("preview-container");
+    var filesArray = [];
 
-    dropZone.addEventListener("click", function () {
+    dropZone.addEventListener("click", function (e) {
+        if (e.target.classList.contains("remove-button")) {
+            return;
+        }
         fileInput.click();
     });
 
     fileInput.addEventListener("change", function () {
         if (fileInput.files.length) {
-            previewFiles(fileInput.files);
+            addFilesToPreview(fileInput.files);
         }
     });
 
@@ -37,14 +41,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     dropZone.addEventListener("drop", function (e) {
         e.preventDefault();
-        fileInput.files = e.dataTransfer.files;
-        previewFiles(fileInput.files);
+        addFilesToPreview(e.dataTransfer.files);
     });
 
-    function previewFiles(files) {
-        previewContainer.innerHTML = ""; // Clear previous previews
+    function addFilesToPreview(files) {
         Array.from(files).forEach(file => {
-            if (file.type.startsWith("image/")) {
+            // Check if the file is already in the array
+            if (!filesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
+                filesArray.push(file);
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = function (event) {
@@ -52,25 +56,43 @@ document.addEventListener("DOMContentLoaded", function () {
                     img.src = event.target.result;
                     const previewImage = document.createElement("div");
                     previewImage.className = "col-4 preview-image";
+
                     const removeButton = document.createElement("button");
                     removeButton.className = "remove-button";
                     removeButton.innerHTML = "&times;";
-                    removeButton.addEventListener("click", function () {
+                    removeButton.addEventListener("click", function (e) {
+                        e.stopPropagation(); // Stop event from bubbling up to the dropzone
+                        filesArray = filesArray.filter(f => f !== file);
+                        updateFileInput();
                         previewImage.remove();
                     });
+
                     previewImage.appendChild(img);
                     previewImage.appendChild(removeButton);
                     previewContainer.appendChild(previewImage);
                 };
             }
         });
+        updateFileInput();
+    }
+
+    function updateFileInput() {
+        // Clear the file input so that it can be used to add more files
+        fileInput.value = '';
+
+        // Create a new DataTransfer object to hold the remaining files
+        const dataTransfer = new DataTransfer();
+        filesArray.forEach(file => dataTransfer.items.add(file));
+        fileInput.files = dataTransfer.files;
     }
 });
 
 document.addEventListener("DOMContentLoaded", function () {
     var pcRadio = document.getElementById("pc-radio");
+    var remarkPC = document.getElementById("Remark-PC");
     var PM_StatusActionType = document.getElementById("PM_StatusActionType").value;
     var UnitFormStatusIDchk = document.getElementById("UnitFormStatusIDchk").value;
+    var PC_StatusID = document.getElementById("PC_StatusID").value;
 
     function disableAllRadios() {
         var allRadios = document.querySelectorAll(".form-check-input[type='radio']:not(#pc-radio)");
@@ -86,13 +108,21 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function toggleRemarkPC() {
+        if (pcRadio.checked) {
+            remarkPC.disabled = false; // Enable Remark-PC when pc-radio is checked
+        } else {
+            remarkPC.disabled = true; // Disable Remark-PC when pc-radio is not checked
+        }
+    }
+
     pcRadio.addEventListener("click", function (e) {
         var allRadios = document.querySelectorAll(".form-check-input[type='radio']:not(#pc-radio)");
         var allChecked = true;
 
-        // Check if all other radios with value="1" are checked
+        // Check if all other radios with value="9" are checked
         allRadios.forEach(function (radio) {
-            if (radio.value == "1" && !radio.checked) {
+            if (radio.value == "9" && !radio.checked) {
                 allChecked = false;
             }
         });
@@ -120,27 +150,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 disableAllRadios();
             }
         }
+        toggleRemarkPC(); // Call function to toggle Remark-PC based on pc-radio state
     });
 
-    if (pcRadio.checked || PM_StatusActionType === "submit") {
-        disableAllRadios(); 
+    if (pcRadio.checked || PM_StatusActionType === "submit" || userRole !== "1") {
+        disableAllRadios();
     } else {
-        enableAllRadios(); 
+        enableAllRadios();
     }
 
-    if (PM_StatusActionType === "submit") {
-        if (UnitFormStatusIDchk === "2" || UnitFormStatusIDchk === "3" || UnitFormStatusIDchk === "4" || UnitFormStatusIDchk === "6" || UnitFormStatusIDchk === "7") {
+    if (PM_StatusActionType === "submit" || userRole !== "1") {
+        if (["2", "3", "4", "6", "7", "9"].includes(UnitFormStatusIDchk) || PC_StatusID === "8" || userRole !== "1") {
             document.querySelectorAll('textarea[data-package-id]').forEach(function (textarea) {
-                var packageId = textarea.getAttribute('data-package-id');
                 textarea.disabled = true;
-
             });
             pcRadio.disabled = true;
-            document.getElementById("Remark-PC").disabled = true;
+            remarkPC.disabled = true; // Ensure Remark-PC is disabled when PM_StatusActionType is submit
         }
     }
 
-
+    toggleRemarkPC(); // Initial call to set the correct state of Remark-PC on page load
 });
 
 
@@ -148,6 +177,21 @@ $('#saveButton').on('click', function () {
     var packages = [];
     var checklists = [];
     var pcCheck = null;
+    var valid = true; // Variable to track validation status
+
+    // Check if both the file input and the preview container are empty
+    var files = $('#file-input')[0].files;
+    var imagpreview = parseInt($('#hd_imageListcnt').val(), 10) || 0;
+
+    if (files.length === 0 && imagpreview === 0) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'กรุณาอัปโหลดรูปภาพอย่างน้อยหนึ่งรูปก่อนบันทึก.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        valid = false; // Mark the validation as failed
+    }
 
     // Collect data for each package
     $('div.container-xl.mb-3').each(function (index) {
@@ -188,83 +232,104 @@ $('#saveButton').on('click', function () {
         }
     });
 
+    // Validate that at least one package is available
+    if (packages.length === 0) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'กรุณากรอกข้อมูลในทุกฟิลด์ที่จำเป็นก่อนบันทึก.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        valid = false; // Mark the validation as failed
+    }
+
     var pcRadioChecked = $('#pc-radio').is(':checked');
     if (pcRadioChecked) {
-        pcCheck = {
-            UnitFormID: packages[0]?.UnitFormID,
-            GroupID: packages[0]?.GroupID,
-            Remark: $('#Remark-PC').val(),
-            IsChecked: true
-        };
-    }
-
-    var data = new FormData();
-
-    packages.forEach((pkg, index) => {
-        for (const key in pkg) {
-            data.append(`Packages[${index}].${key}`, pkg[key]);
-        }
-    });
-
-    checklists.forEach((checklist, index) => {
-        for (const key in checklist) {
-            data.append(`CheckLists[${index}].${key}`, checklist[key]);
-        }
-    });
-
-    if (pcCheck) {
-        for (const key in pcCheck) {
-            data.append(`PcCheck.${key}`, pcCheck[key]);
+        var remarkPC = $('#Remark-PC').val();
+        if (!remarkPC) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'กรุณาระบุเหตุผลเพื่อขออนุมัติการผ่านแบบมีเงื่อนไข.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            valid = false; // Mark the validation as failed
+        } else {
+            pcCheck = {
+                UnitFormID: packages[0]?.UnitFormID,
+                GroupID: packages[0]?.GroupID,
+                Remark: remarkPC,
+                IsChecked: true
+            };
         }
     }
 
-    // Append images directly under the FormChecklistIUDModel
-    var files = $('#file-input')[0].files;
-    for (var i = 0; i < files.length; i++) {
-        data.append('Images', files[i]);
-    }
+    if (valid) {
+        var data = new FormData();
 
-    console.log(data);
+        packages.forEach((pkg, index) => {
+            for (const key in pkg) {
+                data.append(`Packages[${index}].${key}`, pkg[key]);
+            }
+        });
 
-    $.ajax({
-        url: baseUrl + 'FormCheckList/UpdateStatusV1',
-        type: 'POST',
-        contentType: false,
-        processData: false,
-        data: data,
-        success: function (res) {
-            if (res.success) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'บันทึกข้อมูลสำเร็จ',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.reload();
-                    }
-                });
-            } else {
+        checklists.forEach((checklist, index) => {
+            for (const key in checklist) {
+                data.append(`CheckLists[${index}].${key}`, checklist[key]);
+            }
+        });
+
+        if (pcCheck) {
+            for (const key in pcCheck) {
+                data.append(`PcCheck.${key}`, pcCheck[key]);
+            }
+        }
+
+        for (var i = 0; i < files.length; i++) {
+            data.append('Images', files[i]);
+        }
+
+        $.ajax({
+            url: baseUrl + 'FormCheckList/UpdateStatusV1',
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (res) {
+                if (res.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'บันทึกข้อมูลสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'บันทึกข้อมูลไม่สำเร็จ',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
                 Swal.fire({
                     title: 'Error!',
-                    text: 'บันทึกข้อมูลไม่สำเร็จ',
+                    text: 'An error occurred while saving the data.',
                     icon: 'error',
                     confirmButtonText: 'OK'
                 });
             }
-        },
-        error: function (xhr, status, error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'An error occurred while saving the data.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        }
-    });
+        });
+    }
 
     return false;
 });
+
 
 function deleteImage(resourceId) {
     Swal.fire({
@@ -285,9 +350,13 @@ function deleteImage(resourceId) {
                 data: { resourceId: resourceId },
                 success: function (response) {
                     if (response.success) {
-                        Swal.fire('ลบรูปภาพสำเร็จ', '', 'success');
-                        // Remove the image from the DOM
-                        $(`[onclick="deleteImage('${resourceId}')"]`).closest('.position-relative').remove();
+                        Swal.fire({
+                            title: 'ลบรูปภาพสำเร็จ',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.reload(); // Reload the page after clicking OK
+                        });
                     } else {
                         Swal.fire('Error!', response.message, 'error');
                     }
@@ -299,6 +368,7 @@ function deleteImage(resourceId) {
         }
     });
 }
+
 
 
 

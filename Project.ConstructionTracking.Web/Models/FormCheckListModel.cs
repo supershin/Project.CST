@@ -18,6 +18,7 @@
             public string? UnitCode { get; set; }
             public Guid? UnitFormID { get; set; }
             public int? UnitFormStatusID { get; set; }
+            public string? UnitStatusName { get; set; }
             public int? FormID { get; set; }
             public string? FormName { get; set; }
             public int GroupID { get; set; }
@@ -60,6 +61,7 @@
             public string? PJM_ActionType { get; set; }
             public int? FormID { get; set; }
             public int? LockStatusID { get; set; }
+            public int? PCStatusID { get; set; }
             public string? RemarkPassCondition { get; set; }
             public int? RoleID { get; set; }
             public List<Form_getListImagePasswithCondition>? Form_getListImagePasswithCondition { get; set; }

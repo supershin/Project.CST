@@ -2,7 +2,7 @@
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class WorkPeriodController : BaseController
+    public class ChatInBoxController : Controller
     {
         public IActionResult Index()
         {

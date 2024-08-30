@@ -4,7 +4,7 @@ using Project.ConstructionTracking.Web.Services;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class PMFormcheckController : Controller
+    public class PMFormcheckController : BaseController
     {
         private readonly IPMApproveService _PMApproveService;
 

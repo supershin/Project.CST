@@ -52,7 +52,7 @@ var unitEquipment = {
     submitUnitEquipmentSign: () => {
         let isValid = true;
         let validationMessage = '';
-      
+
         $('div.card-link').each(function () {
             const statusUse = $(this).find('button.status-dot').data('status-use');
             const cntCheckListAll = parseInt($(this).find('.text1').text().split(' ')[1]);
@@ -114,49 +114,61 @@ var unitEquipment = {
             return;
         }
 
-        var data = {
-            ProjectID: document.getElementById('projectId').value,
-            FormID: document.getElementById('FormID').value,
-            UnitFormID: document.getElementById('UnitFormID').value,
-            UnitID: document.getElementById('unitId').value,
-            FormGrade: selectedRadioValue,
-            Act: 'submit',
-            VendorID: vendorId,
-            Sign: signData,
-        };
+        // Confirmation alert before the AJAX call
+        Swal.fire({
+            title: 'ยืนยันการดำเนินการ',
+            text: 'คุณต้องการขออนุมัติใหม่',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var data = {
+                    ProjectID: document.getElementById('projectId').value,
+                    FormID: document.getElementById('FormID').value,
+                    UnitFormID: document.getElementById('UnitFormID').value,
+                    UnitID: document.getElementById('unitId').value,
+                    FormGrade: selectedRadioValue,
+                    Act: 'submit',
+                    VendorID: vendorId,
+                    Sign: signData,
+                };
 
-        $.ajax({
-            url: baseUrl + 'FormGroup/UpdateSaveGrade',
-            type: 'POST',
-            dataType: 'json',
-            data: data,
-            success: function (res) {
-                if (res.success) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'บันทึกข้อมูลสำเร็จ',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.reload();
+                $.ajax({
+                    url: baseUrl + 'FormGroup/UpdateSaveGrade',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: data,
+                    success: function (res) {
+                        if (res.success) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'บันทึกข้อมูลสำเร็จ',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.reload();
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'บันทึกข้อมูลไม่สำเร็จ',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
                         }
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'บันทึกข้อมูลไม่สำเร็จ',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            },
-            error: function (xhr, status, error) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'บันทึกข้อมูลไม่สำเร็จ',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'บันทึกข้อมูลไม่สำเร็จ',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
                 });
             }
         });
@@ -203,6 +215,8 @@ var unitEquipment = {
             VendorID: vendorId,
             Sign: signData,
         };
+
+        alert('here');
 
         $.ajax({
             url: baseUrl + 'FormGroup/UpdateSaveGrade',

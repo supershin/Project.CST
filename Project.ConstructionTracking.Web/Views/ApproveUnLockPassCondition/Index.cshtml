@@ -1,4 +1,569 @@
 ﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
+    var ProjectName = ViewBag.ProjectName;
+    var UnitCode = ViewBag.UnitCode;
+    var FormName = ViewBag.FormName;
+    var ListGroupPC = ViewBag.ListGroupPC;
+}
+
+
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .status-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        border: none;
+        outline: none;
+        font-size: 20px;
+    }
+
+    .drop-zone {
+        border: 2px dashed #007bff;
+        border-radius: 5px;
+        padding: 6px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .drop-zone-text {
+        margin-bottom: 10px;
+    }
+
+    .drop-zone-input {
+        display: none;
+    }
+
+    .preview-container {
+        margin-top: 10px;
+    }
+
+    .preview-image {
+        position: relative;
+        display: inline-block;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        max-width: 100px;
+        max-height: 100px;
+    }
+
+    .preview-image img {
+        max-width: 100%;
+        max-height: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        display: block;
+    }
+
+    .remove-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: rgba(255, 0, 0, 0.8);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 14px;
+        width: 24px;
+        height: 24px;
+        line-height: 18px;
+        text-align: center;
+        padding: 0;
+    }
+
+</style>
+
+<div class="page-wrapper">
+    <!-- Page header -->
+    <div class="page-header d-print-none">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-home-heart">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M21 12l-9 -9l-9 9h2v7a2 2 0 0 0 2 2h6" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.39 0 .754 .112 1.061 .304" />
+                        <path d="M19 21.5l2.518 -2.58a1.74 1.74 0 0 0 0 -2.413a1.627 1.627 0 0 0 -2.346 0l-.168 .172l-.168 -.172a1.627 1.627 0 0 0 -2.346 0a1.74 1.74 0 0 0 0 2.412l2.51 2.59z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-row align-items-baseline">
+                        <form action="@Url.Action("index","Dashboard")" method="post">
+                            <button class="status-dot bg-transparent">
+                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="d-block d-sm-flex align-items-baseline custom-heading">
+                        <h1 class="mb-0 header-text">@UnitCode : @FormName</h1>
+                        <div class="text-muted">
+                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@ProjectName</h5>
+                        </div>
+                    </div>
+                    <div class="align-items-right">
+                        <button class="status-dot bg-transparent">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page body -->
+    <div class="page-body">
+        <div class="container-xl mb-3">
+            <div class="col-12 col-sm-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="col-12">
+                            <label class="form-label align-center">
+                                <i class="fas fa-user-tie"></i> วิศวกรผู้ควบคุมงาน : นายสมชาย ใจดี
+                            </label>
+                            <label class="form-label align-center">
+                                <i class="fas fa-user-tie"></i> PM โครงการ : นายสุทธิชัย วงค์ใหญ่
+                            </label>
+                            <label class="form-label align-center">
+                                <i class="fas fa-user-tie"></i> PJM Head : นายพรชัย แสวงการ
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mt-1 mb-2">
+            <div class="row">
+                @foreach (var item in @ListGroupPC)
+                {
+                    <div class="col-md-4">
+                        <div class="card card-link card-link-pop p-3 mb-2">
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex flex-row align-items-center">
+                                    @{
+                                        string buttonText = "fa-solid fa-lock-open";
+                                        string statusText = "รอขอปลดล็อค";
+                                        string buttonColor = "secondary";
+
+                                        if (item.StatusID == 12)
+                                        {
+                                            statusText = "รออนุมัติปลดล็อค";
+                                            buttonColor = "primary";
+                                        }
+                                        else if (item.StatusID == 13)
+                                        {
+                                            statusText = "อนุมัติปลดล็อค";
+                                            buttonColor = "green";
+                                        }
+                                        else if (item.StatusID == 14)
+                                        {
+                                            statusText = "ไม่อนุมัติปลดล็อค";
+                                            buttonColor = "red";
+                                        }
+                                    }
+                                    <button type="button" class="status-dot bg-@buttonColor @(buttonColor == "red" || buttonColor== "yellow" ? "status-dot-animated" : "")">
+                                        <i class="@buttonText"></i>
+                                    </button>
+
+                                    <div class="ms-3 c-details">
+                                        <h2 class="mb-0 text-primary">
+                                            กลุ่มงาน : <small class="text-yellow"> @item.GroupName </small>
+                                        </h2>
+                                        <p>
+                                            <i class="fa-solid fa-list-check"></i> สถานะ : @statusText
+                                        </p>
+                                    </div>
+
+                                </div>
+                                <div class="align-items-right">
+                                    <!-- Button to open the modal and fetch images -->
+                                    <button class="status-dot bg-primary"
+                                            onclick="openModal('@item.UnitFormID', '@item.GroupID',@item.FormID)">
+                                        <i class="fa-regular fa-image"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <label class="form-label">
+                                    ความเห็นจากวิศวกร
+                                </label>
+                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PE_Remark</textarea>
+                                <label class="form-label">
+                                    ความเห็นจาก PM
+                                </label>
+                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PM_Remark</textarea>
+                                <label class="form-label">
+                                    ความเห็นจาก PJM Head
+                                </label>
+                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PJM_Remark</textarea>
+                                <br>
+                                @foreach (var listimage in item.listImageUnlock)
+                                {
+                                    <div class="position-relative d-inline-block mb-3">
+                                        <a data-fslightbox="gallery" href="~/@listimage.FilePath">
+                                            <img src="~/@listimage.FilePath" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                        </a>
+                                    </div>
+                                }
+                                <label class="form-label">
+                                    ความคิดเห็น PE
+                                </label>
+                                <textarea id="remark_pe"
+                                          rows="2"
+                                          class="form-control"
+                                          placeholder="ระบุเหตุผลเพื่อขออนุมัติปลดล็อค"
+                                          disabled>@item.PEUnLock_Remark</textarea>
+                                <label class="form-label">
+                                    ความคิดเห็น PM
+                                </label>
+                                <textarea id="remark_@item.GroupID"
+                                          rows="2"
+                                          class="form-control"
+                                          placeholder="ระบุเหตุผลเพื่อขออนุมัติปลดล็อค"
+                                          @(item.StatusID != 12 ? "disabled" : "")
+                                          >@item.PMUnLock_Remark</textarea>
+                                @if (item.StatusID == 12)
+                                {
+                                    <button type="button" class="btn btn-danger" style="margin-top: 15px; float: left;" onclick="saveData('@item.PC_ID','@item.UnitFormID','@item.GroupID','Reject')">ไม่อนุมัติปลดล็อค</button>
+                                    <button type="button" class="btn btn-primary" style="margin-top: 15px; float: right;" onclick="saveData('@item.PC_ID','@item.UnitFormID','@item.GroupID','Approved')">อนุมัติปลดล็อค</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+    <!-- Modal show image -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">รูปภาพ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Label and Images for RoleID = 1 -->
+                    <div class="row g-2 g-md-3">
+                        <label class="form-label" id="role1-label">รูปภาพวิศวะกร</label>
+                    </div>
+                    <div class="row g-2 g-md-3" id="image-container-role-1">
+                        <!-- Images for RoleID = 1 will be injected here -->
+                    </div>
+
+                    <!-- Label and Images for RoleID = 2 -->
+                    <div class="row g-2 g-md-3 mt-4">
+                        <label class="form-label" id="role2-label">รูปภาพวิศวะกรผู้คุมโครงการ</label>
+                    </div>
+                    <div class="row g-2 g-md-3" id="image-container-role-2">
+                        <!-- Images for RoleID = 2 will be injected here -->
+                    </div>
+
+                    <!-- Label and Images for RoleID = 2 -->
+                    <div class="row g-2 g-md-3 mt-4">
+                        <label class="form-label" id="role2-label">รูปภาพวิศวะกรหัวหน้าโครงการ</label>
+                    </div>
+                    <div class="row g-2 g-md-3" id="image-container-role-3">
+                        <!-- Images for RoleID = 2 will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+
+        $(document).ready(function () {
+            function adjustTextareaRows() {
+                if ($(window).width() <= 576) {
+                    $('textarea.form-control').attr('rows', 4);
+                } else {
+                    $('textarea.form-control').attr('rows', 2);
+                }
+            }
+
+            adjustTextareaRows(); // Initial call
+            $(window).resize(adjustTextareaRows); // Call on window resize
+        });
+
+         document.addEventListener("DOMContentLoaded", function () {
+            var dropZones = document.querySelectorAll('.drop-zone');
+
+            dropZones.forEach(function(dropZone) {
+                var groupId = dropZone.id.split('-')[2];
+                var fileInput = document.getElementById(`file-input-${groupId}`);
+                var previewContainer = document.getElementById(`preview-container-${groupId}`);
+
+                dropZone.addEventListener("click", function (e) {
+                    // Prevent triggering file input click when clicking the remove button
+                    if (e.target.classList.contains("remove-button")) {
+                        return;
+                    }
+                    fileInput.click();
+                });
+
+                fileInput.addEventListener("change", function () {
+                    if (fileInput.files.length) {
+                        previewFiles(fileInput.files, previewContainer);
+                    }
+                });
+
+                dropZone.addEventListener("dragover", function (e) {
+                    e.preventDefault();
+                    dropZone.classList.add("drop-zone--over");
+                });
+
+                dropZone.addEventListener("dragleave", function () {
+                    dropZone.classList.remove("drop-zone--over");
+                });
+
+                dropZone.addEventListener("drop", function (e) {
+                    e.preventDefault();
+                    fileInput.files = e.dataTransfer.files;
+                    previewFiles(fileInput.files, previewContainer);
+                });
+            });
+
+            function previewFiles(files, previewContainer) {
+                previewContainer.innerHTML = ""; // Clear previous previews
+                Array.from(files).forEach(file => {
+                    if (file.type.startsWith("image/")) {
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = function (event) {
+                            const img = document.createElement("img");
+                            img.src = event.target.result;
+                            const previewImage = document.createElement("div");
+                            previewImage.className = "col-4 preview-image";
+
+                            const removeButton = document.createElement("button");
+                            removeButton.className = "remove-button";
+                            removeButton.innerHTML = "&times;";
+                            removeButton.addEventListener("click", function (e) {
+                                e.stopPropagation(); // Stop event from bubbling up to the dropzone
+                                previewImage.remove();
+                            });
+
+                            previewImage.appendChild(img);
+                            previewImage.appendChild(removeButton);
+                            previewContainer.appendChild(previewImage);
+                        };
+                    }
+                });
+            }
+        });
+
+        function saveData(PC_ID, UnitFormID, groupId, Action) {
+            var remark = document.getElementById(`remark_${groupId}`).value;
+
+            var formData = new FormData();
+            formData.append("PC_ID", PC_ID);
+            formData.append("UnitFormID", UnitFormID);
+            formData.append("GroupID", groupId);
+            formData.append("PMUnLock_Remark", remark);
+            formData.append("Action", Action);
+
+            // Show SweetAlert confirmation with dynamic text
+            Swal.fire({
+                title: 'Confirm Action',
+                text: 'ต้องการ' + Action + 'หรือไม่',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, ' + Action,
+                cancelButtonText: 'No, Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // User confirmed, proceed with AJAX request
+                    $.ajax({
+                        url: '/UnLockPassCondition/RequestUnlock',
+                        type: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Data saved successfully!',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload(); // Reload the page when "OK" is clicked
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Failed to save data: ' + response.message,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred while saving data.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+
+
+        function openModal(UnitFormID, GroupID, FormID) {
+            // Fetch images for RoleID = 1
+            $.ajax({
+                url: '@ViewBag.baseUrl' + 'PMApprove/GetImages',
+                type: 'GET',
+                data: { UnitFormID: UnitFormID, GroupID: GroupID, FormID: FormID, RoleID: 1 },
+                success: function (images) {
+                    var containerRole1 = $('#image-container-role-1');
+                    var labelRole1 = $('#role1-label');
+                    containerRole1.empty(); // Clear any previous images
+
+                    if (images.length > 0) {
+                        images.forEach(function (image) {
+                            var imageHtml = `
+                                <div class="col-6 position-relative">
+                                    <a data-fslightbox="gallery1" href="${image.FilePath}">
+                                        <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                                    </a>
+                                </div>
+                            `;
+                            containerRole1.append(imageHtml);
+                        });
+                    } else {
+                        labelRole1.text('รูปภาพวิศวะกร - ไม่มีรูปภาพ');
+                    }
+
+                    refreshFsLightbox(); // Reinitialize the lightbox
+                },
+                error: function (error) {
+                    console.error('Failed to fetch images for RoleID 1:', error);
+                }
+            });
+
+            // Fetch images for RoleID = 2
+            $.ajax({
+                url: '@ViewBag.baseUrl' + 'PMApprove/GetImages',
+                type: 'GET',
+                data: { UnitFormID: UnitFormID, GroupID: GroupID, FormID: FormID, RoleID: 2 },
+                success: function (images) {
+                    var containerRole2 = $('#image-container-role-2');
+                    var labelRole2 = $('#role2-label');
+                    containerRole2.empty(); // Clear any previous images
+
+                    if (images.length > 0) {
+                        images.forEach(function (image) {
+                            var imageHtml = `
+                                <div class="col-6 position-relative">
+                                    <a data-fslightbox="gallery2" href="${image.FilePath}">
+                                        <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                                    </a>
+                                </div>
+                            `;
+                            containerRole2.append(imageHtml);
+                        });
+                    } else {
+                        labelRole2.text('รูปภาพวิศวะกรผู้คุมโครงการ - ไม่มีรูปภาพ');
+                    }
+
+                    refreshFsLightbox(); // Reinitialize the lightbox
+                },
+                error: function (error) {
+                    console.error('Failed to fetch images for RoleID 2:', error);
+                }
+            });
+
+            // Fetch images for RoleID = 3
+            $.ajax({
+                url: '@ViewBag.baseUrl' + 'PMApprove/GetImages',
+                type: 'GET',
+                data: { UnitFormID: UnitFormID, GroupID: GroupID, FormID: FormID, RoleID: 3 },
+                success: function (images) {
+                    var containerRole3 = $('#image-container-role-3');
+                    var labelRole3 = $('#role3-label');
+                    containerRole3.empty(); // Clear any previous images
+
+                    if (images.length > 0) {
+                        images.forEach(function (image) {
+                            var imageHtml = `
+                                <div class="col-6 position-relative">
+                                    <a data-fslightbox="gallery3" href="${image.FilePath}">
+                                        <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                                    </a>
+                                </div>
+                            `;
+                            containerRole3.append(imageHtml);
+                        });
+                    } else {
+                        labelRole3.text('รูปภาพวิศวะกรหัวหน้าโครงการ - ไม่มีรูปภาพ');
+                    }
+
+                    refreshFsLightbox(); // Reinitialize the lightbox
+                },
+                error: function (error) {
+                    console.error('Failed to fetch images for RoleID 3:', error);
+                }
+            });
+
+            // Show the modal after all AJAX calls have been made
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            myModal.show();
+        }
+
+        function deleteImage(resourceId) {
+            Swal.fire({
+                title: '',
+                text: "ต้องการลลบรูปภาพหรือไม่?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'ลบรูปภาพ',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Perform the deletion via an AJAX call
+                    $.ajax({
+                        url: baseUrl + 'FormCheckList/DeleteImage',
+                        type: 'POST',
+                        data: { resourceId: resourceId },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire('ลบรูปภาพสำเร็จ', '', 'success');
+                                // Remove the image from the DOM
+                                $(`[onclick="deleteImage('${resourceId}')"]`).closest('.position-relative').remove();
+                            } else {
+                                Swal.fire('Error!', response.message, 'error');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire('Error!', 'An error occurred while processing your request.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+
+    </script>
 }

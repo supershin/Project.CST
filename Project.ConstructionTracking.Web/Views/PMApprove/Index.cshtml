@@ -15,6 +15,7 @@
     var PM_Actiontype = ViewBag.PM_Actiontype;
     var PJM_Remarkaction = ViewBag.PJM_Remarkaction;
     var PJM_Actiontype = ViewBag.PJM_Actiontype;
+    var PCALLPASS = ViewBag.PCALLPASS;
 }
 
 @model Project.ConstructionTracking.Web.Models.ApproveFormcheckModel
@@ -194,12 +195,12 @@
                         <div class="card p-3 mb-2">
                             <div class="d-flex justify-content-between">
                                 <div class="d-flex flex-row align-items-center">
-                                    <form action="@Url.Action("Index","FormCheckList" , new { unitId = Model.UnitID, FormID = Model.FormID , GroupID = group.Group_ID})" method="post">
+                                    <form action="@Url.Action("Index","FormCheckList" , new { unitId = Model.UnitID, FormID = Model.FormID , GroupID = group.Group_ID , GobackTo = "PMApprove"})" method="post">
                                         @{
                                             string buttonClass = "bg-green";
                                             string iconClass = "fa-solid fa-magnifying-glass";
 
-                                            if (group.LockStatusID != null)
+                                            if (group.LockStatusID != null && group.PCFlageActive == true)
                                             {
                                                 buttonClass = "bg-primary";
                                                 iconClass = "fa-solid fa-lock";
@@ -248,7 +249,7 @@
                                 <label class="form-label">
                                     ความเห็นจากวิศวกร
                                 </label>
-                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@group.PE_Remark</textarea>
+                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@group.PE_RemarkPC</textarea>
                                 <input type="hidden" id="pass_ID_@group.Group_ID" value="@group.PassConditionsID" />
                                 <div class="col-12 p-1">
                                     <label class="form-label">
@@ -260,24 +261,60 @@
                                                passconID="@group.PassConditionsID"
                                                value="6"
                                                onclick="toggleRadio(this, '@Model.ID')"
-                                        @(group.PC_StatusID == 6 ? "checked" : "")
-                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>
+                                               @(group.PC_StatusID == 6 || group.PC_StatusID == 8 || group.PC_StatusID == 9 ||
+                                               group.PC_StatusID == 10 || group.PC_StatusID == 11 || group.PC_StatusID == 12 ||
+                                               group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "checked" : "")
+                                               @(
+                                                (PM_Actiontype == "submit" &&
+                                                (UnitFormStatusID != 2 || group.PC_StatusID == 8 || group.PCFlageActive == false)) ||
+                                                (PJM_Actiontype == "submit" && group.PC_StatusID == 8 || group.PCFlageActive == false)
+                                                ? "disabled" : ""
+                                               )
+                                        >
                                         <span class="form-check-label">ผ่านเพื่อส่ง PJM Head</span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@group.Group_ID"
+                                        <input class="form-check-input"
+                                               data-action="gr-pass"
+                                               type="radio"
+                                               group-id="@group.Group_ID"
                                                name="radios-inline-@Model.ID-@group.Group_ID"
                                                value="7"
                                                onclick="toggleRadio(this, '@Model.ID')"
-                                        @(group.PC_StatusID == 7 ? "checked" : "")
-                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>
-                                        <span class="form-check-label">ไม่ผ่าน</span>
+                                               @(group.PC_StatusID == 7 ? "checked" : "")
+                                                @(
+                                                (PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (PM_Actiontype == "submit" && (UnitFormStatusID != 2) || group.PCFlageActive == false)
+                                                ? "disabled"
+                                                : ""
+                                                )
+                                        >
+                                      <span class="form-check-label">ไม่ผ่าน</span>
                                     </label>
                                 </div>
                                 <div class="col-12 p-1 mb-2">
-                                    <textarea id="remark_@group.Group_ID" rows="1" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ"
-                                    @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>@group.PM_Remark</textarea>
+                                    <textarea id="remark_@group.Group_ID"
+                                              rows="1"
+                                              class="form-control"
+                                              placeholder="ระบุเหตุผลเพื่อขออนุมัติ"
+                                            @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) ||
+                                            (PM_Actiontype == "submit" && (UnitFormStatusID != 2 || group.PCFlageActive == false))
+                                            ? "disabled"
+                                            : "")>@group.PM_RemarkPC</textarea>
+
                                 </div>
+                                @if (PJM_Actiontype == "submit")
+                                {
+                                    <label class="form-label @(group.PC_StatusID == 8 || group.PC_StatusID == 12 || group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "text-success" : "text-danger")">
+                                        @(group.PC_StatusID == 8 || group.PC_StatusID == 12 || group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "PJM อนมัติการผ่านแบบมีเงื่อนไข" : "PJM ไม่อนมัติการผ่านแบบมีเงื่อนไข")
+                                    </label>
+                                    <div class="col-12 p-1 mb-2">
+                                        <textarea id="PJM_remark"
+                                                  rows="1"
+                                                  class="form-control"
+                                                  disabled
+                                        >@group.PJM_RemarkPC</textarea>
+                                    </div>
+                                }
                             }
                         </div>
                     </div>
@@ -302,6 +339,7 @@
                     <div class="row">
                         <div class="col-12 col-sm-6">
                             <!-- Profile Image -->
+                           <input type="hidden" id="listimagecnt" value="@Model.PM_getListImage.Count" />
                             @foreach (var listimage in Model.PM_getListImage)
                             {
                                 <div class="position-relative d-inline-block mb-3">
@@ -324,6 +362,31 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="row">
+                                <div class="col-12">
+                                    <label class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="radios-inline-approval"
+                                               value="@(LockStatusID != null && PCALLPASS != "yes" ? 6 : 4)"
+                                                @(Model.PM_StatusID == (LockStatusID != null ? 6 : 4) ? "checked" : "")
+                                                @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")
+                                                 onclick="toggleRadio(this, '@Model.ID')"
+                                        >
+                                        <span class="form-check-label">
+                                            @(LockStatusID != null && PCALLPASS != "yes" ? "อนุมัติผ่านแบบมีเงื่อนไข" : "อนุมัติ")
+                                        </span>
+                                    </label>
+                                    <label class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="radios-inline-approval" value="5"
+                                        @(Model.PM_StatusID == 5 ? "checked" : "")
+                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")
+                                         onclick="toggleRadio(this, '@Model.ID')"
+                                        >
+                                        <span class="form-check-label">ไม่อนุมัติ</span>
+                                    </label>
+                                </div>
+                                <div class="col-12">
+                                    <textarea id="mainRemark" rows="2" class="form-control" placeholder=""
+                                    @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>@Model.PM_Remarkaction</textarea>
+                                </div>
                                 @if (PM_Actiontype == "submit")
                                 {
                                     if (UnitFormStatusID == 2)
@@ -351,28 +414,6 @@
                                         </div>
                                     </div>
                                 }
-                                <div class="col-12">
-                                    <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="radios-inline-approval"
-                                               value="@(LockStatusID != null ? 6 : 4)"
-                                        @(Model.PM_StatusID == (LockStatusID != null ? 6 : 4) ? "checked" : "")
-                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>
-                                        <span class="form-check-label">
-                                            @(LockStatusID != null ? "ผ่านเพื่อส่ง PJM Head" : "อนุมัติ")
-                                        </span>
-                                    </label>
-                                    <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="radios-inline-approval" value="5"
-                                        @(Model.PM_StatusID == 5 ? "checked" : "")
-                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>
-                                        <span class="form-check-label">ไม่อนุมัติ</span>
-                                    </label>
-                                </div>
-                                <div class="col-12">
-                                    <textarea id="mainRemark" rows="2" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ"
-                                    @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>@Model.PM_Remarkaction</textarea>
-                                </div>
-
                             </div>
                         </div>
                     </div>
@@ -432,4 +473,18 @@
 <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
 @section scripts{
     <script src="~/js/pages/PMApprove.js?version=@DateTime.Now.Ticks.ToString()"></script>
+    <script>
+         $(document).ready(function () {
+            function adjustTextareaRows() {
+                if ($(window).width() <= 576) {
+                    $('textarea.form-control').attr('rows', 4);
+                } else {
+                    $('textarea.form-control').attr('rows', 2);
+                }
+            }
+
+            adjustTextareaRows(); // Initial call
+            $(window).resize(adjustTextareaRows); // Call on window resize
+        });
+    </script>
 }
