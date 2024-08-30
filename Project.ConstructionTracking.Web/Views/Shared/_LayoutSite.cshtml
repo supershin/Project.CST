@@ -1,7 +1,9 @@
 ﻿<!DOCTYPE html>
 
 <html lang="en">
-<style>
+
+<head>
+    <style>
     /* Loading Animation */
     #loading {
         display: none;
@@ -12,12 +14,111 @@
         z-index: 9999;
     }
 
-        #loading img {
-            width: 100px;
-            height: 100px;
-        }
+    #loading img {
+        width: 100px;
+        height: 100px;
+    }
+
+    /* Styles for Modal Chatbox */
+    .modal {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        overflow: auto;
+        display: flex;
+        align-items: center; 
+        justify-content: center; 
+    }
+
+    .modal-dialog {
+        position: relative;
+        margin: 0 auto; /* Auto margins to center horizontally */
+        max-width: none; /* Prevent Bootstrap's default max-width */
+        transform: translateY(20%); /* Position a bit lower (20% from center) */
+    }
+
+    .modal-content {
+        background-color: #fff;
+        padding: 0;
+        border: 1px solid #888;
+        border-radius: 5px;
+        width: 100%; /* Ensures it respects col-md-4 size */
+    }
+
+    .modal-header, .modal-footer {
+        padding: 10px;
+        background-color: #f1f1f1;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .modal-header h4 {
+        margin: 0;
+    }
+
+    #chatMessages {
+        padding: 15px;
+        height: 300px;
+        overflow-y: auto;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .sendButton {
+        background-color: #74C0FC; /* Button background color */
+        border: none; /* Remove default border */
+        color: white; /* Icon color */
+        padding: 10px; /* Padding around the icon */
+        border-radius: 50%; /* Make the button circular */
+        cursor: pointer; /* Pointer cursor on hover */
+        font-size: 16px; /* Font size for the icon */
+        width: 40px; /* Width of the button */
+        height: 40px; /* Height of the button */
+        display: flex; /* Flexbox for centering the icon */
+        align-items: center; /* Center icon vertically */
+        justify-content: center; /* Center icon horizontally */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional shadow for a raised effect */
+    }
+
+    .sendButton:hover {
+        background-color: #5a9edb; /* Slightly darker blue on hover */
+    }
+
+    .close:hover {
+        color: #000;
+    }
+
+    #chatInput {
+        width: calc(100% - 80px);
+        margin-right: 5px;
+        padding: 5px;
+        resize: none;
+    }
+
+    .fixedButton {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 20px;
+        z-index: 1000;
+        background-color: white;
+        border-radius: 50%;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+    
 </style>
-<head>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
@@ -48,7 +149,10 @@
         <script>
 
             let baseUrl = '@ViewBag.baseUrl'
-
+            let userRole = '@ViewBag.UserRole'
+            let name = '@ViewBag.Name'
+            let id = '@ViewBag.ID'
+            
         </script>
         <!-- header -->
         <header class="navbar navbar-expand-md d-print-none">
@@ -68,13 +172,26 @@
                         <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
                             <span class="avatar avatar-sm" style="background-image: url(./lib/core-ui/static/avatars/img9.png)"></span>
                             <div class="d-none d-xl-block ps-2">
-                                <div>Paweł Kuna</div>
-                                <div class="mt-1 small text-secondary">Project Engineer</div>
+                                <div>@ViewBag.Name</div>
+                                <div class="mt-1 small text-secondary">
+                                    @if (ViewBag.UserRole == SystemConstant.UserRole.PE.ToString())
+                                    {
+                                        @SystemConstant.UserRole_Desc.PE;
+                                    }
+                                    else if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
+                                    {
+                                        @SystemConstant.UserRole_Desc.PM;
+                                    }
+                                    else if (ViewBag.UserRole == SystemConstant.UserRole.PJM.ToString())
+                                    {
+                                        @SystemConstant.UserRole_Desc.PJM;
+                                    }
+                                </div>
                             </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                            <a href="./profile.html" class="dropdown-item">Profile</a>
-                            <a href="./sign-in.html" class="dropdown-item">Logout</a>
+                            <a href="@($"{ViewBag.baseUrl}user/detail?param={Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(ViewBag.ID.ToString()))}")" class="dropdown-item">Profile</a>
+                            <a href="@ViewBag.BaseUrl" class="dropdown-item">Logout</a>
                         </div>
                     </div>
                 </div>
@@ -111,7 +228,45 @@
                                     </span>
                                 </a>
                             </li>
-                            <li class="nav-item dropdown">
+                            @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="PMFormcheck" asp-action="Index">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M3.5 11.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M3.5 17.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M11 6l9 0" />
+                                            <path d="M11 12l9 0" />
+                                            <path d="M11 18l9 0" />
+                                        </svg>
+                                        <span class="nav-link-title">
+                                            My Task
+                                        </span>
+                                    </a>
+                                </li>                              
+                            }
+                            @if (ViewBag.UserRole == SystemConstant.UserRole.PJM.ToString())
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="PJMFormcheck" asp-action="Index">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M3.5 11.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M3.5 17.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M11 6l9 0" />
+                                            <path d="M11 12l9 0" />
+                                            <path d="M11 18l9 0" />
+                                        </svg>
+                                        <span class="nav-link-title">
+                                            My Task
+                                        </span>
+                                    </a>
+                                </li>
+                            }
+                            @* <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -138,7 +293,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </li>
+                            </li> *@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-device-desktop">
@@ -261,6 +416,30 @@
                 <main role="main" class="pb-3">
                     @RenderBody()
                 </main>
+                <!-- Modal Inbox -->
+                <div id="chatModal" class="modal">
+                    <div class="modal-dialog">
+                        <div class="modal-content col-md-4">
+                            <div class="modal-header">
+                                <span class="close" onclick="closeModalChat()">&times;</span>
+                                <h4>Chat with Support</h4>
+                            </div>
+                            <div class="modal-body" id="chatMessages">
+                                <!-- Chat messages will be appended here dynamically -->
+                                <input type="hidden" name="hdname" id="hdname"/>
+                                <p><strong>Jane:</strong> Hello! How can I help you today?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <textarea id="chatInput" placeholder="Type your message..."></textarea>
+                                <button class="sendButton" onclick="sendMessage()">
+                                    <i class="fa-regular fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Inbox -->
+
             </div>
 
             <footer class="footer footer-transparent d-print-none">
@@ -287,6 +466,31 @@
 
     <!-- Libs JS -->
     <script src="~/lib/core-ui/dist/libs/nouislider/dist/nouislider.min.js?1692870487" defer></script>
+
+    <script> 
+        function openModalChat(UnitFormID, FormID, RoleID) {
+            document.getElementById("hdname").value = UnitFormID; // Set the username in the hidden input
+            document.getElementById("chatModal").style.display = "block"; // Show the modal
+        }
+
+        function closeModalChat() {
+            document.getElementById("chatModal").style.display = "none"; // Hide the modal
+        }
+
+        function sendMessage() {
+            var message = document.getElementById("chatInput").value;
+            var username = document.getElementById("hdname").value; // Get the username from the hidden input
+    
+            if (message.trim() !== "") {
+                var chatMessages = document.getElementById("chatMessages");
+                var newMessage = document.createElement("p");
+                newMessage.innerHTML = `<strong>${username}:</strong> ${message}`; // Use the username in the message
+                chatMessages.appendChild(newMessage);
+                document.getElementById("chatInput").value = ""; // Clear the input field
+                chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the latest message
+            }
+        }
+    </script>
 
     <!-- Tabler Core -->
     <script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>

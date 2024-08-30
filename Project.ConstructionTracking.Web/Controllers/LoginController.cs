@@ -12,12 +12,15 @@ namespace Project.ConstructionTracking.Web.Controllers
 	{
         private readonly AppSettings _appSettings;
         private readonly IMasterUserService _masterUserService;
+        private readonly ILoginService _loginService;
 
         public LoginController(IOptions<AppSettings> options,
-            IMasterUserService masterUserService)
+            IMasterUserService masterUserService,
+            ILoginService loginService)
         {
             _appSettings = options.Value;
             _masterUserService = masterUserService;
+            _loginService = loginService;
         }
 
         public IActionResult Index()
@@ -36,11 +39,15 @@ namespace Project.ConstructionTracking.Web.Controllers
             var identity = new ClaimsIdentity(claims, "login");
             var principal = new ClaimsPrincipal(identity);
 
+            // get key for gen md5 
+            string keyPassword = _appSettings.PasswordKey;
+
             // Get user profile using the extension method
-            var userProfile = LoginExtension.GetUserProfile(principal);
+            // var userProfile = LoginExtension.GetUserProfile(principal);
+            LoginResp userProfile = _loginService.VerifyLogin(User_name, password, keyPassword);
 
             // Check if the password is correct (simple check for demonstration purposes)
-            if (userProfile != null && userProfile.Password == password)
+            if (userProfile != null && !String.IsNullOrWhiteSpace(userProfile.Password))
             {
                 // Set the username and role in cookies
                 CookieOptions option = new CookieOptions
@@ -48,12 +55,16 @@ namespace Project.ConstructionTracking.Web.Controllers
                     Expires = DateTime.Now.AddDays(1) // Set the expiration date for the cookies
                 };
                 Response.Cookies.Append("CST.ID", userProfile.ID.ToString(), option);
-                Response.Cookies.Append("CST.UserName", userProfile.UserName, option);
-                Response.Cookies.Append("CST.Role", userProfile.Role?.ToString(), option);
+                Response.Cookies.Append("CST.UserName", userProfile.Username, option);
+                Response.Cookies.Append("CST.Name", userProfile.Name, option);
+                Response.Cookies.Append("CST.Role", userProfile.RoleID.ToString(), option);
 
                 // Set another session cookie
                 var sessionId = Guid.NewGuid().ToString(); // Example session ID
                 Response.Cookies.Append("CST.SessionID", sessionId, option);
+
+                var userRole = Request.Cookies["CST.Role"];
+                ViewBag.UserRole = userRole;
 
                 // Handle successful login (e.g., redirect to a dashboard)
                 return RedirectToAction("Index", "Dashboard");
@@ -71,15 +82,5 @@ namespace Project.ConstructionTracking.Web.Controllers
 
         //          return RedirectToAction("Index", "Dashboard");
         //      }
-        public IActionResult Detail(string param)
-        {
-            string decode = HashExtension.DecodeFrom64(param);
-            Guid userID = Guid.Parse(decode);
-
-            DetailUserResp detailResp = _masterUserService.DetailUser(userID);
-            detailResp.respModel = _masterUserService.GetUnitResp();
-
-            return View(detailResp);
-        }
     }
 }

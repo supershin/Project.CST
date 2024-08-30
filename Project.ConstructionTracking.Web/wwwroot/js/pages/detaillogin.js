@@ -5,13 +5,13 @@ const detailLogin = {
         detailLogin.initSignaturePad();
 
         $("#btn-sign").click(() => {
-            $('#modal-sign').modal();
+            $('#modal-sign').modal('show');
             return false;
         });
 
         $("#btn-save-sign").click(() => {
             $('#modal-sign').modal('hide');
-            if (!unitEquipment.getSignatureData()) {
+            if (!detailLogin.getSignatureData()) {
                 $('#success-icon').hide();
             } else {
                 $('#success-icon').show();
@@ -99,7 +99,7 @@ const detailLogin = {
             }
 
             // Validate Signature
-            if (!unitEquipment.getSignatureData() || !unitEquipment.getSignatureDataJM()) {
+            if (!detailLogin.getSignatureData() ) {
                 isValid = false;
                 document.getElementById('user-sign-error').textContent = 'กรุณาตรวจสอบลายเซ็นต์';
             }
@@ -115,10 +115,10 @@ const detailLogin = {
                     JobPosition: userPosition.value.trim(),
                     RoleID: userRole.value,
                     Password: userPassword.value.trim(),
-                    SignUser: unitEquipment.getSignatureData()
+                    SignUser: detailLogin.getSignatureData()
                 };
 
-                detailUser.EditUser(data);
+                detailLogin.EditUser(data);
             }
         });
 
@@ -135,20 +135,22 @@ const detailLogin = {
             success: function (resp) {
                 if (resp.success) {
                     Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการแก้ไขข้อมูลสำเร็จ',
                         icon: 'success',
-                        title: 'ทำการแก้ไขข้อมูลสำเร็จ',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.reload;
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = baseUrl + 'masteruser/index';
+                        }
                     });
-                }
-                else {
+                } else {
                     Swal.fire({
-                        icon: "error",
-                        title: "ทำการแก้ไขข้อมูลไม่สำเร็จ",
+                        title: 'Error!',
+                        text: "ทำการแก้ไขข้อมูลไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
                     });
-                    //alert("Error: " + resp.message);
                 }
             },
             error: function (xhr, status, error) {

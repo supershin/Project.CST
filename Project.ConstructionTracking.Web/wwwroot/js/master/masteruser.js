@@ -7,7 +7,14 @@ const user = {
             return false;
         });
 
-        
+        $('#user-delete-save').click(() => {
+            var userId = $('#delete-user-id').val();
+
+            var data = {
+                userId: userId
+            }
+            user.DeleteUser(data);
+        })
 
         user.UserList();
     },
@@ -42,14 +49,18 @@ const user = {
 
                         return false;
                     });
-                    $(document).on('click', "button[data-action='user-delete']", function (e) {
+                    $("button[data-action='user-delete']").unbind('click').click((e) => {
                         //e.preventDefault(); // Prevent default action
 
-                        var formTypeId = $(e.currentTarget).attr('data-id');
+                        var userId = $(e.currentTarget).attr('data-id');
 
-                        $('#formTypeID').val(formTypeId);
+                        var data = {
+                            userId: userId
+                        }
 
-                        $('#partial-confirm-delete-FT').modal('show');
+                        $('#delete-user-id').val(userId);
+
+                        $('#partial-confirm-delete-user').modal('show');
 
                     });
 
@@ -82,6 +93,39 @@ const user = {
                     }
                 },
             ]
+        });
+    },
+    DeleteUser: function (data) {
+        $.ajax({
+            url: baseUrl + 'masteruser/UserDelete',
+            type: 'post',
+            dataType: 'json',
+            data: data,
+            success: function (resp) {
+                if (resp.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการลบข้อมูลสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                // do something
+                alert(" Coding Error ")
+            },
         });
     }
 }

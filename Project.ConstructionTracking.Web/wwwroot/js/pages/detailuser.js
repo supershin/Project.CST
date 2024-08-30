@@ -114,20 +114,22 @@
             success: function (resp) {
                 if (resp.success) {
                     Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการแก้ไขข้อมูลสำเร็จ',
                         icon: 'success',
-                        title: 'ทำการแก้ไขข้อมูลสำเร็จ',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.href = baseUrl + 'masteruser/index';
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = baseUrl + 'masteruser/index';
+                        }
                     });
-                }
-                else {
+                } else {
                     Swal.fire({
-                        icon: "error",
-                        title: "ทำการแก้ไขข้อมูลไม่สำเร็จ",
+                        title: 'Error!',
+                        text: "ทำการแก้ไขข้อมูลไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
                     });
-                    //alert("Error: " + resp.message);
                 }
             },
             error: function (xhr, status, error) {

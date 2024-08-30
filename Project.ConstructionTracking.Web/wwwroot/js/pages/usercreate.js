@@ -109,21 +109,24 @@
             success: function (resp) {
                 if (resp.success) {
                     Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการสร้างข้อมูลสำเร็จ',
                         icon: 'success',
-                        title: 'ทำการสร้างข้อมูลสำเร็จ',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.href = baseUrl + 'masteruser/index';
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = baseUrl + 'masteruser/index';
+                        }
                     });
-                }
-                else {
+                } else {
                     Swal.fire({
-                        icon: "error",
-                        title: "ทำรายการไม่สำเร็จ",
+                        title: 'Error!',
+                        text: "ทำการสร้างไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
                     });
-                    alert("Error: " + resp.message);
                 }
+                
             },
             error: function (xhr, status, error) {
                 // do something

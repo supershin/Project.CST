@@ -157,6 +157,34 @@ namespace Project.ConstructionTracking.Web.Controllers
             if (string.IsNullOrEmpty(signUser))
                 throw new Exception("โปรดระบุลายเซ็นต์");
         }
+
+        [HttpPost]
+        public JsonResult UserDelete(Guid userId)
+        {
+            try
+            {
+                var resultData = _masterUserService.DeleteUser(userId);
+
+                return Json(
+                          new
+                          {
+                              success = true,
+                              data = resultData,
+                          }
+                );
+            }
+            catch (Exception ex)
+            {
+                return Json(
+                            new
+                            {
+                                success = false,
+                                message = ex.Message, //InnerException(ex),
+                                data = new[] { ex.Message },
+                            }
+               );
+            }
+        }
     }
 }
 

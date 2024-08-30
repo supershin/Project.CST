@@ -34,6 +34,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 				ID = user.ID,
 				Username = user.Username,
 				Password = user.Password,
+				Name = user.FirstName + " " + user.LastName,
 				RoleID = (int)user.RoleID
 			};
 

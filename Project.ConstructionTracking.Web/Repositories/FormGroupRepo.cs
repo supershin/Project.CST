@@ -30,20 +30,21 @@ namespace Project.ConstructionTracking.Web.Repositories
                         join t3 in _context.tm_FormCheckList.Where(c => c.FlagActive == true) on t2.ID equals t3.PackageID into t3Group
                         from t3 in t3Group.DefaultIfEmpty()
                         join t4 in _context.tr_UnitFormCheckList.Where(f => f.FlagActive == true) on new { t1.FormID, PackageID = (int?)t2.ID, CheckListID = (int?)t3.ID, model.UnitFormID } equals new { t4.FormID, t4.PackageID, t4.CheckListID, t4.UnitFormID } into t4Group
-                        from t4 in t4Group.Where(t => t.StatusID == 1 || t.StatusID == 3).DefaultIfEmpty()
+                        from t4 in t4Group.Where(t => t.StatusID == 9 || t.StatusID == 11).DefaultIfEmpty()
                         join t5 in _context.tr_UnitFormCheckList.Where(f => f.FlagActive == true) on new { t1.FormID, PackageID = (int?)t2.ID, CheckListID = (int?)t3.ID, model.UnitFormID } equals new { t5.FormID, t5.PackageID, t5.CheckListID, t5.UnitFormID } into t5Group
-                        from t5 in t5Group.Where(t => t.StatusID == 2).DefaultIfEmpty()
+                        from t5 in t5Group.Where(t => t.StatusID == 10).DefaultIfEmpty()
                         join t4All in _context.tr_UnitFormCheckList.Where(f => f.FlagActive == true) on new { t1.FormID, PackageID = (int?)t2.ID, CheckListID = (int?)t3.ID, model.UnitFormID } equals new { t4All.FormID, t4All.PackageID, t4All.CheckListID, t4All.UnitFormID } into t4AllGroup
                         from t4All in t4AllGroup.Where(t => t.StatusID != null).DefaultIfEmpty()
-                        join t6 in _context.tr_UnitFormPassCondition.Where(p => p.FlagActive == true) on new { t4.UnitFormID, t4.GroupID } equals new { t6.UnitFormID, t6.GroupID } into t6Group
-                        from t6 in t6Group.DefaultIfEmpty()
-                        group new { t3, t4, t4All, t5, t6  } by new { t1.ID, t1.FormID, t1.Name, t6.LockStatusID, t6.PE_Remark, t6.PM_Remark, t6.PJM_Remark, t6.StatusID} into g
+                        join t6Group in _context.tr_UnitFormPassCondition on new { t4.UnitFormID, t4.GroupID } equals new { t6Group.UnitFormID, t6Group.GroupID } into t6Joined
+                        from t6 in t6Joined.DefaultIfEmpty()
+                        group new { t3, t4, t4All, t5, t6  } by new { t1.ID, t1.FormID, t1.Name, t6.LockStatusID, t6.PE_Remark, t6.PM_Remark, t6.PJM_Remark, t6.StatusID , t6.FlagActive} into g
                         select new FormGroupModel
                         {
                             GroupID = g.Key.ID,
                             FormID = g.Key.FormID,
                             GroupName = g.Key.Name,
                             LockStatusID = g.Key.LockStatusID,
+                            PCFlagActive = g.Key.FlagActive,
                             PC_Remark_PE = g.Key.PE_Remark,
                             PC_Remark_PM = g.Key.PM_Remark,
                             PC_Remark_PJM = g.Key.PJM_Remark,
@@ -90,6 +91,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               PM_StatusID = pmAction != null ? pmAction.StatusID : null,
                               PM_Remark = pmAction != null ? pmAction.Remark : null,
                               PJM_ActionType = pjmAction != null ? pjmAction.ActionType : null,
+                              PJM_Remark = pjmAction != null ? pjmAction.Remark : null,
                               PJM_StatusID = pjmAction != null ? pjmAction.StatusID : null
                           }).FirstOrDefault();
 
@@ -141,6 +143,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     6 => "PM ส่งเรื่องอนุมัติการผ่านแบบมีเงื่อนไขให้ PJM พิจารณา",
                     7 => "PJM อนุมัติคำขอ",
                     8 => "PJM ไม่อนุมัติคำขอ",
+                    9 => "PJM กำลังตรวจ",
                     _ => "สถานะไม่ทราบ"
                 },
                 PE_ActionType = result.PE_ActionType,
@@ -149,6 +152,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 PM_StatusID = result.PM_StatusID,
                 PM_Remark = result.PM_Remark,
                 PJM_ActionType = result.PJM_ActionType,
+                PJM_Remark = result.PJM_Remark,
                 PJM_StatusID = result.PJM_StatusID,
                 FilePath = filePath,
                 FileName = fileName
@@ -167,7 +171,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 unitForm.VendorID = model.VendorID ?? unitForm.VendorID;
                 unitForm.StatusID = model.Act == "submit" ? 2 : 1;
                 unitForm.UpdateDate = DateTime.Now;
-                //unitForm.UpdateBy = userID;
+                unitForm.UpdateBy = model.userID;
             }
 
             var unitFormAction = _context.tr_UnitFormAction
@@ -178,7 +182,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 unitFormAction.ActionType = model.Act;
                 unitFormAction.UpdateDate = DateTime.Now;
-                //unitFormAction.UpdateBy = userID;
+                unitFormAction.UpdateBy = model.userID;
             }
 
             if (model.Act == "save")
@@ -187,7 +191,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 {
                     SaveSignature(model.Sign, model.ApplicationPath, model.UnitFormID, model.FormGrade, model.VendorID, model.userID, model.RoleID, model.FormID, "save");
                 }
-                InsertUnitFormActionLog(model.UnitFormID, "save");
+                InsertUnitFormActionLog(model.UnitFormID, "save", model.userID);
             }
             else
             {
@@ -195,7 +199,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 {
                     SaveSignature(model.Sign, model.ApplicationPath, model.UnitFormID, model.FormGrade, model.VendorID, model.userID, model.RoleID, model.FormID,"submit");
                 }
-                InsertUnitFormActionLog(model.UnitFormID, "submit");
+                InsertUnitFormActionLog(model.UnitFormID, "submit", model.userID);
             }
 
             _context.SaveChanges();
@@ -221,10 +225,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             InsertResource(guidId, fileName, resource.ResourceStoragePath, "image/jpeg", userID);
             InsertOrUpdateUnitFormResource(guidId, UnitFormID, userID, RoleID , FormID);
             SubmitUpdateVendorUnitForm(guidId, UnitFormID, FormGrade, VendorID, userID, RoleID , ActionType);
-            //if (ActionType == "submit")
-            //{
-            //    UpdateUnitFormActionTypePM(UnitFormID);
-            //}
 
         }
         private void ConvertByteToImage(FormGroupModel.Resources item)
@@ -272,13 +272,13 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 ID = guidId,
                 FileName = fileName,
-                FilePath = filePath, // This should already be the relative path
+                FilePath = filePath, 
                 MimeType = mimeType,
                 FlagActive = true,
                 CreateDate = DateTime.Now,
-                //CreateBy = userID,
+                CreateBy = userID,
                 UpdateDate = DateTime.Now,
-                //UpdateBy = userID,
+                UpdateBy = userID,
             };
 
             _context.tm_Resource.Add(newResource);
@@ -286,16 +286,15 @@ namespace Project.ConstructionTracking.Web.Repositories
         }
         public bool InsertOrUpdateUnitFormResource(Guid ResourceID, Guid? UnitFormID, Guid? userID, int? RoleID, int? FormID)
         {
-            // Check if a row already exists with the given UnitFormID, FormID, and RoleID
+
             var existingResource = _context.tr_UnitFormResource.FirstOrDefault(r => r.UnitFormID == UnitFormID && r.FormID == FormID && r.RoleID == RoleID);
 
             if (existingResource != null)
             {
-                // If found, update the existing row
                 existingResource.ResourceID = ResourceID;
                 existingResource.FlagActive = true;
                 existingResource.UpdateDate = DateTime.Now;
-                //existingResource.UpdateBy = userID; // Update the user ID if applicable
+                existingResource.UpdateBy = userID; // Update the user ID if applicable
 
                 _context.tr_UnitFormResource.Update(existingResource);
             }
@@ -310,15 +309,14 @@ namespace Project.ConstructionTracking.Web.Repositories
                     ResourceID = ResourceID,
                     FlagActive = true,
                     CreateDate = DateTime.Now,
-                    //CreateBy = userID, // Set the user ID if applicable
+                    CreateBy = userID, 
                     UpdateDate = DateTime.Now,
-                    //UpdateBy = userID // Set the user ID if applicable
+                    UpdateBy = userID 
                 };
 
                 _context.tr_UnitFormResource.Add(newResource);
             }
 
-            // Save the changes to the database
             _context.SaveChanges();
 
             return true;
@@ -333,22 +331,13 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 unitForm.VendorID = VendorID;
                 unitForm.VendorResourceID = ResourceID;
+                unitForm.UpdateBy = userID;
                 unitForm.UpdateDate = DateTime.Now;
             }
 
             return true;
         }
-        private void UpdateUnitFormActionTypePM(Guid? UnitFormID)
-        {
-            var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == UnitFormID && a.RoleID == 2);
-            if (unitFormAction != null)
-            {
-                unitFormAction.UpdateDate = DateTime.Now;
-                _context.tr_UnitFormAction.Update(unitFormAction);
-                _context.SaveChanges();
-            }
-        }
-        private void InsertUnitFormActionLog(Guid? UnitFormID , string ActionType)
+        private void InsertUnitFormActionLog(Guid? UnitFormID , string ActionType , Guid? userID)
         {
             var actionLog = new tr_UnitFormActionLog
             {
@@ -356,7 +345,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 Remark = "PE " + ActionType + " UnitFormAction",
                 ActionDate = DateTime.Now,
                 CraeteDate = DateTime.Now,
-                // CreateBy = unitFormAction.CreateBy, // Uncomment and set appropriately if you have the CreateBy field
+                CreateBy = userID
             };
 
             _context.tr_UnitFormActionLog.Add(actionLog);

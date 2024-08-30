@@ -13,6 +13,7 @@ namespace Project.ConstructionTracking.Web.Models
         public string? StatusUse { get; set;}
         public string? FormGrade { get; set; }
         public int? LockStatusID { get; set; }
+        public bool? PCFlagActive { get; set; } 
         public string? PC_Remark_PE { get; set; }
         public string? PC_Remark_PM { get; set; }
         public string? PC_Remark_PJM { get; set; }
@@ -68,6 +69,7 @@ namespace Project.ConstructionTracking.Web.Models
             public int? PM_StatusID { get; set; }
             public string? PM_Remark { get; set; }
             public string? PJM_ActionType { get; set; }
+            public string? PJM_Remark { get; set; }
             public int? PJM_StatusID { get; set; }
             public string? FilePath { get; set; }
             public string? FileName { get; set; }

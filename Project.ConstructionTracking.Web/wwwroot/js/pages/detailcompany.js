@@ -188,10 +188,23 @@ const detailCom = {
             data: data,
             success: function (resp) {
                 if (resp.success) {
-                    window.location.reload();
-                }
-                else {
-                    alert("Error: " + resp.message);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำรายการสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
@@ -244,7 +257,12 @@ const detailCom = {
                     $('#modal-vendor-e').modal('show');
                 }
                 else {
-                    alert("Error: " + resp.message);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
@@ -263,16 +281,22 @@ const detailCom = {
             success: function (resp) {
                 if (resp.success) {
                     Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการแก้ไขข้อมูลสำเร็จ',
                         icon: 'success',
-                        title: 'ทำการแก้ไขข้อมูลสำเร็จ',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.reload();
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
                     });
-                }
-                else {
-                    alert("Error: " + resp.message);
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'ทำการแก้ไขข้อมูลไม่สำเร็จ',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
@@ -291,16 +315,22 @@ const detailCom = {
             success: function (resp) {
                 if (resp.success) {
                     Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการลบข้อมูลสำเร็จ',
                         icon: 'success',
-                        title: 'ทำการลบข้อมูลสำเร็จ',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.reload();
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
                     });
-                }
-                else {
-                    alert("Error: " + resp.message);
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {

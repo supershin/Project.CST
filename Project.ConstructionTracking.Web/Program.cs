@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Repositories;
@@ -64,6 +65,9 @@ builder.Services.AddScoped<IMasterCompanyRepo, MasterCompanyRepo>();
 builder.Services.AddScoped<IMasterUnitService, MasterUnitService>();
 builder.Services.AddScoped<IMasterUnitRepo, MasterUnitRepo>();
 
+builder.Services.AddScoped<IUnLockPassConditionService, UnLockPassConditionService>();
+builder.Services.AddScoped<IUnLockPassConditionRepo, UnLockPassConditionRepo>();
+
 builder.Services.AddScoped<IMasterUserService, MasterUserService>();
 builder.Services.AddScoped<IMasterUserRepo, MasterUserRepo>();
 
@@ -86,6 +90,13 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "Upload")),
+    RequestPath = "/Upload"
+});
 
 app.MapControllerRoute(
     name: "default",

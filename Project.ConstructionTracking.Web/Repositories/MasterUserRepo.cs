@@ -22,6 +22,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         Resources UploadSignResource(string model, string appPath, Guid userId);
 
+        bool DeleteUser(Guid userId);
     }
 
 	public class MasterUserRepo : IMasterUserRepo
@@ -91,53 +92,57 @@ namespace Project.ConstructionTracking.Web.Repositories
         public dynamic CreateUser(CreateUserModel model)
         {
             tm_User create = new tm_User();
-            create.ID = Guid.NewGuid();
-            create.BUID = model.BUID;
-            //create.DepartmentID = ;
-            create.RoleID = model.RoleID;
-            create.Username = model.Email;
-
-            // change to gen md5 
-            create.Password = HashExtension.EncryptMD5(model.Password, model.PasswordKey);
-
-            // check Position by check master position
-            tm_Position? position = _context.tm_Position
-                                .Where(o => o.Name == model.JobPosition && o.FlagActive == true)
-                                .FirstOrDefault();
-
-            if(position == null)
-            {
-                tm_Position newData = new tm_Position();
-                newData.Name = model.JobPosition;
-                newData.FlagActive = true;
-                newData.CreateDate = DateTime.Now;
-                newData.UpdateDate = DateTime.Now;
-                //newData.CreateBy = ;
-                //newData.UpdateBy = ;
-
-                _context.tm_Position.Add(newData);
-                _context.SaveChanges();
-
-                create.PositionID = newData.ID;
-            }
+            tm_User? verifyEmail = _context.tm_User.Where(o => o.Email == model.Email && o.FlagActive == true).FirstOrDefault();
+            if (verifyEmail != null) throw new Exception("อีเมลล์นี้ถูกใช้งานแล้ว");
             else
             {
-                create.PositionID = position.ID;
+                create.ID = Guid.NewGuid();
+                create.BUID = model.BUID;
+                //create.DepartmentID = ;
+                create.RoleID = model.RoleID;
+                create.Username = model.Email;
+
+                // change to gen md5 
+                create.Password = HashExtension.EncryptMD5(model.Password, model.PasswordKey);
+
+                // check Position by check master position
+                tm_Position? position = _context.tm_Position
+                                    .Where(o => o.Name == model.JobPosition && o.FlagActive == true)
+                                    .FirstOrDefault();
+
+                if (position == null)
+                {
+                    tm_Position newData = new tm_Position();
+                    newData.Name = model.JobPosition;
+                    newData.FlagActive = true;
+                    newData.CreateDate = DateTime.Now;
+                    newData.UpdateDate = DateTime.Now;
+                    //newData.CreateBy = ;
+                    //newData.UpdateBy = ;
+
+                    _context.tm_Position.Add(newData);
+                    _context.SaveChanges();
+
+                    create.PositionID = newData.ID;
+                }
+                else
+                {
+                    create.PositionID = position.ID;
+                }
+
+                create.FirstName = model.FirstName;
+                create.LastName = model.LastName;
+                create.Email = model.Email;
+                create.Mobile = model.MobileNo;
+                create.FlagActive = true;
+                create.CreateDate = DateTime.Now;
+                create.UpdateDate = DateTime.Now;
+                //create.CreateBy = ;
+                //create.UpdateBy = ;
+
+                _context.tm_User.Add(create);
+                _context.SaveChanges();
             }
-            
-            create.FirstName = model.FirstName;
-            create.LastName = model.LastName;
-            create.Email = model.Email;
-            create.Mobile = model.MobileNo;
-            create.FlagActive = true;
-            create.CreateDate = DateTime.Now;
-            create.UpdateDate = DateTime.Now;
-            //create.CreateBy = ;
-            //create.UpdateBy = ;
-
-            _context.tm_User.Add(create);
-            _context.SaveChanges();
-
             return create;
         }
 
@@ -326,6 +331,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 throw exp;
             }
         }
+
         public bool CreateUploadSign(Guid userId, string fileName, string filePath)
         {
             tr_UserResource? userResource = _context.tr_UserResource
@@ -407,6 +413,23 @@ namespace Project.ConstructionTracking.Web.Repositories
                 _context.tr_UserResource.Add(mappingUser);
                 _context.SaveChanges();
             }
+            return true;
+        }
+
+        public bool DeleteUser(Guid userId)
+        {
+            tm_User? delete = _context.tm_User
+                            .Where(o => o.ID == userId && o.FlagActive == true).FirstOrDefault();
+
+            if (delete == null) throw new Exception("ไม่พบข้อมูลผู้ใช้งาน");
+
+            delete.FlagActive = false;
+            delete.UpdateDate = DateTime.Now;
+            //delete.UpdateBy = ;
+
+            _context.tm_User.Update(delete);
+            _context.SaveChanges();
+
             return true;
         }
     }

@@ -40,14 +40,5 @@ namespace Project.ConstructionTracking.Web.Services
             var Result = _IFormChecklistRepo.DeleteImage(resourceId, ApplicationPath);
             return Result;
         }
-
-        //public async Task InsertOrUpdate(FormChecklistIUDModel model, IFormFileCollection files)
-        //{
-        //    var unitFormIDUse = _IFormChecklistRepo.InsertOrUpdate(model);
-        //    if (files != null && files.Count > 0)
-        //    {
-        //        await _IFormChecklistRepo.UploadFiles(unitFormIDUse, files);
-        //    }
-        //}
     }
 }

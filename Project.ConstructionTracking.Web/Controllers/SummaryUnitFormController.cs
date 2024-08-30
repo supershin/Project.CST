@@ -6,7 +6,7 @@ using Project.ConstructionTracking.Web.Services;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class SummaryUnitFormController : Controller
+    public class SummaryUnitFormController : BaseController
     {
         private readonly ISummeryUnitFormService _SummeryUnitFormService;
 
@@ -31,6 +31,23 @@ namespace Project.ConstructionTracking.Web.Controllers
         public IActionResult GoToFormGroup(Guid projectId, string projectName, int FormID, Guid UnitFormID, string UnitFormName, Guid unitId, string UnitCode, string UnitStatusName)
         {
             return RedirectToAction("Index", "FormGroup", new { projectId, projectName, FormID, UnitFormID, UnitFormName, unitId, UnitCode, UnitStatusName });
+        }
+
+        [HttpPost]
+        public IActionResult GoToPC(Guid UnitFormID, int GroupID)
+        {
+            var RoleID = Request.Cookies["CST.Role"];
+            GroupID = (GroupID == 0) ? -1 : GroupID;
+
+            if (RoleID == "1")
+            {
+                return RedirectToAction("Index", "UnLockPassCondition", new { UnitFormID, GroupID });
+            }
+            else
+            {
+                return RedirectToAction("Index", "ApproveUnLockPassCondition", new { UnitFormID, GroupID });
+            }
+            
         }
     }
 }

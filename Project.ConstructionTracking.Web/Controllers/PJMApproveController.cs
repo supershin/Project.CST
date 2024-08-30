@@ -9,7 +9,7 @@ using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class PJMApproveController : Controller
+    public class PJMApproveController : BaseController
     {
         private readonly IPJMApproveService _PJMApproveService;
         private readonly IPMApproveService _PMApproveService;

@@ -2,6 +2,7 @@
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
@@ -34,10 +35,19 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from unit in units.DefaultIfEmpty()
                           join t6 in _context.tm_Form on t1.FormID equals t6.ID into forms
                           from form in forms.DefaultIfEmpty()
-                          let passCondition = _context.tr_UnitFormPassCondition
-                                                 .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true)
-                                                 .OrderBy(pc => pc.ID)
-                                                 .FirstOrDefault()
+                          let allpassConditionCount = _context.tr_UnitFormPassCondition
+                                                                  .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true)
+                                                                  .Count()
+
+                          let passConditionCount = _context.tr_UnitFormPassCondition
+                                                      .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true
+                                                                && (pc.StatusID == 6 || pc.StatusID == 8))
+                                                      .Count()
+
+                          let notpassConditionCount = _context.tr_UnitFormPassCondition
+                                                      .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true
+                                                                && (pc.StatusID == 7 || pc.StatusID == 9))
+                                                      .Count()
                           where t1.StatusID > 1
                           select new
                           {
@@ -68,8 +78,16 @@ namespace Project.ConstructionTracking.Web.Repositories
                               StatusID_PJM = actionPJM.StatusID,
                               Remark_PJM = actionPJM.Remark,
                               ActionDate_PJM = actionPJM.ActionDate,
-                              PC_LockID = passCondition.LockStatusID,
-                              PC_StatusID = passCondition.StatusID
+                              PC_Cnt = allpassConditionCount,
+                              //PC_StatusID = passCondition.StatusID,
+                              AnswerColor = notpassConditionCount > 0 ? "bg-danger"
+                                          : (notpassConditionCount == 0 && passConditionCount == allpassConditionCount && allpassConditionCount > 0) ? "bg-success"
+                                          : (allpassConditionCount == 0) ? ""
+                                          : (notpassConditionCount == 0 && allpassConditionCount > 0) ? "bg-primary"
+                                          : "" //
+
+
+
                           })
                           .OrderBy(item => item.StatusID)
                           .ThenBy(item => item.UnitFormID)
@@ -112,8 +130,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                     ActionDate_PJM = item.ActionDate_PJM.HasValue
                                     ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PJM.Value.ToString("dd/MM/yyyy"))
                                     : null,
-                    PC_LockID = item.PC_LockID,
-                    PC_StatusID = item.PC_StatusID
+                    PC_CNT = item.PC_Cnt,
+                    PC_Color = item.AnswerColor
                 })
                 .ToList();
 
@@ -161,8 +179,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                               PJM_StatusID = PJMUnitFormAction.StatusID,
                               PJM_Remarkaction = PJMUnitFormAction.Remark,
                               PJM_Actiontype = PJMUnitFormAction.ActionType,
+
                               PM_getListgroup = (from fg in _context.tm_FormGroup
-                                                 join t7 in _context.tr_UnitFormPassCondition on new { UnitFormID = (Guid?)t1.ID, GroupID = (int?)fg.ID , FlagActive = (bool?)true } equals new { t7.UnitFormID, t7.GroupID ,t7.FlagActive } into unitFormPassConditions
+                                                 join t7 in _context.tr_UnitFormPassCondition on new { UnitFormID = (Guid?)t1.ID, GroupID = (int?)fg.ID } equals new { t7.UnitFormID, t7.GroupID } into unitFormPassConditions
                                                  from passCondition in unitFormPassConditions.DefaultIfEmpty()
                                                  where fg.FormID == t1.FormID
                                                  select new PM_getListgroup
@@ -172,14 +191,16 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                      PassConditionsID = passCondition.ID,
                                                      PC_StatusID = passCondition.StatusID,
                                                      LockStatusID = passCondition.LockStatusID,
-                                                     PE_Remark = passCondition.PE_Remark,
-                                                     PM_Remark = passCondition.PM_Remark,
+                                                     PE_RemarkPC = passCondition.PE_Remark,
+                                                     PM_RemarkPC = passCondition.PM_Remark,
+                                                     PJM_RemarkPC = passCondition.PJM_Remark,
+                                                     PCFlageActive = passCondition.FlagActive,
                                                      PM_getListpackage = (from tpk in _context.tr_UnitFormPackage
-                                                                          join ftpk in _context.tm_FormPackage on new { tpk.GroupID , tpk.PackageID } equals new { ftpk.GroupID , PackageID = (int?)ftpk.ID }  into FormPackages
+                                                                          join ftpk in _context.tm_FormPackage on new { tpk.GroupID, tpk.PackageID } equals new { ftpk.GroupID, PackageID = (int?)ftpk.ID } into FormPackages
                                                                           from FormPackage in FormPackages.DefaultIfEmpty()
                                                                           where tpk.UnitFormID == PEUnitFormAction.UnitFormID && tpk.FormID == t1.FormID && tpk.GroupID == fg.ID
                                                                           select new PM_getListpackage
-                                                                          { 
+                                                                          {
                                                                               Package_ID = tpk.PackageID,
                                                                               Package_Name = FormPackage.Name,
                                                                               Package_Remark = tpk.Remark
@@ -219,10 +240,8 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
-
         public void SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
         {
-            // Handle UnitFormAction for the RoleID = 2 (PM)
             var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == model.UnitFormID && a.RoleID == 2);
 
             if (unitFormAction == null)
@@ -236,7 +255,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                     StatusID = model.UnitFormStatus,
                     Remark = model.Remark,
                     ActionDate = DateTime.Now,
+                    UpdateBy = model.UserID,
                     UpdateDate = DateTime.Now,
+                    CreateBy = model.UserID,
                     CraeteDate = DateTime.Now
                 };
 
@@ -249,6 +270,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 unitFormAction.StatusID = model.UnitFormStatus;
                 unitFormAction.Remark = model.Remark;
                 unitFormAction.ActionDate = DateTime.Now;
+                unitFormAction.UpdateBy = model.UserID;
                 unitFormAction.UpdateDate = DateTime.Now;
 
                 _context.tr_UnitFormAction.Update(unitFormAction);
@@ -260,10 +282,10 @@ namespace Project.ConstructionTracking.Web.Repositories
             bool PC = model.PassConditionsIUD != null && model.PassConditionsIUD.Count > 0;
 
             // UpdateUnitForm action
-            UpdateUnitForm(model.UnitFormID, model.ActionType, model.UnitFormStatus);
+            UpdateUnitForm(model.UnitFormID, model.ActionType, model.UnitFormStatus , model.UserID);
 
             // Log the action
-            InsertUnitFormActionLog(unitFormAction);
+            InsertUnitFormActionLog(unitFormAction, model.UserID);
 
             // Handle PassConditions if they exist
             if (model.PassConditionsIUD != null && model.PassConditionsIUD.Count > 0)
@@ -271,38 +293,20 @@ namespace Project.ConstructionTracking.Web.Repositories
                 foreach (var passConditionModel in model.PassConditionsIUD)
                 {
                     var passCondition = _context.tr_UnitFormPassCondition
-                        .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID);
+                        .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.FlagActive == true);
 
-                    if (passCondition == null)
+                    if (passCondition != null)
                     {
-                        // Insert a new PassCondition record
-                        passCondition = new tr_UnitFormPassCondition
+                        if (passCondition.StatusID != 8)
                         {
-                            UnitFormID = model.UnitFormID,
-                            GroupID = passConditionModel.Group_ID,
-                            StatusID = passConditionModel.PassConditionsvalue,
-                            PM_Remark = passConditionModel.Remark,
-                            ActionDate = DateTime.Now,
-                            CraeteDate = DateTime.Now
-                        };
-
-                        _context.tr_UnitFormPassCondition.Add(passCondition);
-
+                            passCondition.StatusID = passConditionModel.PassConditionsvalue;
+                            passCondition.PM_Remark = passConditionModel.Remark;
+                            passCondition.UpdateBy = model.UserID;
+                            passCondition.UpdateDate = DateTime.Now;
+                            _context.tr_UnitFormPassCondition.Update(passCondition);
+                            InsertUnitFormActionLogPassCondition(passCondition , model.UserID);
+                        }
                     }
-                    else
-                    {
-                        // Update the existing PassCondition record
-                        passCondition.StatusID = passConditionModel.PassConditionsvalue;
-                        passCondition.PM_Remark = passConditionModel.Remark;
-                        passCondition.UpdateDate = DateTime.Now;
-
-                        _context.tr_UnitFormPassCondition.Update(passCondition);
-                    }
-
-                    
-                    // Log the action
-                    InsertUnitFormActionLogPassCondition(passCondition);
-
                     // Save changes for each PassCondition
                     _context.SaveChanges();
                 }
@@ -324,7 +328,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-        private void UpdateUnitForm(Guid? unitformID, string? actiontype, int? StatusID)
+        private void UpdateUnitForm(Guid? unitformID, string? actiontype, int? StatusID ,Guid? userID)
         {
             var UnitForm = _context.tr_UnitForm
                 .FirstOrDefault(tr => tr.ID == unitformID);
@@ -332,6 +336,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             if (UnitForm != null)  // Ensure UnitForm is found
             {
                 UnitForm.StatusID = actiontype == "save" ? 3 : StatusID;
+                UnitForm.UpdateBy = userID;
                 UnitForm.UpdateDate = DateTime.Now;
 
                 _context.tr_UnitForm.Update(UnitForm);
@@ -339,7 +344,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-        private void InsertUnitFormActionLogPassCondition(tr_UnitFormPassCondition UnitFormPassCondition)
+        private void InsertUnitFormActionLogPassCondition(tr_UnitFormPassCondition UnitFormPassCondition ,Guid? UserID)
         {
             var pcvalue = UnitFormPassCondition.StatusID == 6 ? "ให้ผ่านเพื่อส่ง PJM Head" : "ให้ไม่ผ่าน";
 
@@ -352,14 +357,14 @@ namespace Project.ConstructionTracking.Web.Repositories
                 Remark = "PM " + pcvalue + " UnitFormPassCondition",
                 ActionDate = DateTime.Now,
                 CraeteDate = DateTime.Now,
-                // CreateBy = unitFormAction.CreateBy, // Uncomment and set appropriately if you have the CreateBy field
+                CreateBy = UserID
             };
 
             _context.tr_UnitFormActionLog.Add(actionLog);
             _context.SaveChanges();
         }
 
-        private void InsertUnitFormActionLog(tr_UnitFormAction unitFormAction)
+        private void InsertUnitFormActionLog(tr_UnitFormAction unitFormAction , Guid? userID)
         {
             var actionLog = new tr_UnitFormActionLog
             {
@@ -369,7 +374,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 Remark = "PM " + unitFormAction.ActionType + " UnitFormAction",
                 ActionDate = unitFormAction.ActionDate,
                 CraeteDate = DateTime.Now,
-                // CreateBy = unitFormAction.CreateBy, // Uncomment and set appropriately if you have the CreateBy field
+                CreateBy = userID
             };
 
             _context.tr_UnitFormActionLog.Add(actionLog);
@@ -411,7 +416,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                             FilePath = relativeFilePath, // Store the relative path with forward slashes
                             MimeType = "image/jpeg", // Ensure the MimeType is set to "image/jpeg"
                             FlagActive = true,
+                            CreateBy = model.UserID,
                             CreateDate = DateTime.Now,
+                            UpdateBy = model.UserID,    
                             UpdateDate = DateTime.Now,
                         };
                         _context.tm_Resource.Add(newResource);
@@ -424,6 +431,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                             RoleID = RoleID,
                             UnitFormID = model.UnitFormID,
                             ResourceID = newResource.ID,
+                            CreateBy = model.UserID,
                             CreateDate = DateTime.Now,
                         };
                         _context.tr_UnitFormResource.Add(newFormResource);

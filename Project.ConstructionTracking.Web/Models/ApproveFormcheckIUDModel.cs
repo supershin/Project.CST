@@ -5,7 +5,9 @@
         public Guid? UnitFormID { get; set; }
         public Guid? ProjectID { get; set; }
         public Guid? UnitID { get; set; }
+        public Guid? UserID { get; set; }
         public string? UnitCode { get; set; }
+        public int? RoleID { get; set; }
         public int? FormID { get; set; }
         public int? Group_ID { get; set; }
         public string? ActionType { get; set; }

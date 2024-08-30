@@ -35,43 +35,140 @@
         });
 
         $('#create-unit-save').click(() => {
-            // Get form values
-            var projectID = $('#u-project-list').val();
-            var unitTypeID = $('#u-unit-type-list').val();
-            var modelTypeID = $('#u-model-type-list').val();
-            var unitCode = $('#u-unit-code').val();
-            var addrNo = $('#u-addr-no').val();
-            var area = $('#u-area').val();
+            event.preventDefault(); // Prevent form submission for validation
+            let isValid = true;
 
-            var data = {
-                ProjectID: projectID,
-                UnitTypeID: unitTypeID,
-                ModelTypeID: modelTypeID,
-                UnitCode: unitCode,
-                UnitAddress: addrNo,
-                UnitArea: area
+            // Clear previous error messages and reset styles
+            document.querySelectorAll('.form-control').forEach(input => {
+                input.style.borderColor = ''; // Reset border color
+            });
+            document.querySelectorAll('.text-danger').forEach(span => {
+                span.textContent = ''; // Clear error messages
+            });
+
+            // Validate Project List
+            const projectList = document.getElementById('u-project-list');
+            if (projectList.value === '0') {
+                isValid = false;
+                projectList.style.borderColor = 'red';
+                document.getElementById('u-project-list-error').textContent = 'กรุณาเลือกโครงการ';
             }
 
-            unit.CreateUnit(data);
+            // Validate Unit Type List
+            const unitTypeList = document.getElementById('u-unit-type-list');
+            if (unitTypeList.value === '0') {
+                isValid = false;
+                unitTypeList.style.borderColor = 'red';
+                document.getElementById('u-unit-type-list-error').textContent = 'กรุณาเลือกประเภทยูนิต';
+            }
+
+            // Validate Model Type List
+            const modelTypeList = document.getElementById('u-model-type-list');
+            if (modelTypeList.value === '0') {
+                isValid = false;
+                modelTypeList.style.borderColor = 'red';
+                document.getElementById('u-model-type-list-error').textContent = 'กรุณาเลือกประเภทโมเดล';
+            }
+
+            // Validate Unit Code
+            const unitCode = document.getElementById('u-unit-code');
+            if (unitCode.value.trim() === '') {
+                isValid = false;
+                unitCode.style.borderColor = 'red';
+                document.getElementById('u-unit-code-error').textContent = 'กรุณากรอกรหัสยูนิต';
+            }
+
+            // Validate Address Number
+            const addrNo = document.getElementById('u-addr-no');
+            if (addrNo.value.trim() === '') {
+                isValid = false;
+                addrNo.style.borderColor = 'red';
+                document.getElementById('u-addr-no-error').textContent = 'กรุณากรอกเลขที่อยู่';
+            }
+
+            // Validate Area
+            const area = document.getElementById('u-area');
+            if (area.value.trim() === '' || parseFloat(area.value) <= 0) {
+                isValid = false;
+                area.style.borderColor = 'red';
+                document.getElementById('u-area-error').textContent = 'กรุณากรอกเนื้อที่ที่ถูกต้อง';
+            }
+
+            if (isValid) {
+                // Get form values
+                var projectID = $('#u-project-list').val();
+                var unitTypeID = $('#u-unit-type-list').val();
+                var modelTypeID = $('#u-model-type-list').val();
+                var unitCodes = $('#u-unit-code').val();
+                var addrNos = $('#u-addr-no').val();
+                var areas = $('#u-area').val();
+
+                var data = {
+                    ProjectID: projectID,
+                    UnitTypeID: unitTypeID,
+                    ModelTypeID: modelTypeID,
+                    UnitCode: unitCodes,
+                    UnitAddress: addrNos,
+                    UnitArea: areas
+                }
+
+                unit.CreateUnit(data);
+            }
         });
 
         $('#edit-unit-save').click(() => {
-            var unitId = $('#edit-unit-id').val();
-            var projectId = $('#edit-project-id').val();
-            var vendorId = $('#vendor').val();
-            var poNo = $('#po-no').val();
-            var startDate = $('#start-date').val();
+            event.preventDefault(); // Prevent form submission for validation
+            let isValid = true;
 
-            var data = {
-                UnitID: unitId,
-                ProjectID: projectId,
-                vendorID: vendorId,
-                PONo: poNo,
-                StartDate: startDate
+            // Clear previous error messages and reset styles
+            document.querySelectorAll('.form-control').forEach(input => {
+                input.style.borderColor = ''; // Reset border color
+            });
+            document.querySelectorAll('.text-danger').forEach(span => {
+                span.textContent = ''; // Clear error messages
+            });
+
+            // Validate Vendor
+            const vendor = document.getElementById('vendor');
+            if (vendor.value.trim() === '') {
+                isValid = false;
+                vendor.style.borderColor = 'red';
+                document.getElementById('vendor-error').textContent = 'กรุณาเลือกผู้ควบคุมงาน';
             }
 
-            unit.EditUnit(data);
+            // Validate PO Number
+            const poNo = document.getElementById('po-no');
+            if (poNo.value.trim() === '') {
+                isValid = false;
+                poNo.style.borderColor = 'red';
+                document.getElementById('po-no-error').textContent = 'กรุณากรอก PO';
+            }
 
+            // Validate Start Date
+            const startDate = document.getElementById('start-date');
+            if (startDate.value.trim() === '') {
+                isValid = false;
+                startDate.style.borderColor = 'red';
+                document.getElementById('start-date-error').textContent = 'กรุณากรอกวันที่เริ่มทำงาน';
+            }
+
+            if (isValid) {
+                var unitId = $('#edit-unit-id').val();
+                var projectId = $('#edit-project-id').val();
+                var vendorId = $('#vendor').val();
+                var poNos = $('#po-no').val();
+                var startDates = $('#start-date').val();
+
+                var data = {
+                    UnitID: unitId,
+                    ProjectID: projectId,
+                    vendorID: vendorId,
+                    PONo: poNos,
+                    StartDate: startDates
+                }
+
+                unit.EditUnit(data);
+            }
         });
 
         $('#unit-delete-save').click(() => {
@@ -107,7 +204,7 @@
                 complete: function (res) {
                     $(document).on('click', "button[data-action='edit-unit']", function (e) {
                         var unitId = $(e.currentTarget).attr('data-id');
-                        console.log(unitId)
+                        
                         var data = {
                             unitID: unitId
                         }
@@ -116,7 +213,7 @@
                     });
                     $(document).on('click', "button[data-action='delete-unit']", function (e) {
                         var unitId = $(e.currentTarget).attr('data-id');
-                        console.log(unitId)
+                        
                         $('#delete-unit-id').val(unitId);
                         $('#partial-confirm-delete-unit').modal('show');
                         return false;
@@ -216,18 +313,21 @@
             success: function (resp) {
                 if (resp.success) {
                     Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการสร้างข้อมูลสำเร็จ',
                         icon: 'success',
-                        title: 'ทำการสร้างข้อมูลสำเร็จ',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.reload();
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
                     });
-                }
-                else {
+                } else {
                     Swal.fire({
-                        icon: "error",
+                        title: 'Error!',
                         title: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
                     });
                 }
             },
@@ -244,21 +344,24 @@
             type: 'post',
             dataType: 'json',
             data: data,
-            success: function (resp) {
+            success: function (resp) { 
                 if (resp.success) {
                     Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการแก้ไขข้อมูลสำเร็จ',
                         icon: 'success',
-                        title: 'ทำการสร้างข้อมูลสำเร็จ',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.reload();
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
                     });
-                }
-                else {
+                } else {
                     Swal.fire({
-                        icon: "error",
-                        title: "ทำรายการไม่สำเร็จ",
+                        title: 'Error!',
+                        text: "ทำการแก้ไขข้อมูลไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
                     });
                 }
             },
@@ -278,18 +381,21 @@
             success: function (resp) {
                 if (resp.success) {
                     Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการลบข้อมูลสำเร็จ',
                         icon: 'success',
-                        title: 'ทำการลบข้อมูลสำเร็จ',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.reload();
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
                     });
-                }
-                else {
+                } else {
                     Swal.fire({
-                        icon: "error",
-                        title: "ทำรายการไม่สำเร็จ",
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
                     });
                 }
             },

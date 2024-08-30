@@ -22,6 +22,21 @@
             public const int CONTRACT = 5; //สัญญา
             public const int TRANSFER = 6; //โอน
         }
+
+        public static class UserRole
+        {
+            //public const int ADMIN = 3;
+            public const int PE = 1;
+            public const int PM = 2;
+            public const int PJM = 3;
+        }
+
+        public static class UserRole_Desc
+        {
+            public const string PE = "Project Engineer";
+            public const string PM = "Product Manager";
+            public const string PJM = "Project Manager";
+        }
     }
 
 }

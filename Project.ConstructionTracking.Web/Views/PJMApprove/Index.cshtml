@@ -136,12 +136,12 @@
                         <div class="card p-3 mb-2">
                             <div class="d-flex justify-content-between">
                                 <div class="d-flex flex-row align-items-center">
-                                    <form action="@Url.Action("Index","FormCheckList" , new { unitId = item.UnitID, FormID = item.FormID , GroupID = item.GroupID})" method="post">
+                                    <form action="@Url.Action("Index","FormCheckList" , new { unitId = item.UnitID, FormID = item.FormID , GroupID = item.GroupID , GobackTo = "PJMApprove"})" method="post">
                                         @{
                                             string buttonClass = "bg-green";
                                             string iconClass = "fa-solid fa-magnifying-glass";
 
-                                            if (item.LockStatusID != null)
+                                            if (item.LockStatusID != null && item.PC_FlagActive == true)
                                             {
                                                 buttonClass = "bg-primary";
                                                 iconClass = "fa-solid fa-lock";
@@ -161,7 +161,7 @@
                                     <!-- Button to open the modal and fetch images -->
                                     <button class="status-dot bg-primary"
                                             onclick="openModal('@item.UnitFormID', '@item.GroupID',@item.FormID)">
-                                        <i class="fa-regular fa-image"></i>
+                                            <i class="fa-regular fa-image"></i>
                                     </button>
                                 </div>
                             </div>
@@ -178,17 +178,24 @@
                                         อนุมัติการผ่านแบบมีเงื่อนไข
                                     </label>
                                     <label class="form-check form-check-inline">
-                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="8" @(item.PC_StatusID == 8 ? "checked" : "") @(PJM_Actiontype == "submit" && UnitFormStatus != "6" ? "disabled" : "") onclick="toggleRadio(this)">
+                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="8" @(item.PC_StatusID == 8 ? "checked" : "") @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || item.PC_FlagActive == false ? "disabled" : "") onclick="toggleRadio(this)">
                                         <span class="form-check-label">อนุมัติ</span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="9" @(item.PC_StatusID == 9 ? "checked" : "") @(PJM_Actiontype == "submit" && UnitFormStatus != "6"  ? "disabled" : "") onclick="toggleRadio(this)">
+                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="9" @((PJM_Actiontype == "submit" && item.PC_StatusID != 8 && item.PC_StatusID != null) || item.PC_StatusID == 9 ? "checked" : "") @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || item.PC_FlagActive == false ? "disabled" : "") onclick="toggleRadio(this)">
                                         <span class="form-check-label">ไม่อนุมัติ</span>
                                     </label>
                                 </div>
                                 <div class="col-12 p-1 mb-2">
-                                <textarea id="remark_@item.GroupID" rows="1" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ" @(item.PJM_Actiontype == "submit" && UnitFormStatus != "6" ? "disabled" : "")>@item.PJM_Remark</textarea>
+                                <textarea id="remark_@item.GroupID" rows="1" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ" @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || item.PC_FlagActive == false ? "disabled" : "")>@item.PJM_Remark</textarea>
                                 </div>
+                                <input type="hidden" id="Flag-Active-@item.GroupID" value="@(item.PC_FlagActive == true ? 1 : 0)" />
+                                @if (item.PC_FlagActive == false)
+                                {
+                                <label class="form-label">
+                                    งานนี้ผ่านแบบปกติแล้ว
+                                </label>
+                            }
                         </div>
                     </div>
                 }
@@ -234,6 +241,10 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="row">
+                                <div class="col-12">
+                                    <textarea id="mainRemark" rows="2" class="form-control" placeholder="หมายเหตุ" @(PJM_Actiontype == "submit" && UnitFormStatus != "6" ? "disabled" : "")
+                                    >@PJMUnitFormRemark</textarea>
+                                </div>
                                 @if (PJM_Actiontype == "submit")
                                 {
                                     if (UnitFormStatus == "6")
@@ -247,11 +258,11 @@
                                                 <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
                                             </div>
                                         </div>
-                                    }   
+                                    }
                                 }
                                 else
                                 {
-                                      <div class="col-12 p-3">
+                                    <div class="col-12 p-3">
                                         <div id="drop-zone" class="drop-zone">
                                             <p class="drop-zone-text">
                                                 <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
@@ -259,11 +270,8 @@
                                             <input type="file" id="file-input" class="drop-zone-input" multiple>
                                             <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
                                         </div>
-                                    </div>                                  
+                                    </div>
                                 }
-                                <div class="col-12">
-                                    <textarea id="mainRemark" rows="2" class="form-control" placeholder="หมายเหตุ" @(PJM_Actiontype == "submit" && UnitFormStatus != "6" ? "disabled" : "")> @PJMUnitFormRemark </textarea>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -279,7 +287,7 @@
                                 {
                                     if (UnitFormStatus == "6")
                                     {
-                                         <input type="hidden" id="UnitFormID" value="@UnitFormID" />
+                                        <input type="hidden" id="UnitFormID" value="@UnitFormID" />
                                         <input type="hidden" id="ProjectID" value="@ProjectID" />
                                         <input type="hidden" id="UnitID" value="@UnitID" />
                                         <input type="hidden" id="UnitCode" value="@UnitCode" />
@@ -333,8 +341,6 @@
             </div>
         </div>
     </div>
-
-
 </div>
 
 
@@ -342,8 +348,8 @@
 @section scripts{
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+    <script src="~/js/pages/PMApprove.js?ver=@DateTime.Now.Ticks.ToString()"></script>
     <script>
-
         $(document).ready(function () {
             function adjustTextareaRows() {
                 if ($(window).width() <= 576) {
@@ -357,260 +363,135 @@
             $(window).resize(adjustTextareaRows); // Call on window resize
         });
 
-        function toggleRadio(radio) {
-            // Check if the radio button was already checked
-            if (radio.checked && radio.dataset.wasChecked) {
-                // If so, uncheck it
-                radio.checked = false;
-                radio.dataset.wasChecked = "";
-            } else {
-                // Uncheck all radios in the same group
-                var radios = document.getElementsByName(radio.name);
-                for (var i = 0; i < radios.length; i++) {
-                    radios[i].dataset.wasChecked = "";
+        function saveOrSubmit(actionType) {
+            var data = new FormData();
+
+            data.append("ActionType", actionType);
+            data.append("Remark", document.getElementById("mainRemark").value.trim());
+            data.append("UnitFormID", document.getElementById("UnitFormID").value);
+            data.append("ProjectID", document.getElementById("ProjectID").value);
+            data.append("UnitID", document.getElementById("UnitID").value);
+            data.append("FormID", document.getElementById("FormID").value);
+
+            var passConditions = [];
+            var allGroupsChecked = true; // To track if all groups have a selected radio button
+            var allRemarksFilled = true; // To track if all required remarks are filled
+
+            $("input[data-action='gr-pass']").each(function () {
+                let group_id = $(this).attr("group-id");
+                let passconID = $(this).attr("passconID");
+                let _statusID = $(this).is(":checked") ? $(this).val() : null;
+                let remark = document.getElementById(`remark_${group_id}`).value;
+                let FlagActive = document.getElementById(`Flag-Active-${group_id}`).value;
+
+                // Convert FlagActive to integer for comparison
+                FlagActive = parseInt(FlagActive);
+
+                // Only proceed if FlagActive is 1
+                if (FlagActive === 1) {
+                    let existingCondition = passConditions.find(pc => pc.Group_ID === group_id);
+
+                    // If not already added, add it
+                    if (!existingCondition) {
+                        passConditions.push({
+                            PC_ID: passconID,
+                            Group_ID: group_id,
+                            StatusID: _statusID,
+                            PC_FlagActive: FlagActive,
+                            PJM_Remark: remark ? remark.trim() : '',
+                        });
+                    } else {
+                        if (_statusID !== null) {
+                            existingCondition.StatusID = _statusID;
+                        }
+                    }
+
+                    // If "ไม่อนุมัติ" (value "9") is selected, check if the remarks are filled
+                    if (_statusID === "9") {
+                        if (remark.trim() === "" || document.getElementById("mainRemark").value.trim() === "") {
+                            allRemarksFilled = false; // Set to false if required remarks are empty
+                        }
+                    }
+
+                    // Check if each group of radio buttons has a selected option
+                    let groupChecked = $("input[data-action='gr-pass'][group-id='" + group_id + "']:checked").length > 0;
+                    if (!groupChecked) {
+                        allGroupsChecked = false; // If any group is not checked, set this to false
+                    }
                 }
-                // Set the current radio as checked
-                radio.dataset.wasChecked = "true";
+            });
+
+            if (passConditions.length > 0) {
+                data.append("PassConditionsIUD", JSON.stringify(passConditions));
             }
-        }
 
-        function openModal(UnitFormID, GroupID, FormID) {
-            // Fetch images for RoleID = 1
-            $.ajax({
-                url: '@ViewBag.baseUrl' + 'PMApprove/GetImages',
-                type: 'GET',
-                data: { UnitFormID: UnitFormID, GroupID: GroupID, FormID: FormID , RoleID: 1 },
-                success: function (images) {
-                    // Update the modal with the fetched images for RoleID = 1
-                    var containerRole1 = $('#image-container-role-1');
-                    containerRole1.empty(); // Clear any previous images
+            // Collect images if any
+            var files = document.getElementById("file-input").files;
+            for (var i = 0; i < files.length; i++) {
+                data.append("Images", files[i]);
+            }
 
-                    images.forEach(function (image) {
-                        var imageHtml = `
-                            <div class="col-6 position-relative">
-                                <a data-fslightbox="gallery1" href="${image.FilePath}">
-                                    <img src="${image.FilePath}" alt="..." class="img-thumbnail">
-                                </a>
-                            </div>
-                        `;
-                        containerRole1.append(imageHtml);
+            // Validation: Check if all radio button groups are checked when actionType is "submit"
+            if (actionType === "submit") {
+                if (!allGroupsChecked) {
+                    Swal.fire({
+                        title: 'Warning!',
+                        text: 'กรุณาเลือกการอนุมัติหรือไม่อนุมัติในทุกงานที่ใช้งานอยู่',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
                     });
-
-                    // Reinitialize fslightbox for the newly added images in Role 1 container
-                    refreshFsLightbox(); // Call this function to reinitialize the lightbox
-                },
-                error: function (error) {
-                    console.error('Failed to fetch images for RoleID 1:', error);
+                    return;
                 }
-            });
-
-            // Fetch images for RoleID = 2
-            $.ajax({
-                url: '@ViewBag.baseUrl' + 'PMApprove/GetImages',
-                type: 'GET',
-                data: { UnitFormID: UnitFormID, GroupID: GroupID , FormID: FormID , RoleID: 2 },
-                success: function (images) {
-                    // Update the modal with the fetched images for RoleID = 2
-                    var containerRole2 = $('#image-container-role-2');
-                    containerRole2.empty(); // Clear any previous images
-
-                    images.forEach(function (image) {
-                        var imageHtml = `
-                            <div class="col-6 position-relative">
-                                <a data-fslightbox="gallery2" href="${image.FilePath}">
-                                    <img src="${image.FilePath}" alt="..." class="img-thumbnail">
-                                </a>
-                            </div>
-                        `;
-                        containerRole2.append(imageHtml);
+                if (!allRemarksFilled) {
+                    Swal.fire({
+                        title: 'Warning!',
+                        text: 'กรุณาระบุเหตุผลสำหรับการไม่อนุมัติในทุกงานและหมายเหตุงวดนี้',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
                     });
-
-                    // Reinitialize fslightbox for the newly added images in Role 2 container
-                    refreshFsLightbox(); // Call this function to reinitialize the lightbox
-                },
-                error: function (error) {
-                    console.error('Failed to fetch images for RoleID 2:', error);
+                    return;
                 }
-            });
+            }
 
-            // Show the modal after both AJAX calls have been made
-            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-            myModal.show();
-        }
-
-        function deleteImage(resourceId) {
-                Swal.fire({
-                    title: '',
-                    text: "ต้องการลลบรูปภาพหรือไม่?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'ลบรูปภาพ',
-                    cancelButtonText: 'ยกเลิก'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Perform the deletion via an AJAX call
-                        $.ajax({
-                            url: '@ViewBag.baseUrl' + 'FormCheckList/DeleteImage',
-                            type: 'POST',
-                            data: { resourceId: resourceId },
-                            success: function (response) {
-                                if (response.success) {
-                                    Swal.fire('ลบรูปภาพสำเร็จ', '', 'success');
-                                    // Remove the image from the DOM
-                                    $(`[onclick="deleteImage('${resourceId}')"]`).closest('.position-relative').remove();
-                                } else {
-                                    Swal.fire('Error!', response.message, 'error');
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                Swal.fire('Error!', 'An error occurred while processing your request.', 'error');
+            // Uncomment the AJAX part for actual data submission
+            $.ajax({
+                url: '@ViewBag.baseUrl' + 'PJMApprove/SaveOrSubmit',
+                type: 'POST',
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (res) {
+                    if (res.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'บันทึกสำเร็จ',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
                             }
                         });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to ' + actionType + ' the data.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                     }
-                });
-            }
-
-            document.addEventListener("DOMContentLoaded", function () {
-                var dropZone = document.getElementById("drop-zone");
-                var fileInput = document.getElementById("file-input");
-                var previewContainer = document.getElementById("preview-container");
-
-                dropZone.addEventListener("click", function (e) {
-                    // Prevent triggering file input click when clicking the remove button
-                    if (e.target.classList.contains("remove-button")) {
-                        return;
-                    }
-                    fileInput.click();
-                });
-
-                fileInput.addEventListener("change", function () {
-                    if (fileInput.files.length) {
-                        previewFiles(fileInput.files);
-                    }
-                });
-
-                dropZone.addEventListener("dragover", function (e) {
-                    e.preventDefault();
-                    dropZone.classList.add("drop-zone--over");
-                });
-
-                dropZone.addEventListener("dragleave", function () {
-                    dropZone.classList.remove("drop-zone--over");
-                });
-
-                dropZone.addEventListener("drop", function (e) {
-                    e.preventDefault();
-                    fileInput.files = e.dataTransfer.files;
-                    previewFiles(fileInput.files);
-                });
-
-                function previewFiles(files) {
-                    previewContainer.innerHTML = ""; // Clear previous previews
-                    Array.from(files).forEach(file => {
-                        if (file.type.startsWith("image/")) {
-                            const reader = new FileReader();
-                            reader.readAsDataURL(file);
-                            reader.onload = function (event) {
-                                const img = document.createElement("img");
-                                img.src = event.target.result;
-                                const previewImage = document.createElement("div");
-                                previewImage.className = "col-4 preview-image";
-
-                                const removeButton = document.createElement("button");
-                                removeButton.className = "remove-button";
-                                removeButton.innerHTML = "&times;";
-                                removeButton.addEventListener("click", function (e) {
-                                    e.stopPropagation(); // Stop event from bubbling up to the dropzone
-                                    previewImage.remove();
-                                });
-
-                                previewImage.appendChild(img);
-                                previewImage.appendChild(removeButton);
-                                previewContainer.appendChild(previewImage);
-                            };
-                        }
-                    });
-                }
-            });
-
-
-    function saveOrSubmit(actionType) {
-        var data = new FormData();
-
-        data.append("ActionType", actionType);
-        data.append("Remark", document.getElementById("mainRemark").value);
-        data.append("UnitFormID", document.getElementById("UnitFormID").value);
-        data.append("ProjectID", document.getElementById("ProjectID").value);
-        data.append("UnitID", document.getElementById("UnitID").value);
-        data.append("FormID", document.getElementById("FormID").value);
-
-        var passConditions = [];
-        $("input[data-action='gr-pass']:checked").each(function () {
-            let group_id = $(this).attr("group-id");
-            let passconID = $(this).attr("passconID");
-            let statusID = $(this).val();
-            let remark = document.getElementById(`remark_${group_id}`).value;
-
-            passConditions.push({
-                PC_ID: passconID,
-                Group_ID: group_id,
-                StatusID: statusID,
-                PJM_Remark: remark
-            });
-        });
-
-        if (passConditions.length > 0) {
-            data.append("PassConditionsIUD", JSON.stringify(passConditions));
-        }
-
-        // Collect images if any
-        var files = document.getElementById("file-input").files;
-        for (var i = 0; i < files.length; i++) {
-            data.append("Images", files[i]);
-        }
-
-        console.log(data);
-
-        // Send the data using AJAX
-        $.ajax({
-            url: '@ViewBag.baseUrl' + '/PJMApprove/SaveOrSubmit', // Ensure the URL matches your controller action
-            type: 'POST',
-            contentType: false,
-            processData: false,
-            data: data,
-            success: function (res) {
-                if (res.success) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Data has been successfully ' + actionType + 'd.',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.reload();
-                        }
-                    });
-                } else {
+                },
+                error: function (xhr, status, error) {
                     Swal.fire({
                         title: 'Error!',
-                        text: 'Failed to ' + actionType + ' the data.',
+                        text: 'An error occurred while processing the request.',
                         icon: 'error',
                         confirmButtonText: 'OK'
                     });
                 }
-            },
-            error: function (xhr, status, error) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'An error occurred while processing the request.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
-        });
-    }
+            });
+        }
+
 
 
     </script>

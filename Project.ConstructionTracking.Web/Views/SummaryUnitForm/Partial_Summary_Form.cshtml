@@ -129,7 +129,25 @@
                                 <div class="col">
                                     @if (!string.IsNullOrEmpty(item.PassConditionStatus))
                                     {
-                                        <div class="status-dot bg-@item.PassConditionStatus">
+                                        @if (@item.LockStatusID == 8)
+                                        {
+                                            <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                                <input type="hidden" name="UnitFormID" value="@item.UnitFormID" />
+                                                <button type="submit" class="status-dot bg-@item.PassConditionStatus">
+                                                    <i class="fa-solid fa-lock-open"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                                <input type="hidden" name="UnitFormID" value="@item.UnitFormID" />
+                                                <button type="submit" class="status-dot bg-@item.PassConditionStatus">
+                                                    <i class="fa-solid fa-lock"></i>
+                                                </button>
+                                            </form>
+                                        }
+                    @*                     <div class="status-dot bg-@item.PassConditionStatus">
                                             <span class="status-text">
                                                 @if (@item.LockStatusID == 8)
                                                 {
@@ -140,7 +158,7 @@
                                                     <i class="fa-solid fa-lock"></i>
                                                 }
                                             </span>
-                                        </div>
+                                        </div> *@
                                     }
                                 </div>
                             </div>

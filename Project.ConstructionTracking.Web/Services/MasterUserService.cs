@@ -19,6 +19,8 @@ namespace Project.ConstructionTracking.Web.Services
 		DetailUserResp DetailUser(Guid userID);
 
         EditUserResp EditUser(EditUserModel model);
+
+		bool DeleteUser(Guid userId);
     }
 
 	public class MasterUserService : IMasterUserService
@@ -170,7 +172,31 @@ namespace Project.ConstructionTracking.Web.Services
                 }
             }
         }
-		
+
+		public bool DeleteUser(Guid userId)
+        {
+            TransactionOptions option = new TransactionOptions();
+            option.Timeout = new TimeSpan(1, 0, 0);
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew, option))
+            {
+                try
+                {
+                    bool resp = _masterUserRepo.DeleteUser(userId);
+
+                    scope.Complete();
+
+                    return resp;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    scope.Dispose();
+                }
+            }
+        }
 	}
 }
 

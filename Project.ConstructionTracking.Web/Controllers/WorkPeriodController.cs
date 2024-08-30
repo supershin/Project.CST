@@ -2,7 +2,7 @@
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class WorkPeriodController : Controller
+    public class WorkPeriodController : BaseController
     {
         public IActionResult Index()
         {

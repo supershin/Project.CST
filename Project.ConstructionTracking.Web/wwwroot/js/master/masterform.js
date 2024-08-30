@@ -235,10 +235,23 @@
             data: data,
             success: function (resp) {
                 if (resp.success) {
-                    window.location.reload();
-                }
-                else {
-                    alert("Error: " + resp.message);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการสร้างข้อมูลสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
@@ -256,10 +269,23 @@
             data: model,
             success: function (resp) {
                 if (resp.success) {
-                    window.location.reload();
-                }
-                else {
-                    alert("Error: " + resp.message);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการลบข้อมูลสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {

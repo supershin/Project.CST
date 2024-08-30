@@ -1,5 +1,6 @@
 ﻿const project = {
     init: () => {
+
         $("#project-create").click(() => {
             $("#modal-c").find('.form-control, .form-select').removeClass('is-invalid');
             $("#modal-c").find('.invalid-feedback').text('');
@@ -74,41 +75,96 @@
         });
 
         $('#project-edit-save').click(() => {
-            var buType = $('#e-bu-type').val();
-            var projectType = $('#e-project-type').val();
 
-            // Get the values from the Project Code and Project Name input fields
-            var projectId = $('#e-project-id').val();
-            var projectCode = $('#e-project-code').val();
-            var projectName = $('#e-project-name').val();
-            
-            // Prepare an array to store model mappings
-            var modelMappings = [];
-            
-            // Loop through each row in the Model Mapping table to get values
-            $('#modal-format table tbody tr').each(function () {
-                var modelID = $(this).find('td').eq(0).text();
-                var formTypeID = $(this).find('.form-type-select').val(); // Get selected form type ID
+            event.preventDefault(); // Prevent form submission for validation
+            let isValid = true;
 
-                // Push the model data into the array
-                modelMappings.push({
-                    ModelID: modelID,
-                    FormTypeID: formTypeID
-                });
+            // Clear previous error messages and reset styles
+            document.querySelectorAll('.form-control').forEach(input => {
+                input.style.borderColor = ''; // Reset border color
+            });
+            document.querySelectorAll('.text-danger').forEach(span => {
+                span.textContent = ''; // Clear error messages
             });
 
-            var data = {
-                BUID: buType,
-                ProjectTypeID: projectType,
-                ProjectID: projectId,
-                ProjectCode: projectCode,
-                ProjectName: projectName,
-                ModelMapping: modelMappings
+            // Validate BU
+            const eBuType = document.getElementById('e-bu-type');
+            if (eBuType.value === '0') {
+                isValid = false;
+                eBuType.style.borderColor = 'red';
+                document.getElementById('e-bu-type-error').textContent = 'กรุณาเลือก BU';
             }
 
-            project.EditProject(data);
-        });
+            // Validate Project Type
+            const eProjectType = document.getElementById('e-project-type');
+            if (eProjectType.value === '0') {
+                isValid = false;
+                eProjectType.style.borderColor = 'red';
+                document.getElementById('e-project-type-error').textContent = 'กรุณาเลือกประเภทโครงการ';
+            }
 
+            // Validate Project Code
+            const eProjectCode = document.getElementById('e-project-code');
+            if (eProjectCode.value.trim() === '') {
+                isValid = false;
+                eProjectCode.style.borderColor = 'red';
+                document.getElementById('e-project-code-error').textContent = 'กรุณากรอกรหัสโครงการ';
+            }
+
+            // Validate Project Name
+            const eProjectName = document.getElementById('e-project-name');
+            if (eProjectName.value.trim() === '') {
+                isValid = false;
+                eProjectName.style.borderColor = 'red';
+                document.getElementById('e-project-name-error').textContent = 'กรุณากรอกชื่อโครงการ';
+            }
+
+            if (isValid) {
+                var buType = $('#e-bu-type').val();
+                var projectType = $('#e-project-type').val();
+
+                // Get the values from the Project Code and Project Name input fields
+                var projectId = $('#e-project-id').val();
+                var projectCode = $('#e-project-code').val();
+                var projectName = $('#e-project-name').val();
+
+                // Prepare an array to store model mappings
+                var modelMappings = [];
+
+                // Loop through each row in the Model Mapping table to get values
+                $('#modal-format table tbody tr').each(function () {
+                    var modelID = $(this).find('td').eq(0).text();
+                    var formTypeID = $(this).find('.form-type-select').val(); // Get selected form type ID
+
+                    // Push the model data into the array
+                    modelMappings.push({
+                        ModelID: modelID,
+                        FormTypeID: formTypeID
+                    });
+                });
+
+                var data = {
+                    BUID: buType,
+                    ProjectTypeID: projectType,
+                    ProjectID: projectId,
+                    ProjectCode: projectCode,
+                    ProjectName: projectName,
+                    ModelMapping: modelMappings
+                }
+
+                project.EditProject(data);
+            }
+            
+        });
+        $("#btn-search").click(() => {
+            if ($.fn.DataTable.isDataTable('#tbl-project-list')) {
+                $('#tbl-project-list').DataTable().clear().destroy();
+            }
+
+            project.AjaxGrid();
+
+            return false;
+        });
 
         $('#project-delete-save').click(() => {
             var projectId = $('#delete-project-id').val();
@@ -120,63 +176,62 @@
     },
     AjaxGrid: function () {
         tblProject = $('#tbl-project-list').dataTable({
-        "dom": '<<t>lip>',
+            "dom": '<<t>lip>',
             "processing": true,
             "serverSide": true,
             "ajax": {
                 url: baseUrl + 'MasterProject/JsonAjaxGridProjectList',
                 type: "POST",
                 data: function (json) {
-                //  ￼ var datastring = $("#form-search").serialize();
-                //json = datastring + '&' + $.param(json);
+                    var datastring = $("#form-search").serialize();
+                    json = datastring + '&' + $.param(json);
 
-                //return json;
-            },
-            "dataSrc": function (res) {
-                //app.ajaxVerifySession(res);                    
-                return res.data;
-            },
-            complete: function (res) {
-                $(document).on('click', "button[data-action='edit-project']", function (e) {
-                    var projectId = $(e.currentTarget).attr('data-id');
+                    return json;
+                },
+                "dataSrc": function (res) {
+                    return res.data;
+                },
+                complete: function (res) {
+                    $(document).on('click', "button[data-action='edit-project']", function (e) {
+                        var projectId = $(e.currentTarget).attr('data-id');
 
-                    var data = {
-                        ProjectID: projectId
-                    };
+                        var data = {
+                            ProjectID: projectId
+                        };
 
-                    project.DetailProject(data);
-                    return false;
-                });
-                $(document).on('click', "button[data-action='delete-project']", function (e) {
-                    var projectId = $(e.currentTarget).attr('data-id');
+                        project.DetailProject(data);
+                        return false;
+                    });
+                    $(document).on('click', "button[data-action='delete-project']", function (e) {
+                        var projectId = $(e.currentTarget).attr('data-id');
 
-                    $('#delete-project-id').val(projectId);
-                    $('#partial-confirm-delete-project').modal('show');
-                    return false;
-                });
-            }
-        },
-        "ordering": true,
-        "order": [[2, "desc"]],
-        "columns": [
-            { 'data': 'ProjectCode', "className": "text-center " },
-            { 'data': 'ProjectName', "className": "text-center " },
-            { 'data': 'UpdateDate', "className": "text-center " },
-            {
-                'data': 'ProjectId',
-                "className": "text-center",
-                "render": function (data, type, row, meta) {
-                    var html = '<button data-action="edit-project" data-id="' + data + '" class="btn bg-skyblue-lt btn-icon btn-rounded" style="margin-right:10px;">';
-                    html += '<i class="fa-regular fa-pen-to-square"></i>';
-                    html += '</button>';
-                    html += '<button data-action="delete-project" data-id="' + data + '" class="btn bg-red-lt btn-icon btn-rounded">';
-                    html += '<i class="fa-regular fa-trash-can"></i>';
-                    html += '</button>';
-                    return html;
+                        $('#delete-project-id').val(projectId);
+                        $('#partial-confirm-delete-project').modal('show');
+                        return false;
+                    });
                 }
-            }
-        ]
-        });
+            },
+            "ordering": true,
+            "order": [[2, "desc"]],
+            "columns": [
+                { 'data': 'ProjectCode', "className": "text-center " },
+                { 'data': 'ProjectName', "className": "text-center " },
+                { 'data': 'UpdateDate', "className": "text-center " },
+                {
+                    'data': 'ProjectId',
+                    "className": "text-center",
+                    "render": function (data, type, row, meta) {
+                        var html = '<button data-action="edit-project" data-id="' + data + '" class="btn bg-skyblue-lt btn-icon btn-rounded" style="margin-right:10px;">';
+                        html += '<i class="fa-regular fa-pen-to-square"></i>';
+                        html += '</button>';
+                        html += '<button data-action="delete-project" data-id="' + data + '" class="btn bg-red-lt btn-icon btn-rounded">';
+                        html += '<i class="fa-regular fa-trash-can"></i>';
+                        html += '</button>';
+                        return html;
+                    }
+                }
+            ]
+        })
     },
     CreateProject: function (data) {
         $.ajax({
@@ -187,16 +242,22 @@
             success: function (resp) {
                 if (resp.success) {
                     Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการสร้างข้อมูลสำเร็จ',
                         icon: 'success',
-                        title: 'ทำการสร้างข้อมูลสำเร็จ',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.reload();
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
                     });
-                }
-                else {
-                    alert("Error: " + resp.message);
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
@@ -249,14 +310,16 @@
                             </tr>`
                             );
                         });
-                    } else {
-                        alert("ModelTypeList or FormTypeList is empty.");
                     }
-
                     // Show the modal
                     $("#modal-e").modal('show');
                 } else {
-                    alert("Error: " + resp.message);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
@@ -274,16 +337,22 @@
             success: function (resp) {
                 if (resp.success) {
                     Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการแก้ไขข้อมูลสำเร็จ',
                         icon: 'success',
-                        title: 'ทำการสร้างข้อมูลสำเร็จ',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.reload();
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
                     });
-                }
-                else {
-                    alert("Error: " + resp.message);
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
@@ -304,16 +373,22 @@
             success: function (resp) {
                 if (resp.success) {
                     Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการลบข้อมูลสำเร็จ',
                         icon: 'success',
-                        title: 'ทำการสร้างข้อมูลสำเร็จ',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.reload();
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
                     });
-                }
-                else {
-                    alert("Error: " + resp.message);
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
