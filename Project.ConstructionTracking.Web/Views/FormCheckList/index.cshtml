@@ -385,7 +385,7 @@
                                 <input type="hidden" name="UnitFormStatusIDchk" value="@UnitFormStatusID" ID="UnitFormStatusIDchk" />
                             </div>
                             <div class="col-6">
-                            @if (ViewBag.UserRole == "1")
+                            @if (ViewBag.UserRole == SystemConstant.UserRole.PE.ToString())
                             {
                                 @if (ViewBag.StatusActionType == "submit")
                                 {

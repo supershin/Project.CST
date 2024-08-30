@@ -118,13 +118,24 @@
                                     }
                                 </div>
                                 <div class="col">
-                                    <form action="@Url.Action("index", "PMApprove", new { unitId = @item.UnitID, formId = @item.FormID })" method="post">
-                                        <button type="submit" class="status-dot bg-@item.PM @(item.PM == "danger" || item.PM == "warning" ? "status-dot-animated" : "")">
+                                    @if (@item.PE != null)
+                                    {
+                                        <form action="@Url.Action("index", "PMApprove", new { unitId = @item.UnitID, formId = @item.FormID , comeFrom = "SummaryUnitForm" })" method="post">
+                                            <button type="submit" class="status-dot bg-@item.PM @(item.PM == "danger" || item.PM == "warning" ? "status-dot-animated" : "")">
+                                                <span class="status-text">
+                                                    PM
+                                                </span>
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="status-dot bg-@item.PM @(item.PM == "danger" || item.PM == "warning" ? "status-dot-animated" : "")" onclick="showPEAlert()">
                                             <span class="status-text">
                                                 PM
                                             </span>
                                         </button>
-                                    </form>
+                                    }
                                 </div>
                                 <div class="col">
                                     @if (!string.IsNullOrEmpty(item.PassConditionStatus))
@@ -169,4 +180,16 @@
         }
     </div>
 </div>
+
+<script>
+    function showPEAlert() {
+        Swal.fire({
+            title: 'Warning!',
+            text: 'PE ยังไม่เริ่มตรวจในงานนี้',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+    }
+
+</script>
 

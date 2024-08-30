@@ -44,7 +44,7 @@ function toggleRadio(radio, itemId) {
         radio.dataset.wasChecked = "true";
     }
 
-    // Auto check "ไม่อนุมัติหลัก" when "ไม่อนุมัติPC" is checked
+    // Auto-check "ไม่อนุมัติหลัก" when "ไม่อนุมัติPC" is checked
     if (radio.value === "7") {
         var mainApprovalRadios = document.getElementsByName('radios-inline-approval');
         for (var j = 0; j < mainApprovalRadios.length; j++) {
@@ -54,9 +54,11 @@ function toggleRadio(radio, itemId) {
         }
     }
 
-    // Prevent checking "อนุมัติหลัก" if any "ไม่อนุมัติPC" is selected
-    if (radio.value === "4"|| radio.value === "6") {
-        var conditionalRadios = document.querySelectorAll('input[type="radio"][value="7"]');
+    // Prevent checking "อนุมัติหลัก" if any "ไม่อนุมัติPC" is selected in the same item context
+    if (radio.name === "radios-inline-approval" && (radio.value === "4" || radio.value === "6")) {
+        // Find any "ไม่อนุมัติPC" radios within the same group context
+        var conditionalRadios = document.querySelectorAll(`input[name^="radios-inline-"][value="7"]`);
+
         for (var k = 0; k < conditionalRadios.length; k++) {
             if (conditionalRadios[k].checked) {
                 Swal.fire({
@@ -71,6 +73,7 @@ function toggleRadio(radio, itemId) {
         }
     }
 }
+
 
 document.addEventListener("DOMContentLoaded", function () {
     var dropZone = document.getElementById("drop-zone");

@@ -48,6 +48,19 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                       .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true
                                                                 && (pc.StatusID == 7 || pc.StatusID == 9))
                                                       .Count()
+
+                          let UnlockpassConditionall = _context.tr_UnitFormPassCondition
+                                                      .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true && pc.LockStatusID == 8)
+                                                      .Count()
+
+                          let UnlockpassConditionapprove = _context.tr_UnitFormPassCondition
+                                                      .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true && pc.LockStatusID == 8 && pc.StatusID == 13)
+                                                      .Count()
+
+                          let UnlockpassConditionreject = _context.tr_UnitFormPassCondition
+                                                      .Where(pc => pc.UnitFormID == t1.ID && pc.FlagActive == true && pc.LockStatusID == 8 && pc.StatusID == 14)
+                                                      .Count()
+
                           where t1.StatusID > 1
                           select new
                           {
@@ -79,14 +92,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                               Remark_PJM = actionPJM.Remark,
                               ActionDate_PJM = actionPJM.ActionDate,
                               PC_Cnt = allpassConditionCount,
-                              //PC_StatusID = passCondition.StatusID,
                               AnswerColor = notpassConditionCount > 0 ? "bg-danger"
                                           : (notpassConditionCount == 0 && passConditionCount == allpassConditionCount && allpassConditionCount > 0) ? "bg-success"
                                           : (allpassConditionCount == 0) ? ""
                                           : (notpassConditionCount == 0 && allpassConditionCount > 0) ? "bg-primary"
-                                          : "" //
-
-
+                                          : "" ,
+                              PC_UnlockAll = UnlockpassConditionall,
+                              PC_UnlockColor = UnlockpassConditionreject > 0 ? "bg-danger" : UnlockpassConditionapprove == UnlockpassConditionall ? "bg-success" : "bg-primary"
 
                           })
                           .OrderBy(item => item.StatusID)
@@ -131,7 +143,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                                     ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PJM.Value.ToString("dd/MM/yyyy"))
                                     : null,
                     PC_CNT = item.PC_Cnt,
-                    PC_Color = item.AnswerColor
+                    PC_Color = item.AnswerColor,
+                    PC_UnlockAll = item.PC_UnlockAll,
+                    PC_UnlockColor = item.PC_UnlockColor
                 })
                 .ToList();
 

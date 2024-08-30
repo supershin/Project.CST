@@ -70,7 +70,10 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
             else if (userName == "PM")
             {
-                //return RedirectToAction("Index", "PMApprove", new { projectId, projectName, unitId });
+                return RedirectToAction("Index", "SummaryUnitForm", new { unitId, projectId, projectName, UnitCode, UnitStatusName });
+            }
+            else if (userName == "PJM")
+            {
                 return RedirectToAction("Index", "SummaryUnitForm", new { unitId, projectId, projectName, UnitCode, UnitStatusName });
             }
             else if (userName == "QC")
