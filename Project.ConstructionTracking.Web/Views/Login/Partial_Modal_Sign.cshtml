@@ -1,0 +1,32 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div id="modal-sign" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id=""><i class="fas fa-signature"></i> ลายเซ็นผู้รับมอบ</h4>
+            </div>
+            <div class="sign-body modal-body" style="padding:20px;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="signature-pad" class="signature-pad" style="justify-content:center;align-items:center;display:flex;">
+                            <div class="signature-pad--body" style="width:332px;height:260px">
+                                <canvas></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+                    <button type="button" class="clear btn btn-default"><i class="fas fa-reply"></i> เคลียร์</button>
+                    <button id="btn-save-sign" type="button" class="permission btn btn-success"><i class="fas fa-check"></i> บันทึก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -219,26 +219,43 @@ namespace Project.ConstructionTracking.Web.Repositories
                 {
                     tr_ProjectModelForm? editModel = _context.tr_ProjectModelForm
                                             .Where(o => o.ProjectID == model.ProjectID
-                                            && o.ModelTypeID == list.ModelID && o.FlagActive == true)
+                                            && o.ModelTypeID == list.ModelID
+                                            && o.FlagActive == true)
                                             .FirstOrDefault();
-
-                    if(editModel.FormTypeID != list.FormTypeID)
+                    if(editModel == null)
                     {
-                        editModel.FormTypeID = list.FormTypeID;
-                        editModel.UpdateDate = DateTime.Now;
-                        //editModel.UpdateBy = ;
+                        tr_ProjectModelForm? createNew = new tr_ProjectModelForm();
+                        createNew.ProjectID = edit.ProjectID;
+                        createNew.ModelTypeID = list.ModelID;
+                        createNew.FormTypeID = list.FormTypeID;
+                        createNew.FlagActive = true;
+                        //createNew.CreateBy =;
+                        createNew.CreateDate = DateTime.Now;
+                        createNew.UpdateDate = DateTime.Now;
+                        //createNew.UpdateBy = ;
 
-                        _context.tr_ProjectModelForm.Update(editModel);
-
-                        modelForm = new ModelForm()
-                        {
-                            ModelID = editModel.ID,
-                            FormTypeID = (int)editModel.FormTypeID
-                        };
-
-                        resp.ModelMapping.Add(modelForm);
+                        _context.tr_ProjectModelForm.Add(createNew);
+                        _context.SaveChanges();
                     }
-                    
+                    else
+                    {
+                        if (editModel.FormTypeID != list.FormTypeID)
+                        {
+                            editModel.FormTypeID = list.FormTypeID;
+                            editModel.UpdateDate = DateTime.Now;
+                            //editModel.UpdateBy = ;
+
+                            _context.tr_ProjectModelForm.Update(editModel);
+
+                            modelForm = new ModelForm()
+                            {
+                                ModelID = editModel.ID,
+                                FormTypeID = (int)editModel.FormTypeID
+                            };
+
+                            resp.ModelMapping.Add(modelForm);
+                        }
+                    }
                 }
             }
 

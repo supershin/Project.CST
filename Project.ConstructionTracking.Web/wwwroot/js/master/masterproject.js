@@ -111,7 +111,7 @@
 
 
         $('#project-delete-save').click(() => {
-            var projectId = $('delete-project-id').val();
+            var projectId = $('#delete-project-id').val();
 
             project.DeleteProject(projectId);
         })

@@ -3,36 +3,62 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.MUnitModel;
+using Project.ConstructionTracking.Web.Models.MUserModel;
 using Project.ConstructionTracking.Web.Services;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class MasterUnitController : BaseController
+    public class MasterUser : BaseController
     {
-        private readonly IMasterUnitService _masterUnitService;
-        public MasterUnitController(IMasterUnitService masterUnitService)
+        private readonly AppSettings _appSettings;
+        private readonly IMasterUserService _masterUserService;
+        private readonly IHostEnvironment _hosting;
+
+        public MasterUser(IOptions<AppSettings> options,
+            IMasterUserService masterUserService,
+            IHostEnvironment hostEnvironment)
         {
-            _masterUnitService = masterUnitService;
+            _appSettings = options.Value;
+            _masterUserService = masterUserService;
+            _hosting = hostEnvironment;
         }
 
         public IActionResult Index()
         {
+            return View();
+        }
 
-            MasterUnitResp resp = _masterUnitService.GetModelUnitResp();
-           
+        public IActionResult Create()
+        {
+            UnitRespModel resp = _masterUserService.GetUnitResp();
+
+            //string KeyPassword = _appSettings.PasswordKey;
             return View(resp);
         }
 
+        public IActionResult Detail(string param)
+        {
+            string decode = HashExtension.DecodeFrom64(param);
+            Guid userID = Guid.Parse(decode);
+
+            DetailUserResp detailResp = _masterUserService.DetailUser(userID);
+            detailResp.respModel = _masterUserService.GetUnitResp();
+
+            return View(detailResp);
+        }
+
         [HttpPost]
-        public JsonResult UnitList(DTParamModel param, MasterUnitModel criteria)
+        public JsonResult UserList(DTParamModel param, MasterUserModel criteria)
         {
             try
             {
-                var resultData = _masterUnitService.ListMasterUnit(param, criteria);
+                var resultData = _masterUserService.UserList(param, criteria);
 
                 return Json(
                           new
@@ -62,11 +88,12 @@ namespace Project.ConstructionTracking.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult CreateUnit(CreateUnitModel model)
+        public JsonResult UserCreate(CreateUserModel model)
         {
             try
             {
-                var resultData = _masterUnitService.CreateUnit(model);
+                model.PasswordKey = _appSettings.PasswordKey;
+                var resultData = _masterUserService.CreateUser(model);
 
                 return Json(
                           new
@@ -90,11 +117,19 @@ namespace Project.ConstructionTracking.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetDetail(Guid unitID)
+        public JsonResult UserEdit(EditUserModel model)
         {
             try
             {
-                var resultData = _masterUnitService.GetProjectID(unitID);
+                //model.ApplicationPath = AppDomain.CurrentDomain.BaseDirectory;
+                model.ApplicationPath = _hosting.ContentRootPath;
+
+                if(model.SignUser != null)
+                {
+                    validateUnitEquipmentSign(model.SignUser);
+                }
+
+                var resultData = _masterUserService.EditUser(model);
 
                 return Json(
                           new
@@ -117,60 +152,10 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
-        [HttpPost]
-        public JsonResult EditUnit(EditUnitModel model)
+        private void validateUnitEquipmentSign(string signUser)
         {
-            try
-            {
-                var resultData = _masterUnitService.EditUnit(model);
-
-                return Json(
-                          new
-                          {
-                              success = true,
-                              data = resultData,
-                          }
-                );
-            }
-            catch (Exception ex)
-            {
-                return Json(
-                            new
-                            {
-                                success = false,
-                                message = ex.Message, //InnerException(ex),
-                                data = new[] { ex.Message },
-                            }
-               );
-            }
-        }
-
-        [HttpPost]
-        public JsonResult DeleteUnit(Guid unitID)
-        {
-            try
-            {
-                var resultData = _masterUnitService.DeleteUnit(unitID);
-
-                return Json(
-                          new
-                          {
-                              success = true,
-                              data = resultData,
-                          }
-                );
-            }
-            catch (Exception ex)
-            {
-                return Json(
-                            new
-                            {
-                                success = false,
-                                message = ex.Message, //InnerException(ex),
-                                data = new[] { ex.Message },
-                            }
-               );
-            }
+            if (string.IsNullOrEmpty(signUser))
+                throw new Exception("โปรดระบุลายเซ็นต์");
         }
     }
 }

@@ -31,6 +31,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tm_FormPackage> tm_FormPackage { get; set; } = null!;
         public virtual DbSet<tm_FormType> tm_FormType { get; set; } = null!;
         public virtual DbSet<tm_ModelType> tm_ModelType { get; set; } = null!;
+        public virtual DbSet<tm_Position> tm_Position { get; set; } = null!;
         public virtual DbSet<tm_Project> tm_Project { get; set; } = null!;
         public virtual DbSet<tm_QC_CheckList> tm_QC_CheckList { get; set; } = null!;
         public virtual DbSet<tm_QC_CheckListDetail> tm_QC_CheckListDetail { get; set; } = null!;
@@ -60,6 +61,8 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tr_UnitFormPackage> tr_UnitFormPackage { get; set; } = null!;
         public virtual DbSet<tr_UnitFormPassCondition> tr_UnitFormPassCondition { get; set; } = null!;
         public virtual DbSet<tr_UnitFormResource> tr_UnitFormResource { get; set; } = null!;
+        public virtual DbSet<tr_UnitFormUnLockPassCondition> tr_UnitFormUnLockPassCondition { get; set; } = null!;
+        public virtual DbSet<tr_UserResource> tr_UserResource { get; set; } = null!;
         public virtual DbSet<vw_UnitForm_Action> vw_UnitForm_Action { get; set; } = null!;
         public virtual DbSet<vw_UnitQC_Action> vw_UnitQC_Action { get; set; } = null!;
 
@@ -443,8 +446,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_ProjectModelForm>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
@@ -788,6 +789,11 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tr_UnitFormResource)
                     .HasForeignKey(d => d.UnitFormID)
                     .HasConstraintName("FK_tr_UnitForm_Resource_tr_UnitForm");
+            });
+
+            modelBuilder.Entity<tr_UnitFormUnLockPassCondition>(entity =>
+            {
+                entity.Property(e => e.ID).ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<vw_UnitForm_Action>(entity =>

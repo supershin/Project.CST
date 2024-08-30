@@ -1,12 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Project.ConstructionTracking.Web.Commons;
+using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.MUserModel;
+using Project.ConstructionTracking.Web.Services;
 using System.Security.Claims;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
 	public class LoginController : Controller
 	{
-		public IActionResult Index()
+        private readonly AppSettings _appSettings;
+        private readonly IMasterUserService _masterUserService;
+
+        public LoginController(IOptions<AppSettings> options,
+            IMasterUserService masterUserService)
+        {
+            _appSettings = options.Value;
+            _masterUserService = masterUserService;
+        }
+
+        public IActionResult Index()
 		{
 			return View();
 		}
@@ -51,11 +65,21 @@ namespace Project.ConstructionTracking.Web.Controllers
                 return View("Index");
             }
         }
-  //      [HttpPost]
-		//public IActionResult Login()
-		//{
+        //      [HttpPost]
+        //public IActionResult Login()
+        //{
 
-  //          return RedirectToAction("Index", "Dashboard");
-  //      }
+        //          return RedirectToAction("Index", "Dashboard");
+        //      }
+        public IActionResult Detail(string param)
+        {
+            string decode = HashExtension.DecodeFrom64(param);
+            Guid userID = Guid.Parse(decode);
+
+            DetailUserResp detailResp = _masterUserService.DetailUser(userID);
+            detailResp.respModel = _masterUserService.GetUnitResp();
+
+            return View(detailResp);
+        }
     }
 }

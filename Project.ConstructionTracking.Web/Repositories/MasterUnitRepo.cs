@@ -9,9 +9,17 @@ namespace Project.ConstructionTracking.Web.Repositories
 	public interface IMasterUnitRepo
 	{
 		dynamic GetProjectList();
+        dynamic GetUnitTypeList();
+        dynamic GetModelTypeInProjectList(Guid projectID);
+        dynamic GetProjectCompanyVendor(Guid projectID);
+        dynamic GetProjectId(Guid unitID);
 
-		dynamic GetUnitList(DTParamModel param, MasterUnitModel criteria);
-	}
+        dynamic GetUnitList(DTParamModel param, MasterUnitModel criteria);
+
+        dynamic CreateUnit(CreateUnitModel model);
+        dynamic EditUnit(EditUnitModel model);
+        dynamic DeleteUnit(Guid unitID);
+    }
 
 	public class MasterUnitRepo : IMasterUnitRepo
 	{
@@ -34,6 +42,32 @@ namespace Project.ConstructionTracking.Web.Repositories
 			return query;
 		}
 
+        public dynamic GetUnitTypeList()
+        {
+            var query = (from ut in _context.tm_UnitType
+                         where ut.FlagActive == true
+                         select new
+                         {
+                             ut.ID,
+                             ut.Name
+                         }).ToList();
+
+            return query;
+        }
+
+        public dynamic GetModelTypeInProjectList(Guid projectID)
+        {
+            var query = (from mt in _context.tm_ModelType
+                         where mt.ProjectID == projectID && mt.FlagActive == true
+                         select new
+                         {
+                             mt.ID,
+                             mt.ModelName
+                         }).ToList();
+
+            return query;
+        }
+
 		public dynamic GetUnitList(DTParamModel param, MasterUnitModel criteria)
 		{
             //throw new NotImplementedException();
@@ -49,6 +83,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                         from ut in utGroup.DefaultIfEmpty()
                         join mt in _context.tm_ModelType on u.ModelTypeID equals mt.ID
                         join ext in _context.tm_Ext on u.UnitStatusID equals ext.ID
+                        join v in _context.tm_Vendor on u.VendorID equals v.ID into vGroup
+                        from v in vGroup.DefaultIfEmpty()
                         where u.FlagActive == true && p.FlagActive == true
                         select new
                         {
@@ -64,6 +100,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                             UnitStatus = u.UnitStatusID,
                             UnitStatusDesc = ext.Name,
                             UnitVendor = u.VendorID,
+                            UnitVendorName = v.Name,
                             UnitPO = u.PONo,
                             UnitStartDate = u.StartDate,
                             UnitEndDate = u.EndDate,
@@ -105,12 +142,138 @@ namespace Project.ConstructionTracking.Web.Repositories
                 UnitStatus = e.UnitStatus,
                 UnitStatusDesc = e.UnitStatusDesc,
                 UnitVendor = e.UnitVendor,
+                UnitVendorName = e.UnitVendorName,
                 UnitPO = e.UnitPO,
-                UnitStartDate = e.UnitStartDate.ToStringDateTime(),
-                UnitEndDate = e.UnitEndDate.ToStringDateTime(),
+                UnitStartDate = e.UnitStartDate.ToStringDate(),
+                UnitEndDate = e.UnitEndDate.ToStringDate(),
                 UpdateDate = e.UpdateDate.ToStringDateTime()
             }).ToList();
         }
-	}
+
+        public dynamic CreateUnit(CreateUnitModel model)
+        {
+            tm_Unit createUnit = new tm_Unit();
+            createUnit.UnitID = Guid.NewGuid();
+            createUnit.ProjectID = model.ProjectID;
+            createUnit.ModelTypeID = model.ModelTypeID;
+            createUnit.UnitTypeID = model.UnitTypeID;
+            createUnit.UnitCode = model.UnitCode;
+            createUnit.AddreessNo = model.UnitAddress;
+            createUnit.Area = model.UnitArea;
+            createUnit.TitledeedArea = model.UnitArea;
+            createUnit.UnitStatusID = SystemConstant.Unit_Status.FREE;
+            createUnit.FlagActive = true;
+            //createUnit.CreateBy = ; 
+            createUnit.CreateDate = DateTime.Now;
+            //createUnit.UpdateBy = ;
+            createUnit.UpdateDate = DateTime.Now;
+
+            _context.tm_Unit.Add(createUnit);
+            _context.SaveChanges();
+
+            return createUnit;
+        }
+
+        public dynamic EditUnit(EditUnitModel model)
+        {
+            tm_Unit? edit = _context.tm_Unit.Where(o => o.UnitID == model.UnitID && o.FlagActive == true).FirstOrDefault();
+            if (edit == null) throw new Exception("ไม่พบข้อมูลของยูนิต");
+
+            edit.VendorID = model.VendorID;
+            edit.PONo = model.PONo;
+            edit.StartDate = model.StartDate;
+            edit.UpdateDate = DateTime.Now;
+            //edit.UpdateBy = ;
+
+            int sumDuration = 0;
+
+            tr_ProjectModelForm? modelForm = _context.tr_ProjectModelForm
+                                            .Where(o => o.ProjectID == edit.ProjectID
+                                            && o.ModelTypeID == edit.ModelTypeID
+                                            && o.FlagActive == true).FirstOrDefault();
+            if (modelForm == null) throw new Exception("ไม่พบข้อมูลโมเดลฟอร์ม");
+
+            tm_FormType? formType = _context.tm_FormType
+                                    .Where(o => o.ID == modelForm.FormTypeID && o.FlagActive == true).FirstOrDefault();
+            if (formType == null) throw new Exception("ไม่พบข้อมูลประเภทฟอร์ม");
+
+            List<tm_Form>? form = _context.tm_Form.Where(o => o.FormTypeID == formType.ID && o.FlagActive == true).ToList();
+            if (form == null) throw new Exception("ไม่พบข้อมูลฟอร์ม");
+
+            foreach (var data in form)
+            {
+                sumDuration += (int)data.DurationDay;
+            }
+
+            edit.EndDate = model.StartDate.AddDays(sumDuration);
+
+            _context.tm_Unit.Update(edit);
+            _context.SaveChanges();
+
+            return edit;
+        }
+
+        public dynamic GetProjectCompanyVendor(Guid projectID)
+        {
+            var query = (from cvp in _context.tr_CompanyVendorProject
+                         join cv in _context.tr_CompanyVendor on cvp.CompanyVendorID equals cv.CompanyVendorID
+                         join v in _context.tm_Vendor on cv.VendorID equals v.ID
+                         where cvp.ProjectID == projectID && cvp.FlagActive == true
+                         && cv.FlagActive == true && v.FlagActive == true
+                         select new
+                         {
+                             v.ID,
+                             v.Name
+                         }).ToList();
+
+            return query;
+        }
+
+        public dynamic GetProjectId(Guid unitID)
+        {
+            var query = (from u in _context.tm_Unit
+                         where u.UnitID == unitID && u.FlagActive == true
+                         select new
+                         {
+                             u.UnitID,
+                             u.ProjectID,
+                             u.VendorID,
+                             u.PONo,
+                             u.StartDate
+                         }).FirstOrDefault();
+
+            return query;
+        }
+
+        public dynamic DeleteUnit(Guid unitID)
+        {
+            bool verify = ValidateDeleteUnit(unitID);
+            if (!verify) throw new Exception("ข้อมูลยูนิตถูกใช้งานแล้ว");
+
+            tm_Unit? delete = _context.tm_Unit.Where(o => o.UnitID == unitID && o.FlagActive == true).FirstOrDefault();
+            if (delete == null) throw new Exception("ไม่พบข้อมูลยูนิต");
+
+            delete.FlagActive = false;
+            delete.UpdateDate = DateTime.Now;
+            //delete.UpdateBy = ;
+
+            _context.tm_Unit.Update(delete);
+            _context.SaveChanges();
+
+            return delete;
+        }
+
+        private bool ValidateDeleteUnit(Guid unitID)
+        {
+            bool flag = false;
+
+            tm_Unit? valid = _context.tm_Unit.Where(o => o.UnitID == unitID && o.FlagActive == true).FirstOrDefault();
+            if (valid == null) throw new Exception("ไม่พบข้อมูลยูนิต");
+
+            if (valid.StartDate == null || valid.PONo == null || valid.VendorID == null) flag = true;
+
+            return flag;
+        }
+    }
 }
 

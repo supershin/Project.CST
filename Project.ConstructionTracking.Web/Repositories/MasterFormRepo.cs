@@ -508,76 +508,55 @@ namespace Project.ConstructionTracking.Web.Repositories
                 _context.SaveChanges();
 
                 // check qc in form 
-                List<int> qc = _context.tr_Form_QCCheckList
-                                            .Where(o => o.FormID == model.FormID && o.FlagActive == true)
-                                            .Select(o => o.ID).ToList();
-                if (qc.Count > 0)
+                List<tr_Form_QCCheckList> qcAll = _context.tr_Form_QCCheckList
+                                            .Where(o => o.FormID == model.FormID)
+                                            .ToList();
+                List<int> activeQc = qcAll.Where(o => o.FlagActive == true)
+                                    .Select(o => o.CheckListID.Value).ToList();
+
+                List<int> inActiveQc = qcAll.Where(o => o.FlagActive == false)
+                                    .Select(o => o.CheckListID.Value).ToList();
+
+                List<int> newQc = null;
+
+                if (qcAll.Count > 0)
                 {
                     // Check if model.QcList is null
-                    IEnumerable<int> checkQc;
                     if (model.QcList == null)
                     {
-                        // If model.QcList is null, remove all items in qc
-                        checkQc = qc;
+                        // If no projects are selected, deactivate all active projects
+                        UpdateMappingQc(edit.ID, activeQc, false);
                     }
                     else
                     {
-                        checkQc = qc.Except(model.QcList);
-
-                        IEnumerable<int> newQcs = model.QcList.Except(qc);
-
-                        // Add these new items to `qc`
-                        foreach (var newItem in newQcs)
+                        newQc = model.QcList.Except(activeQc).Except(inActiveQc).ToList();
+                        if (newQc.Any())
                         {
-                            tr_Form_QCCheckList? qcForm = new tr_Form_QCCheckList
-                            {
-                                FormID = model.FormID,
-                                CheckListID = newItem,
-                                FlagActive = true,
-                                CreateDate = DateTime.Now,
-                                UpdateDate = DateTime.Now,
-                                //CreateBy = ,
-                                //UpdateBy = ,
-                            };
-
-                            _context.tr_Form_QCCheckList.Add(qcForm);
+                            CreateMappingQc(edit.ID, newQc);
                         }
-                    }
-                    foreach (var data in checkQc)
-                    {
-                        tr_Form_QCCheckList? qcForm = _context.tr_Form_QCCheckList
-                                                    .Where(o => o.ID == data && o.FormID == model.FormID)
-                                                    .FirstOrDefault();
 
-                        qcForm.FlagActive = false;
-                        //qcForm.UpdateBy = ;
-                        qcForm.UpdateDate = DateTime.Now;
+                        // Deactivate projects that are no longer selected
+                        var qcToDeactivate = activeQc.Except(model.QcList).ToList();
+                        if (qcToDeactivate.Any())
+                        {
+                            UpdateMappingQc(edit.ID, qcToDeactivate, false);
+                        }
 
-                        _context.tr_Form_QCCheckList.Update(qcForm);
-                        _context.SaveChanges();
+                        // Activate inactive projects that are now selected
+                        var qcToActivate = inActiveQc.Intersect(model.QcList).ToList();
+                        if (qcToActivate.Any())
+                        {
+                            UpdateMappingQc(edit.ID, qcToActivate, true);
+                        }
                     }
                 }
                 else
                 {
-                    var qcCheckList = new List<tr_Form_QCCheckList>();
-
-                    foreach (var value in model.QcList)
+                    // If there are no existing projects, create mappings for all selected projects
+                    if (model.QcList != null && model.QcList.Any())
                     {
-                        tr_Form_QCCheckList createQc = new tr_Form_QCCheckList
-                        {
-                            FormID = model.FormID,
-                            CheckListID = value,
-                            FlagActive = true,
-                            CreateDate = DateTime.Now,
-                            UpdateDate = DateTime.Now,
-                            //CreateBy = ,
-                            //UpdateBy = ,
-                        };
-                        qcCheckList.Add(createQc);
+                        CreateMappingQc(edit.ID, model.QcList);
                     }
-
-                    _context.tr_Form_QCCheckList.AddRange(qcCheckList);
-                    _context.SaveChanges();
                 }
                 
                 formResp = new FormResp()
@@ -890,6 +869,54 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
 
             return checkListResp;
+        }
+
+        private void CreateMappingQc(int formID, List<int> qcLists)
+        {
+            if (qcLists != null && qcLists.Count > 0)
+            {
+                List<tr_Form_QCCheckList> listCreate = new List<tr_Form_QCCheckList>();
+
+                foreach (var create in qcLists)
+                {
+                    tr_Form_QCCheckList createData = new tr_Form_QCCheckList();
+                    createData.FormID = formID;
+                    createData.CheckListID = create;
+                    createData.FlagActive = true;
+                    createData.CreateDate = DateTime.Now;
+                    createData.UpdateDate = DateTime.Now;
+                    //createData.CreateBy = ;
+                    //createData.UpdateBy = ;
+                    listCreate.Add(createData);
+                }
+
+                _context.tr_Form_QCCheckList.AddRange(listCreate);
+                _context.SaveChanges();
+            }
+        }
+
+        private void UpdateMappingQc(int formID, List<int> qcLists, bool flag)
+        {
+            if (qcLists != null && qcLists.Count > 0)
+            {
+                List<tr_Form_QCCheckList> listUpdate = new List<tr_Form_QCCheckList>();
+
+                foreach (var create in qcLists)
+                {
+                    tr_Form_QCCheckList? updateData = _context.tr_Form_QCCheckList
+                                                        .Where(o => o.FormID == formID
+                                                        && o.CheckListID == create).FirstOrDefault();
+
+                    updateData.FlagActive = flag;
+                    updateData.UpdateDate = DateTime.Now;
+                    //updateData.UpdateBy = ;
+
+                    listUpdate.Add(updateData);
+                }
+
+                _context.tr_Form_QCCheckList.UpdateRange(listUpdate);
+                _context.SaveChanges();
+            }
         }
     }
 }

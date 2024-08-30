@@ -1,0 +1,200 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+
+    ViewData["Title"] = "Edit User";
+
+    var baseUrl = @ViewBag.baseUrl;
+}
+<style>
+    #modal-sign .modal-content .modal-body,
+    #modal-sign-mech .modal-content .modal-body {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: block;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        width: 100%;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        margin: 0;
+        padding: 16px 16px;
+    }
+</style>
+@model Project.ConstructionTracking.Web.Models.MUserModel.DetailUserResp
+<div class="page-header d-print-none">
+    <div class="container-xl">
+        <div class="row">
+            <div class="col-3">
+                <a href="javascript:history.back()" class="btn btn-secondary mb-3">
+                    <i class="fas fa-chevron-left"></i> <span>Go Back</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mt-5">
+    <h1>Edit User</h1>
+    <hr />
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <label for="user-name" class="form-label">ชื่อ</label>
+            <input type="text" class="form-control" id="user-name" value="@Model.FirstName">
+            <span id="user-name-error" class="text-danger"></span>
+        </div>
+        <div class="col-lg-6">
+            <label for="user-last-name" class="form-label">นามสกุล</label>
+            <input type="text" class="form-control" id="user-last-name" value="@Model.LastName">
+            <span id="user-last-name-error" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <label for="user-email" class="form-label">อีเมลล์</label>
+            <input type="email" class="form-control" id="user-email" value="@Model.Email">
+            <span id="user-email-error" class="text-danger"></span>
+        </div>
+        <div class="col-lg-6">
+            <label for="user-mobile" class="form-label">หมายเลขโทรศัพท์</label>
+            <input type="tel" class="form-control" id="user-mobile" value="@Model.MobileNo">
+            <span id="user-mobile-error" class="text-danger"></span>
+        </div>
+    </div>
+    <hr />
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <label for="user-bu-id" class="form-label">BU</label>
+            <select class="form-control" id="user-bu-id" name="user-bu-id">
+                <option value="0">กรุณาเลือก BU</option>
+                @foreach (var b in Model.respModel.BUList)
+                {
+                    if (b.ID == Model.BUID)
+                    {
+                        <option value="@b.ID" selected>@b.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@b.ID">@b.Name</option>
+                    }
+                }
+            </select>
+            <span id="user-bu-id-error" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <label for="user-position" class="form-label">ตำแหน่ง</label>
+            <input type="text" class="form-control" id="user-position" value="@Model.JobPosition">
+            <span id="user-position-error" class="text-danger"></span>
+        </div>
+        <div class="col-lg-6">
+            <label for="user-role" class="form-label">Role</label>
+            <select class="form-control" id="user-role">
+                <option value="0">กรุณาเลือก Role</option>
+                @foreach (var r in Model.respModel.RoleList)
+                {
+                    if (r.ID == Model.RoleID)
+                    {
+                        <option value="@r.ID" selected>@r.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@r.ID">@r.Name</option>
+                    }
+                }
+            </select>
+            <span id="user-role-error" class="text-danger"></span>
+        </div>
+    </div>
+    <hr />
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <label for="user-password" class="form-label">รหัสผ่าน</label>
+            <input type="password" class="form-control" id="user-password">
+            <span id="user-password-error" class="text-danger"></span>
+        </div>
+        <div class="col-lg-6">
+            <label for="user-password-confirm" class="form-label">ยืนยันรหัสผ่าน</label>
+            <input type="password" class="form-control" id="user-password-confirm">
+            <span id="user-password-confirm-error" class="text-danger"></span>
+        </div>
+    </div>
+    <hr />
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <a href="#" class="btn btn-primary form-control" data-bs-toggle="modal" data-bs-target="#modal-sign">
+                ยืนยัน
+            </a>
+            <span id="user-sign-error" class="text-danger"></span>
+        </div>
+        <div class="col-lg-6">
+            <button id="open-image-btn" class="btn btn-info">
+                <i class="fa-solid fa-signature"></i> &nbsp; แสดงรูปภาพลายเซ็นต์
+            </button>
+        </div>
+    </div>
+    <hr />
+    <div class="d-flex justify-content-end">
+        <button id="edit-user-save" class="btn btn-success">
+            บันทึก
+        </button>
+    </div>
+</div>
+<partial name="Partial_Modal_Sign" />
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">ลายเซ็นต์</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (@Model.ImageSign != null)
+                {
+                    <img id="signatureImage" src="@baseUrl@Model.ImageSign" alt="ลายเซ็นต์" class="img-fluid">
+                }
+                else
+                {
+                    <p>ไม่มีรูปภาพลายเซ็นต์</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="~/lib/core-ui/signature-pad-master/css/signature-pad.css" />
+    <script src="~/lib/core-ui/signature-pad-master/js/signature_pad.umd.js"></script>
+    <script src="~/js/pages/detaillogin.js?version=@DateTime.Now.Ticks.ToString()"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Convert PositionList to a JavaScript array
+            var positionNames = [
+                @foreach(var position in Model.respModel.PositionList)
+                {
+                    @: "@position.Name",
+                }
+            ].filter(Boolean); // Remove any undefined or empty values
+
+            // Set the initial value in the input field
+            $("#user-position").val("@Model.JobPosition");
+
+            // Apply autocomplete to the input field
+            $("#user-position").autocomplete({
+                source: positionNames
+            });
+            var unitId = "@Model.UserID";
+            // Initialize userCreate with the UserID (assuming userCreate is defined in your external script)
+            detailLogin.init(unitId);
+        });
+    </script>
+}
+

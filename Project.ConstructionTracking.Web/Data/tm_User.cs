@@ -43,6 +43,7 @@ namespace Project.ConstructionTracking.Web.Data
         [Column(TypeName = "datetime")]
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
+        public int? PositionID { get; set; }
 
         [ForeignKey("BUID")]
         [InverseProperty("tm_User")]
