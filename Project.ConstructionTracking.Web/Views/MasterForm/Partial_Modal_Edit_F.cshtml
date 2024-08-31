@@ -22,18 +22,21 @@
                                 <option value="@projectType.ID">@projectType.Name</option>
                             }
                         </select>
+                        <div id="modalProjectTypeError" class="text-danger" style="display:none;"></div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12 mb-3">
                         <label for="modalFormTypeName" class="form-label">ชื่อประเภทฟอร์ม</label>
-                        <input class="form-control" id="modalFormTypeName">
+                        <input class="form-control" id="modalFormTypeName" placeholder="กรุณากรอกข้อมูลชื่อประเภทฟอร์ม">
+                        <div id="modalFormTypeNameError" class="text-danger" style="display:none;"></div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12 mb-3">
                         <label for="modalFormTypeDesc" class="form-label">รายละเอียด</label>
-                        <input class="form-control" id="modalFormTypeDesc">
+                        <input class="form-control" id="modalFormTypeDesc" placeholder="กรุณากรอกข้อมูลรายละเอียด">
+                        <div id="modalFormTypeDescError" class="text-danger" style="display:none;"></div>
                     </div>
                 </div>
                 <input type="hidden" id="modalFormTypeId">
@@ -43,7 +46,7 @@
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     Cancel
                 </a>
-                <button id="editFormType" class="btn btn-success ms-auto" data-bs-dismiss="modal">
+                <button id="editFormType" class="btn btn-success ms-auto">
                     บันทึก
                 </button>
             </div>

@@ -46,12 +46,18 @@ builder.Services.AddScoped<IMasterProjectRepo, MasterProjectRepo>();
 
 builder.Services.AddScoped<IPMApproveService, PMApproveService>();
 builder.Services.AddScoped<IPMApproveRepo, PMApproveRepo>();
+
 builder.Services.AddScoped<IMasterFormService, MasterFormService>();
 builder.Services.AddScoped<IMasterFormRepo, MasterFormRepo>();
 
 
 builder.Services.AddScoped<IPJMApproveService, PJMApproveService>();
 builder.Services.AddScoped<IPJMApproveRepo, PJMApproveRepo>();
+builder.Services.AddScoped<IMasterCompanyService, MasterCompanyService>();
+builder.Services.AddScoped<IMasterCompanyRepo, MasterCompanyRepo>();
+
+builder.Services.AddScoped<IMasterUnitService, MasterUnitService>();
+builder.Services.AddScoped<IMasterUnitRepo, MasterUnitRepo>();
 
 builder.Services.AddScoped<IUnLockPassConditionService, UnLockPassConditionService>();
 builder.Services.AddScoped<IUnLockPassConditionRepo, UnLockPassConditionRepo>();

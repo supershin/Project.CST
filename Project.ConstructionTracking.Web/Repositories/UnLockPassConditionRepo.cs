@@ -32,11 +32,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from t7 in groups.DefaultIfEmpty()
                           where t1.UnitFormID == filterData.UnitFormID
                               && (filterData.GroupID == -1 || t1.GroupID == filterData.GroupID)
-                              && (t1.StatusID == 8 || t1.StatusID == 12 || t1.StatusID == 13 || t1.StatusID == 14)
+                              //&& (t1.StatusID == 8 || t1.StatusID == 12 || t1.StatusID == 13 || t1.StatusID == 14)
                           select new UnLockPassConditionModel.GetDataUnlockPC
                           {
                               PC_ID = t1.ID,
+                              ProjectID = t3.ProjectID,
                               ProjectName = t3.ProjectName,
+                              UnitID = t4.UnitID,
                               UnitCode = t4.UnitCode,
                               FormID = t2.FormID,
                               FormName = t5.Name,

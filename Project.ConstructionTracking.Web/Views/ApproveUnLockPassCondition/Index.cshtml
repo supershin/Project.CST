@@ -1,7 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
+    var ProjectID = ViewBag.ProjectID;
     var ProjectName = ViewBag.ProjectName;
+    var UnitID = ViewBag.UnitID;
     var UnitCode = ViewBag.UnitCode;
     var FormName = ViewBag.FormName;
     var ListGroupPC = ViewBag.ListGroupPC;
@@ -101,7 +103,12 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        <form action="@Url.Action("index","Dashboard")" method="post">
+                        <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
+                            <input type="hidden" name="projectId" id="projectId" value="@ProjectID" />
+                            <input type="hidden" name="projectName" value="@ProjectName" />
+                            <input type="hidden" name="unitId" value="@UnitID" />
+                            <input type="hidden" name="UnitCode" value="@UnitCode" />
+                            <input type="hidden" name="UnitStatusName" value="" />
                             <button class="status-dot bg-transparent">
                                 <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
                             </button>
@@ -230,12 +237,14 @@
                                           rows="2"
                                           class="form-control"
                                           placeholder="ระบุเหตุผลเพื่อขออนุมัติปลดล็อค"
-                                          @(item.StatusID != 12 ? "disabled" : "")
-                                          >@item.PMUnLock_Remark</textarea>
+                                @(item.StatusID != 12 || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")>@item.PMUnLock_Remark</textarea>
                                 @if (item.StatusID == 12)
                                 {
-                                    <button type="button" class="btn btn-danger" style="margin-top: 15px; float: left;" onclick="saveData('@item.PC_ID','@item.UnitFormID','@item.GroupID','Reject')">ไม่อนุมัติปลดล็อค</button>
-                                    <button type="button" class="btn btn-primary" style="margin-top: 15px; float: right;" onclick="saveData('@item.PC_ID','@item.UnitFormID','@item.GroupID','Approved')">อนุมัติปลดล็อค</button>
+                                    @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
+                                    {
+                                        <button type="button" class="btn btn-danger" style="margin-top: 15px; float: left;" onclick="saveData('@item.PC_ID','@item.UnitFormID','@item.GroupID','Reject')">ไม่อนุมัติปลดล็อค</button>
+                                        <button type="button" class="btn btn-primary" style="margin-top: 15px; float: right;" onclick="saveData('@item.PC_ID','@item.UnitFormID','@item.GroupID','Approved')">อนุมัติปลดล็อค</button>
+                                    }
                                 }
                             </div>
                         </div>
@@ -299,7 +308,7 @@
             $(window).resize(adjustTextareaRows); // Call on window resize
         });
 
-         document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () {
             var dropZones = document.querySelectorAll('.drop-zone');
 
             dropZones.forEach(function(dropZone) {
@@ -376,19 +385,19 @@
             formData.append("PMUnLock_Remark", remark);
             formData.append("Action", Action);
 
-            // Show SweetAlert confirmation with dynamic text
+            let Actionanswer = (Action === 'Approved') ? 'อนุมัติ' : 'ไม่อนุมัติ';
+
             Swal.fire({
                 title: 'Confirm Action',
-                text: 'ต้องการ' + Action + 'หรือไม่',
+                text: 'ต้องการ' + Actionanswer + 'ปลดล็อคงานนี้หรือไม่',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, ' + Action,
-                cancelButtonText: 'No, Cancel'
+                confirmButtonText: 'ใช่, ' + Actionanswer,
+                cancelButtonText: 'ยกเลิก'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // User confirmed, proceed with AJAX request
                     $.ajax({
-                        url: '/UnLockPassCondition/RequestUnlock',
+                        url: '@ViewBag.baseUrl' + 'UnLockPassCondition/RequestUnlock',
                         type: 'POST',
                         data: formData,
                         contentType: false,
@@ -426,8 +435,6 @@
                 }
             });
         }
-
-
 
         function openModal(UnitFormID, GroupID, FormID) {
             // Fetch images for RoleID = 1
@@ -526,7 +533,6 @@
                 }
             });
 
-            // Show the modal after all AJAX calls have been made
             var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
             myModal.show();
         }
@@ -543,7 +549,6 @@
                 cancelButtonText: 'ยกเลิก'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Perform the deletion via an AJAX call
                     $.ajax({
                         url: baseUrl + 'FormCheckList/DeleteImage',
                         type: 'POST',

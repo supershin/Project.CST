@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Project.ConstructionTracking.Web.Models.MProjectModel.ListMasterProjectModel>
+﻿@model Project.ConstructionTracking.Web.Models.MProjectModel.InformationProjectResp
 
 @{
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
@@ -66,9 +66,11 @@
 
 <partial name="Partial_Modal_Create_P"/>
 <partial name="Partial_Modal_Edit_P" />
+<partial name="Partial_Confirm_Delete_Project" />
 
 @section Scripts {
     <script src="~/lib/datatable/jquery.datatables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/js/master/masterproject.js?version=@DateTime.Now.Ticks.ToString()"></script>
 
     <script type="text/javascript">

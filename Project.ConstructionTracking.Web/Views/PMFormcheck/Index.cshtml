@@ -134,7 +134,7 @@
                 @foreach (var item in Model)
                 {
                     <div class="col-md-4">
-                        <form action="@Url.Action("index", "PMApprove", new { unitId = item.UnitID, formId = item.FormID })" method="post">
+                        <form action="@Url.Action("index", "PMApprove", new { unitId = item.UnitID, formId = item.FormID , comeFrom = "PMFormcheck"})" method="post">
                             <div class="card card-link card-link-pop p-3 mb-2" onclick="this.closest('form').submit();">
                                 <div class="d-flex justify-content-between">
                                     <div class="d-flex flex-row align-items-center">
@@ -205,13 +205,26 @@
                                     </div>
                                     @if (item.PC_CNT > 0)
                                     {
-                                        <div class="ms-auto">
-                                            <button type="button" class="status-dot @item.PC_Color" ms-auto">
-                                                <span class="status-text">
-                                                    <i class="fa-solid @(item.PC_CNT == 7 ? "fa-lock" : item.PC_CNT == 8 ? "fa-unlock" : "fa-lock")"></i>
-                                                </span>
-                                            </button>
-                                        </div>
+                                        @if (item.PC_UnlockAll > 0)
+                                        {
+                                            <div class="ms-auto">
+                                                <button type="button" class="status-dot @item.PC_UnlockColor" ms-auto">
+                                                    <span class="status-text">
+                                                        <i class="fa-solid fa-lock-open"></i>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="ms-auto">
+                                                <button type="button" class="status-dot @item.PC_Color" ms-auto">
+                                                    <span class="status-text">
+                                                        <i class="fa-solid fa-lock"></i>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        }
                                     }
 
                                 </div>

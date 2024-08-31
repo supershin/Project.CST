@@ -16,6 +16,9 @@
         public int? StatusID { get; set; }
         public int FlagActive { get; set; }
         public int? PC_CNT { get; set; }
+        public int? PC_UnlockAll { get; set; }
+        public int? PC_UnlockNotPass { get; set; }
+        public string? PC_UnlockColor { get; set; }
         public string? PC_Color{ get; set; }
         public int? RoleID_PE { get; set; }
         public string? ActionType_PE { get; set; }

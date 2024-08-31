@@ -185,6 +185,11 @@ namespace Project.ConstructionTracking.Web.Repositories
                 unitFormAction.UpdateBy = model.userID;
             }
 
+            if(model.VendorID != null)
+            {
+
+            }
+
             if (model.Act == "save")
             {               
                 if (model.Sign != null)
@@ -329,7 +334,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             if (unitForm != null)
             {
-                unitForm.VendorID = VendorID;
+                unitForm.VendorID = VendorID ?? unitForm.VendorID;
                 unitForm.VendorResourceID = ResourceID;
                 unitForm.UpdateBy = userID;
                 unitForm.UpdateDate = DateTime.Now;

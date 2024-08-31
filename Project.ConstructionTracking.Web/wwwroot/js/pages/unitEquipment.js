@@ -216,8 +216,6 @@ var unitEquipment = {
             Sign: signData,
         };
 
-        alert('here');
-
         $.ajax({
             url: baseUrl + 'FormGroup/UpdateSaveGrade',
             type: 'POST',

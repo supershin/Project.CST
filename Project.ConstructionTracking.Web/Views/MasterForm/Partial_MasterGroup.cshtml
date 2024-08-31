@@ -16,13 +16,14 @@
                     <div class="col-lg-12">
                         <label class="form-label">ชื่อฟอร์ม</label>
                         <input id="g-form-name" type="text" class="form-control" disabled>
-                        <input type="hidden" id="g-form-id"/>
+                        <input type="hidden" id="g-form-id" />
                     </div>
                 </div>
                 <div class="form-selectgroup-boxes row mb-3">
                     <div class="col-lg-12">
                         <label class="form-label">ชื่อกลุ่มฟอร์ม</label>
                         <input id="group-name" type="text" class="form-control" placeholder="Your Form Group Name">
+                        <div id="groupNameError" class="text-danger" style="display:none;"></div>
                         <input type="hidden" id="group-id" />
                     </div>
                 </div>
@@ -31,7 +32,7 @@
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     ยกเลิก
                 </a>
-                <button id="group-save" href="#" class="btn btn-success ms-auto" data-bs-dismiss="modal">
+                <button id="group-save" href="#" class="btn btn-success ms-auto">
                     บันทึก
                 </button>
             </div>

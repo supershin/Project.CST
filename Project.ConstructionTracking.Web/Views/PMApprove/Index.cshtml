@@ -1,11 +1,14 @@
 ﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
+    var ProjectID = ViewBag.ProjectID;
     var ProjectName = ViewBag.ProjectName;
+    var UnitID = ViewBag.UnitID;
     var UnitCode = ViewBag.UnitCode;
     var FormName = ViewBag.FormName;
     var UnitFormStatusID = ViewBag.UnitFormStatusID;
     var Actiondate = ViewBag.Actiondate;
+    var comeFrom = ViewBag.comeFrom;
     var ActiondatePm = ViewBag.ActiondatePm;
     var ActiondatePJm = ViewBag.ActiondatePJm;
     var Grade = ViewBag.Grade;
@@ -120,11 +123,27 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        <form action="@Url.Action("index","PMFormcheck")" method="post">
-                            <button class="status-dot bg-transparent">
-                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
-                            </button>
-                        </form>
+                        @if (comeFrom == "PMFormcheck")
+                        {
+                            <form action="@Url.Action("index","PMFormcheck")" method="post">
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
+                        else if (comeFrom == "SummaryUnitForm")
+                        {
+                            <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
+                                <input type="hidden" name="projectId" id="projectId" value="@ProjectID" />
+                                <input type="hidden" name="projectName" value="@ProjectName" />
+                                <input type="hidden" name="unitId" value="@UnitID" />
+                                <input type="hidden" name="UnitCode" value="@UnitCode" />
+                                <input type="hidden" name="UnitStatusName" value="" />
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
                         <h1 class="mb-0 header-text">@UnitCode</h1>
@@ -189,135 +208,175 @@
             </ol>
             <br>
             <div class="row">
-                @foreach (var group in Model.PM_getListgroup)
+                @if (Model.PM_getListgroup != null)
                 {
-                    <div class="col-md-4">
-                        <div class="card p-3 mb-2">
-                            <div class="d-flex justify-content-between">
-                                <div class="d-flex flex-row align-items-center">
-                                    <form action="@Url.Action("Index","FormCheckList" , new { unitId = Model.UnitID, FormID = Model.FormID , GroupID = group.Group_ID , GobackTo = "PMApprove"})" method="post">
-                                        @{
-                                            string buttonClass = "bg-green";
-                                            string iconClass = "fa-solid fa-magnifying-glass";
+                    @foreach (var group in Model.PM_getListgroup)
+                    {
+                        <div class="col-md-4">
+                            <div class="card p-3 mb-2">
+                                <div class="d-flex justify-content-between">
+                                    <div class="d-flex flex-row align-items-center">
+                                        <form action="@Url.Action("Index", "FormCheckList", new { unitId = Model.UnitID, FormID = Model.FormID, GroupID = group.Group_ID, GobackTo = "PMApprove" })" method="post">
+                                            @{
+                                                string buttonClass = "bg-success"; // Default class
+                                                string iconClass = "fa-solid fa-magnifying-glass"; // Default icon
 
-                                            if (group.LockStatusID != null && group.PCFlageActive == true)
+                                                // Logic to determine button class and icon
+                                                if (group.LockStatusID == 7)
+                                                {
+                                                    if ((group.PC_StatusID == 7 && PM_Actiontype == "submit") || (group.PC_StatusID == 9 && PJM_Actiontype == "submit"))
+                                                    {
+                                                        buttonClass = "bg-danger";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                    else if ((group.PC_StatusID == 6 && PM_Actiontype == "submit") || (group.PC_StatusID == 8 && PJM_Actiontype == "submit"))
+                                                    {
+                                                        buttonClass = "bg-success";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                    else
+                                                    {
+                                                        buttonClass = "bg-primary";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                }
+                                                else if (group.LockStatusID == 8)
+                                                {
+                                                    if (group.PC_StatusID == 14)
+                                                    {
+                                                        buttonClass = "bg-danger";
+                                                        iconClass = "fa-solid fa-lock-open";
+                                                    }
+                                                    else if (group.PC_StatusID == 13)
+                                                    {
+                                                        buttonClass = "bg-success";
+                                                        iconClass = "fa-solid fa-lock-open";
+                                                    }
+                                                    else
+                                                    {
+                                                        buttonClass = "bg-primary";
+                                                        iconClass = "fa-solid fa-lock-open";
+                                                    }
+                                                }
+                                            }
+
+                                            <button class="status-dot @buttonClass">
+                                                <i class="@iconClass"></i>
+                                            </button>
+                                        </form>
+
+                                        <div class="ms-2 c-details">
+                                            <h3 class="mb-0">
+                                                @group.Group_Name
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div class="align-items-right">
+                                        <!-- Button to open the modal and fetch images -->
+                                        <button class="status-dot bg-primary" onclick="openModal('@Model.ID', '@group.Group_ID')">
+                                            <i class="fa-regular fa-image"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="Group_ID_@group.Group_ID" value="@group.Group_ID" />
+                                @if (group.PM_getListpackage != null)
+                                {
+                                    <div class="mb-3">
+                                        <label class="form-label">ความเห็นจากวิศวกร</label>
+                                        @* Build the content first *@
+                                        @{
+                                            var textareaContent = new System.Text.StringBuilder();
+                                            foreach (var Listpackage in group.PM_getListpackage)
                                             {
-                                                buttonClass = "bg-primary";
-                                                iconClass = "fa-solid fa-lock";
+                                                textareaContent.AppendLine($"{Listpackage.Package_Name} : {Listpackage.Package_Remark}");
                                             }
                                         }
-                                        <button class="status-dot @buttonClass">
-                                            <i class="@iconClass"></i>
-                                        </button>
-                                    </form>
-                                    <div class="ms-2 c-details">
-                                        <h3 class="mb-0">
-                                            @group.Group_Name
-                                        </h3>
-                                    </div>
-                                </div>
-                                <div class="align-items-right">
-                                    <!-- Button to open the modal and fetch images -->
-                                    <button class="status-dot bg-primary" onclick="openModal('@Model.ID', '@group.Group_ID')">
-                                        <i class="fa-regular fa-image"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <input type="hidden" id="Group_ID_@group.Group_ID" value="@group.Group_ID" />
-                            @if (group.PM_getListpackage != null)
-                            {
-                                <div class="mb-3">
-                                    <label class="form-label">ความเห็นจากวิศวกร</label>
-                                    @* Build the content first *@
-                                    @{
-                                        var textareaContent = new System.Text.StringBuilder();
-                                        foreach (var Listpackage in group.PM_getListpackage)
-                                        {
-                                            textareaContent.AppendLine($"{Listpackage.Package_Name} : {Listpackage.Package_Remark}");
-                                        }
-                                    }
 
-                                    <textarea class="form-control mt-2"
-                                              rows="4"
-                                              style="text-align: left; white-space: pre-wrap;"
-                                              disabled>@textareaContent.ToString()</textarea>
-                                </div>
-                            }
-
-                            @if (group.LockStatusID != null)
-                            {
-                                <label class="form-label">
-                                    ความเห็นจากวิศวกร
-                                </label>
-                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@group.PE_RemarkPC</textarea>
-                                <input type="hidden" id="pass_ID_@group.Group_ID" value="@group.PassConditionsID" />
-                                <div class="col-12 p-1">
-                                    <label class="form-label">
-                                        อนุมัติการผ่านแบบมีเงื่อนไข
-                                    </label>
-                                    <label class="form-check form-check-inline">
-                                        <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@group.Group_ID"
-                                               name="radios-inline-@Model.ID-@group.Group_ID"
-                                               passconID="@group.PassConditionsID"
-                                               value="6"
-                                               onclick="toggleRadio(this, '@Model.ID')"
-                                               @(group.PC_StatusID == 6 || group.PC_StatusID == 8 || group.PC_StatusID == 9 ||
-                                               group.PC_StatusID == 10 || group.PC_StatusID == 11 || group.PC_StatusID == 12 ||
-                                               group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "checked" : "")
-                                               @(
-                                                (PM_Actiontype == "submit" &&
-                                                (UnitFormStatusID != 2 || group.PC_StatusID == 8 || group.PCFlageActive == false)) ||
-                                                (PJM_Actiontype == "submit" && group.PC_StatusID == 8 || group.PCFlageActive == false)
-                                                ? "disabled" : ""
-                                               )
-                                        >
-                                        <span class="form-check-label">ผ่านเพื่อส่ง PJM Head</span>
-                                    </label>
-                                    <label class="form-check form-check-inline">
-                                        <input class="form-check-input"
-                                               data-action="gr-pass"
-                                               type="radio"
-                                               group-id="@group.Group_ID"
-                                               name="radios-inline-@Model.ID-@group.Group_ID"
-                                               value="7"
-                                               onclick="toggleRadio(this, '@Model.ID')"
-                                               @(group.PC_StatusID == 7 ? "checked" : "")
-                                                @(
-                                                (PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (PM_Actiontype == "submit" && (UnitFormStatusID != 2) || group.PCFlageActive == false)
-                                                ? "disabled"
-                                                : ""
-                                                )
-                                        >
-                                      <span class="form-check-label">ไม่ผ่าน</span>
-                                    </label>
-                                </div>
-                                <div class="col-12 p-1 mb-2">
-                                    <textarea id="remark_@group.Group_ID"
-                                              rows="1"
-                                              class="form-control"
-                                              placeholder="ระบุเหตุผลเพื่อขออนุมัติ"
-                                            @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) ||
-                                            (PM_Actiontype == "submit" && (UnitFormStatusID != 2 || group.PCFlageActive == false))
-                                            ? "disabled"
-                                            : "")>@group.PM_RemarkPC</textarea>
-
-                                </div>
-                                @if (PJM_Actiontype == "submit")
-                                {
-                                    <label class="form-label @(group.PC_StatusID == 8 || group.PC_StatusID == 12 || group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "text-success" : "text-danger")">
-                                        @(group.PC_StatusID == 8 || group.PC_StatusID == 12 || group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "PJM อนมัติการผ่านแบบมีเงื่อนไข" : "PJM ไม่อนมัติการผ่านแบบมีเงื่อนไข")
-                                    </label>
-                                    <div class="col-12 p-1 mb-2">
-                                        <textarea id="PJM_remark"
-                                                  rows="1"
-                                                  class="form-control"
-                                                  disabled
-                                        >@group.PJM_RemarkPC</textarea>
+                                        <textarea class="form-control mt-2"
+                                                  rows="4"
+                                                  style="text-align: left; white-space: pre-wrap;"
+                                                  disabled>@textareaContent.ToString()</textarea>
                                     </div>
                                 }
-                            }
+
+                                @if (group.LockStatusID != null)
+                                {
+                                    <label class="form-label">
+                                        ความเห็นจากวิศวกร
+                                    </label>
+                                    <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@group.PE_RemarkPC</textarea>
+                                    <input type="hidden" id="pass_ID_@group.Group_ID" value="@group.PassConditionsID" />
+                                    <div class="col-12 p-1">
+                                        <label class="form-label">
+                                            อนุมัติการผ่านแบบมีเงื่อนไข
+                                        </label>
+                                        <label class="form-check form-check-inline">
+                                            <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@group.Group_ID"
+                                                   name="radios-inline-@Model.ID-@group.Group_ID"
+                                                   passconID="@group.PassConditionsID"
+                                                   value="6"
+                                                   onclick="toggleRadio(this, '@Model.ID')"
+                                                   @(group.PC_StatusID == 6 || group.PC_StatusID == 8 || group.PC_StatusID == 9 ||
+                                                   group.PC_StatusID == 10 || group.PC_StatusID == 11 || group.PC_StatusID == 12 ||
+                                                   group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "checked" : "")
+                                                   @(
+                                                    (PM_Actiontype == "submit" &&
+                                                    (UnitFormStatusID != 2 || group.PC_StatusID == 8 || group.PCFlageActive == false)) ||
+                                                    (PJM_Actiontype == "submit" && group.PC_StatusID == 8 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
+                                                ? "disabled" : ""
+                                                   )
+                                            >
+                                            <span class="form-check-label">ผ่านเพื่อส่ง PJM Head</span>
+                                        </label>
+                                        <label class="form-check form-check-inline">
+                                            <input class="form-check-input"
+                                                   data-action="gr-pass"
+                                                   type="radio"
+                                                   group-id="@group.Group_ID"
+                                                   name="radios-inline-@Model.ID-@group.Group_ID"
+                                                   value="7"
+                                                   onclick="toggleRadio(this, '@Model.ID')"
+                                                   @(group.PC_StatusID == 7 ? "checked" : "")
+                                                    @(
+                                                  (PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (PM_Actiontype == "submit" && (UnitFormStatusID != 2) || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
+                                                ? "disabled"
+                                                    : ""
+                                                    )
+                                            >
+                                          <span class="form-check-label">ไม่ผ่าน</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-12 p-1 mb-2">
+                                        <textarea id="remark_@group.Group_ID"
+                                                  rows="1"
+                                                  class="form-control"
+                                                  placeholder="ระบุเหตุผลเพื่อขออนุมัติ"
+                                                @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) ||
+                                                (PM_Actiontype == "submit" && (UnitFormStatusID != 2 || group.PCFlageActive == false)) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
+                                            ? "disabled"
+                                                : "")>@group.PM_RemarkPC</textarea>
+                                    </div>
+                                    @if (PJM_Actiontype == "submit")
+                                    {
+                                        <label class="form-label @(group.PC_StatusID == 8 || group.PC_StatusID == 12 || group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "text-success" : "text-danger")">
+                                            @(group.PC_StatusID == 8 || group.PC_StatusID == 12 || group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "PJM อนมัติการผ่านแบบมีเงื่อนไข" : "PJM ไม่อนมัติการผ่านแบบมีเงื่อนไข")
+                                        </label>
+                                        <div class="col-12 p-1 mb-2">
+                                            <textarea id="PJM_remark"
+                                                      rows="1"
+                                                      class="form-control"
+                                                      disabled
+                                            >@group.PJM_RemarkPC</textarea>
+                                        </div>
+                                    }
+                                }
+                            </div>
                         </div>
-                    </div>
+                    }
+                }
+                else
+                {
+                    <p>ยังไม่มีข้อมูล.</p>
                 }
             </div>
         </div>
@@ -346,16 +405,19 @@
                                     <a data-fslightbox="gallery" href="~/@listimage.FilePath">
                                         <img src="~/@listimage.FilePath" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                     </a>
-                                    @if (PM_Actiontype == "submit")
+                                    @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
                                     {
-                                        if (UnitFormStatusID == 2)
+                                        @if (PM_Actiontype == "submit")
+                                        {
+                                            if (UnitFormStatusID == 2)
+                                            {
+                                                <button type="button" class="remove-button" onclick="deleteImage('@listimage.ResourceID')">✖</button>
+                                            }
+                                        }
+                                        else
                                         {
                                             <button type="button" class="remove-button" onclick="deleteImage('@listimage.ResourceID')">✖</button>
                                         }
-                                    }
-                                    else
-                                    {
-                                        <button type="button" class="remove-button" onclick="deleteImage('@listimage.ResourceID')">✖</button>
                                     }
                                 </div>
                             }
@@ -367,17 +429,17 @@
                                         <input class="form-check-input" type="radio" name="radios-inline-approval"
                                                value="@(LockStatusID != null && PCALLPASS != "yes" ? 6 : 4)"
                                                 @(Model.PM_StatusID == (LockStatusID != null ? 6 : 4) ? "checked" : "")
-                                                @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")
-                                                 onclick="toggleRadio(this, '@Model.ID')"
-                                        >
+                                                @((PM_Actiontype == "submit" && UnitFormStatusID != 2) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
+                                               onclick="toggleRadio(this, '@Model.ID')">
                                         <span class="form-check-label">
                                             @(LockStatusID != null && PCALLPASS != "yes" ? "อนุมัติผ่านแบบมีเงื่อนไข" : "อนุมัติ")
                                         </span>
                                     </label>
+
                                     <label class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="radios-inline-approval" value="5"
                                         @(Model.PM_StatusID == 5 ? "checked" : "")
-                                        @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")
+                                        @((PM_Actiontype == "submit" && UnitFormStatusID != 2) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
                                          onclick="toggleRadio(this, '@Model.ID')"
                                         >
                                         <span class="form-check-label">ไม่อนุมัติ</span>
@@ -385,11 +447,26 @@
                                 </div>
                                 <div class="col-12">
                                     <textarea id="mainRemark" rows="2" class="form-control" placeholder=""
-                                    @(PM_Actiontype == "submit" && UnitFormStatusID != 2 ? "disabled" : "")>@Model.PM_Remarkaction</textarea>
+                                    @((PM_Actiontype == "submit" && UnitFormStatusID != 2) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")>@Model.PM_Remarkaction</textarea>
                                 </div>
-                                @if (PM_Actiontype == "submit")
+                                @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
                                 {
-                                    if (UnitFormStatusID == 2)
+                                    @if (PM_Actiontype == "submit")
+                                    {
+                                        if (UnitFormStatusID == 2)
+                                        {
+                                            <div class="col-12 p-3">
+                                                <div id="drop-zone" class="drop-zone">
+                                                    <p class="drop-zone-text">
+                                                        <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                                    </p>
+                                                    <input type="file" id="file-input" class="drop-zone-input" multiple>
+                                                    <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
                                     {
                                         <div class="col-12 p-3">
                                             <div id="drop-zone" class="drop-zone">
@@ -401,18 +478,6 @@
                                             </div>
                                         </div>
                                     }
-                                }
-                                else
-                                {
-                                    <div class="col-12 p-3">
-                                        <div id="drop-zone" class="drop-zone">
-                                            <p class="drop-zone-text">
-                                                <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
-                                            </p>
-                                            <input type="file" id="file-input" class="drop-zone-input" multiple>
-                                            <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
-                                        </div>
-                                    </div>
                                 }
                             </div>
                         </div>
@@ -430,17 +495,20 @@
                             <input type="hidden" id="UnitCode" value="@Model.UnitCode" />
                             <input type="hidden" id="FormID" value="@Model.FormID" />
                             <div class="justify-content-end">
-                                @if (PM_Actiontype == "submit"){
-                                    if (UnitFormStatusID == 2)
+                                @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
+                                {
+                                    @if (PM_Actiontype == "submit"){
+                                        if (UnitFormStatusID == 2)
+                                        {
+                                            <button class="btn" onclick="saveOrSubmit('save')">Save</button>
+                                            <button class="btn btn-primary" onclick="saveOrSubmit('submit')">Submit</button>
+                                        }
+                                    }
+                                    else
                                     {
                                         <button class="btn" onclick="saveOrSubmit('save')">Save</button>
                                         <button class="btn btn-primary" onclick="saveOrSubmit('submit')">Submit</button>
                                     }
-                                }
-                                else
-                                {
-                                    <button class="btn" onclick="saveOrSubmit('save')">Save</button>
-                                    <button class="btn btn-primary" onclick="saveOrSubmit('submit')">Submit</button>
                                 }
                             </div>
                         </div>
@@ -448,7 +516,6 @@
                 </div>
             </div>
         </div>
-
 
         <!-- Modal show image -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
