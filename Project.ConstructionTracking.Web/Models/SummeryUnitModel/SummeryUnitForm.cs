@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace Project.ConstructionTracking.Web.Models
+namespace Project.ConstructionTracking.Web.Models.SummeryUnitModel
 {
     public class SummeryUnitForm
     {
         public Guid? projectId { get; set; }
         public Guid? UnitID { get; set; }
         public Guid? UnitFormID { get; set; }
-        public string? UnitFormName { get; set;}
+        public string? FormName { get; set; }
         public int? FormID { get; set; }
         public string? PE { get; set; }
         public string? QC1 { get; set; }

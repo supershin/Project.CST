@@ -84,6 +84,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               t1.Grade,
                               t1.FormID,
                               venderName = venderN.Name,
+                              venderID = venderN.ID,
                               UnitFormstatus = t1.StatusID,
                               PE_ActionType = peAction != null ? peAction.ActionType : null,
                               PE_StatusID = peAction != null ? peAction.StatusID : null,
@@ -132,6 +133,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 Grade = result.Grade,
                 FormID = result.FormID,
                 VenderName = result.venderName,
+                VenderID = result.venderID,
                 UnitFormstatusID = result.UnitFormstatus,
                 UnitFormstatus = result.UnitFormstatus switch
                 {
