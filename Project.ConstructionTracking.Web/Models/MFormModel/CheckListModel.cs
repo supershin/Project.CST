@@ -8,6 +8,9 @@ namespace Project.ConstructionTracking.Web.Models.MFormModel
         public int? PackageID { get; set; }
         public int? CheckListID { get; set; }
         public string CheckListName { get; set; } = default!;
+
+        public Guid RequestUserID { get; set; }
+        public int RequestRoleID { get; set; }
     }
 }
 

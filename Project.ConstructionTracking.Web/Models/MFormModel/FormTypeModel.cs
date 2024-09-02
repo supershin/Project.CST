@@ -8,6 +8,9 @@ namespace Project.ConstructionTracking.Web.Models.MFormModel
 		public int? FormTypeID { get; set; }
 		public string? FormTypeName { get; set; } = default!;
 		public string? FormTypeDesc { get; set; } = default!;
-	}
+
+        public Guid RequestUserID { get; set; }
+        public int RequestRoleID { get; set; }
+    }
 }
 

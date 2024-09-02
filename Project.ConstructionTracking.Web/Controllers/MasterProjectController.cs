@@ -65,6 +65,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 var resultData = _masterProjectService.CreateProject(model);
 
                 return Json(
@@ -121,6 +126,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 var resultData = _masterProjectService.EditProject(model);
 
                 return Json(
@@ -149,7 +159,12 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
-                var resultData = _masterProjectService.DeleteProject(projectId);
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                Guid RequestUserID = Guid.Parse(userID);
+                int RequestRoleID = Int32.Parse(RoleID);
+
+                var resultData = _masterProjectService.DeleteProject(projectId, RequestUserID);
 
                 return Json(
                           new

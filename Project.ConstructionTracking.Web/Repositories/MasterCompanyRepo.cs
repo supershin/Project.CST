@@ -152,8 +152,8 @@ namespace Project.ConstructionTracking.Web.Repositories
             create.FlagActive = true;
             create.CreateDate = DateTime.Now;
             create.UpdateDate = DateTime.Now;
-            //create.CreateBy =;
-            //create.UpdateBy =;
+            create.CreateBy = model.RequestUserID;
+            create.UpdateBy = model.RequestUserID;
 
             _context.tm_CompanyVendor.Add(create);
             _context.SaveChanges();
@@ -169,6 +169,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                 .FirstOrDefault();
 
             if (company == null) throw new Exception("ไม่พบข้อมูลของ Company Vendor");
+
+            company.Name = model.CompanyVendorName;
+            company.UpdateDate = DateTime.Now;
+            company.UpdateBy = model.RequestUserID;
+
+            _context.tm_CompanyVendor.Update(company);
+            _context.SaveChanges();
 
             // Fetch all related projects
             List<tr_CompanyVendorProject> listProject = _context.tr_CompanyVendorProject
@@ -193,7 +200,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 if (model.ProJectIDList == null)
                 {
                     // If no projects are selected, deactivate all active projects
-                    UpdateMapping(company.ID, activeList, false);
+                    UpdateMapping(company.ID, activeList, false, model.RequestUserID);
                 }
                 else
                 {
@@ -201,21 +208,21 @@ namespace Project.ConstructionTracking.Web.Repositories
                     newList = model.ProJectIDList.Except(activeList).Except(inActiveList).ToList();
                     if (newList.Any())
                     {
-                        CreateMapping(company.ID, newList);
+                        CreateMapping(company.ID, newList, model.RequestUserID);
                     }
 
                     // Deactivate projects that are no longer selected
                     var projectsToDeactivate = activeList.Except(model.ProJectIDList).ToList();
                     if (projectsToDeactivate.Any())
                     {
-                        UpdateMapping(company.ID, projectsToDeactivate, false);
+                        UpdateMapping(company.ID, projectsToDeactivate, false, model.RequestUserID);
                     }
 
                     // Activate inactive projects that are now selected
                     var projectsToActivate = inActiveList.Intersect(model.ProJectIDList).ToList();
                     if (projectsToActivate.Any())
                     {
-                        UpdateMapping(company.ID, projectsToActivate, true);
+                        UpdateMapping(company.ID, projectsToActivate, true, model.RequestUserID);
                     }
                 }
             }
@@ -224,7 +231,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 // If there are no existing projects, create mappings for all selected projects
                 if (model.ProJectIDList != null && model.ProJectIDList.Any())
                 {
-                    CreateMapping(company.ID, model.ProJectIDList);
+                    CreateMapping(company.ID, model.ProJectIDList, model.RequestUserID);
                 }
             }
 
@@ -247,7 +254,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         
             return resp;
         }
-        private void CreateMapping(int companyID, List<Guid?> projectLists)
+        private void CreateMapping(int companyID, List<Guid?> projectLists, Guid requestUserID)
         {
             if(projectLists != null && projectLists.Count > 0)
             {
@@ -261,8 +268,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                     createData.FlagActive = true;
                     createData.CreateDate = DateTime.Now;
                     createData.UpdateDate = DateTime.Now;
-                    //createData.CreateBy = ;
-                    //createData.UpdateBy = ;
+                    createData.CreateBy = requestUserID;
+                    createData.UpdateBy = requestUserID;
                     listCreate.Add(createData);
                 }
 
@@ -271,7 +278,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-        private void UpdateMapping(int companyID, List<Guid?> projectLists, bool flag)
+        private void UpdateMapping(int companyID, List<Guid?> projectLists, bool flag, Guid requestUserID)
         {
             if (projectLists != null && projectLists.Count > 0)
             {
@@ -285,7 +292,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     updateData.FlagActive = flag;
                     updateData.UpdateDate = DateTime.Now;
-                    //updateData.UpdateBy = ;
+                    updateData.UpdateBy = requestUserID;
 
                     listUpdate.Add(updateData);
                 }
@@ -303,8 +310,8 @@ namespace Project.ConstructionTracking.Web.Repositories
             create.FlagActive = true;
             create.CreateDate = DateTime.Now;
             create.UpdateDate = DateTime.Now;
-            //create.CreateBy =;
-            //create.UpdateBy =;
+            create.CreateBy = model.RequestUserID;
+            create.UpdateBy = model.RequestUserID;
 
             _context.tm_Vendor.Add(create);
             _context.SaveChanges();
@@ -315,8 +322,8 @@ namespace Project.ConstructionTracking.Web.Repositories
             mapping.FlagActive = true;
             mapping.CreateDate = DateTime.Now;
             mapping.UpdateDate = DateTime.Now;
-            //create.CreateBy =;
-            //create.UpdateBy =;
+            create.CreateBy = model.RequestUserID;
+            create.UpdateBy = model.RequestUserID;
 
             _context.tr_CompanyVendor.Add(mapping);
             _context.SaveChanges();
@@ -362,7 +369,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 edit.Name = model.Name;
                 edit.Email = model.Email;
                 edit.UpdateDate = DateTime.Now;
-                //edit.UpdateBy = ;
+                edit.UpdateBy = model.RequestUserID;
 
                 _context.tm_Vendor.Update(edit);
                 _context.SaveChanges();
@@ -389,7 +396,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 delete.FlagActive = false;
                 delete.UpdateDate = DateTime.Now;
-                //delete.UpdateBy = ;
+                delete.UpdateBy = model.RequestUserID;
 
                 _context.tm_CompanyVendor.Update(delete);
 
@@ -401,7 +408,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 {
                     data.FlagActive = false;
                     data.UpdateDate = DateTime.Now;
-                    //data.UpdateBy = ;
+                    data.UpdateBy = model.RequestUserID;
 
                     tm_Vendor? vendor = _context.tm_Vendor
                                         .Where(o => o.ID == data.VendorID && o.FlagActive == true)
@@ -410,7 +417,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     vendor.FlagActive = false;
                     vendor.UpdateDate = DateTime.Now;
-                    //vendor.UpdateBy = ;
+                    vendor.UpdateBy = model.RequestUserID;
 
                     _context.tm_Vendor.Update(vendor);
                 }
@@ -423,7 +430,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 {
                     data2.FlagActive = false;
                     data2.UpdateDate = DateTime.Now;
-                    //data.UpdateBy = ;
+                    data2.UpdateBy = model.RequestUserID;
                 }
 
                 _context.SaveChanges();
@@ -445,7 +452,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 delete.FlagActive = false;
                 delete.UpdateDate = DateTime.Now;
-                //delete.UpdateBy = ;
+                delete.UpdateBy = model.RequestUserID;
 
                 _context.tm_Vendor.Update(delete);
 
@@ -456,7 +463,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 deleteMapping.FlagActive = false;
                 deleteMapping.UpdateDate = DateTime.Now;
-                //deleteMapping.UpdateBy = ;
+                deleteMapping.UpdateBy = model.RequestUserID;
 
                 _context.tr_CompanyVendor.Update(deleteMapping);
                 _context.SaveChanges();

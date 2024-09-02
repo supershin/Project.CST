@@ -15,7 +15,7 @@ namespace Project.ConstructionTracking.Web.Services
 
         CreateUnitResp CreateUnit(CreateUnitModel model);
 		EditUnitResp EditUnit(EditUnitModel model);
-        bool DeleteUnit(Guid unitID);
+        bool DeleteUnit(Guid unitID, Guid requestUserID);
 	}
 
 	public class MasterUnitService : IMasterUnitService
@@ -191,7 +191,7 @@ namespace Project.ConstructionTracking.Web.Services
             
 		}
 
-        public bool DeleteUnit(Guid unitID)
+        public bool DeleteUnit(Guid unitID, Guid requestUserID)
         {
             TransactionOptions option = new TransactionOptions();
             option.Timeout = new TimeSpan(1, 0, 0);
@@ -200,7 +200,7 @@ namespace Project.ConstructionTracking.Web.Services
                 try
                 {
                     bool resp = false;
-                    var data = _masterUnitRepo.DeleteUnit(unitID);
+                    var data = _masterUnitRepo.DeleteUnit(unitID, requestUserID);
 
                     if (data != null) resp = true;
 

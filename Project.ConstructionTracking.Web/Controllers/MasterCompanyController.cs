@@ -104,6 +104,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 CompanyVendorResp resultData = _masterCompanyService.CreateCompanyVendor(model);
                 if (resultData == null) throw new Exception("เกิดข้อผิดพลาดในการสร้างข้อมูล");
                 return Json(
@@ -132,6 +137,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 DetailCompanyModel resultData = _masterCompanyService.CompanyVendorMappingProject(model);
                 if (resultData == null) throw new Exception("เกิดข้อผิดพลาดในการ​ Mapping ข้อมูล");
                 return Json(
@@ -160,6 +170,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 CreateVendorResp resultData = _masterCompanyService.CreateVendor(model);
                 if (resultData == null) throw new Exception("เกิดข้อผิดพลาดในการสร้างข้อมูล Vendor");
                 return Json(
@@ -188,6 +203,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 DeleteCompanyVendorResp resultData = _masterCompanyService.ActionDeleteCompanyVendor(model);
                 if (resultData == null) throw new Exception("เกิดข้อผิดพลาดในการสร้างลบข้อมูล");
                 return Json(
@@ -216,6 +236,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 ActionVendorResp resultData = _masterCompanyService.ActionVendor(model);
                 if (resultData == null) throw new Exception("เกิดข้อผิดพลาดในการแก้ไข Vendor");
                 return Json(

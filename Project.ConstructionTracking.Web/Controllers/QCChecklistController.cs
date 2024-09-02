@@ -2,7 +2,7 @@
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class QCChecklistController : Controller
+    public class QCChecklistController : BaseController
     {
         public IActionResult Index()
         {

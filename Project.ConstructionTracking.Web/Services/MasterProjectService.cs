@@ -19,7 +19,7 @@ namespace Project.ConstructionTracking.Web.Services
 
 		EditProjectResp EditProject(EditProjectModel model);
 
-		bool DeleteProject(Guid guid);
+		bool DeleteProject(Guid guid, Guid requestUserID);
     }
 
 	public class MasterProjectService : IMasterProjectService
@@ -171,7 +171,7 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
-        public bool DeleteProject(Guid guid)
+        public bool DeleteProject(Guid guid, Guid requestUserID)
 		{
             TransactionOptions option = new TransactionOptions();
             option.Timeout = new TimeSpan(1, 0, 0);
@@ -180,7 +180,7 @@ namespace Project.ConstructionTracking.Web.Services
                 try
                 {
 					bool resp = false;
-                    var query = _masterProjectRepo.DeleteProject(guid);
+                    var query = _masterProjectRepo.DeleteProject(guid, requestUserID);
 
 					if (query != null) resp = true;
 

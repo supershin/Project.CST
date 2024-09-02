@@ -9,6 +9,9 @@ namespace Project.ConstructionTracking.Web.Models.MProjectModel
 		public string ProjectCode { get; set; }
 		public string ProjectName { get; set; }
 		public List<ModelForm> ModelMapping { get; set; }
+
+        public Guid RequestUserID { get; set; }
+        public int RequestRoleID { get; set; }
     }
 
 	public class ModelForm

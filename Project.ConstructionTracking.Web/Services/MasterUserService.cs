@@ -20,7 +20,7 @@ namespace Project.ConstructionTracking.Web.Services
 
         EditUserResp EditUser(EditUserModel model);
 
-		bool DeleteUser(Guid userId);
+		bool DeleteUser(Guid userId, Guid requestUserID);
     }
 
 	public class MasterUserService : IMasterUserService
@@ -149,7 +149,7 @@ namespace Project.ConstructionTracking.Web.Services
                     //user sign resource
                     if (!string.IsNullOrEmpty(model.SignUser))
                     {
-                        _masterUserRepo.UploadSignResource(model.SignUser, model.ApplicationPath, model.UserID);
+                        _masterUserRepo.UploadSignResource(model.SignUser, model.ApplicationPath, model.UserID , model.RequestUserID);
                     }
 
                     EditUserResp resp = new EditUserResp()
@@ -173,7 +173,7 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
-		public bool DeleteUser(Guid userId)
+		public bool DeleteUser(Guid userId, Guid requestUserID)
         {
             TransactionOptions option = new TransactionOptions();
             option.Timeout = new TimeSpan(1, 0, 0);
@@ -181,7 +181,7 @@ namespace Project.ConstructionTracking.Web.Services
             {
                 try
                 {
-                    bool resp = _masterUserRepo.DeleteUser(userId);
+                    bool resp = _masterUserRepo.DeleteUser(userId, requestUserID);
 
                     scope.Complete();
 

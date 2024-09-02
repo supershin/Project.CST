@@ -2,7 +2,7 @@
     init: () => {
         $('#btn-search').click(() => {
             var string = $('#strSearch').val();
-            console.log(string)
+
             if ($.fn.DataTable.isDataTable('#tbl-table-mform')) {
                 $('#tbl-table-mform').DataTable().clear().destroy();
             }

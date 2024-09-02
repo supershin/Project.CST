@@ -11,6 +11,9 @@ namespace Project.ConstructionTracking.Web.Models.MFormModel
         public decimal? Progress { get; set; }
         public int? Duration { get; set; }
         public List<int>? QcList { get; set; }
+
+        public Guid RequestUserID { get; set; }
+        public int RequestRoleID { get; set; }
     }
 }
 

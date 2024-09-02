@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
@@ -135,9 +136,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                     create.Description = model.FormTypeDesc;
                     create.FlagActive = true;
                     create.CreateDate = DateTime.Now;
-                    //Create.CreateBy = ; // wait for permission login
+                    create.CreateBy = model.RequestUserID; 
                     create.UpdateDate = DateTime.Now;
-                    //Create.UpdateBy = ; // wait for permission login
+                    create.UpdateBy = model.RequestUserID; 
 
                     _context.tm_FormType.Add(create);
                     _context.SaveChanges();
@@ -167,7 +168,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     edit.Name = model.FormTypeName;
                     edit.Description = model.FormTypeDesc;
                     edit.UpdateDate = DateTime.Now;
-                    //Edit.UpdateBy = ; // wait for permission login
+                    edit.UpdateBy = model.RequestUserID;
 
                     // condition for check formtype using
                     bool verify = VerifyFormTypeUsing((int)model.FormTypeID);
@@ -198,7 +199,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     delete.FlagActive = false;
                     delete.UpdateDate = DateTime.Now;
-                    //delete.UpdateBy = ; // wait for permission login
+                    delete.UpdateBy = model.RequestUserID;
 
                     // condition for check formtype using
                     bool verify = VerifyFormTypeUsing((int)model.FormTypeID);
@@ -448,8 +449,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 create.FlagActive = true;
                 create.CreateDate = DateTime.Now;
                 create.UpdateDate = DateTime.Now;
-                //create.CreateBy = ;
-                //create.UpdateBy = ;
+                create.CreateBy = model.RequestUserID;
+                create.UpdateBy = model.RequestUserID;
 
                 _context.tm_Form.Add(create);
                 _context.SaveChanges();
@@ -468,8 +469,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                             FlagActive = true,
                             CreateDate = DateTime.Now,
                             UpdateDate = DateTime.Now,
-                            //CreateBy = ,
-                            //UpdateBy = ,
+                            CreateBy = model.RequestUserID,
+                            UpdateBy = model.RequestUserID,
                         };
                         qcCheckList.Add(createQc);
                     }
@@ -502,7 +503,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 edit.Progress = model.Progress;
                 edit.DurationDay = model.Duration;
                 edit.UpdateDate = DateTime.Now;
-                //edit.UpdateBy = ;
+                edit.UpdateBy = model.RequestUserID;
 
                 _context.tm_Form.Update(edit);
                 _context.SaveChanges();
@@ -525,28 +526,28 @@ namespace Project.ConstructionTracking.Web.Repositories
                     if (model.QcList == null)
                     {
                         // If no projects are selected, deactivate all active projects
-                        UpdateMappingQc(edit.ID, activeQc, false);
+                        UpdateMappingQc(edit.ID, activeQc, false, model.RequestUserID);
                     }
                     else
                     {
                         newQc = model.QcList.Except(activeQc).Except(inActiveQc).ToList();
                         if (newQc.Any())
                         {
-                            CreateMappingQc(edit.ID, newQc);
+                            CreateMappingQc(edit.ID, newQc, model.RequestUserID);
                         }
 
                         // Deactivate projects that are no longer selected
                         var qcToDeactivate = activeQc.Except(model.QcList).ToList();
                         if (qcToDeactivate.Any())
                         {
-                            UpdateMappingQc(edit.ID, qcToDeactivate, false);
+                            UpdateMappingQc(edit.ID, qcToDeactivate, false, model.RequestUserID);
                         }
 
                         // Activate inactive projects that are now selected
                         var qcToActivate = inActiveQc.Intersect(model.QcList).ToList();
                         if (qcToActivate.Any())
                         {
-                            UpdateMappingQc(edit.ID, qcToActivate, true);
+                            UpdateMappingQc(edit.ID, qcToActivate, true, model.RequestUserID);
                         }
                     }
                 }
@@ -555,7 +556,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     // If there are no existing projects, create mappings for all selected projects
                     if (model.QcList != null && model.QcList.Any())
                     {
-                        CreateMappingQc(edit.ID, model.QcList);
+                        CreateMappingQc(edit.ID, model.QcList, model.RequestUserID);
                     }
                 }
                 
@@ -579,7 +580,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 if (delete == null) throw new Exception("ไม่พบข้อมูลฟอร์ม");
 
                 delete.FlagActive = false;
-                //delete.UpdateBy = ;
+                delete.UpdateBy = model.RequestUserID;
                 delete.UpdateDate = DateTime.Now;
 
                 _context.tm_Form.Update(delete);
@@ -597,7 +598,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                     .FirstOrDefault();
 
                         formQc.FlagActive = false;
-                        //formQc.UpdateBy = ;
+                        formQc.UpdateBy = model.RequestUserID;
                         formQc.UpdateDate = DateTime.Now;
 
                         _context.tr_Form_QCCheckList.Update(formQc);
@@ -645,8 +646,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 create.FlagActive = true;
                 create.CreateDate = DateTime.Now;
                 create.UpdateDate = DateTime.Now;
-                //create.CreateBy = ;
-                //create.UpdateBy = ;
+                create.CreateBy = model.RequestUserID;
+                create.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormGroup.Add(create);
                 _context.SaveChanges();
@@ -667,7 +668,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 if (edit == null) throw new Exception("ไม่พบข้อมูลกลุ่มฟอร์ม");
 
                 edit.Name = model.GroupName;
-                //edit.UpdateBy =;
+                edit.UpdateBy = model.RequestUserID;
                 edit.UpdateDate = DateTime.Now;
 
                 _context.tm_FormGroup.Update(edit);
@@ -688,7 +689,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 if (delete == null) throw new Exception("ไม่พบข้อมูลกลุ่มฟอร์ม");
 
                 delete.FlagActive = false;
-                //delete.UpdateBy =;
+                delete.UpdateBy = model.RequestUserID;
                 delete.UpdateDate = DateTime.Now;
 
                 _context.tm_FormGroup.Update(delete);
@@ -729,8 +730,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 create.FlagActive = true;
                 create.CreateDate = DateTime.Now;
                 create.UpdateDate = DateTime.Now;
-                //create.CreateBy = ;
-                //create.UpdateBy = ;
+                create.CreateBy = model.RequestUserID;
+                create.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormPackage.Add(create);
                 _context.SaveChanges();
@@ -751,7 +752,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 edit.Name = model.PackageName;
                 edit.UpdateDate = DateTime.Now;
-                //edit.UpdateBy = ;
+                edit.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormPackage.Update(edit);
                 _context.SaveChanges();
@@ -772,7 +773,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 delete.FlagActive = false;
                 delete.UpdateDate = DateTime.Now;
-                //edit.UpdateBy = ;
+                delete.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormPackage.Update(delete);
                 _context.SaveChanges();
@@ -812,8 +813,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 create.FlagActive = true;
                 create.CreateDate = DateTime.Now;
                 create.UpdateDate = DateTime.Now;
-                //create.CreateBy = ;
-                //create.UpdateBy = ;
+                create.CreateBy = model.RequestUserID;
+                create.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormCheckList.Add(create);
                 _context.SaveChanges();
@@ -834,7 +835,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 edit.Name = model.CheckListName;
                 edit.UpdateDate = DateTime.Now;
-                //edit.UpdateBy = ;
+                edit.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormCheckList.Update(edit);
                 _context.SaveChanges();
@@ -855,7 +856,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 delete.FlagActive = false;
                 delete.UpdateDate = DateTime.Now;
-                //edit.UpdateBy = ;
+                delete.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormCheckList.Update(delete);
                 _context.SaveChanges();
@@ -871,7 +872,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             return checkListResp;
         }
 
-        private void CreateMappingQc(int formID, List<int> qcLists)
+        private void CreateMappingQc(int formID, List<int> qcLists, Guid requestUserID)
         {
             if (qcLists != null && qcLists.Count > 0)
             {
@@ -885,8 +886,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                     createData.FlagActive = true;
                     createData.CreateDate = DateTime.Now;
                     createData.UpdateDate = DateTime.Now;
-                    //createData.CreateBy = ;
-                    //createData.UpdateBy = ;
+                    createData.CreateBy = requestUserID;
+                    createData.UpdateBy = requestUserID;
                     listCreate.Add(createData);
                 }
 
@@ -895,7 +896,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-        private void UpdateMappingQc(int formID, List<int> qcLists, bool flag)
+        private void UpdateMappingQc(int formID, List<int> qcLists, bool flag, Guid requestUserID)
         {
             if (qcLists != null && qcLists.Count > 0)
             {
@@ -909,7 +910,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     updateData.FlagActive = flag;
                     updateData.UpdateDate = DateTime.Now;
-                    //updateData.UpdateBy = ;
+                    updateData.UpdateBy = requestUserID;
 
                     listUpdate.Add(updateData);
                 }

@@ -14,6 +14,8 @@ namespace Project.ConstructionTracking.Web.Models.MUserModel
 		public string ConfirmPassword { get; set; }
 
 		public string? PasswordKey { get; set; }
+		public Guid RequestUserID { get; set; }
+		public int RequestRoleID { get; set; }
 	}
 }
 

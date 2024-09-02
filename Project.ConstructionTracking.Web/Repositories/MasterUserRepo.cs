@@ -20,9 +20,9 @@ namespace Project.ConstructionTracking.Web.Repositories
         dynamic EditUser(EditUserModel model);
         dynamic DetailUser(Guid userId);
 
-        Resources UploadSignResource(string model, string appPath, Guid userId);
+        Resources UploadSignResource(string model, string appPath, Guid userId, Guid requestUserID);
 
-        bool DeleteUser(Guid userId);
+        bool DeleteUser(Guid userId, Guid requestUserID);
     }
 
 	public class MasterUserRepo : IMasterUserRepo
@@ -117,8 +117,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                     newData.FlagActive = true;
                     newData.CreateDate = DateTime.Now;
                     newData.UpdateDate = DateTime.Now;
-                    //newData.CreateBy = ;
-                    //newData.UpdateBy = ;
+                    newData.CreateBy = model.RequestUserID;
+                    newData.UpdateBy = model.RequestUserID;
 
                     _context.tm_Position.Add(newData);
                     _context.SaveChanges();
@@ -137,8 +137,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 create.FlagActive = true;
                 create.CreateDate = DateTime.Now;
                 create.UpdateDate = DateTime.Now;
-                //create.CreateBy = ;
-                //create.UpdateBy = ;
+                create.CreateBy = model.RequestUserID;
+                create.UpdateBy = model.RequestUserID;
 
                 _context.tm_User.Add(create);
                 _context.SaveChanges();
@@ -173,8 +173,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 newData.FlagActive = true;
                 newData.CreateDate = DateTime.Now;
                 newData.UpdateDate = DateTime.Now;
-                //newData.CreateBy = ;
-                //newData.UpdateBy = ;
+                newData.CreateBy = model.RequestUserID;
+                newData.UpdateBy = model.RequestUserID;
 
                 _context.tm_Position.Add(newData);
                 _context.SaveChanges();
@@ -191,7 +191,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             edit.Email = model.Email;
             edit.Mobile = model.MobileNo;
             edit.UpdateDate = DateTime.Now;
-            //edit.UpdateBy = ;
+            edit.UpdateBy = model.RequestUserID;
 
             _context.tm_User.Update(edit);
             _context.SaveChanges();
@@ -266,7 +266,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             return query;
         }
 
-        public Resources UploadSignResource(string model, string appPath, Guid userId)
+        public Resources UploadSignResource(string model, string appPath, Guid userId, Guid RequestUserID)
         {
             Resources resource = new Resources();
             Guid guidId = Guid.NewGuid();
@@ -286,7 +286,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 resource.Directory = Path.Combine(appPath, dirPath);
                 ConvertByteToImage(resource);
 
-                CreateUploadSign(userId, fileName, filePath);
+                CreateUploadSign(userId, fileName, filePath, RequestUserID);
             }
 
             return resource;
@@ -332,7 +332,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-        public bool CreateUploadSign(Guid userId, string fileName, string filePath)
+        public bool CreateUploadSign(Guid userId, string fileName, string filePath, Guid requestUserID)
         {
             tr_UserResource? userResource = _context.tr_UserResource
                                         .Where(o => o.UserID == userId && o.FlagActive == true).FirstOrDefault();
@@ -347,8 +347,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 createResource.FlagActive = true;
                 createResource.CreateDate = DateTime.Now;
                 createResource.UpdateDate = DateTime.Now;
-                //createResource.CreateBy = ;
-                //createResource.UpdateBy = ;
+                createResource.CreateBy = requestUserID;
+                createResource.UpdateBy = requestUserID;
 
                 _context.tm_Resource.Add(createResource);
                 _context.SaveChanges();
@@ -359,8 +359,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 mappingUser.FlagActive = true;
                 mappingUser.CreateDate = DateTime.Now;
                 mappingUser.UpdateDate = DateTime.Now;
-                //mappingUser.CreateBy = ;
-                //mappingUser.UpdateBy = ;
+                mappingUser.CreateBy = requestUserID;
+                mappingUser.UpdateBy = requestUserID;
 
                 _context.tr_UserResource.Add(mappingUser);
                 _context.SaveChanges();
@@ -370,7 +370,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 //update mapping user resource to false
                 userResource.FlagActive = false;
                 userResource.UpdateDate = DateTime.Now;
-                //userResource.UpdateBy = ;
+                userResource.UpdateBy = requestUserID;
 
                 _context.tr_UserResource.Update(userResource);
 
@@ -381,7 +381,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 resource.FlagActive = false;
                 resource.FlagActive = false;
                 resource.UpdateDate = DateTime.Now;
-                //userResource.UpdateBy = ;
+                userResource.UpdateBy = requestUserID;
 
                 _context.tm_Resource.Update(resource);
 
@@ -394,8 +394,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 createResource.FlagActive = true;
                 createResource.CreateDate = DateTime.Now;
                 createResource.UpdateDate = DateTime.Now;
-                //createResource.CreateBy = ;
-                //createResource.UpdateBy = ;
+                createResource.CreateBy = requestUserID;
+                createResource.UpdateBy = requestUserID;
 
                 _context.tm_Resource.Add(createResource);
                 _context.SaveChanges();
@@ -407,8 +407,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 mappingUser.FlagActive = true;
                 mappingUser.CreateDate = DateTime.Now;
                 mappingUser.UpdateDate = DateTime.Now;
-                //mappingUser.CreateBy = ;
-                //mappingUser.UpdateBy = ;
+                mappingUser.CreateBy = requestUserID;
+                mappingUser.UpdateBy = requestUserID;
 
                 _context.tr_UserResource.Add(mappingUser);
                 _context.SaveChanges();
@@ -416,7 +416,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             return true;
         }
 
-        public bool DeleteUser(Guid userId)
+        public bool DeleteUser(Guid userId, Guid requestUserID)
         {
             tm_User? delete = _context.tm_User
                             .Where(o => o.ID == userId && o.FlagActive == true).FirstOrDefault();
@@ -425,7 +425,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             delete.FlagActive = false;
             delete.UpdateDate = DateTime.Now;
-            //delete.UpdateBy = ;
+            delete.UpdateBy = requestUserID;
 
             _context.tm_User.Update(delete);
             _context.SaveChanges();

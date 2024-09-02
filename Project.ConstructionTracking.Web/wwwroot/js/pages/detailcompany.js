@@ -25,9 +25,9 @@ const detailCom = {
 
                 var data = {
                     CompanyVendorID: companyId,
+                    CompanyVendorName: $('#company-name').val(),
                     ProJectIDList: selectedProjects
                 }
-                console.log(data);
 
                 detailCom.MappingProject(data);
             }

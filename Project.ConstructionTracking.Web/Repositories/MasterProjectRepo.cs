@@ -20,7 +20,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         dynamic GetFormTypeList(int projectTypeId);
 
-        dynamic DeleteProject(Guid projectID);
+        dynamic DeleteProject(Guid projectID, Guid requestUserID);
 
         EditProjectResp EditProject(EditProjectModel model);
     }
@@ -141,8 +141,8 @@ namespace Project.ConstructionTracking.Web.Repositories
             create.FlagActive = true;
             create.CreateDate = DateTime.Now;
             create.UpdateDate = DateTime.Now;
-            //create.CreateBy = ;
-            //create.UpdateBy = ;
+            create.CreateBy = model.RequestUserID;
+            create.UpdateBy = model.RequestUserID;
 
             _context.tm_Project.Add(create);
             _context.SaveChanges();
@@ -163,7 +163,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             return query;
         }
 
-        public dynamic DeleteProject(Guid projectID)
+        public dynamic DeleteProject(Guid projectID, Guid requestUserID)
         {
             bool verify = VerifyFormTypeUsing(projectID);
             if (verify) throw new Exception("ข้อมูลโครงการถูกใช้งานแล้ว");
@@ -173,7 +173,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             delete.FlagActive = false;
             delete.UpdateDate = DateTime.Now;
-            //delete.UpdateBy = ;
+            delete.UpdateBy = requestUserID;
 
             _context.tm_Project.Update(delete);
             _context.SaveChanges();
@@ -199,7 +199,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             edit.ProjectCode = model.ProjectCode;
             edit.ProjectName = model.ProjectName;
             edit.UpdateDate = DateTime.Now;
-            //edit.UpdateBy =;
+            edit.UpdateBy = model.RequestUserID;
 
             _context.tm_Project.Update(edit);
 
@@ -229,10 +229,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                         createNew.ModelTypeID = list.ModelID;
                         createNew.FormTypeID = list.FormTypeID;
                         createNew.FlagActive = true;
-                        //createNew.CreateBy =;
+                        createNew.CreateBy = model.RequestUserID;
                         createNew.CreateDate = DateTime.Now;
                         createNew.UpdateDate = DateTime.Now;
-                        //createNew.UpdateBy = ;
+                        createNew.UpdateBy = model.RequestUserID;
 
                         _context.tr_ProjectModelForm.Add(createNew);
                         _context.SaveChanges();
@@ -243,7 +243,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         {
                             editModel.FormTypeID = list.FormTypeID;
                             editModel.UpdateDate = DateTime.Now;
-                            //editModel.UpdateBy = ;
+                            editModel.UpdateBy = model.RequestUserID;
 
                             _context.tr_ProjectModelForm.Update(editModel);
 
@@ -268,7 +268,7 @@ namespace Project.ConstructionTracking.Web.Repositories
         private bool VerifyFormTypeUsing(Guid projectId)
         {
             bool query = (from pmf in _context.tr_ProjectModelForm
-                          join u in _context.tm_Unit on pmf.ModelTypeID equals u.ModelTypeID
+                          join u in _context.tm_Unit on pmf.ModelTypeID equals u.ModelTypeID 
                           join uf in _context.tr_UnitForm on u.UnitID equals uf.UnitID
                           where pmf.ProjectID == projectId && pmf.FormTypeID != null
                           select new { pmf, u, uf }

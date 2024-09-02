@@ -74,7 +74,6 @@ const detail = {
                     PackageID: $("#packageID").val(),
                     PackageName: $("#packageName").val()
                 }
-                console.log('check')
                 detail.DeleteCheckList(data);
             } else if ( groupID && packageID) {
                 data = {
@@ -84,7 +83,7 @@ const detail = {
                     GroupID: $("#groupID").val(),
                     GroupName: $("#groupName").val(),
                 }
-                console.log('pack')
+                
                 detail.DeletePackage(data);
             } else if (formID && groupID) {
                 data = {
@@ -94,7 +93,7 @@ const detail = {
                     FormID: $("#formID").val(),
                     FormName: $("#formName").val()
                 }
-                console.log('group')
+                
                 detail.DeleteGroup(data);
             } else if (formID) {
                 data = {
@@ -102,7 +101,6 @@ const detail = {
                     FormTypeID: id,
                     FormID: $("#formID").val()
                 }
-                console.log('form')
                 detail.DeleteForm(data);
             } 
         })
@@ -466,7 +464,7 @@ const detail = {
                     
                         // Retrieve data
                         var groupId = $(e.currentTarget).attr('data-id');
-                        console.log(id ,value)
+                        
                         var data = {
                             GroupId: groupId,
                         };
@@ -485,7 +483,7 @@ const detail = {
                                     $('#g-form-id').val(id);
                                     $('#group-name').val(resp.data.Name);
                                     $('#group-id').val(resp.data.ID);
-
+                                    
                                     clearErrorsGroup();
                                     // Show the modal
                                     $("#partial-modal-group").modal('show');
@@ -500,14 +498,13 @@ const detail = {
 
                     // Other bindings like form-delete can also be handled similarly
                     $(document).on('click', "button[data-action='form-g-delete']", function (e) {
-                        var groupId = $(e.currentTarget).attr('data-id');
-
                         //clear data in modal delete
                         $('#formID').val('');
                         $('#groupID').val('');
                         $('#packageID').val('');
                         $('#checklistID').val('');
 
+                        var groupId = $(e.currentTarget).attr('data-id');
                         $('#groupID').val(groupId);
                         $('#formID').val(id);
                         $('#formName').val(value);
@@ -843,14 +840,29 @@ const detail = {
             data: model,
             success: function (resp) {
                 if (resp.success) {
-                    if ($.fn.DataTable.isDataTable('#tbl-list-fg')) {
-                        $('#tbl-list-fg').DataTable().clear().destroy();
-                    }
-                    
-                    detail.FormGroup(model.FormID, model.FormName);
-                }
-                else {
-                    alert("Error: " + resp.message);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำรายการสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $("#partial-modal-group").modal('hide');
+
+                            if ($.fn.DataTable.isDataTable('#tbl-list-fg')) {
+                                $('#tbl-list-fg').DataTable().clear().destroy();
+                            }
+
+                            detail.FormGroup(model.FormID, model.FormName);
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
@@ -868,13 +880,27 @@ const detail = {
             data: model,
             success: function (resp) {
                 if (resp.success) {
-                    if ($.fn.DataTable.isDataTable('#tbl-list-fg')) {
-                        $('#tbl-list-fg').DataTable().clear().destroy();
-                    }
-                    detail.FormGroup(model.FormID, model.FormName);
-                }
-                else {
-                    alert("Error: " + resp.message);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการลบข้อมูลสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if ($.fn.DataTable.isDataTable('#tbl-list-fg')) {
+                                $('#tbl-list-fg').DataTable().clear().destroy();
+                            }
+
+                            detail.FormGroup(model.FormID, model.FormName);
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำการลบข้อมูลไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
@@ -892,13 +918,28 @@ const detail = {
             data: model,
             success: function (resp) {
                 if (resp.success) {
-                    if ($.fn.DataTable.isDataTable('#tbl-list-fp')) {
-                        $('#tbl-list-fp').DataTable().clear().destroy();
-                    }
-                    detail.FormPackage(model.GroupID, model.GroupName);
-                }
-                else {
-                    alert("Error: " + resp.message);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำรายการสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $("#partial-modal-package").modal('hide');
+
+                            if ($.fn.DataTable.isDataTable('#tbl-list-fp')) {
+                                $('#tbl-list-fp').DataTable().clear().destroy();
+                            }
+                            detail.FormPackage(model.GroupID, model.GroupName);
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
@@ -916,13 +957,26 @@ const detail = {
             data: model,
             success: function (resp) {
                 if (resp.success) {
-                    if ($.fn.DataTable.isDataTable('#tbl-list-fp')) {
-                        $('#tbl-list-fp').DataTable().clear().destroy();
-                    }
-                    detail.FormPackage(model.GroupID, model.GroupName);
-                }
-                else {
-                    alert("Error: " + resp.message);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการลบข้อมูลสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if ($.fn.DataTable.isDataTable('#tbl-list-fp')) {
+                                $('#tbl-list-fp').DataTable().clear().destroy();
+                            }
+                            detail.FormPackage(model.GroupID, model.GroupName);
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำการลบข้อมูลไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
@@ -940,13 +994,28 @@ const detail = {
             data: model,
             success: function (resp) {
                 if (resp.success) {
-                    if ($.fn.DataTable.isDataTable('#tbl-list-fcl')) {
-                        $('#tbl-list-fcl').DataTable().clear().destroy();
-                    }
-                    detail.FormCheck(model.PackageID, model.PackageName);
-                }
-                else {
-                    alert("Error: " + resp.message);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำรายการสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $("#partial-modal-checklist").modal('hide');
+
+                            if ($.fn.DataTable.isDataTable('#tbl-list-fcl')) {
+                                $('#tbl-list-fcl').DataTable().clear().destroy();
+                            }
+                            detail.FormCheck(model.PackageID, model.PackageName);
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
@@ -964,13 +1033,26 @@ const detail = {
             data: model,
             success: function (resp) {
                 if (resp.success) {
-                    if ($.fn.DataTable.isDataTable('#tbl-list-fcl')) {
-                        $('#tbl-list-fcl').DataTable().clear().destroy();
-                    }
-                    detail.FormCheck(model.PackageID, model.PackageName);
-                }
-                else {
-                    alert("Error: " + resp.message);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการลบข้อมูลสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if ($.fn.DataTable.isDataTable('#tbl-list-fcl')) {
+                                $('#tbl-list-fcl').DataTable().clear().destroy();
+                            }
+                            detail.FormCheck(model.PackageID, model.PackageName);
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำการลบข้อมูลไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {

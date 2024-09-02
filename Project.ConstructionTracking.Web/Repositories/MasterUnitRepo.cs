@@ -18,7 +18,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         dynamic CreateUnit(CreateUnitModel model);
         dynamic EditUnit(EditUnitModel model);
-        dynamic DeleteUnit(Guid unitID);
+        dynamic DeleteUnit(Guid unitID, Guid requestUserID);
     }
 
 	public class MasterUnitRepo : IMasterUnitRepo
@@ -163,9 +163,9 @@ namespace Project.ConstructionTracking.Web.Repositories
             createUnit.TitledeedArea = model.UnitArea;
             createUnit.UnitStatusID = SystemConstant.Unit_Status.FREE;
             createUnit.FlagActive = true;
-            //createUnit.CreateBy = ; 
+            createUnit.CreateBy = model.RequestUserID; 
             createUnit.CreateDate = DateTime.Now;
-            //createUnit.UpdateBy = ;
+            createUnit.UpdateBy = model.RequestUserID;
             createUnit.UpdateDate = DateTime.Now;
 
             _context.tm_Unit.Add(createUnit);
@@ -183,7 +183,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             edit.PONo = model.PONo;
             edit.StartDate = model.StartDate;
             edit.UpdateDate = DateTime.Now;
-            //edit.UpdateBy = ;
+            edit.UpdateBy = model.RequestUserID;
 
             int sumDuration = 0;
 
@@ -245,7 +245,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             return query;
         }
 
-        public dynamic DeleteUnit(Guid unitID)
+        public dynamic DeleteUnit(Guid unitID, Guid requestUserID)
         {
             bool verify = ValidateDeleteUnit(unitID);
             if (!verify) throw new Exception("ข้อมูลยูนิตถูกใช้งานแล้ว");
@@ -255,7 +255,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             delete.FlagActive = false;
             delete.UpdateDate = DateTime.Now;
-            //delete.UpdateBy = ;
+            delete.UpdateBy = requestUserID;
 
             _context.tm_Unit.Update(delete);
             _context.SaveChanges();

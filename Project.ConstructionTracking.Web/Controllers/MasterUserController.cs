@@ -92,6 +92,10 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
                 model.PasswordKey = _appSettings.PasswordKey;
                 var resultData = _masterUserService.CreateUser(model);
 
@@ -124,7 +128,12 @@ namespace Project.ConstructionTracking.Web.Controllers
                 //model.ApplicationPath = AppDomain.CurrentDomain.BaseDirectory;
                 model.ApplicationPath = _hosting.ContentRootPath;
 
-                if(model.SignUser != null)
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
+                if (model.SignUser != null)
                 {
                     validateUnitEquipmentSign(model.SignUser);
                 }
@@ -163,7 +172,12 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
-                var resultData = _masterUserService.DeleteUser(userId);
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                Guid RequestUserID = Guid.Parse(userID);
+                int RequestRoleID = Int32.Parse(RoleID);
+
+                var resultData = _masterUserService.DeleteUser(userId, RequestUserID);
 
                 return Json(
                           new

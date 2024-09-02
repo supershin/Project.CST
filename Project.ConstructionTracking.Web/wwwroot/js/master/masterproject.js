@@ -281,8 +281,7 @@
                     $('#e-project-id').val(resp.data.ProjectID);
                     $('#e-project-code').val(resp.data.ProjectCode);
                     $('#e-project-name').val(resp.data.ProjectName);
-                    console.log(resp.data.ProjectCode);
-                    console.log(resp.data.ProjectName);
+
                     // Clear previous rows in the table
                     $('#modal-format table tbody').empty();
 

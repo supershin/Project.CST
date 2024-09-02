@@ -369,6 +369,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 FormResp resp = _masterForm.ActionForm(model);
                 if (resp == null) throw new Exception("เกิดข้อผิดพลาดในการอัพเดทฟอร์ม");
 
@@ -393,6 +398,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 FormResp delete = _masterForm.ActionForm(model);
                 if (delete == null) throw new Exception("เกิดข้อผิดพลาดในการลบฟอร์ม");
 
@@ -417,6 +427,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 GroupResp resp = _masterForm.ActionFormGroup(model);
                 if (resp == null) throw new Exception("เกิดข้อผิดพลาดในการอัพเดทกลุ่มฟอร์ม");
 
@@ -441,6 +456,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 GroupResp delete = _masterForm.ActionFormGroup(model);
                 if (delete == null) throw new Exception("เกิดข้อผิดพลาดในการลบกลุ่มฟอร์ม");
 
@@ -465,6 +485,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 PackageResp resp = _masterForm.ActionFormPackage(model);
                 if (resp == null) throw new Exception("เกิดข้อผิดพลาดในการอัพเดทแพ็คเกจฟอร์ม");
 
@@ -489,6 +514,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 PackageResp delete = _masterForm.ActionFormPackage(model);
                 if (delete == null) throw new Exception("เกิดข้อผิดพลาดในการลบแพ็คเกจฟอร์ม");
 
@@ -513,6 +543,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 CheckListResp resp = _masterForm.ActionFormCheckList(model);
                 if (resp == null) throw new Exception("เกิดข้อผิดพลาดในการอัพเดทฟอร์มรายการตรวจสอบ");
 
@@ -537,6 +572,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 CheckListResp delete = _masterForm.ActionFormCheckList(model);
                 if (delete == null) throw new Exception("เกิดข้อผิดพลาดในการลบฟอร์มรายการตรวจสอบ");
 
