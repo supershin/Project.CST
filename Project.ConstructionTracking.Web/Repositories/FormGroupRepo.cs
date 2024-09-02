@@ -64,8 +64,7 @@ namespace Project.ConstructionTracking.Web.Repositories
         public FormGroupDetail GetFormGroupDetail(Guid unitFormId)
         {
             // Step 1: Fetch the UnitForm and related actions (PE, PM, and PJM)
-            var result = (from t1 in _context.tr_UnitForm
-                          where t1.ID == unitFormId
+            var result = (from t1 in _context.tr_UnitForm                          
                           join t2 in _context.tr_UnitFormAction.Where(a => a.RoleID == 1)
                               on t1.ID equals t2.UnitFormID into peActions
                           from peAction in peActions.DefaultIfEmpty()
@@ -78,12 +77,14 @@ namespace Project.ConstructionTracking.Web.Repositories
                           join t5 in _context.tm_Vendor.Where(a => a.FlagActive == true)
                                on t1.VendorID equals t5.ID into venderNs
                           from venderN in venderNs.DefaultIfEmpty()
+                          where t1.ID == unitFormId
                           select new
                           {
                               t1.ID,
                               t1.Grade,
                               t1.FormID,
-                              venderName = venderN.Name,
+                              venderName = venderN != null ? venderN.Name : "",
+                              venderID = venderN != null ? venderN.ID : 0,
                               UnitFormstatus = t1.StatusID,
                               PE_ActionType = peAction != null ? peAction.ActionType : null,
                               PE_StatusID = peAction != null ? peAction.StatusID : null,
@@ -132,6 +133,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 Grade = result.Grade,
                 FormID = result.FormID,
                 VenderName = result.venderName,
+                VenderID = result.venderID,
                 UnitFormstatusID = result.UnitFormstatus,
                 UnitFormstatus = result.UnitFormstatus switch
                 {

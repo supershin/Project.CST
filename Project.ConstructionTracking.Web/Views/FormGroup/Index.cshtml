@@ -14,6 +14,7 @@
     var RoleID = ViewBag.RoleID;
     var grade = FormGroupDetail?.Grade;
     var VenderName = FormGroupDetail?.VenderName;
+    var VenderValue = FormGroupDetail?.VenderID;
     var UnitFormstatusID = FormGroupDetail?.UnitFormstatusID;
     var UnitFormstatus = FormGroupDetail?.UnitFormstatus;
     var PE_ActionType = FormGroupDetail?.PE_ActionType;
@@ -562,6 +563,24 @@
                                         <div id="autocomplete-list" class="autocomplete-items"></div>
                                         <input type="hidden" id="selectedVendorValue" name="selectedVendorValue">
                                     </div>
+                                 </div>
+                            }
+
+                           <!-- Card B -->
+                            <div id="cardB" class="col-sm-12 mt-1 mb-2">
+                                <div class="col-sm-12 mt-1 mb-2" style="position: relative;">
+                                    <label class="form-label">ผู้รับเหมา</label>
+                                    <input type="text" class="form-control" name="example-disabled-input" placeholder="Disabled..." value="@(!string.IsNullOrEmpty(VenderName) ? VenderName : "ยังไม่ได้เลือกผู้รับเหมา")" disabled>
+                                    <!-- Hidden input for VenderName -->
+                                    <input type="hidden" id="hiddenVenderName" name="hiddenVenderName" value="@VenderName">
+                                </div>
+                            </div>
+
+
+                            @if (ViewBag.UserRole == "1")
+                            {
+                                <!-- Card C -->
+                                <div id="cardC" class="col-sm-12 mt-1 mb-2">
                                     <label for="signature-pad" class="form-label">ลงลายเซ็นผู้รับเหมา</label>
                                     <div id="signature-pad" class="signature-pad" style="justify-content:center;align-items:center;display:flex;">
                                         <div class="signature-pad--body" style="width:340px;height:260px; background-color: grey;">
@@ -574,16 +593,8 @@
                                 </div>
                             }
 
-                            <!-- Card B -->
-                            <div id="cardB" class="col-sm-12 mt-1 mb-2">
-                                <div class="col-sm-12 mt-1 mb-2" style="position: relative;">
-                                    <label class="form-label">ผู้รับเหมา</label>
-                                    <input type="text" class="form-control" name="example-disabled-input" placeholder="Disabled..."
-                                           value="@(!string.IsNullOrEmpty(VenderName) ? VenderName : "ยังไม่ได้เลือกผู้รับเหมา")" disabled>
-
-                                    <!-- Hidden input for VenderName -->
-                                    <input type="hidden" id="hiddenVenderName" name="hiddenVenderName" value="@VenderName">
-                                </div>
+                            <!-- Card D -->
+                            <div id="cardD" class="col-sm-12 mt-1 mb-2">
                                 <label class="form-label">ลายเซ็นผู้รับเหมา</label>
                                 @if (!string.IsNullOrEmpty(FilePath))
                                 {
@@ -685,13 +696,26 @@
     <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+
         $(document).ready(() => {
             var cardA = $("#cardA");
             var cardB = $("#cardB");
+            var cardC = $("#cardC");
+            var cardD = $("#cardD");
             var btnToggleCard = $("#btn-toggle-card");
+            var venderNameInput = $("#ddlList"); // Input for vendor name
+            var hiddenVenderName = $("#hiddenVenderName").val(); // Get the value from the hidden input
 
             // Initially set the visibility based on FilePath
             if ("@FilePath" === "") {
+                cardC.show();
+                cardD.hide();
+            } else {
+                cardD.show();
+                cardC.hide();
+            }
+
+            if (hiddenVenderName === "") {
                 cardA.show();
                 cardB.hide();
             } else {
@@ -703,17 +727,26 @@
             btnToggleCard.click(function () {
                 cardA.toggle();
                 cardB.toggle();
+                cardC.toggle();
+                cardD.toggle();
             });
-
 
             unitEquipment.init();
 
+            // Prepare vendor list for autocomplete
             var availableVendors = [
-            @foreach (var item in ListVender)
-                {
-                    @Html.Raw($"{{ text: \"{item.Text}\", value: \"{item.Value}\" }},")
-                }
+        @foreach (var item in ListVender)
+        {
+            @Html.Raw($"{{ text: \"{item.Text}\", value: \"{item.Value}\" }},")
+        }
             ];
+
+            // Include the existing vendor name and value as the first option
+            if (hiddenVenderName !== "") {
+                availableVendors.unshift({ text: hiddenVenderName, value: "@VenderValue" });
+                venderNameInput.val(hiddenVenderName);
+                $("#selectedVendorValue").val("@VenderValue"); // Set hidden input for selected vendor
+            }
 
             function autocomplete(input, array) {
                 var currentFocus;
@@ -790,6 +823,9 @@
 
             autocomplete(document.getElementById("ddlList"), availableVendors);
         });
+
+
+
 
         function toggleComments(event, groupId) {
             event.stopPropagation(); // Prevent the event from bubbling up and triggering form submission
