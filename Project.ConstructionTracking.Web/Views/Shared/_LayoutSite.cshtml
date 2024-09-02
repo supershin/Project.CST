@@ -170,7 +170,7 @@
                     </div>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
-                            <span class="avatar avatar-sm" style="background-image: url(./lib/core-ui/static/avatars/img9.png)"></span>
+                            <span class="avatar avatar-sm" style="background-image: url(/lib/core-ui/static/avatars/img9.png)"></span>
                             <div class="d-none d-xl-block ps-2">
                                 <div>@ViewBag.Name</div>
                                 <div class="mt-1 small text-secondary">
@@ -185,6 +185,14 @@
                                     else if (ViewBag.UserRole == SystemConstant.UserRole.PJM.ToString())
                                     {
                                         @SystemConstant.UserRole_Desc.PJM;
+                                    }
+                                    else if (ViewBag.UserRole == SystemConstant.UserRole.QC.ToString())
+                                    {
+                                        @SystemConstant.UserRole_Desc.QC;
+                                    }
+                                    else if (ViewBag.UserRole == SystemConstant.UserRole.ADMIN.ToString())
+                                    {
+                                        @SystemConstant.UserRole_Desc.ADMIN;
                                     }
                                 </div>
                             </div>

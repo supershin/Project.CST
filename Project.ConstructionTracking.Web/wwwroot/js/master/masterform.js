@@ -192,8 +192,8 @@
             "order": [[3, "desc"]],
             "columns": [
                 { 'data': 'Name', "className": "text-center " },
-                { 'data': 'FormName', "className": "text-center " },
-                { 'data': 'Description', "className": "text-center " },
+                { 'data': 'FormName', "className": "text-left " },
+                { 'data': 'Description', "className": "text-left " },
                 { 'data': 'UpdateDate', "className": "text-center " },
                 {
                     'data': 'ID',

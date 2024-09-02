@@ -214,8 +214,8 @@
             "ordering": true,
             "order": [[2, "desc"]],
             "columns": [
-                { 'data': 'ProjectCode', "className": "text-center " },
-                { 'data': 'ProjectName', "className": "text-center " },
+                { 'data': 'ProjectCode', "className": "text-center" },
+                { 'data': 'ProjectName', "className": "text-left " },
                 { 'data': 'UpdateDate', "className": "text-center " },
                 {
                     'data': 'ProjectId',
