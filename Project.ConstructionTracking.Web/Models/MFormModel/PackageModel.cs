@@ -8,6 +8,9 @@ namespace Project.ConstructionTracking.Web.Models.MFormModel
         public int? GroupID { get; set; }
         public int? PackageID { get; set; }
         public string PackageName { get; set; } = default!;
+
+        public Guid RequestUserID { get; set; }
+        public int RequestRoleID { get; set; }
     }
 }
 

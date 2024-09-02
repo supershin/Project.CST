@@ -1,8 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model Project.ConstructionTracking.Web.Models.MUnitModel.MasterUnitResp
 
 <div class="modal fade" id="modal-unit-e" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg" role="document">
@@ -13,39 +9,41 @@
             </div>
             <div class="modal-body">
                 <div class="row">
+                    <input type="hidden" id="edit-unit-id" />
+                    <input type="hidden" id="edit-project-id" />
                     <div class="col-lg-12 mb-3">
                         <label class="form-label">ผู้ควบคุมงาน</label>
-                        <select class="form-control" name="vendor">
+                        <select class="form-control" id="vendor">
                             <option value="">กรุณาเลือกผู้ควบคุมงาน</option>
-                            <!-- Add options here -->
-                            <option value="1">Vendor 1</option>
-                            <option value="2">Vendor 2</option>
-                            <!-- Add more options as needed -->
+                            <!-- Options will be populated dynamically -->
                         </select>
+                        <span id="vendor-error" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12 mb-3">
                         <label class="form-label">PO</label>
-                        <input type="text" class="form-control" name="po-no">
+                        <input type="text" class="form-control" id="po-no">
+                        <span id="po-no-error" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12 mb-3">
                         <label class="form-label">วันที่เริ่มทำงาน</label>
-                        <input class="form-control" type="date" id="Date">
+                        <input class="form-control" type="date" id="start-date">
+                        <span id="start-date-error" class="text-danger"></span>
                     </div>
                 </div>
             </div>
-
             <div class="modal-footer">
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     Cancel
                 </a>
-                <a href="#" class="btn btn-success ms-auto" data-bs-dismiss="modal">
+                <button href="#" class="btn btn-success ms-auto" id="edit-unit-save">
                     บันทึก
-                </a>
+                </button>
             </div>
         </div>
     </div>
 </div>
+

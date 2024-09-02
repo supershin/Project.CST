@@ -24,6 +24,7 @@
                                 <option value="@data.BUID">@data.BUName</option>
                             }
                         </select>
+                        <span id="e-bu-type-error" class="text-danger"></span>
                     </div>
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">ประเภทโครงการ</label>
@@ -34,17 +35,20 @@
                                 <option value="@data.ProjectTypeID">@data.ProjectTypeName</option>
                             }
                         </select>
+                        <span id="e-project-type-error" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">รหัสโครงการ</label>
                         <input type="text" class="form-control" id="e-project-code">
+                        <span id="e-project-code-error" class="text-danger"></span>
                         <input type="hidden" id="e-project-id" />
                     </div>
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">ชื่อโครงการ</label>
                         <input type="text" class="form-control" id="e-project-name">
+                        <span id="e-project-name-error" class="text-danger"></span>
                     </div>
                 </div>
             </div>

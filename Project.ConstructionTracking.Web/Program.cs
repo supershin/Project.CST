@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Project.ConstructionTracking.Web.Data;
+using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Repositories;
 using Project.ConstructionTracking.Web.Services;
 
@@ -11,6 +13,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ContructionTrackingDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("ContructionTrackingStrings")));
 
+// Add Config appsetting.json
+builder.Services.AddOptions();
+builder.Services.Configure<AppSettings>(
+    builder.Configuration.GetSection("AppSettings"));
 
 builder.Services.AddControllers().AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);
 //scope
@@ -50,9 +56,9 @@ builder.Services.AddScoped<IPMApproveRepo, PMApproveRepo>();
 builder.Services.AddScoped<IMasterFormService, MasterFormService>();
 builder.Services.AddScoped<IMasterFormRepo, MasterFormRepo>();
 
-
 builder.Services.AddScoped<IPJMApproveService, PJMApproveService>();
 builder.Services.AddScoped<IPJMApproveRepo, PJMApproveRepo>();
+
 builder.Services.AddScoped<IMasterCompanyService, MasterCompanyService>();
 builder.Services.AddScoped<IMasterCompanyRepo, MasterCompanyRepo>();
 
@@ -61,6 +67,12 @@ builder.Services.AddScoped<IMasterUnitRepo, MasterUnitRepo>();
 
 builder.Services.AddScoped<IUnLockPassConditionService, UnLockPassConditionService>();
 builder.Services.AddScoped<IUnLockPassConditionRepo, UnLockPassConditionRepo>();
+
+builder.Services.AddScoped<IMasterUserService, MasterUserService>();
+builder.Services.AddScoped<IMasterUserRepo, MasterUserRepo>();
+
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<ILoginRepo, LoginRepo>();
 
 var app = builder.Build();
 
@@ -78,6 +90,13 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "Upload")),
+    RequestPath = "/Upload"
+});
 
 app.MapControllerRoute(
     name: "default",

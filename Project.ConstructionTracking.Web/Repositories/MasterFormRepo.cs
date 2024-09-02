@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
@@ -135,9 +136,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                     create.Description = model.FormTypeDesc;
                     create.FlagActive = true;
                     create.CreateDate = DateTime.Now;
-                    //Create.CreateBy = ; // wait for permission login
+                    create.CreateBy = model.RequestUserID; 
                     create.UpdateDate = DateTime.Now;
-                    //Create.UpdateBy = ; // wait for permission login
+                    create.UpdateBy = model.RequestUserID; 
 
                     _context.tm_FormType.Add(create);
                     _context.SaveChanges();
@@ -167,7 +168,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     edit.Name = model.FormTypeName;
                     edit.Description = model.FormTypeDesc;
                     edit.UpdateDate = DateTime.Now;
-                    //Edit.UpdateBy = ; // wait for permission login
+                    edit.UpdateBy = model.RequestUserID;
 
                     // condition for check formtype using
                     bool verify = VerifyFormTypeUsing((int)model.FormTypeID);
@@ -198,7 +199,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     delete.FlagActive = false;
                     delete.UpdateDate = DateTime.Now;
-                    //delete.UpdateBy = ; // wait for permission login
+                    delete.UpdateBy = model.RequestUserID;
 
                     // condition for check formtype using
                     bool verify = VerifyFormTypeUsing((int)model.FormTypeID);
@@ -448,8 +449,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 create.FlagActive = true;
                 create.CreateDate = DateTime.Now;
                 create.UpdateDate = DateTime.Now;
-                //create.CreateBy = ;
-                //create.UpdateBy = ;
+                create.CreateBy = model.RequestUserID;
+                create.UpdateBy = model.RequestUserID;
 
                 _context.tm_Form.Add(create);
                 _context.SaveChanges();
@@ -468,8 +469,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                             FlagActive = true,
                             CreateDate = DateTime.Now,
                             UpdateDate = DateTime.Now,
-                            //CreateBy = ,
-                            //UpdateBy = ,
+                            CreateBy = model.RequestUserID,
+                            UpdateBy = model.RequestUserID,
                         };
                         qcCheckList.Add(createQc);
                     }
@@ -502,82 +503,61 @@ namespace Project.ConstructionTracking.Web.Repositories
                 edit.Progress = model.Progress;
                 edit.DurationDay = model.Duration;
                 edit.UpdateDate = DateTime.Now;
-                //edit.UpdateBy = ;
+                edit.UpdateBy = model.RequestUserID;
 
                 _context.tm_Form.Update(edit);
                 _context.SaveChanges();
 
                 // check qc in form 
-                List<int> qc = _context.tr_Form_QCCheckList
-                                            .Where(o => o.FormID == model.FormID && o.FlagActive == true)
-                                            .Select(o => o.ID).ToList();
-                if (qc.Count > 0)
+                List<tr_Form_QCCheckList> qcAll = _context.tr_Form_QCCheckList
+                                            .Where(o => o.FormID == model.FormID)
+                                            .ToList();
+                List<int> activeQc = qcAll.Where(o => o.FlagActive == true)
+                                    .Select(o => o.CheckListID.Value).ToList();
+
+                List<int> inActiveQc = qcAll.Where(o => o.FlagActive == false)
+                                    .Select(o => o.CheckListID.Value).ToList();
+
+                List<int> newQc = null;
+
+                if (qcAll.Count > 0)
                 {
                     // Check if model.QcList is null
-                    IEnumerable<int> checkQc;
                     if (model.QcList == null)
                     {
-                        // If model.QcList is null, remove all items in qc
-                        checkQc = qc;
+                        // If no projects are selected, deactivate all active projects
+                        UpdateMappingQc(edit.ID, activeQc, false, model.RequestUserID);
                     }
                     else
                     {
-                        checkQc = qc.Except(model.QcList);
-
-                        IEnumerable<int> newQcs = model.QcList.Except(qc);
-
-                        // Add these new items to `qc`
-                        foreach (var newItem in newQcs)
+                        newQc = model.QcList.Except(activeQc).Except(inActiveQc).ToList();
+                        if (newQc.Any())
                         {
-                            tr_Form_QCCheckList? qcForm = new tr_Form_QCCheckList
-                            {
-                                FormID = model.FormID,
-                                CheckListID = newItem,
-                                FlagActive = true,
-                                CreateDate = DateTime.Now,
-                                UpdateDate = DateTime.Now,
-                                //CreateBy = ,
-                                //UpdateBy = ,
-                            };
-
-                            _context.tr_Form_QCCheckList.Add(qcForm);
+                            CreateMappingQc(edit.ID, newQc, model.RequestUserID);
                         }
-                    }
-                    foreach (var data in checkQc)
-                    {
-                        tr_Form_QCCheckList? qcForm = _context.tr_Form_QCCheckList
-                                                    .Where(o => o.ID == data && o.FormID == model.FormID)
-                                                    .FirstOrDefault();
 
-                        qcForm.FlagActive = false;
-                        //qcForm.UpdateBy = ;
-                        qcForm.UpdateDate = DateTime.Now;
+                        // Deactivate projects that are no longer selected
+                        var qcToDeactivate = activeQc.Except(model.QcList).ToList();
+                        if (qcToDeactivate.Any())
+                        {
+                            UpdateMappingQc(edit.ID, qcToDeactivate, false, model.RequestUserID);
+                        }
 
-                        _context.tr_Form_QCCheckList.Update(qcForm);
-                        _context.SaveChanges();
+                        // Activate inactive projects that are now selected
+                        var qcToActivate = inActiveQc.Intersect(model.QcList).ToList();
+                        if (qcToActivate.Any())
+                        {
+                            UpdateMappingQc(edit.ID, qcToActivate, true, model.RequestUserID);
+                        }
                     }
                 }
                 else
                 {
-                    var qcCheckList = new List<tr_Form_QCCheckList>();
-
-                    foreach (var value in model.QcList)
+                    // If there are no existing projects, create mappings for all selected projects
+                    if (model.QcList != null && model.QcList.Any())
                     {
-                        tr_Form_QCCheckList createQc = new tr_Form_QCCheckList
-                        {
-                            FormID = model.FormID,
-                            CheckListID = value,
-                            FlagActive = true,
-                            CreateDate = DateTime.Now,
-                            UpdateDate = DateTime.Now,
-                            //CreateBy = ,
-                            //UpdateBy = ,
-                        };
-                        qcCheckList.Add(createQc);
+                        CreateMappingQc(edit.ID, model.QcList, model.RequestUserID);
                     }
-
-                    _context.tr_Form_QCCheckList.AddRange(qcCheckList);
-                    _context.SaveChanges();
                 }
                 
                 formResp = new FormResp()
@@ -600,7 +580,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 if (delete == null) throw new Exception("ไม่พบข้อมูลฟอร์ม");
 
                 delete.FlagActive = false;
-                //delete.UpdateBy = ;
+                delete.UpdateBy = model.RequestUserID;
                 delete.UpdateDate = DateTime.Now;
 
                 _context.tm_Form.Update(delete);
@@ -618,7 +598,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                     .FirstOrDefault();
 
                         formQc.FlagActive = false;
-                        //formQc.UpdateBy = ;
+                        formQc.UpdateBy = model.RequestUserID;
                         formQc.UpdateDate = DateTime.Now;
 
                         _context.tr_Form_QCCheckList.Update(formQc);
@@ -666,8 +646,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 create.FlagActive = true;
                 create.CreateDate = DateTime.Now;
                 create.UpdateDate = DateTime.Now;
-                //create.CreateBy = ;
-                //create.UpdateBy = ;
+                create.CreateBy = model.RequestUserID;
+                create.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormGroup.Add(create);
                 _context.SaveChanges();
@@ -688,7 +668,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 if (edit == null) throw new Exception("ไม่พบข้อมูลกลุ่มฟอร์ม");
 
                 edit.Name = model.GroupName;
-                //edit.UpdateBy =;
+                edit.UpdateBy = model.RequestUserID;
                 edit.UpdateDate = DateTime.Now;
 
                 _context.tm_FormGroup.Update(edit);
@@ -709,7 +689,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 if (delete == null) throw new Exception("ไม่พบข้อมูลกลุ่มฟอร์ม");
 
                 delete.FlagActive = false;
-                //delete.UpdateBy =;
+                delete.UpdateBy = model.RequestUserID;
                 delete.UpdateDate = DateTime.Now;
 
                 _context.tm_FormGroup.Update(delete);
@@ -750,8 +730,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 create.FlagActive = true;
                 create.CreateDate = DateTime.Now;
                 create.UpdateDate = DateTime.Now;
-                //create.CreateBy = ;
-                //create.UpdateBy = ;
+                create.CreateBy = model.RequestUserID;
+                create.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormPackage.Add(create);
                 _context.SaveChanges();
@@ -772,7 +752,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 edit.Name = model.PackageName;
                 edit.UpdateDate = DateTime.Now;
-                //edit.UpdateBy = ;
+                edit.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormPackage.Update(edit);
                 _context.SaveChanges();
@@ -793,7 +773,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 delete.FlagActive = false;
                 delete.UpdateDate = DateTime.Now;
-                //edit.UpdateBy = ;
+                delete.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormPackage.Update(delete);
                 _context.SaveChanges();
@@ -833,8 +813,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 create.FlagActive = true;
                 create.CreateDate = DateTime.Now;
                 create.UpdateDate = DateTime.Now;
-                //create.CreateBy = ;
-                //create.UpdateBy = ;
+                create.CreateBy = model.RequestUserID;
+                create.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormCheckList.Add(create);
                 _context.SaveChanges();
@@ -855,7 +835,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 edit.Name = model.CheckListName;
                 edit.UpdateDate = DateTime.Now;
-                //edit.UpdateBy = ;
+                edit.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormCheckList.Update(edit);
                 _context.SaveChanges();
@@ -876,7 +856,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 delete.FlagActive = false;
                 delete.UpdateDate = DateTime.Now;
-                //edit.UpdateBy = ;
+                delete.UpdateBy = model.RequestUserID;
 
                 _context.tm_FormCheckList.Update(delete);
                 _context.SaveChanges();
@@ -890,6 +870,54 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
 
             return checkListResp;
+        }
+
+        private void CreateMappingQc(int formID, List<int> qcLists, Guid requestUserID)
+        {
+            if (qcLists != null && qcLists.Count > 0)
+            {
+                List<tr_Form_QCCheckList> listCreate = new List<tr_Form_QCCheckList>();
+
+                foreach (var create in qcLists)
+                {
+                    tr_Form_QCCheckList createData = new tr_Form_QCCheckList();
+                    createData.FormID = formID;
+                    createData.CheckListID = create;
+                    createData.FlagActive = true;
+                    createData.CreateDate = DateTime.Now;
+                    createData.UpdateDate = DateTime.Now;
+                    createData.CreateBy = requestUserID;
+                    createData.UpdateBy = requestUserID;
+                    listCreate.Add(createData);
+                }
+
+                _context.tr_Form_QCCheckList.AddRange(listCreate);
+                _context.SaveChanges();
+            }
+        }
+
+        private void UpdateMappingQc(int formID, List<int> qcLists, bool flag, Guid requestUserID)
+        {
+            if (qcLists != null && qcLists.Count > 0)
+            {
+                List<tr_Form_QCCheckList> listUpdate = new List<tr_Form_QCCheckList>();
+
+                foreach (var create in qcLists)
+                {
+                    tr_Form_QCCheckList? updateData = _context.tr_Form_QCCheckList
+                                                        .Where(o => o.FormID == formID
+                                                        && o.CheckListID == create).FirstOrDefault();
+
+                    updateData.FlagActive = flag;
+                    updateData.UpdateDate = DateTime.Now;
+                    updateData.UpdateBy = requestUserID;
+
+                    listUpdate.Add(updateData);
+                }
+
+                _context.tr_Form_QCCheckList.UpdateRange(listUpdate);
+                _context.SaveChanges();
+            }
         }
     }
 }

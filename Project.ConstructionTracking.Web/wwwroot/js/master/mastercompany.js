@@ -72,7 +72,7 @@ const company = {
             "ordering": true,
             "order": [[1, "DESC"]],
             "columns": [
-                { 'data': 'Name', "className": "text-center " },
+                { 'data': 'Name', "className": "text-left " },
                 { 'data': 'UpdateDate', "className": "text-center " },
                 {
                     'data': 'ID',

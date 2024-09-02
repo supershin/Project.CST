@@ -3,6 +3,9 @@
 
     ViewData["Title"] = "Create User";
 }
+
+@model Project.ConstructionTracking.Web.Models.MUserModel.UnitRespModel
+
 <div class="page-header d-print-none">
     <div class="container-xl">
         <div class="row">
@@ -15,75 +18,106 @@
     </div>
 </div>
 <div class="container mt-5">
-    <h2>Create User</h2>
+    <h2>Edit User</h2>
     <hr />
-    <form>
-        <div class="row mb-3">
-            <div class="col-lg-6">
-                <label for="user-name" class="form-label">ชื่อ</label>
-                <input type="text" class="form-control" id="user-name">
-            </div>
-            <div class="col-lg-6">
-                <label for="user-last-name" class="form-label">นามสกุล</label>
-                <input type="text" class="form-control" id="user-last-name">
-            </div>
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <label for="user-name" class="form-label">ชื่อ</label>
+            <input type="text" class="form-control" id="user-name">
+            <span id="user-name-error" class="text-danger"></span>
         </div>
-        <div class="row mb-3">
-            <div class="col-lg-6">
-                <label for="user-email" class="form-label">อีเมลล์</label>
-                <input type="email" class="form-control" id="user-email">
-            </div>
-            <div class="col-lg-6">
-                <label for="user-mobile" class="form-label">หมายเลขโทรศัพท์</label>
-                <input type="tel" class="form-control" id="user-mobile">
-            </div>
+        <div class="col-lg-6">
+            <label for="user-last-name" class="form-label">นามสกุล</label>
+            <input type="text" class="form-control" id="user-last-name">
+            <span id="user-last-name-error" class="text-danger"></span>
         </div>
-        <hr />
-        <div class="row mb-3">
-            <div class="col-lg-6">
-                <label for="user-bu-id" class="form-label">BU</label>
-                <select class="form-control" id="user-bu-id">
-                    <option value="0">กรุณาเลือก BU</option>
-                    <option value="1">BUG 1</option>
-                    <option value="2">BUG 2</option>
-                    <option value="3">BUG 3</option>
-                    <option value="4">BUG 4</option>
-                    <option value="5">SE</option>
-                </select>
-            </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <label for="user-email" class="form-label">อีเมลล์</label>
+            <input type="email" class="form-control" id="user-email">
+            <span id="user-email-error" class="text-danger"></span>
         </div>
-        <div class="row mb-3">
-            <div class="col-lg-6">
-                <label for="user-department" class="form-label">ตำแหน่ง</label>
-                <input type="text" class="form-control" id="user-department">
-            </div>
-            <div class="col-lg-6">
-                <label for="user-role" class="form-label">Role</label>
-                <select class="form-control" id="user-role">
-                    <option value="0">กรุณาเลือก Role</option>
-                    <option value="1">PE/SE</option>
-                    <option value="2">PM</option>
-                    <option value="1">PJM</option>
-                    <option value="2">QC</option>
-                </select>
-            </div>
+        <div class="col-lg-6">
+            <label for="user-mobile" class="form-label">หมายเลขโทรศัพท์</label>
+            <input type="tel" class="form-control" id="user-mobile">
+            <span id="user-mobile-error" class="text-danger"></span>
         </div>
-        <hr />
-        <div class="row mb-3">
-            <div class="col-lg-6">
-                <label for="user-password" class="form-label">รหัสผ่าน</label>
-                <input type="password" class="form-control" id="user-password">
-            </div>
-            <div class="col-lg-6">
-                <label for="user-password-confirm" class="form-label">ยืนยันรหัสผ่าน</label>
-                <input type="password" class="form-control" id="user-password-confirm">
-            </div>
+    </div>
+    <hr />
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <label for="user-bu-id" class="form-label">BU</label>
+            <select class="form-control" id="user-bu-id">
+                <option value="0">กรุณาเลือก BU</option>
+                @foreach (var b in Model.BUList)
+                {
+                    <option value="@b.ID">@b.Name</option>
+                }
+            </select>
+            <span id="user-bu-id-error" class="text-danger"></span>
         </div>
-        <hr />
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-success">
-                บันทึก
-            </button>
+    </div>
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <label for="user-position" class="form-label">ตำแหน่ง</label>
+            <input type="text" class="form-control" id="user-position">
+            <span id="user-position-error" class="text-danger"></span>
         </div>
-    </form>
+        <div class="col-lg-6">
+            <label for="user-role" class="form-label">Role</label>
+            <select class="form-control" id="user-role">
+                <option value="0">กรุณาเลือก Role</option>
+                @foreach (var r in Model.RoleList)
+                {
+                    <option value="@r.ID">@r.Name</option>
+                }
+            </select>
+            <span id="user-role-error" class="text-danger"></span>
+        </div>
+    </div>
+    <hr />
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <label for="user-password" class="form-label">รหัสผ่าน</label>
+            <input type="password" class="form-control" id="user-password">
+            <span id="user-password-error" class="text-danger"></span>
+        </div>
+        <div class="col-lg-6">
+            <label for="user-password-confirm" class="form-label">ยืนยันรหัสผ่าน</label>
+            <input type="password" class="form-control" id="user-password-confirm">
+            <span id="user-password-confirm-error" class="text-danger"></span>
+        </div>
+    </div>
+    <hr />
+    <div class="d-flex justify-content-end">
+        <button id="create-user-save" class="btn btn-success">
+            บันทึก
+        </button>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="~/js/pages/usercreate.js?version=@DateTime.Now.Ticks.ToString()"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Manually convert PositionList to a JSON array
+            var positionNames = [
+                @foreach(var position in Model.PositionList)
+                {
+                    @: "@position.Name",
+                }
+            ];
+
+            // Apply autocomplete to the input field
+            $("#user-position").autocomplete({
+                source: positionNames
+            });
+
+            userCreate.init();
+        });
+    </script>
+}

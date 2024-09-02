@@ -16,12 +16,17 @@ namespace Project.ConstructionTracking.Web.Data
         [StringLength(50)]
         [Unicode(false)]
         public string? PE { get; set; }
+        [StringLength(9)]
+        [Unicode(false)]
+        public string PM { get; set; } = null!;
+        public int? Cnt_PC { get; set; }
         [StringLength(50)]
         [Unicode(false)]
-        public string? PM { get; set; }
+        public string? UnitFormActionPMActionType { get; set; }
+        public int? UnitFormActionPMStatusID { get; set; }
+        public int? LockStatusID { get; set; }
         [StringLength(7)]
         [Unicode(false)]
-        public string? PassConditionStatus { get; set; }
-        public int? LockStatusID { get; set; }
+        public string PassConditionStatus { get; set; } = null!;
     }
 }

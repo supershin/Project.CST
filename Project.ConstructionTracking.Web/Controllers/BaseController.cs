@@ -29,6 +29,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         private void setUserProfile() {
             var userName = Request.Cookies["CST.UserName"];
             var userRole = Request.Cookies["CST.Role"];
+            var name = Request.Cookies["CST.Name"];
+            var id = Request.Cookies["CST.ID"];
+            ViewBag.ID = id;
+            ViewBag.Name = name;
+            ViewBag.UserName = userName;
             ViewBag.UserRole = userRole;
         }
     }

@@ -3,6 +3,7 @@
 *@
 @{
 }
+@model Project.ConstructionTracking.Web.Models.MUnitModel.MasterUnitResp
 
 <div class="modal fade" id="modal-unit-c" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg" role="document">
@@ -15,54 +16,83 @@
                 <div class="row">
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">ชื่อโครงการ</label>
-                        <select class="form-control" id="u-project-list">
-                            <option value="1">ดิ ออเนอร์ โยธินพัฒนา</option>
-                            <option value="2">เอสต้า ซีรีนิตี้ บรมราชชนนี</option>
+                        <select class="form-control" id="u-project-list" onchange="updateModelList()">
+                            <option value="0">กรุณาเลือกโครงการ</option>
+                            @foreach (var project in Model.ProjectList)
+                            {
+                                <option value="@project.ProjectID">@project.ProjectName</option>
+                            }
                         </select>
+                        <span id="u-project-list-error" class="text-danger"></span>
                     </div>
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">ประเภทยูนิต</label>
                         <select class="form-control" id="u-unit-type-list">
-                            <option value="1">บ้านเดี่ยว 2 ชั้น</option>
-                            <option value="2">บ้านเดี่ยว 3 ชั้น</option>
+                            <option value="0">กรุณาเลือกประเภทยูนิต</option>
+                            @foreach (var unit in Model.UnitTypeList)
+                            {
+                                <option value="@unit.UnitTypeID">@unit.UnitTypeName</option>
+                            }
                         </select>
+                        <span id="u-unit-type-list-error" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">ประเภทโมเดล</label>
                         <select class="form-control" id="u-model-type-list">
-                            <option value="1">ดีไลท์</option>
-                            <option value="2">SERENE</option>
+                            <option value="0">กรุณาเลือกประเภทโมเดล</option>
                         </select>
+                        <span id="u-model-type-list-error" class="text-danger"></span>
                     </div>
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">รหัสยูนิต</label>
-                        <input type="text" class="form-control" name="u-unit-code">
+                        <input type="text" class="form-control" id="u-unit-code">
+                        <span id="u-unit-code-error" class="text-danger"></span>
                     </div>
                 </div>
-            </div>
-            <div class="modal-body">
                 <div class="row">
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">เลขที่อยู่</label>
-                        <input type="text" class="form-control" name="u-addr-no">
+                        <input type="text" class="form-control" id="u-addr-no">
+                        <span id="u-addr-no-error" class="text-danger"></span>
                     </div>
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">เนื้อที่</label>
-                        <input type="text" class="form-control" name="u-area">
+                        <input type="number" class="form-control" id="u-area" step="0.01">
+                        <span id="u-area-error" class="text-danger"></span>
                     </div>
                 </div>
-                
             </div>
             <div class="modal-footer">
-                <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                <a class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     Cancel
                 </a>
-                <a href="#" class="btn btn-success ms-auto" data-bs-dismiss="modal">
+                <button id="create-unit-save" class="btn btn-success ms-auto">
                     บันทึก
-                </a>
+                </button>
             </div>
         </div>
     </div>
 </div>
+
+
+<script>
+    function updateModelList() {
+        var projectId = document.getElementById('u-project-list').value;
+        var modelList = @Html.Raw(Json.Serialize(Model.ProjectList.ToDictionary(p => p.ProjectID, p => p.ModelList)));
+
+        var modelDropdown = document.getElementById('u-model-type-list');
+        modelDropdown.innerHTML = '<option value="0">กรุณาเลือกประเภทโมเดล</option>'; // Reset the dropdown
+
+        if (projectId != '0') {
+            var models = modelList[projectId];
+            models.forEach(function(model) {
+                var option = document.createElement('option');
+                option.value = model.ModelTypeID;
+                option.text = model.ModelTypeName;
+                modelDropdown.add(option);
+            });
+        }
+    }
+</script>

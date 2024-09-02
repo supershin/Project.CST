@@ -2,7 +2,7 @@
     init: () => {
         $('#btn-search').click(() => {
             var string = $('#strSearch').val();
-            console.log(string)
+
             if ($.fn.DataTable.isDataTable('#tbl-table-mform')) {
                 $('#tbl-table-mform').DataTable().clear().destroy();
             }
@@ -192,8 +192,8 @@
             "order": [[3, "desc"]],
             "columns": [
                 { 'data': 'Name', "className": "text-center " },
-                { 'data': 'FormName', "className": "text-center " },
-                { 'data': 'Description', "className": "text-center " },
+                { 'data': 'FormName', "className": "text-left " },
+                { 'data': 'Description', "className": "text-left " },
                 { 'data': 'UpdateDate', "className": "text-center " },
                 {
                     'data': 'ID',
@@ -235,10 +235,23 @@
             data: data,
             success: function (resp) {
                 if (resp.success) {
-                    window.location.reload();
-                }
-                else {
-                    alert("Error: " + resp.message);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการสร้างข้อมูลสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
@@ -256,10 +269,23 @@
             data: model,
             success: function (resp) {
                 if (resp.success) {
-                    window.location.reload();
-                }
-                else {
-                    alert("Error: " + resp.message);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการลบข้อมูลสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {

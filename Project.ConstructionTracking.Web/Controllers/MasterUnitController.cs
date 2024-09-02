@@ -60,6 +60,133 @@ namespace Project.ConstructionTracking.Web.Controllers
                );
             }
         }
+
+        [HttpPost]
+        public JsonResult CreateUnit(CreateUnitModel model)
+        {
+            try
+            {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
+                var resultData = _masterUnitService.CreateUnit(model);
+
+                return Json(
+                          new
+                          {
+                              success = true,
+                              data = resultData,
+                          }
+                );
+            }
+            catch (Exception ex)
+            {
+                return Json(
+                            new
+                            {
+                                success = false,
+                                message = ex.Message, //InnerException(ex),
+                                data = new[] { ex.Message },
+                            }
+               );
+            }
+        }
+
+        [HttpPost]
+        public JsonResult GetDetail(Guid unitID)
+        {
+            try
+            {
+                var resultData = _masterUnitService.GetProjectID(unitID);
+
+                return Json(
+                          new
+                          {
+                              success = true,
+                              data = resultData,
+                          }
+                );
+            }
+            catch (Exception ex)
+            {
+                return Json(
+                            new
+                            {
+                                success = false,
+                                message = ex.Message, //InnerException(ex),
+                                data = new[] { ex.Message },
+                            }
+               );
+            }
+        }
+
+        [HttpPost]
+        public JsonResult EditUnit(EditUnitModel model)
+        {
+            try
+            {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
+                var resultData = _masterUnitService.EditUnit(model);
+
+                return Json(
+                          new
+                          {
+                              success = true,
+                              data = resultData,
+                          }
+                );
+            }
+            catch (Exception ex)
+            {
+                return Json(
+                            new
+                            {
+                                success = false,
+                                message = ex.Message, //InnerException(ex),
+                                data = new[] { ex.Message },
+                            }
+               );
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DeleteUnit(Guid unitID)
+        {
+            try
+            {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                Guid RequestUserID = Guid.Parse(userID);
+                int RequestRoleID = Int32.Parse(RoleID);
+
+                var resultData = _masterUnitService.DeleteUnit(unitID, RequestUserID);
+
+                return Json(
+                          new
+                          {
+                              success = true,
+                              data = resultData,
+                          }
+                );
+            }
+            catch (Exception ex)
+            {
+                return Json(
+                            new
+                            {
+                                success = false,
+                                message = ex.Message, //InnerException(ex),
+                                data = new[] { ex.Message },
+                            }
+               );
+            }
+        }
     }
 }
 

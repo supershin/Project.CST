@@ -44,72 +44,84 @@
     </div>
     <div class="page-body">
         <div class="container-xl">
-            <h2 class="page-title">ข้อมูล Company</h2>
-            <hr />
-            <div class="row mb-3">
-                <div class="col-lg-6">
-                    <label for="company-name" class="form-label">ชื่อ</label>
-                    <input type="text" class="form-control" id="company-name" value="@Model.CompanyName">
-                    <input type="hidden" id="company-id" value="@Model.CompanyID" />
-                    <div id="company-name-error" class="text-danger"></div> <!-- Error message container -->
+            <!-- Card for Company Information -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h2 class="page-title">ข้อมูล Company</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-lg-6">
+                            <label for="company-name" class="form-label">ชื่อ</label>
+                            <input type="text" class="form-control" id="company-name" value="@Model.CompanyName">
+                            <input type="hidden" id="company-id" value="@Model.CompanyID" />
+                            <div id="company-name-error" class="text-danger"></div> <!-- Error message container -->
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-12">
+                            <label class="form-label">Mapping โครงการ</label>
+                            <select class="js-example-responsive" id="multiple-select-project" multiple="multiple" style="width: 100%">
+                                @foreach (var data in Model.ProjectLists)
+                                {
+                                    var isSelected = Model.ProjectMappings.Any(mapping => mapping.ProjectID == data.ProjectID);
+                                    if (isSelected)
+                                    {
+                                        <option value="@data.ProjectID" selected>@data.ProjectName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@data.ProjectID">@data.ProjectName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-12">
+                            <div class="d-flex justify-content-start">
+                                <button id="save-mapping" type="submit" class="btn btn-success">บันทึก</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row mb-3">
-                <div class="col-lg-12">
-                    <label class="form-label">Mapping โครงการ</label>
-                    <select class="js-example-responsive" id="multiple-select-project" multiple="multiple" style="width: 100%">
-                        @foreach (var data in Model.ProjectLists)
-                        {
-                            var isSelected = Model.ProjectMappings.Any(mapping => mapping.ProjectID == data.ProjectID);
-                            if (isSelected)
-                            {
-                                <option value="@data.ProjectID" selected>@data.ProjectName</option>
-                            }
-                            else
-                            {
-                                <option value="@data.ProjectID">@data.ProjectName</option>
-                            }
-                        }
-                    </select>
 
+            <!-- Card for Vendor Information -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h2 class="page-title">ข้อมูล Vendor</h2>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-lg-12">
-                    <div class="d-flex justify-content-start">
-                        <button id="save-mapping" type="submit" class="btn btn-success">บันทึก</button>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-lg-5">
+                            <label for="vendor-name" class="form-label">ชื่อผู้ควบคุมงาน</label>
+                            <input type="text" class="form-control" id="vendor-name" value="">
+                            <div id="vendor-name-error" class="text-danger"></div> <!-- Error message container -->
+                        </div>
+                        <div class="col-lg-5">
+                            <label for="vendor-email" class="form-label">อีเมลล์</label>
+                            <input type="text" class="form-control" id="vendor-email" value="">
+                            <div id="vendor-email-error" class="text-danger"></div> <!-- Error message container -->
+                        </div>
+                        <div class="col-lg-2">
+                            <label></label>
+                            <div class="justify-content-start" style="margin-top:8px;">
+                                <button id="create-vendor" type="submit" class="btn btn-primary" style="width:100%">เพิ่ม</button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <hr />
-            <h2 class="page-title">ข้อมูล Vendor</h2>
-            <hr />
-            <div class="row mb-3">
-                <div class="col-lg-5">
-                    <label for="vendor-name" class="form-label">ชื่อผู้ควบคุมงาน</label>
-                    <input type="text" class="form-control" id="vendor-name" value="">
-                    <div id="vendor-name-error" class="text-danger"></div> <!-- Error message container -->
-                </div>
-                <div class="col-lg-5">
-                    <label for="vendor-email" class="form-label">อีเมลล์</label>
-                    <input type="text" class="form-control" id="vendor-email" value="">
-                    <div id="vendor-email-error" class="text-danger"></div> <!-- Error message container -->
-                </div>
-                <div class="col-lg-2">
-                    <label></label>
-                    <div class="justify-content-start" style="margin-top:8px;">
-                        <button id="create-vendor" type="submit" class="btn btn-primary" style="width:100%">เพิ่ม</button>
+                    <div class="table-responsive">
+                        <div class="card-table table-responsive">
+                            <partial name="Partial_List_MVendor" />
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="table-responsive">
-                <div class="card-table table-responsive">
-                    <partial name="Partial_List_MVendor" />
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <partial name="Partial_Modal_Edit_V" />
 <partial name="Partial_Delete_CompanyVendor" />
@@ -122,9 +134,7 @@
     <script src="~/lib/datatable/jquery.datatables.min.js"></script>
     <script src="~/js/pages/detailcompany.js?version=@DateTime.Now.Ticks.ToString()"></script>
 
-    <script type="text/javascript">
-        $(document).ready(function () {
+    <script type="text/javascript">$(document).ready(function () {
             detailCom.init();
-        });
-    </script>
+        });</script>
 }
