@@ -31,6 +31,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tm_FormPackage> tm_FormPackage { get; set; } = null!;
         public virtual DbSet<tm_FormType> tm_FormType { get; set; } = null!;
         public virtual DbSet<tm_ModelType> tm_ModelType { get; set; } = null!;
+        public virtual DbSet<tm_Position> tm_Position { get; set; } = null!;
         public virtual DbSet<tm_Project> tm_Project { get; set; } = null!;
         public virtual DbSet<tm_QC_CheckList> tm_QC_CheckList { get; set; } = null!;
         public virtual DbSet<tm_QC_CheckListDetail> tm_QC_CheckListDetail { get; set; } = null!;
@@ -61,6 +62,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tr_UnitFormPassCondition> tr_UnitFormPassCondition { get; set; } = null!;
         public virtual DbSet<tr_UnitFormResource> tr_UnitFormResource { get; set; } = null!;
         public virtual DbSet<tr_UnitFormUnLockPassCondition> tr_UnitFormUnLockPassCondition { get; set; } = null!;
+        public virtual DbSet<tr_UserResource> tr_UserResource { get; set; } = null!;
         public virtual DbSet<vw_UnitForm_Action> vw_UnitForm_Action { get; set; } = null!;
         public virtual DbSet<vw_UnitQC_Action> vw_UnitQC_Action { get; set; } = null!;
 
