@@ -17,16 +17,19 @@ namespace Project.ConstructionTracking.Web.Controllers
             _hosting = hosting;
         }
 
-        public IActionResult Index(Guid unitId, int formId)
+        public IActionResult Index(Guid unitId, int formId ,string comeFrom)
         {
             // Use the GetApproveFormcheck method from your service to get the data
             var model = new ApproveFormcheckModel { UnitID = unitId, FormID = formId };
             var resultModel = _PMApproveService.GetApproveFormcheck(model);
+            ViewBag.comeFrom = comeFrom;
 
             if (resultModel != null)
             {
                 // Set ViewBag properties based on the result
+                ViewBag.ProjectID = resultModel.ProjectID;
                 ViewBag.ProjectName = resultModel.ProjectName;
+                ViewBag.UnitID = resultModel.UnitID;
                 ViewBag.UnitCode = resultModel.UnitCode;
                 ViewBag.FormName = resultModel.FormName;
                 ViewBag.UnitFormStatusID = resultModel.UnitFormStatusID;
