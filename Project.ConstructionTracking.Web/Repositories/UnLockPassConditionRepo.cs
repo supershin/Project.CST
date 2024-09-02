@@ -125,7 +125,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                 // Check if model.PEUnLock_Remark has a value
                 if (!string.IsNullOrEmpty(model.PEUnLock_Remark))
                 {
-                    passCondition.PEUnLock_Remark = model.PEUnLock_Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                    if (passCondition.PEUnLock_Remark != model.PEUnLock_Remark)
+                    {
+                        passCondition.PEUnLock_Remark = model.PEUnLock_Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                    }
+                }
+                else {
+                    passCondition.PEUnLock_Remark = "";
                 }
 
                 passCondition.UpdateBy = model.UserID;
@@ -216,7 +222,14 @@ namespace Project.ConstructionTracking.Web.Repositories
                 // Check if model.PEUnLock_Remark has a value
                 if (!string.IsNullOrEmpty(model.PMUnLock_Remark))
                 {
-                    passCondition.PMUnLock_Remark = model.PMUnLock_Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                    if (passCondition.PMUnLock_Remark != model.PMUnLock_Remark)
+                    {
+                        passCondition.PMUnLock_Remark = model.PMUnLock_Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                    }                 
+                }
+                else
+                {
+                    passCondition.PMUnLock_Remark = "";
                 }
                 passCondition.UpdateBy = model.UserID;
                 passCondition.UpdateDate = DateTime.Now;
