@@ -274,13 +274,16 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tm_QC_CheckListDetail>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.Parent)
+                    .WithMany(p => p.InverseParent)
+                    .HasForeignKey(d => d.ParentID)
+                    .HasConstraintName("FK_tm_QC_CheckListDetail_tm_QC_CheckListDetail1");
 
                 entity.HasOne(d => d.QCCheckList)
                     .WithMany(p => p.tm_QC_CheckListDetail)
@@ -714,11 +717,6 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tr_UnitFormCheckList)
                     .HasForeignKey(d => d.UnitFormID)
                     .HasConstraintName("FK_tr_UnitForm_Detail_tr_UnitForm");
-            });
-
-            modelBuilder.Entity<tr_UnitFormInbox>(entity =>
-            {
-                entity.Property(e => e.ID).ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<tr_UnitFormPackage>(entity =>
