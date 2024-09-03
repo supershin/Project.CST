@@ -26,6 +26,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                               from t4Join in t4Joins.DefaultIfEmpty()
                               join t5 in _context.tm_Form on new { t3Join.FormID } equals new { FormID = (int?)t5.ID } into t5Joins
                               from t5Join in t5Joins.DefaultIfEmpty()
+                              join t6 in _context.tm_Role on new {t1.RoleID } equals new { RoleID = (int?)t6.ID } into t6Joins
+                              from t6Join in t6Joins.DefaultIfEmpty()
                               where t1.FlagActive == true
                                  && t1.UnitFormID == filterData.UnitFormID
                                  && t1.FormID == filterData.FormID
@@ -37,6 +39,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                   FormID = t5Join.ID,
                                   FormName = t5Join.Name,
                                   UserID = t1.ActionBy,
+                                  RoleName = t6Join.Name,
                                   UserName = t2Join.FirstName + " " + t2Join.LastName,
                                   TextInbox = t1.TextInbox,
                                   Actiondate = t1.ActionDate.HasValue ? t1.ActionDate.Value.ToString("dd/MM/yyyy") : "",

@@ -434,24 +434,24 @@
                         <div class="modal-content col-md-4">
                             <div class="modal-header">
                                 <span class="close" onclick="closeModalChat()">&times;</span>
-                                <h4>Chat with Support</h4>
+                                <h4 id="chatHeader">Chat with Support</h4> <!-- Updated to add an ID -->
                             </div>
                             <div class="modal-body" id="chatMessages">
                                 <!-- Chat messages will be appended here dynamically -->
                             </div>
                             <div class="modal-footer">
-                                <textarea id="chatInput" placeholder="Type your message..."></textarea>
+                                <textarea id="chatInput" placeholder="พิมพ์ข้อความ..."></textarea>
                                 <button class="sendButton" onclick="sendMessage()">
                                     <i class="fa-regular fa-paper-plane"></i>
                                 </button>
                             </div>
-                                <input type="hidden" id="hdUnitFormID" name="hdUnitFormID" />
-                                <input type="hidden" id="hdFormID" name="hdFormID" />
-                                <input type="hidden" id="hdRoleID" name="hdRoleID" />
+                            <!-- Hidden inputs for storing data -->
+                            <input type="hidden" id="hdUnitFormID" name="hdUnitFormID" />
+                            <input type="hidden" id="hdFormID" name="hdFormID" />
+                            <input type="hidden" id="hdRoleID" name="hdRoleID" />
                         </div>
                     </div>
                 </div>
-
                 <!-- Modal Inbox -->
 
             </div>
@@ -483,23 +483,21 @@
 
     <script> 
 
-        function openModalChat(UnitFormID, FormID, RoleID) {
+        function openModalChat(UnitFormID, FormID, FormName , Unitcode) {
             // Store the UnitFormID, FormID, and RoleID in hidden inputs
             document.getElementById("hdUnitFormID").value = UnitFormID;
             document.getElementById("hdFormID").value = FormID;
-            document.getElementById("hdRoleID").value = RoleID;
+            document.getElementById("hdRoleID").value = userRole;
+
+             // Set the dynamic header text using UnitCode and FormName
+            var chatHeader = document.querySelector("#chatModal .modal-header h4");
+            chatHeader.textContent = Unitcode + ": " + FormName; // Update header text
 
             // Show the modal
             document.getElementById("chatModal").style.display = "block";
-            console.log(UnitFormID, FormID, RoleID);
-            
-            var data = {
-                UnitFormID: UnitFormID,
-                FormID: FormID,
-                RoleID: RoleID
-            }
+
             // Fetch the chat messages when the modal is opened
-            fetchChatMessages(UnitFormID, FormID, RoleID);
+            fetchChatMessages(UnitFormID, FormID, userRole);
         }
 
         function closeModalChat() {
@@ -521,7 +519,7 @@
                             // Append each message to the chat box
                             data.data.forEach(function (message) {
                                 var newMessage = document.createElement("p");
-                                newMessage.innerHTML = `<strong>${message.UserName}:</strong> ${message.TextInbox} <small>${message.Actiondate}</small>`;
+                                    newMessage.innerHTML = `<strong>${message.UserName}(${message.RoleName}):</strong> ${message.TextInbox} <small>${message.Actiondate}</small>`;
                                 chatMessages.appendChild(newMessage);
                             });
 

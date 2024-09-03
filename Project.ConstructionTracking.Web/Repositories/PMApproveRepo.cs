@@ -176,6 +176,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               ProjectID = t1.ProjectID,
                               ProjectName = project.ProjectName,
                               UnitID = t1.UnitID,
+                              UnitFormID = t1.ID,
                               UnitCode = unit.UnitCode,
                               VendorID = t1.VendorID,
                               VenderName = vendor.Name,
