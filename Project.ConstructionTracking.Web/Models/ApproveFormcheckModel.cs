@@ -6,6 +6,7 @@
         public Guid? ProjectID { get; set; }
         public string? ProjectName { get; set; }
         public Guid? UnitID { get; set; }
+        public Guid? UnitFormID { get; set; }
         public string? UnitCode { get; set; }
         public int? VendorID { get; set; }
         public string? VenderName { get; set; }

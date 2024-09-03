@@ -434,19 +434,21 @@
                         <div class="modal-content col-md-4">
                             <div class="modal-header">
                                 <span class="close" onclick="closeModalChat()">&times;</span>
-                                <h4>Chat with Support</h4>
+                                <h4 id="chatHeader">Chat with Support</h4> <!-- Updated to add an ID -->
                             </div>
                             <div class="modal-body" id="chatMessages">
                                 <!-- Chat messages will be appended here dynamically -->
-                                <input type="hidden" name="hdname" id="hdname"/>
-                                <p><strong>Jane:</strong> Hello! How can I help you today?</p>
                             </div>
                             <div class="modal-footer">
-                                <textarea id="chatInput" placeholder="Type your message..."></textarea>
+                                <textarea id="chatInput" placeholder="พิมพ์ข้อความ..."></textarea>
                                 <button class="sendButton" onclick="sendMessage()">
                                     <i class="fa-regular fa-paper-plane"></i>
                                 </button>
                             </div>
+                            <!-- Hidden inputs for storing data -->
+                            <input type="hidden" id="hdUnitFormID" name="hdUnitFormID" />
+                            <input type="hidden" id="hdFormID" name="hdFormID" />
+                            <input type="hidden" id="hdRoleID" name="hdRoleID" />
                         </div>
                     </div>
                 </div>
@@ -480,28 +482,90 @@
     <script src="~/lib/core-ui/dist/libs/nouislider/dist/nouislider.min.js?1692870487" defer></script>
 
     <script> 
-        function openModalChat(UnitFormID, FormID, RoleID) {
-            document.getElementById("hdname").value = UnitFormID; // Set the username in the hidden input
-            document.getElementById("chatModal").style.display = "block"; // Show the modal
+
+        function openModalChat(UnitFormID, FormID, FormName , Unitcode) {
+            // Store the UnitFormID, FormID, and RoleID in hidden inputs
+            document.getElementById("hdUnitFormID").value = UnitFormID;
+            document.getElementById("hdFormID").value = FormID;
+            document.getElementById("hdRoleID").value = userRole;
+
+             // Set the dynamic header text using UnitCode and FormName
+            var chatHeader = document.querySelector("#chatModal .modal-header h4");
+            chatHeader.textContent = Unitcode + ": " + FormName; // Update header text
+
+            // Show the modal
+            document.getElementById("chatModal").style.display = "block";
+
+            // Fetch the chat messages when the modal is opened
+            fetchChatMessages(UnitFormID, FormID, userRole);
         }
 
         function closeModalChat() {
             document.getElementById("chatModal").style.display = "none"; // Hide the modal
         }
 
+        function fetchChatMessages(UnitFormID, FormID, RoleID) {
+            // Make an AJAX request to fetch chat messages
+            $.ajax({
+                url: baseUrl + 'ChatInBox/Getchatlist', // Ensure this matches your route and action name
+                type: 'POST',
+                data: { UnitFormID: UnitFormID, FormID: FormID, RoleID: RoleID },
+                //contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                        if (data.success) {
+                            var chatMessages = document.getElementById("chatMessages");
+                            chatMessages.innerHTML = ''; // Clear existing messages
+
+                            // Append each message to the chat box
+                            data.data.forEach(function (message) {
+                                var newMessage = document.createElement("p");
+                                    newMessage.innerHTML = `<strong>${message.UserName}(${message.RoleName}):</strong> ${message.TextInbox} <small>${message.Actiondate}</small>`;
+                                chatMessages.appendChild(newMessage);
+                            });
+
+                            chatMessages.scrollTop = chatMessages.scrollHeight; 
+                        } else {
+                            alert("Error: " + response.message);
+                        }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to fetch chat messages:", xhr.responseText);
+                }
+            });
+        }
+
+
         function sendMessage() {
+            
             var message = document.getElementById("chatInput").value;
-            var username = document.getElementById("hdname").value; // Get the username from the hidden input
-    
+            var UnitFormID = document.getElementById("hdUnitFormID").value;
+            var FormID = document.getElementById("hdFormID").value;
+            var RoleID = document.getElementById("hdRoleID").value;
+            var UserID = id;
+
             if (message.trim() !== "") {
-                var chatMessages = document.getElementById("chatMessages");
-                var newMessage = document.createElement("p");
-                newMessage.innerHTML = `<strong>${username}:</strong> ${message}`; // Use the username in the message
-                chatMessages.appendChild(newMessage);
-                document.getElementById("chatInput").value = ""; // Clear the input field
-                chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the latest message
+                // Make an AJAX request to save the new message
+                $.ajax({
+                    url: baseUrl + 'ChatInBox/InsertChatInbox',
+                    type: 'POST',
+                    data: {FormID: FormID , RoleID: RoleID , TextInbox: message , UnitFormID : UnitFormID, UserID: UserID },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            // Fetch updated chat messages after sending the new message
+                            fetchChatMessages(UnitFormID, FormID, RoleID);
+                            document.getElementById("chatInput").value = ""; // Clear the input field
+                        } else {
+                            alert("Error: " + response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Failed to send message:", error);
+                    }
+                });
             }
         }
+
     </script>
 
     <!-- Tabler Core -->
