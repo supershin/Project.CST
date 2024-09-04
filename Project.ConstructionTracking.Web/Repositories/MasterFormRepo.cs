@@ -253,7 +253,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 Progress = e.Progress,
                 DurationDay = e.DurationDay,
                 Sort = e.Sort
-            }).ToList();
+            }).OrderBy(e => e.ID).ToList();
         }
 
         public dynamic GetFormGroupList(DTParamModel param, int formID)
@@ -276,7 +276,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 ID = e.ID,
                 Name = e.Name,
-            }).ToList();
+            }).OrderBy(e => e.ID).ToList();
         }
 
         public dynamic GetFormPackageList(DTParamModel param, int groupID)
@@ -299,7 +299,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 ID = e.ID,
                 Name = e.Name,
-            }).ToList();
+            }).OrderBy(e => e.ID).ToList();
         }
 
         public dynamic GetFormCheckList(DTParamModel param, int packageID)
@@ -322,7 +322,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 ID = e.ID,
                 Name = e.Name,
-            }).ToList();
+            }).OrderBy(e => e.ID).ToList();
         }
 
         public dynamic GetQcList(int formTypeID)
