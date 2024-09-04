@@ -2,7 +2,7 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 }
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+@*<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">*@
 <style>
 
     .fixed-size-btn {
@@ -37,6 +37,7 @@
     }
 
 </style>
+@model Project.ConstructionTracking.Web.Models.QCModel.QcSummaryResp
 
 <div class="page-wrapper">
     <!-- Page header -->
@@ -55,16 +56,16 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        <form asp-controller="ProjectList" asp-action="index">
-                            <button class="status-dot bg-transparent">
-                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
-                            </button>
-                        </form>
+                        <button class="status-dot bg-transparent" onclick="javascript:history.back();">
+                            <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                        </button>
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
-                        <h3 class="mb-0 header-text">Unit : A008</h3>
+                        <h3 class="mb-0 header-text">Unit : @Model.UnitCode</h3>
                         <div class="text-muted">
-                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">ดิ ออเนอร์ โยธินพัฒนา (สถานะ : สัญญา)</h5>
+                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">
+                                @Model.ProjectName (สถานะ : @Model.UnitStatusDesc)
+                            </h5>
                         </div>
                     </div>                 
                     <div class="align-items-right">
@@ -82,346 +83,50 @@
     <div class="page-body">
         <div class="container-xl">
             <div class="row row-cards">
-                <div class="col-12 col-sm-6">
-                    <div class="card card-link card-link-pop">
-                        <div class="row justify-content-center">
-                            <div class="card-body">
-                                <div class="col-12 d-flex flex-row align-items-center">
-                                    <div class="row">
-                                        <div class="col-3">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="btn btn-success fixed-size-btn mb-2">
-                                                    QC 1
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-green mx-1 mb-2">
-                                                    <span class="status-text">
-                                                        F
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-                                                  
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-                                                  
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-                                                  
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-
+                @foreach (var listQc in Model.QcSummaryLists)
+                {
+                    <div class="col-12 col-sm-6">
+                        <div class="card card-link card-link-pop">
+                            <div class="row justify-content-center">
+                                <div class="card-body">
+                                    <div class="col-12 d-flex flex-row align-items-center">
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <form asp-controller="QCChecklist" asp-action="index">
+                                                    <button type="submit" class="btn btn-success fixed-size-btn mb-2">
+                                                        @listQc.QcTypeName
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            @for (int i = 1; i <= 6; i++)
+                                                {
+                                                    //var data = listQc.QcInspections[i - 1];
+                                                @if( i != 6)
+                                                {
+                                                    <div class="col">
+                                                        <form asp-controller="QCChecklist" asp-action="index">
+                                                            <button type="submit" class="status-dot btn-secondary mx-1 mb-2">
+                                                                <span class="status-text">
+                                                                    @*@data.QcUnitCheckListStatus*@
+                                                                </span>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="col">
+                                                        
+                                                    </div>
+                                                }
+                                            }
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-12 col-sm-6">
-                    <div class="card card-link card-link-pop">
-                        <div class="row justify-content-center">
-                            <div class="card-body">
-                                <div class="col-12 d-flex flex-row align-items-center">
-                                    <div class="row">
-                                        <div class="col-3">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="btn btn-success fixed-size-btn mb-2">
-                                                    QC 2
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-danger mx-1 mb-2">
-                                                    <span class="status-text">
-                                                        S
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-danger mx-1 mb-2">
-                                                    <span class="status-text">
-                                                        S
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-danger mx-1 mb-2">
-                                                    <span class="status-text">
-                                                        S
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-green mx-1 mb-2">
-                                                    <span class="status-text">
-                                                        F
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-blue mx-1 mb-2">
-                                                    <span class="status-text">
-                                                        <i class="fa-solid fa-lock"></i>
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6">
-                    <div class="card card-link card-link-pop">
-                        <div class="row justify-content-center">
-                            <div class="card-body">
-                                <div class="col-12 d-flex flex-row align-items-center">
-                                    <div class="row">
-                                        <div class="col-3">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="btn btn-success fixed-size-btn mb-2">
-                                                    QC 3
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-yellow mx-1 mb-2">
-                                                    <span class="status-text">
-                                                        W
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-                                                  
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-                                                  
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-                                                  
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6">
-                    <div class="card card-link card-link-pop">
-                        <div class="row justify-content-center">
-                            <div class="card-body">
-                                <div class="col-12 d-flex flex-row align-items-center">
-                                    <div class="row">
-                                        <div class="col-3">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="btn btn-success fixed-size-btn mb-2">
-                                                    QC 4
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-danger mx-1 mb-2">
-                                                    <span class="status-text">
-                                                        S
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-                                                  
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-                                                  
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-                                                  
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6">
-                    <div class="card card-link card-link-pop">
-                        <div class="row justify-content-center">
-                            <div class="card-body">
-                                <div class="col-12 d-flex flex-row align-items-center">
-                                    <div class="row">
-                                        <div class="col-3">
-                                            <form asp-controller="QC5Check" asp-action="index">
-                                                <button type="submit" class="btn btn-success fixed-size-btn mb-2">
-                                                    QC 5
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QC5Check" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QC5Check" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-                                                  
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QC5Check" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QC5Check" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-                                                  
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                            <form asp-controller="QC5Check" asp-action="index">
-                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2">
-                                                    <span class="status-text">
-                                                  
-                                                    </span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
         </div>
     </div>

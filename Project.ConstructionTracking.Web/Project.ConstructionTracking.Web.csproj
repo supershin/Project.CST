@@ -23,6 +23,7 @@
     <Folder Include="Models\MUnitModel\" />
     <Folder Include="Models\MUserModel\" />
     <Folder Include="Views\User\" />
+    <Folder Include="Models\QCModel\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -57,6 +58,7 @@
     <None Remove="Models\MUnitModel\" />
     <None Remove="Models\MUserModel\" />
     <None Remove="Views\User\" />
+    <None Remove="Models\QCModel\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="Views\FormOverall\PartialFormList.cshtml" />

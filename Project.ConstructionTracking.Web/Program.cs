@@ -74,6 +74,9 @@ builder.Services.AddScoped<IMasterUserRepo, MasterUserRepo>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<ILoginRepo, LoginRepo>();
 
+builder.Services.AddScoped<IQcSummaryService, QcSummaryService>();
+builder.Services.AddScoped<IQcSummaryRepo, QcSummaryRepo>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

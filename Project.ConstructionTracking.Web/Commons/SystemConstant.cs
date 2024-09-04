@@ -40,6 +40,11 @@
             public const string QC = "Quality Control";
             public const string ADMIN = "Administrator";
         }
+
+        public static class QcStatus
+        {
+            //public const int PASS =  
+        }
     }
 
 }
