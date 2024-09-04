@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.StoreProcedureModel;
 using System.Collections.Generic;
 using System.Data;
 
@@ -30,6 +31,9 @@ namespace Project.ConstructionTracking.Web.Library.DAL
 
         public abstract List<ProjectModel> SP_Get_Project(ProjectModel EN);
 
+        public abstract List<UnitStatusModel> sp_get_unitstatus(UnitStatusModel EN);
+
+
         #region __ Reader __
         public static List<ProjectModel> SP_Get_Project_ListReader(IDataReader reader)
         {
@@ -55,10 +59,47 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.ProjectCode = Commons.FormatExtension.NullToString(reader["ProjectCode"]);
             Entity.ProjectName = Commons.FormatExtension.NullToString(reader["ProjectName"]);
             Entity.FlagActive = Commons.FormatExtension.Nulltoint(reader["FlagActive"]);
-            Entity.CreateDate = Commons.FormatExtension.ConvertToDateString(reader["CreateDate"]);
+            Entity.CreateDate = Commons.FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(reader["CreateDate"]);
             Entity.CreateBy = Commons.FormatExtension.Nulltoint(reader["CreateBy"]);
-            Entity.UpdateDate = Commons.FormatExtension.ConvertToDateString(reader["UpdateDate"]);
+            Entity.UpdateDate = Commons.FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(reader["UpdateDate"]);
             Entity.UpdateBy = Commons.FormatExtension.Nulltoint(reader["UpdateBy"]);
+            return Entity;
+        }
+
+
+
+        public static List<UnitStatusModel> sp_get_unitstatus_ListReader(IDataReader reader)
+        {
+            List<UnitStatusModel> list = new List<UnitStatusModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_unitstatus_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static UnitStatusModel sp_get_unitstatus_Reader(IDataReader reader, int index)
+        {
+            UnitStatusModel Entity = new UnitStatusModel();
+
+            Entity.index = index;
+            Entity.unit_code = Commons.FormatExtension.NullToString(reader["unit_code"]);
+            Entity.model_type_str = Commons.FormatExtension.NullToString(reader["model_type_str"]);
+            Entity.unit_type_str = Commons.FormatExtension.NullToString(reader["unit_type_str"]);
+            Entity.unit_status_str = Commons.FormatExtension.NullToString(reader["unit_status_str"]);
+            Entity.unit_build_status_str = Commons.FormatExtension.NullToString(reader["unit_build_status_str"]);
+            Entity.date_start_plan_str = Commons.FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(reader["date_start_plan_str"]);
+            Entity.date_end_plan_str = Commons.FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(reader["date_end_plan_str"]);
+            Entity.formname_plan_str = Commons.FormatExtension.NullToString(reader["formname_plan_str"]);
+            Entity.formname_true_str = Commons.FormatExtension.NullToString(reader["formname_true_str"]);
+            Entity.process_plan_str = Commons.FormatExtension.NullToString(reader["process_plan_str"]);
+            Entity.process_true_str = Commons.FormatExtension.NullToString(reader["process_true_str"]);
+            Entity.delay_ahead_str = Commons.FormatExtension.NullToString(reader["delay_ahead_str"]);
+            Entity.allday_str = Commons.FormatExtension.NullToString(reader["allday_str"]);
+            Entity.realday_use_str = Commons.FormatExtension.NullToString(reader["realday_use_str"]);
             return Entity;
         }
         #endregion

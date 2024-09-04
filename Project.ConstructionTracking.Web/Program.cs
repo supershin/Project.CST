@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Project.ConstructionTracking.Web.Data;
+using Project.ConstructionTracking.Web.Library.DAL.SQL;
+using Project.ConstructionTracking.Web.Library.DAL;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Repositories;
 using Project.ConstructionTracking.Web.Services;
@@ -76,6 +78,10 @@ builder.Services.AddScoped<ILoginRepo, LoginRepo>();
 
 builder.Services.AddScoped<IChatInBoxService, ChatInBoxService>();
 builder.Services.AddScoped<IChatInBoxRepo, ChatInBoxRepo>();
+
+
+// Add the new services for SQL and data access
+builder.Services.AddScoped<MasterManagementProviderProject, SqlMasterManagementProject>();
 
 var app = builder.Build();
 

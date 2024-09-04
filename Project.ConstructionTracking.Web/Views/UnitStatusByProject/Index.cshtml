@@ -2,10 +2,7 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 }
-<script src="~/lib/core-ui/dist/js/tabler.min.js?1692870487" defer></script>
-<script src="~/lib/core-ui/dist/js/demo.min.js?1692870487" defer></script>
-<script src="~/lib/core-ui/dist/js/demo-theme.min.js?1692870487"></script>
-
+@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.UnitStatusModel>
 <div class="page-wrapper">
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
@@ -124,7 +121,8 @@
             </div>
         </div>
         <div class="container mt-3">
-            @Html.Partial("PartialTable")
+            <partial name="PartialTable" model="Model" />
+@*             @Html.Partial("PartialTable") *@
         </div>
     </div>
 </div>

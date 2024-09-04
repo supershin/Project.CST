@@ -207,7 +207,7 @@ namespace Project.ConstructionTracking.Web.Commons
             return Temp;
         }
 
-        public static string ConvertToDateString(object dateObject)
+        public static string ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(object dateObject)
         {
             if (dateObject == null || dateObject == DBNull.Value)
             {
