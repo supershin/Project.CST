@@ -380,6 +380,9 @@
                                     }
                                 }
                             </div>
+                            <div class="col-12" style="padding-top : 2rem;">
+                                <label class="form-label" style="background-color: #B1CAF6; font-size: 20px;">กรณีผ่านแบบมีเงื่อนไขใส่ข้อมูลด้านล่าง</label>
+                            </div>
                             <div class="col-12">
                                 <label class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="PcCheck.IsChecked" id="pc-radio" value="true" onclick="checkPC(this)" @(LockStatusID != null ? "checked" : "")>
@@ -392,8 +395,11 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <div class="row">
-                            <div class="col-3">
+                        <label class="form-label"> บันทึกล่าสุด @ViewBag.StatusUpdateDate</label>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex">
+                            <div>
                                 @if (GobackTo == "Forgroup")
                                 {                                
                                     <a class="BackButton" href="@Url.Action("Index","FormGroup"
@@ -428,13 +434,7 @@
                                     </a>
                                 }
                             </div>
-                            <div class="col-3">
-                                <label class="form-label"> แก้ไขล่าสุด @ViewBag.StatusUpdateDate</label>
-                                <input type="hidden" name="PM_StatusActionType" value="@ViewBag.StatusActionType" ID="PM_StatusActionType" />
-                                <input type="hidden" name="PC_StatusID" value="@PCStatusID" ID="PC_StatusID" />
-                                <input type="hidden" name="UnitFormStatusIDchk" value="@UnitFormStatusID" ID="UnitFormStatusIDchk" />
-                            </div>
-                            <div class="col-6">
+                            <div class="ms-auto">
                                 @if (ViewBag.UserRole == SystemConstant.UserRole.PE.ToString())
                                 {
                                     @if (ViewBag.StatusActionType == "submit")

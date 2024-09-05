@@ -121,7 +121,6 @@ namespace Project.ConstructionTracking.Web.Commons
             //Return the string
             return sValue;
         }
-
         public static string Left(this string value, int maxLength)
         {
             if (string.IsNullOrEmpty(value)) return value;
@@ -132,7 +131,6 @@ namespace Project.ConstructionTracking.Web.Commons
                    : value.Substring(0, maxLength)
                    );
         }
-
         public static string GetExtension(this string contentType)
         {
             return MimeTypesMap.GetExtension(contentType);
