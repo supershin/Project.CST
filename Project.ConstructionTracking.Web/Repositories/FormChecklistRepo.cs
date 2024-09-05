@@ -1,9 +1,12 @@
-﻿using Project.ConstructionTracking.Web.Commons;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Repositories;
 using System.Linq;
+using System.Transactions;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
 using static Project.ConstructionTracking.Web.Models.FormCheckListModel;
 
 public class FormChecklistRepo : IFormChecklistRepo
@@ -46,8 +49,57 @@ public class FormChecklistRepo : IFormChecklistRepo
                           UnitStatusName = subT2.Name,
                       }).FirstOrDefault();
 
-
         return result;
+    }
+
+    public FormCheckListModel.Form_getUnitFormData GetUnitFormDataX(FormCheckListModel.Form_getUnitFormData filterData)
+    {
+        var query = (from t1 in _context.tm_Project
+                     join t2 in _context.tm_Unit on t1.ProjectID equals t2.ProjectID into units
+                     from unit in units.DefaultIfEmpty()
+                     join t2sub in _context.tm_Ext on unit.UnitStatusID equals t2sub.ID into gj
+                     from subT2 in gj.DefaultIfEmpty()
+                     join t3 in _context.tr_ProjectModelForm on t1.ProjectID equals t3.ProjectID into projectModelForms
+                     from projectModelForm in projectModelForms.DefaultIfEmpty()
+                     join t4 in _context.tm_Form on projectModelForm.FormTypeID equals t4.FormTypeID into forms
+                     from form in forms.DefaultIfEmpty()
+                     join t5 in _context.tm_FormGroup on form.ID equals t5.FormID into formGroups
+                     from formGroup in formGroups.DefaultIfEmpty()
+                     join t6 in _context.tr_UnitForm on new { ProjectID = (Guid?)t1.ProjectID, UnitID = (Guid?)unit.UnitID, FormID = (int?)form.ID } equals new { t6.ProjectID, t6.UnitID, t6.FormID } into unitForms
+                     from unitForm in unitForms.DefaultIfEmpty()
+                     where unit.UnitID == filterData.UnitID && form.ID == filterData.FormID && formGroup.ID == filterData.GroupID
+                     select new
+                     {
+                         t1.ProjectID,
+                         t1.ProjectName,
+                         unit.UnitID,
+                         unit.UnitCode,
+                         form.ID,
+                         form.Name,
+                         formGroupID = formGroup.ID,
+                         formGroupName = formGroup.Name,
+                         unitFormID = unitForm.ID,
+                         unitForm.StatusID,
+                         UnitStatusName = subT2.Name
+                     }).AsEnumerable() // Switch to in-memory processing
+                     .Select(e => new FormCheckListModel.Form_getUnitFormData
+                     {
+                         ProjectID = e.ProjectID,
+                         ProjectName = e.ProjectName.ToStringEmpty(),
+                         UnitID = e.UnitID,
+                         UnitCode = e.UnitCode.ToStringEmpty(),
+                         FormID = e.ID,
+                         FormName = e.Name.ToStringEmpty(),
+                         GroupID = e.formGroupID,
+                         GroupName = e.formGroupName.ToStringEmpty(),
+                         UnitFormID = e.unitFormID,
+                         UnitFormStatusID = e.StatusID,
+                         UnitStatusName = e.UnitStatusName.ToStringEmpty(),
+                         // Here you can apply additional logic or formatting as needed
+                     })
+                     .FirstOrDefault();
+
+        return query;
     }
 
     public List<FormCheckListModel.Form_getListPackages> GetFormCheckList(FormCheckListModel.Form_getFilterData filterData)
@@ -186,9 +238,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                 RemarkPassCondition = x.UnitFormPassCondition?.PE_Remark,
                 RoleID = x.UnitFormAction?.RoleID,
                 ActionType = x.UnitFormAction?.ActionType,
-                UpdateDate = x.UnitFormAction?.UpdateDate.HasValue ?? false
-                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(x.UnitFormAction.UpdateDate.Value.ToString("dd/MM/yyyy"))
-                    : "",
+                UpdateDate = x.UnitFormAction?.UpdateDate.HasValue ?? false ? FormatExtension.ToStringDateTime(x.UnitFormAction.UpdateDate) : "",
                 Form_getListImagePasswithCondition = x.Form_getListImagePasswithCondition // Ensure this maps correctly
             })
             .ToList();
@@ -197,31 +247,51 @@ public class FormChecklistRepo : IFormChecklistRepo
         return result;
     }
 
+    #region InsertOrUpdate FormChecklist
+
     public void InsertOrUpdate(FormChecklistIUDModel model, Guid? userID, int RoleID)
     {
-        var UnitFormIDUse = Guid.Empty;
-        var package = model.Packages.FirstOrDefault();
-        var pcCheck = model.PcCheck;
+        TransactionOptions options = new TransactionOptions
+        {
+            IsolationLevel = IsolationLevel.ReadCommitted, 
+            Timeout = TimeSpan.FromMinutes(3) 
+        };
 
-        if (package != null)
+        using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, options))
         {
-            UnitFormIDUse = InsertOrUpdateUnitForm(package , userID);
-            InsertOrUpdateUnitFormAction(package, UnitFormIDUse , userID);
-            InsertOrUpdateUnitFormPackage(model.Packages, UnitFormIDUse, userID);
-            InsertOrUpdateUnitFormCheckList(model.CheckLists, UnitFormIDUse, userID);
-            InsertImagesPE(model, package.FormID, package.GroupID, UnitFormIDUse, userID, RoleID); // Insert images if there are any
-        }
-        if (pcCheck != null)
-        {
-            InsertOrUpdatePassConditionCheck(pcCheck, UnitFormIDUse , userID);
-            
-        }
-        else if (pcCheck == null)
-        {
-            InsertOrUpdatePassConditionUnCheck(package, UnitFormIDUse, userID);
-        }
+            try
+            {
+                var UnitFormIDUse = Guid.Empty;
+                var package = model.Packages.FirstOrDefault();
+                var pcCheck = model.PcCheck;
 
-        _context.SaveChanges();
+                if (package != null)
+                {
+                    UnitFormIDUse = InsertOrUpdateUnitForm(package, userID);
+                    InsertOrUpdateUnitFormAction(package, UnitFormIDUse, userID);
+                    InsertOrUpdateUnitFormPackage(model.Packages, UnitFormIDUse, userID);
+                    InsertOrUpdateUnitFormCheckList(model.CheckLists, UnitFormIDUse, userID);
+                    InsertImagesPE(model, package.FormID, package.GroupID, UnitFormIDUse, userID, RoleID);
+                }
+
+                if (pcCheck != null)
+                {
+                    InsertOrUpdatePassConditionCheck(pcCheck, UnitFormIDUse, userID);
+                }
+                else
+                {
+                    InsertOrUpdatePassConditionUnCheck(package, UnitFormIDUse, userID);
+                }
+
+                _context.SaveChanges(); 
+
+                scope.Complete(); 
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+            }
+        } 
     }
 
     private Guid InsertOrUpdateUnitForm(PackageModel package , Guid? userID)
@@ -309,23 +379,29 @@ public class FormChecklistRepo : IFormChecklistRepo
                     FormID = packagelist.FormID,
                     GroupID = packagelist.GroupID,
                     PackageID = packagelist.PackageID,
-                    Remark = packagelist.Remark,
+                    Remark = string.IsNullOrEmpty(packagelist.Remark) ? "" : packagelist.Remark + " : วันที่ " + DateTime.Now.ToStringDateTime(),
                     UpdateDate = DateTime.Now,
                     UpdateBy = userID,
                     CreateDate = DateTime.Now,
                     CreateBy = userID
                 };
                 _context.tr_UnitFormPackage.Add(newUnitFormPackage);
-
-                //InsertLog(newUnitFormPackage.UnitFormID, newUnitFormPackage.GroupID, null, "Insert", null);
             }
             else
             {
-                existingUnitFormPackage.Remark = packagelist.Remark;
-                existingUnitFormPackage.UpdateBy = userID;
-                existingUnitFormPackage.UpdateDate = DateTime.Now;
-
-                //InsertLog(existingUnitFormPackage.UnitFormID, existingUnitFormPackage.GroupID, null, "Update", null);
+                if (!string.IsNullOrEmpty(packagelist.Remark))
+                {
+                    if (existingUnitFormPackage.Remark != packagelist.Remark)
+                    {
+                        existingUnitFormPackage.Remark = packagelist.Remark + " : วันที่ " + DateTime.Now.ToStringDateTime();
+                    }
+                }
+                else
+                {
+                    existingUnitFormPackage.Remark = "";
+                }
+                 existingUnitFormPackage.UpdateBy = userID;
+                 existingUnitFormPackage.UpdateDate = DateTime.Now;
             }
         }
 
@@ -387,7 +463,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                 UnitFormID = unitFormIDUse,
                 GroupID = pcCheck.GroupID,
                 LockStatusID = 7,
-                PE_Remark = pcCheck.Remark,
+                PE_Remark = pcCheck.Remark + " : วันที่ " + DateTime.Now.ToStringDateTime(),
                 FlagActive = true,
                 ActionDate = DateTime.Now,
                 CraeteDate = DateTime.Now,
@@ -399,7 +475,17 @@ public class FormChecklistRepo : IFormChecklistRepo
         }
         else
         {
-            passCondition.PE_Remark = pcCheck.Remark;
+            if (!string.IsNullOrEmpty(pcCheck.Remark))
+            {
+                if (passCondition.PE_Remark != pcCheck.Remark)
+                {
+                    passCondition.PE_Remark = pcCheck.Remark + " : วันที่ " + DateTime.Now.ToStringDateTime();
+                }
+            }
+            else
+            {
+                passCondition.PE_Remark = "";
+            }
             passCondition.FlagActive = true;
             passCondition.ActionDate = DateTime.Now;
             passCondition.UpdateDate = DateTime.Now;
@@ -409,7 +495,7 @@ public class FormChecklistRepo : IFormChecklistRepo
         _context.SaveChanges();
     }
 
-    private void InsertOrUpdatePassConditionUnCheck(PackageModel pcCheck, Guid unitFormIDUse, Guid? userID)
+    private void InsertOrUpdatePassConditionUnCheck(PackageModel? pcCheck, Guid unitFormIDUse, Guid? userID)
     {
         var passCondition = _context.tr_UnitFormPassCondition
             .Where(pc => pc.UnitFormID == unitFormIDUse && pc.GroupID == pcCheck.GroupID)
@@ -494,42 +580,6 @@ public class FormChecklistRepo : IFormChecklistRepo
         }
     }
 
-    public bool DeleteImage(Guid resourceId, string applicationPath)
-    {
-        // Retrieve the resource record from the database
-        var resource = _context.tm_Resource.FirstOrDefault(r => r.ID == resourceId);
-        if (resource == null)
-        {
-            return false;
-        }
-
-        // If resource.FilePath already contains the directory and filename, you can directly combine it
-        // with the application path:
-        var fullFilePath = Path.Combine(applicationPath ,"wwwroot", resource.FilePath);
-
-        // Check if the file exists and delete it
-        if (File.Exists(fullFilePath))
-        {
-            File.Delete(fullFilePath);
-        }
-        else
-        {
-            return false;
-        }
-
-        // Remove any related entries in the tr_UnitFormResource table
-        var relatedEntries = _context.tr_UnitFormResource.Where(ufr => ufr.ResourceID == resourceId).ToList();
-        _context.tr_UnitFormResource.RemoveRange(relatedEntries);
-
-        // Remove the resource record from the database
-        _context.tm_Resource.Remove(resource);
-
-        // Save changes to the database
-        _context.SaveChanges();
-
-        return true;
-    }
-
     private void InsertUnitFormActionLog(tr_UnitFormAction unitFormAction , int group_ID , string Action, Guid? userID)
     {
         var actionLog = new tr_UnitFormActionLog
@@ -567,4 +617,48 @@ public class FormChecklistRepo : IFormChecklistRepo
         _context.tr_UnitFormActionLog.Add(actionLog);
         _context.SaveChanges();
     }
+
+    #endregion
+
+    public bool DeleteImage(Guid resourceId, string applicationPath)
+    {
+
+        TransactionOptions options = new TransactionOptions
+        {
+            IsolationLevel = IsolationLevel.ReadCommitted,
+            Timeout = TimeSpan.FromMinutes(3)
+        };
+
+        using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, options))
+        {
+            try
+            {
+                var resource = _context.tm_Resource.FirstOrDefault(r => r.ID == resourceId);
+                if (resource == null)
+                {
+                    return false;
+                }
+                var fullFilePath = Path.Combine(applicationPath, "wwwroot", resource.FilePath);
+                if (File.Exists(fullFilePath))
+                {
+                    File.Delete(fullFilePath);
+                }
+                else
+                {
+                    return false;
+                }
+                var relatedEntries = _context.tr_UnitFormResource.Where(ufr => ufr.ResourceID == resourceId).ToList();
+                _context.tr_UnitFormResource.RemoveRange(relatedEntries);
+                _context.tm_Resource.Remove(resource);
+                _context.SaveChanges();
+                scope.Complete(); 
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("ลบรูปภาพไม่สำเร็จ", ex);
+            }
+        } 
+    }
+
 }

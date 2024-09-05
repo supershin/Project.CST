@@ -172,28 +172,26 @@ document.addEventListener("DOMContentLoaded", function () {
     toggleRemarkPC(); // Initial call to set the correct state of Remark-PC on page load
 });
 
-
 $('#saveButton').on('click', function () {
     var packages = [];
     var checklists = [];
     var pcCheck = null;
-    var valid = true; // Variable to track validation status
+    var valid = true; 
 
-    // Check if both the file input and the preview container are empty
+
     var files = $('#file-input')[0].files;
     var imagpreview = parseInt($('#hd_imageListcnt').val(), 10) || 0;
 
     if (files.length === 0 && imagpreview === 0) {
         Swal.fire({
-            title: 'Error!',
+            title: 'คำเตือน!',
             text: 'กรุณาอัปโหลดรูปภาพอย่างน้อยหนึ่งรูปก่อนบันทึก.',
             icon: 'error',
-            confirmButtonText: 'OK'
+            confirmButtonText: 'ตกลง'
         });
-        valid = false; // Mark the validation as failed
+        valid = false; 
     }
 
-    // Collect data for each package
     $('div.container-xl.mb-3').each(function (index) {
         var package = {
             UserName: $(this).find('input[id="UserName"]').val(),
@@ -209,11 +207,9 @@ $('#saveButton').on('click', function () {
             Remark: $(this).find('textarea.form-control').val()
         };
 
-        // Validation to ensure the package is not empty
         if (package.UserName && package.UserRole && package.ProjectId && package.UnitId && package.FormID && package.GroupID && package.PackageID) {
             packages.push(package);
 
-            // Collect data for each checklist
             $(this).find('div.card.card-link.card-link-pop').each(function () {
                 var checklist = {
                     FormID: package.FormID,
@@ -232,15 +228,14 @@ $('#saveButton').on('click', function () {
         }
     });
 
-    // Validate that at least one package is available
     if (packages.length === 0) {
         Swal.fire({
-            title: 'Error!',
+            title: 'คำเตือน!',
             text: 'กรุณากรอกข้อมูลในทุกฟิลด์ที่จำเป็นก่อนบันทึก.',
             icon: 'error',
-            confirmButtonText: 'OK'
+            confirmButtonText: 'ตกลง'
         });
-        valid = false; // Mark the validation as failed
+        valid = false; 
     }
 
     var pcRadioChecked = $('#pc-radio').is(':checked');
@@ -248,12 +243,12 @@ $('#saveButton').on('click', function () {
         var remarkPC = $('#Remark-PC').val();
         if (!remarkPC) {
             Swal.fire({
-                title: 'Error!',
+                title: 'คำเตือน!',
                 text: 'กรุณาระบุเหตุผลเพื่อขออนุมัติการผ่านแบบมีเงื่อนไข.',
                 icon: 'error',
-                confirmButtonText: 'OK'
+                confirmButtonText: 'ตกลง'
             });
-            valid = false; // Mark the validation as failed
+            valid = false; 
         } else {
             pcCheck = {
                 UnitFormID: packages[0]?.UnitFormID,
@@ -265,6 +260,16 @@ $('#saveButton').on('click', function () {
     }
 
     if (valid) {
+
+        Swal.fire({
+            title: 'กำลังบันทึก...',
+            text: 'กรุณารอสักครู่กำลังบันทึกข้อมูล.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading(); 
+            }
+        });
+
         var data = new FormData();
 
         packages.forEach((pkg, index) => {
@@ -296,12 +301,13 @@ $('#saveButton').on('click', function () {
             processData: false,
             data: data,
             success: function (res) {
+                Swal.close(); 
                 if (res.success) {
                     Swal.fire({
-                        title: 'Success!',
+                        title: 'สำเร็จ!',
                         text: 'บันทึกข้อมูลสำเร็จ',
                         icon: 'success',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'ตกลง'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             window.location.reload();
@@ -309,19 +315,20 @@ $('#saveButton').on('click', function () {
                     });
                 } else {
                     Swal.fire({
-                        title: 'Error!',
+                        title: 'ผิดพลาด!',
                         text: 'บันทึกข้อมูลไม่สำเร็จ',
                         icon: 'error',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'ตกลง'
                     });
                 }
             },
             error: function (xhr, status, error) {
+                Swal.close(); // Close the loading indicator
                 Swal.fire({
-                    title: 'Error!',
-                    text: 'An error occurred while saving the data.',
+                    title: 'ผิดพลาด!',
+                    text: 'บันทึกข้อมูลไม่สำเร็จ',
                     icon: 'error',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'ตกลง'
                 });
             }
         });
@@ -330,11 +337,10 @@ $('#saveButton').on('click', function () {
     return false;
 });
 
-
 function deleteImage(resourceId) {
     Swal.fire({
         title: '',
-        text: "ต้องการลลบรูปภาพหรือไม่?",
+        text: "ต้องการลบรูปภาพหรือไม่?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
@@ -343,12 +349,23 @@ function deleteImage(resourceId) {
         cancelButtonText: 'ยกเลิก'
     }).then((result) => {
         if (result.isConfirmed) {
+            // Show loading screen
+            Swal.fire({
+                title: 'กำลังลบรูปภาพ...',
+                text: 'กรุณารอสักครู่',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading(); // Show loading indicator
+                }
+            });
+
             // Perform the deletion via an AJAX call
             $.ajax({
                 url: baseUrl + 'FormCheckList/DeleteImage',
                 type: 'POST',
                 data: { resourceId: resourceId },
                 success: function (response) {
+                    Swal.close(); // Close the loading indicator
                     if (response.success) {
                         Swal.fire({
                             title: 'ลบรูปภาพสำเร็จ',
@@ -362,12 +379,14 @@ function deleteImage(resourceId) {
                     }
                 },
                 error: function (xhr, status, error) {
+                    Swal.close(); // Close the loading indicator
                     Swal.fire('Error!', 'An error occurred while processing your request.', 'error');
                 }
             });
         }
     });
 }
+
 
 
 

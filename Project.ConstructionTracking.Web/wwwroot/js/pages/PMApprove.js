@@ -56,8 +56,8 @@ function toggleRadio(radio, itemId) {
 
     // Prevent checking "อนุมัติหลัก" if any "ไม่อนุมัติPC" is selected in the same item context
     if (radio.name === "radios-inline-approval" && (radio.value === "4" || radio.value === "6")) {
-        // Find any "ไม่อนุมัติPC" radios within the same group context
-        var conditionalRadios = document.querySelectorAll(`input[name^="radios-inline-"][value="7"]`);
+        // Find any "ไม่อนุมัติPC" radios (value="7") within the same group context where PCFlageActive is true
+        var conditionalRadios = document.querySelectorAll(`input[name^="radios-inline-"][value="7"][data-pc-flag-active="true"]`);
 
         for (var k = 0; k < conditionalRadios.length; k++) {
             if (conditionalRadios[k].checked) {
@@ -72,6 +72,7 @@ function toggleRadio(radio, itemId) {
             }
         }
     }
+
 }
 
 
@@ -161,15 +162,15 @@ function saveOrSubmit(actionType) {
             });
             return;
         }
-        if (files.length === 0 && listimagecnt === "0") {
-            Swal.fire({
-                title: 'Warning!',
-                text: 'กรุณาแนบไฟล์ภาพ เมื่อไม่อนุมัติงวดงานนี้',
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
+        //if (files.length === 0 && listimagecnt === "0") {
+        //    Swal.fire({
+        //        title: 'Warning!',
+        //        text: 'กรุณาแนบไฟล์ภาพ เมื่อไม่อนุมัติงวดงานนี้',
+        //        icon: 'warning',
+        //        confirmButtonText: 'OK'
+        //    });
+        //    return;
+        //}
     }
 
 

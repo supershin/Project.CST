@@ -339,6 +339,7 @@
                                                    type="radio"
                                                    group-id="@group.Group_ID"
                                                    name="radios-inline-@Model.ID-@group.Group_ID"
+                                                   data-pc-flag-active="@group.PCFlageActive"  
                                                    value="7"
                                                    onclick="toggleRadio(this, '@Model.ID')"
                                                    @(group.PC_StatusID == 7 ? "checked" : "")

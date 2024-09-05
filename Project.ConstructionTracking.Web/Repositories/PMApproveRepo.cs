@@ -126,21 +126,21 @@ namespace Project.ConstructionTracking.Web.Repositories
                     StatusID_PE = item.StatusID_PE,
                     Remark_PE = item.Remark_PE,
                     ActionDate_PE = item.ActionDate_PE.HasValue
-                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PE.Value.ToString("dd/MM/yyyy"))
+                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PE.Value)
                                     : null,
                     RoleID_PM = item.RoleID_PM,
                     ActionType_PM = item.ActionType_PM,
                     StatusID_PM = item.StatusID_PM,
                     Remark_PM = item.Remark_PM,
                     ActionDate_PM = item.ActionDate_PM.HasValue
-                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PM.Value.ToString("dd/MM/yyyy"))
+                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PM.Value)
                                     : null,
                     RoleID_PJM = item.RoleID_PJM,
                     ActionType_PJM = item.ActionType_PJM,
                     StatusID_PJM = item.StatusID_PJM,
                     Remark_PJM = item.Remark_PJM,
                     ActionDate_PJM = item.ActionDate_PJM.HasValue
-                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PJM.Value.ToString("dd/MM/yyyy"))
+                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PJM.Value)
                                     : null,
                     PC_CNT = item.PC_Cnt,
                     PC_Color = item.AnswerColor,
