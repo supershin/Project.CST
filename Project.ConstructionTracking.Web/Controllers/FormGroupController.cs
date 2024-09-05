@@ -49,7 +49,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.FormGroupDetail = FormGroupDetail;
             }
 
-            var ddlModel = new GetDDL { Act = "Vender", ID = 0 };
+            var ddlModel = new GetDDL { Act = "Vender", ID = 2 };
             List<GetDDL> ListVender = _getDDLService.GetDDLList(ddlModel);
 
             ViewBag.ListVender = ListVender;

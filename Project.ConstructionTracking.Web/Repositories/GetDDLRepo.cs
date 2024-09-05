@@ -29,29 +29,22 @@ namespace Project.ConstructionTracking.Web.Repositories
                     return extQuery.ToList();
 
                 case "Vender":
-                    var vendorQuery = from t1 in _context.tr_CompanyVendorProject
-                                      join t2 in _context.tm_CompanyVendor.Where(cv => cv.FlagActive == true)
-                                      on t1.CompanyVendorID equals t2.ID into t2Joins
-                                      from t2 in t2Joins.DefaultIfEmpty()
+                    var result = from t1 in _context.tm_CompanyVendor
+                                 join t2 in _context.tr_CompanyVendor
+                                     on new { CompanyVendorID = (int?)t1.ID, FlagActive = (bool?)true } equals new { t2.CompanyVendorID,t2.FlagActive } into gj1
+                                 from t2 in gj1.DefaultIfEmpty()
+                                 join t3 in _context.tm_Vendor
+                                     on new { t2.VendorID, FlagActive = (bool?)true } equals new { VendorID = (int?)t3.ID, t3.FlagActive } into gj2
+                                 from t3 in gj2.DefaultIfEmpty()
+                                 where t1.ID == Model.ID && t1.FlagActive == true
+                                 orderby t2.VendorID
+                                  select new GetDDL
+                                  {
+                                      Value = t3.ID,
+                                      Text = t1.Name + " / " + t3.Name
+                                  };
 
-                                      join t3 in _context.tr_CompanyVendor.Where(cv => cv.FlagActive == true)
-                                      on t1.CompanyVendorID equals t3.CompanyVendorID into t3Joins
-                                      from t3 in t3Joins.DefaultIfEmpty()
-
-                                      join t4 in _context.tm_Vendor
-                                      on t3.VendorID equals t4.ID into t4Joins
-                                      from t4 in t4Joins.DefaultIfEmpty()
-
-                                      where t1.ProjectID == Guid.Parse("3ED05DB5-C3C7-4CC0-A98B-169EA8489CF4")
-                                            && t1.FlagActive == true
-                                      orderby t3.VendorID
-                                      select new GetDDL
-                                      {
-                                          Value = t3.VendorID,
-                                          Text = t2.Name + " / " + t4.Name
-                                      };
-
-                    return vendorQuery.ToList();
+                    return result.ToList();
 
 
                 default:

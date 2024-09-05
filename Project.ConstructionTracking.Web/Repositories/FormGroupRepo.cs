@@ -77,12 +77,16 @@ namespace Project.ConstructionTracking.Web.Repositories
                           join t5 in _context.tm_Vendor.Where(a => a.FlagActive == true)
                                on t1.VendorID equals t5.ID into venderNs
                           from venderN in venderNs.DefaultIfEmpty()
+                          join t6 in _context.tm_CompanyVendor.Where(a => a.FlagActive == true)
+                               on t1.CompanyVendorID equals t6.ID into CompanyVendors
+                          from CompanyVendor in CompanyVendors.DefaultIfEmpty()
                           where t1.ID == unitFormId
                           select new
                           {
                               t1.ID,
                               t1.Grade,
                               t1.FormID,
+                              CompanyName = CompanyVendor != null ? CompanyVendor.Name : "",
                               venderName = venderN != null ? venderN.Name : "",
                               venderID = venderN != null ? venderN.ID : 0,
                               UnitFormstatus = t1.StatusID,
@@ -132,7 +136,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 ID = result.ID,
                 Grade = result.Grade,
                 FormID = result.FormID,
-                VenderName = result.venderName,
+                VenderName = result.venderName + " / " + result.CompanyName,
                 VenderID = result.venderID,
                 UnitFormstatusID = result.UnitFormstatus,
                 UnitFormstatus = result.UnitFormstatus switch
