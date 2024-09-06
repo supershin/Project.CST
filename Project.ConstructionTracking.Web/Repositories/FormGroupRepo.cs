@@ -7,6 +7,7 @@ using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Project.ConstructionTracking.Web.Models.FormGroupModel;
 
@@ -61,7 +62,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             var orderedQuery = query.OrderBy(fg => fg.GroupID).ToList();
             return orderedQuery;
         }
-        public FormGroupDetail GetFormGroupDetail(Guid unitFormId)
+        public FormGroupDetail GetFormGroupDetail(Guid? unitFormId)
         {
             // Step 1: Fetch the UnitForm and related actions (PE, PM, and PJM)
             var result = (from t1 in _context.tr_UnitForm                          
@@ -101,7 +102,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                           }).FirstOrDefault();
 
             if (result == null)
-                return null;
+              return null;
 
             // Step 2: Fetch the latest UnitFormResource and related Resource
             var latestResource = (from ure in _context.tr_UnitFormResource
@@ -113,20 +114,22 @@ namespace Project.ConstructionTracking.Web.Repositories
                                       ure.CreateDate
                                   }).FirstOrDefault();
 
-            string filePath = null;
-            string fileName = null;
+            string? filePath = null;
+            string? fileName = null;
+            DateTime? fileDate = null;
 
             if (latestResource != null)
             {
                 var resource = _context.tm_Resource
                     .Where(r => r.ID == latestResource.ResourceID)
-                    .Select(r => new { r.FilePath, r.FileName })
+                    .Select(r => new { r.FilePath, r.FileName ,r.CreateDate})
                     .FirstOrDefault();
 
                 if (resource != null)
                 {
                     filePath = resource.FilePath;
                     fileName = resource.FileName;
+                    fileDate = resource.CreateDate;
                 }
             }
 
@@ -161,60 +164,75 @@ namespace Project.ConstructionTracking.Web.Repositories
                 PJM_Remark = result.PJM_Remark,
                 PJM_StatusID = result.PJM_StatusID,
                 FilePath = filePath,
-                FileName = fileName
+                FileName = fileName,
+                FileDate = fileDate
             };
         }
 
-
         public void SubmitSaveFormGroup(FormGroupModel.FormGroupIUDModel model)
         {
-
-            var unitForm = _context.tr_UnitForm.Where(uf => uf.ID == model.UnitFormID).FirstOrDefault();
-
-            if (unitForm != null)
+            TransactionOptions options = new TransactionOptions
             {
-                unitForm.Grade = model.FormGrade;
-                unitForm.VendorID = model.VendorID ?? unitForm.VendorID;
-                unitForm.StatusID = model.Act == "submit" ? 2 : 1;
-                unitForm.UpdateDate = DateTime.Now;
-                unitForm.UpdateBy = model.userID;
-            }
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TimeSpan.FromMinutes(3)
+            };
 
-            var unitFormAction = _context.tr_UnitFormAction
-            .Where(uf => uf.UnitFormID == model.UnitFormID && uf.RoleID == 1)
-            .FirstOrDefault();
-
-            if (unitFormAction != null)
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, options))
             {
-                unitFormAction.ActionType = model.Act;
-                unitFormAction.UpdateDate = DateTime.Now;
-                unitFormAction.UpdateBy = model.userID;
-            }
-
-            if(model.VendorID != null)
-            {
-
-            }
-
-            if (model.Act == "save")
-            {               
-                if (model.Sign != null)
+                try
                 {
-                    SaveSignature(model.Sign, model.ApplicationPath, model.UnitFormID, model.FormGrade, model.VendorID, model.userID, model.RoleID, model.FormID, "save");
-                }
-                InsertUnitFormActionLog(model.UnitFormID, "save", model.userID);
-            }
-            else
-            {
-                if (model.Sign != null)
-                {
-                    SaveSignature(model.Sign, model.ApplicationPath, model.UnitFormID, model.FormGrade, model.VendorID, model.userID, model.RoleID, model.FormID,"submit");
-                }
-                InsertUnitFormActionLog(model.UnitFormID, "submit", model.userID);
-            }
+                    var unitForm = _context.tr_UnitForm.Where(uf => uf.ID == model.UnitFormID).FirstOrDefault();
+                    var CompanyvenderID = _context.tr_CompanyVendor.Where(uf => uf.VendorID == model.VendorID).FirstOrDefault();
 
-            _context.SaveChanges();
+                    if (unitForm != null)
+                    {
+                        unitForm.Grade = model.FormGrade;
+                        unitForm.CompanyVendorID = CompanyvenderID?.CompanyVendorID ?? 0; 
+                        unitForm.VendorID = model.VendorID ?? unitForm.VendorID;
+                        unitForm.StatusID = model.Act == "submit" ? 2 : 1;
+                        unitForm.UpdateDate = DateTime.Now;
+                        unitForm.UpdateBy = model.userID;
+                    }
+
+                    var unitFormAction = _context.tr_UnitFormAction
+                        .Where(uf => uf.UnitFormID == model.UnitFormID && uf.RoleID == 1)
+                        .FirstOrDefault();
+
+                    if (unitFormAction != null)
+                    {
+                        unitFormAction.ActionType = model.Act;
+                        unitFormAction.UpdateDate = DateTime.Now;
+                        unitFormAction.UpdateBy = model.userID;
+                    }
+
+                    if (model.Act == "save")
+                    {
+                        if (model.Sign != null)
+                        {
+                            SaveSignature(model.Sign, model.ApplicationPath, model.UnitFormID, model.FormGrade, model.VendorID, model.userID, model.RoleID, model.FormID, "save");
+                        }
+                        InsertUnitFormActionLog(model.UnitFormID, "save", model.userID);
+                    }
+                    else
+                    {
+                        if (model.Sign != null)
+                        {
+                            SaveSignature(model.Sign, model.ApplicationPath, model.UnitFormID, model.FormGrade, model.VendorID, model.userID, model.RoleID, model.FormID, "submit");
+                        }
+                        InsertUnitFormActionLog(model.UnitFormID, "submit", model.userID);
+                    }
+
+                    _context.SaveChanges();
+
+                    scope.Complete(); 
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+                }
+            } 
         }
+
         private void SaveSignature(SignatureData signData, string? appPath, Guid? UnitFormID, string? FormGrade, int? VendorID, Guid? userID, int? RoleID ,int? FormID ,string? ActionType)
         {
             var resource = new FormGroupModel.Resources
@@ -334,13 +352,14 @@ namespace Project.ConstructionTracking.Web.Repositories
         }
         public bool SubmitUpdateVendorUnitForm(Guid ResourceID, Guid? UnitFormID , string? FormGrade , int? VendorID, Guid? userID, int? RoleID ,string? ActionType)
         {
-             var unitForm = _context.tr_UnitForm
-            .Where(uf => uf.ID == UnitFormID)
-            .FirstOrDefault();
+            var CompanyvenderID = _context.tr_CompanyVendor.Where(uf => uf.VendorID == VendorID).FirstOrDefault();
+
+            var unitForm = _context.tr_UnitForm.Where(uf => uf.ID == UnitFormID).FirstOrDefault();
 
             if (unitForm != null)
             {
                 unitForm.VendorID = VendorID ?? unitForm.VendorID;
+                unitForm.CompanyVendorID = CompanyvenderID.CompanyVendorID != null ? CompanyvenderID.CompanyVendorID : 0;
                 unitForm.VendorResourceID = ResourceID;
                 unitForm.UpdateBy = userID;
                 unitForm.UpdateDate = DateTime.Now;

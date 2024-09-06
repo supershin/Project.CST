@@ -19,6 +19,7 @@
             public Guid? UnitFormID { get; set; }
             public int? UnitFormStatusID { get; set; }
             public string? UnitStatusName { get; set; }
+            public int? CompanyvenderID { get; set; }
             public int? FormID { get; set; }
             public string? FormName { get; set; }
             public int GroupID { get; set; }

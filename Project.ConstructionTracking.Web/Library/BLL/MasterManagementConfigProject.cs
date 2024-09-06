@@ -14,5 +14,9 @@ namespace Project.ConstructionTracking.Web.Library.BLL
         {
             return SiteProvider.MastermanageProject.sp_get_unitstatus(en);
         }
+        public static List<PEMyTaskModel> sp_get_mytask_pe(PEMyTaskModel en)
+        {
+            return SiteProvider.MastermanageProject.sp_get_mytask_pe(en);
+        }
     }
 }

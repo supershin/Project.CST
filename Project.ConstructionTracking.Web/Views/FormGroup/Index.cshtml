@@ -10,6 +10,7 @@
     var UnitCode = ViewBag.UnitCode;
     var UnitStatusName = ViewBag.UnitStatusName;
     var FormGroupDetail = ViewBag.FormGroupDetail;
+    var Signaldate = ViewBag.Signaldate;
     var GobackTo = ViewBag.GobackTo;
     var RoleID = ViewBag.RoleID;
     var grade = FormGroupDetail?.Grade;
@@ -142,6 +143,18 @@
         display: none;
     }
 
+    .image-text {
+        position: absolute;
+        bottom: 5px; /* Adjust this value to control the vertical positioning */
+        right: 5px; /* Adjust this value to control the horizontal positioning */
+        color: white; /* Text color */
+        font-size: 12px; /* Font size */
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for better visibility */
+        padding: 2px 5px; /* Padding around the text */
+        border-radius: 3px; /* Rounded corners for the background */
+    }
+
+
   .custom-btn {
     width: 100px;  /* Ensures consistent width */
     height: 45px;  /* Ensures consistent height */
@@ -266,6 +279,16 @@
         padding: 10px 20px;
         font-weight: bold;
     }
+
+    .custom-label {
+        background-color: red; /* Red background */
+        color: white; /* White text color */
+        font-size: 20px; /* Keep the font size */
+        padding: 5px; /* Add some padding around the text */
+        border-radius: 3px; /* Optional: add rounded corners */
+        text-align: center; /* Center the text within the label */
+    }
+
 </style>
 
 <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@UnitFormName','@UnitCode')">
@@ -317,6 +340,17 @@
     </div>
     <!-- Page body -->
     <div class="page-body">
+        @if (PE_ActionType == "save")
+        {
+            <label class="form-label custom-label">ยังไม่ได้ Submit</label>
+        }
+        else if (PE_ActionType == "submit")
+        {
+            @if (UnitFormstatusID == 5 || UnitFormstatusID == 8)
+            {
+                <label class="form-label custom-label">ยังไม่ได้ Submit</label>
+            }
+        }
         @if (PE_ActionType == "submit")
         {
             <div class="container mt-1 mb-2">
@@ -327,9 +361,6 @@
                     <div class="col-md-4">
                         <div id="in-progress-card" class="card">
                             <div class="card-body text-center">
-@*                                 <button class="btn" id="btn-in-progress">
-                                    <span class="status-text"><i class="fa-solid fa-file-pen"></i></span>
-                                </button> *@
                                 <br>
                                 <h3 id="progress-title" class="card-title">@UnitFormstatus</h3>
                                     <p id="progress-text" class="card-text">ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "")</p>
@@ -599,8 +630,10 @@
                                 <label class="form-label">ลายเซ็นผู้รับเหมา</label>
                                 @if (!string.IsNullOrEmpty(FilePath))
                                 {
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal1">
+
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal1" style="position: relative; display: inline-block;">
                                         <img src="~/@FilePath" alt="Gallery Image 1" class="rounded" style="width:340px;height:260px;">
+                                        <span class="image-text">ลงลายเซ็นวันที่ : @Signaldate</span>
                                     </a>
 
                                     <!-- Hidden input for FilePath -->
