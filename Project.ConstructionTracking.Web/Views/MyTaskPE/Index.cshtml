@@ -1,0 +1,138 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+}
+
+@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.PEMyTaskModel>
+
+<style>
+    .status-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        border: none;
+        outline: none;
+        font-size: 18px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px
+    }
+
+    .c-details span {
+        font-weight: 300;
+        font-size: 13px
+    }
+
+    .text1 {
+        font-size: 14px;
+        font-weight: 600
+    }
+
+    .text2 {
+        color: #a5aec0
+    }
+
+</style>
+
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-home-heart">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M21 12l-9 -9l-9 9h2v7a2 2 0 0 0 2 2h6" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.39 0 .754 .112 1.061 .304" />
+                        <path d="M19 21.5l2.518 -2.58a1.74 1.74 0 0 0 0 -2.413a1.627 1.627 0 0 0 -2.346 0l-.168 .172l-.168 -.172a1.627 1.627 0 0 0 -2.346 0a1.74 1.74 0 0 0 0 2.412l2.51 2.59z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="card-body">
+                <h1>
+                    รายการขออนุมัติ
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="page-body">
+      <div class="container mt-1 mb-2">
+        <div class="row mb-3">
+                <div class="col-md-4 p-1 mb-2">
+                <input type="text" id="projectNameSearch" class="form-control" placeholder="Search by Project Name">
+                <div class="autocomplete-dropdown"></div>
+            </div>
+                <div class="col-md-4 p-1 mb-2">
+                <input type="text" id="unitCodeSearch" class="form-control" placeholder="Search by Unit Code">
+                <div class="autocomplete-dropdown"></div>
+            </div>
+                <div class="col-md-4 p-1 mb-2">
+                <input type="text" id="statusIdSearch" class="form-control" placeholder="Search by Status ID">
+                <div class="autocomplete-dropdown"></div>
+            </div>
+        </div>
+      </div>
+        <div class="container mt-1 mb-2">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-4">
+                        <form action="@Url.Action("index", "PMApprove")" method="post">
+                            <div class="card card-link card-link-pop p-3 mb-2" onclick="this.closest('form').submit();">
+                                <div class="d-flex justify-content-between">
+                                    <div class="d-flex flex-row align-items-center">
+                                        <button type="button" class="status-dot @item.StatusColor @(item.StatusColor == "bg-danger" || item.StatusColor== "bg-warning" ? "status-dot-animated" : "")">
+                                            <i class="@item.StatusIcon"></i>
+                                        </button>
+
+                                        <div class="ms-2 c-details">
+                                            <h3 class="mb-0 text-primary">@item.UnitCode <small class="text-yellow"> @item.ProjectName : @item.FormName</small></h3>
+                                        </div>
+                                    </div>
+                                    @if (@item.PassConditionIcon != "")
+                                    {
+                                        <div class="ms-auto">
+                                            <button type="button" class="status-dot @item.PassConditionColor" ms-auto">
+                                                <span class="status-text">
+                                                    <i class="@item.PassConditionIcon"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="mt-3">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-list-check"></i> &nbsp; สถานะ</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2"> @item.StatusDescription </span></li>
+                                    </ol>
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-user-pen"></i> &nbsp;PM ผู้ตรวจ</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">@item.PMActionBy</span></li>
+                                    </ol>
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-calendar-days"></i> &nbsp; PM ตรวจวันที่</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">@item.PMActionDate </span></li>
+                                    </ol>
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-user-pen"></i> &nbsp;PJM ผู้ตรวจ</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">@item.PJMActionBy</span></li>
+                                    </ol>
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-calendar-days"></i> &nbsp; PJM ตรวจวันที่</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">@item.PJMActionDate </span></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
