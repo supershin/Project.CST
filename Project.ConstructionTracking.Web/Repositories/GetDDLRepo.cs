@@ -26,7 +26,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                        Text = ext.Name
                                    };
 
-                    return extQuery.ToList();
+                return extQuery.ToList();
 
                 case "Vender":
                     var result = from t1 in _context.tm_CompanyVendor
@@ -44,11 +44,47 @@ namespace Project.ConstructionTracking.Web.Repositories
                                       Text = t1.Name + " / " + t3.Name
                                   };
 
-                    return result.ToList();
+                return result.ToList();
 
+                case "Project":
+                    var ListProject = from t1 in _context.tm_Project
+                                       join t2 in _context.tr_ProjectPermission
+                                       on t1.ProjectID equals t2.ProjectID into joined
+                                       from t2 in joined.DefaultIfEmpty()
+                                       where t1.FlagActive == true && t2.FlagActive == true && t2.UserID == Model.UserID
+                                       select new GetDDL
+                                       {
+                                           ValueGuid = t1.ProjectID,
+                                           Text = t1.ProjectName
+                                       };
+
+                return ListProject.ToList();
+
+                case "Unit":
+                    var ListUnit = from tu in _context.tm_Unit
+                                   where tu.FlagActive == true && tu.ProjectID == Model.ValueGuid
+                                   orderby tu.UnitCode
+                                   select new GetDDL
+                                   {
+                                       ValueGuid = tu.UnitID,
+                                       Text = tu.UnitCode
+                                   };
+
+                return ListUnit.ToList();
+
+                case "UnitFormStatus":
+                    var ListUnitFormStatus = from tu in _context.tm_UnitFormStatus
+                                             where tu.FlagActive == true && tu.ID > 1
+                                             orderby tu.LineOrder
+                                             select new GetDDL
+                                             {
+                                                Value = tu.ID,
+                                                Text = tu.Name
+                                             };
+
+                return ListUnitFormStatus.ToList();
 
                 default:
-
                 return new List<GetDDL>();
             }
         }

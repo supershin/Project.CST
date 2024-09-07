@@ -9,7 +9,8 @@
         public string? unit_status { get; set; }
         public string? user_id { get; set; }
         public Guid ID { get; set; } 
-        public string? UnitCode { get; set; } 
+        public string? UnitCode { get; set; }
+        public string? UnitID { get; set; }
         public string? ProjectName { get; set; } 
         public string? Grade { get; set; } 
         public int FormID { get; set; } 

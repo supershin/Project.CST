@@ -125,6 +125,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             PEMyTaskModel Entity = new PEMyTaskModel();
 
             Entity.index = index;
+            Entity.UnitID = Commons.FormatExtension.NullToString(reader["UnitID"]);
             Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
             Entity.ProjectName = Commons.FormatExtension.NullToString(reader["ProjectName"]);
             Entity.Grade = Commons.FormatExtension.NullToString(reader["Grade"]);
