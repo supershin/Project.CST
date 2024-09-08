@@ -23,7 +23,15 @@ namespace Project.ConstructionTracking.Web.Services
         }
         public void SaveOrUpdateUnitFormAction(PJMApproveModel.PJMApproveIU model)
         {
-            _IPJMApproveRepo.SaveOrUpdateUnitFormAction(model);
+            try
+            {
+                _IPJMApproveRepo.SaveOrUpdateUnitFormAction(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+            }
         }
+
     }
 }

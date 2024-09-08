@@ -1,4 +1,5 @@
-﻿using Project.ConstructionTracking.Web.Data;
+﻿using Project.ConstructionTracking.Web.Commons;
+using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using System;
 using System.Globalization;
@@ -42,7 +43,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                   RoleName = t6Join.Name,
                                   UserName = t2Join.FirstName + " " + t2Join.LastName,
                                   TextInbox = t1.TextInbox,
-                                  Actiondate = t1.ActionDate.HasValue ? t1.ActionDate.Value.ToString("dd/MM/yyyy") : "",
+                                  Actiondate = t1.ActionDate.ToStringDateTime()
                               };
 
             return vendorQuery.ToList();
