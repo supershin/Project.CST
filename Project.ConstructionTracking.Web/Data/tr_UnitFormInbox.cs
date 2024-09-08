@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Project.ConstructionTracking.Web.Data
 {
-    [Keyless]
     public partial class tr_UnitFormInbox
     {
+        [Key]
         public int ID { get; set; }
         public Guid UnitFormID { get; set; }
         public int FormID { get; set; }

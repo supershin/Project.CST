@@ -1,14 +1,18 @@
 ﻿using System;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models.MProjectModel;
+using Project.ConstructionTracking.Web.Models.QCModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
 	public interface IQcSummaryRepo
 	{
 		dynamic GetQcSummaryList(Guid projectID, Guid unitID);
+
+        QcStatusListSummaryResp VerifyStatusQc(Guid projectID, Guid unitID, int checkListID);
 	}
 
 	public class QcSummaryRepo : IQcSummaryRepo
@@ -55,6 +59,78 @@ namespace Project.ConstructionTracking.Web.Repositories
 			return query;
         }
 
-	}
+        public QcStatusListSummaryResp VerifyStatusQc(Guid projectID, Guid unitID, int checkListID)
+		{
+			List<tr_QC_UnitCheckList>? verifyQc = _context.tr_QC_UnitCheckList
+							.Where(o => o.ProjectID == projectID
+							&& o.UnitID == unitID && o.CheckListID == checkListID
+							&& o.FlagActive == true).OrderBy(o => o.Seq).ToList();
+
+			QcStatusListSummaryResp resp = new QcStatusListSummaryResp()
+			{
+				QcStatusLists = new List<QcStatusList>()
+			};
+
+            if (verifyQc != null)
+			{
+
+				foreach( var listData in verifyQc)
+				{
+					QcStatusList qcStatus = new QcStatusList();
+
+					tr_QC_UnitCheckList_Action? qcAction = _context.tr_QC_UnitCheckList_Action
+														.Where(o => o.QCUnitCheckListID == listData.ID
+														).FirstOrDefault();
+					if(qcAction != null)
+					{
+                        qcStatus.QcUnitCheckListID = (Guid)qcAction.QCUnitCheckListID;
+                        qcStatus.Seq = listData.Seq.GetValueOrDefault();
+
+                        if (qcAction.ActionType == SystemConstant.ActionType.SAVE)
+						{
+							// set status = wating
+							qcStatus.QcResultStatus = SystemConstant.QcSummaryStatus.WORKING;
+							qcStatus.QcResultStatusDesc = SystemConstant.QcSummaryStatus.Desc.WORKING;
+
+							resp.QcStatusLists.Add(qcStatus);
+						}
+						else
+						{
+                            if (listData.IsNotReadyInspect == true)
+                            {
+                                //set status = suspend
+                                qcStatus.QcResultStatus = SystemConstant.QcSummaryStatus.SUSPEND;
+                                qcStatus.QcResultStatusDesc = SystemConstant.QcSummaryStatus.Desc.SUSPEND;
+
+                                resp.QcStatusLists.Add(qcStatus);
+                            }
+                            else if (listData.IsPassCondition == true)
+                            {
+                                if (listData.QCStatusID == SystemConstant.QcStatus.PASS)
+                                {
+                                    //set status = pass
+                                    qcStatus.QcResultStatus = SystemConstant.QcSummaryStatus.FINISH;
+                                    qcStatus.QcResultStatusDesc = SystemConstant.QcSummaryStatus.Desc.FINISH;
+
+                                    resp.QcStatusLists.Add(qcStatus);
+                                }
+                                else
+                                {
+                                    //set status = suspend
+                                    qcStatus.QcResultStatus = SystemConstant.QcSummaryStatus.SUSPEND;
+                                    qcStatus.QcResultStatusDesc = SystemConstant.QcSummaryStatus.Desc.SUSPEND;
+
+                                    resp.QcStatusLists.Add(qcStatus);
+                                }
+                            }
+                        }
+                        
+                    }
+                }
+            }
+
+			return resp;
+		}
+    }
 }
 

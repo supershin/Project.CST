@@ -43,7 +43,29 @@
 
         public static class QcStatus
         {
-            //public const int PASS =  
+            public const int PASS = 10;
+            public const int FAILED = 11;
+        }
+
+        public static class ActionType
+        {
+            public const string SAVE = "save";
+            public const string SUBMIT = "submit";
+        }
+
+        public static class QcSummaryStatus
+        {
+            public const int FINISH = 1;
+            public const int SUSPEND = 2;
+            public const int WORKING = 5;
+
+            public class Desc
+            {
+                public const string FINISH = "F";
+                public const string SUSPEND = "S";
+                public const string WORKING = "W";
+            }
+            
         }
     }
 

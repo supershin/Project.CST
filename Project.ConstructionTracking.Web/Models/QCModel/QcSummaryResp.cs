@@ -27,7 +27,7 @@ namespace Project.ConstructionTracking.Web.Models.QCModel
 
 	public class QcInspection
 	{
-		public Guid QcCheckListID { get; set; }
+		public Guid QcUnitCheckListID { get; set; }
 		public int QcStatusID { get; set; }
 		public string QcStatusDesc { get; set; }
 		public int Seq { get; set; }

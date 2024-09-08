@@ -6,7 +6,7 @@ namespace Project.ConstructionTracking.Web.Services
 {
 	public interface IQcSummaryService
 	{
-		QcSummaryResp GetQcSummary(Guid projectId, Guid userId);
+		QcSummaryResp GetQcSummary(Guid projectId, Guid unitId);
 	}
 	public class QcSummaryService : IQcSummaryService
 	{
@@ -16,9 +16,9 @@ namespace Project.ConstructionTracking.Web.Services
 			_qcSummaryRepo = qcSummaryRepo;
 		}
 
-		public QcSummaryResp GetQcSummary(Guid projectId, Guid userId)
+		public QcSummaryResp GetQcSummary(Guid projectId, Guid unitId)
 		{
-			var query = _qcSummaryRepo.GetQcSummaryList(projectId, userId);
+			var query = _qcSummaryRepo.GetQcSummaryList(projectId, unitId);
 
 			QcSummaryResp resp = new QcSummaryResp()
 			{
@@ -44,9 +44,25 @@ namespace Project.ConstructionTracking.Web.Services
 						QcTypeName = data.QcTypeName,
 						FormQcCheckList = data.FormQcCheckList,
 						FormID = data.FormID,
+						QcInspections = new List<QcInspection>()
 					};
 
-					resp.QcSummaryLists.Add(list);
+					QcStatusListSummaryResp qcStatusSummary = _qcSummaryRepo.VerifyStatusQc(projectId, unitId, data.QcCheckListID);
+
+					foreach (var qcSum in qcStatusSummary.QcStatusLists)
+					{
+						QcInspection inspection = new QcInspection()
+						{
+							QcUnitCheckListID = qcSum.QcUnitCheckListID,
+							Seq = qcSum.Seq,
+							QcStatusID = qcSum.QcResultStatus,
+							QcStatusDesc = qcSum.QcResultStatusDesc
+						};
+							
+						list.QcInspections.Add(inspection);
+					}
+
+                    resp.QcSummaryLists.Add(list);
 				}
 
             }
