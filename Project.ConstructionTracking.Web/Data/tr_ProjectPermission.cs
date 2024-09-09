@@ -6,25 +6,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Project.ConstructionTracking.Web.Data
 {
-    public partial class tr_UnitFormInbox
+    public partial class tr_ProjectPermission
     {
         [Key]
         public int ID { get; set; }
-        public Guid UnitFormID { get; set; }
-        public int FormID { get; set; }
-        public int? RoleID { get; set; }
-        [StringLength(500)]
-        [Unicode(false)]
-        public string? TextInbox { get; set; }
+        public Guid? ProjectID { get; set; }
+        public Guid? UserID { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime? ActionDate { get; set; }
-        public Guid? ActionBy { get; set; }
-        [Column(TypeName = "datetime")]
-        public DateTime? CreateDate { get; set; }
-        public Guid? CraeteBy { get; set; }
+        public DateTime? CraeteDate { get; set; }
+        public Guid? CreateBy { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
+
+        [ForeignKey("ProjectID")]
+        [InverseProperty("tr_ProjectPermission")]
+        public virtual tm_Project? Project { get; set; }
+        [ForeignKey("UserID")]
+        [InverseProperty("tr_ProjectPermission")]
+        public virtual tm_User? User { get; set; }
     }
 }

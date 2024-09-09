@@ -107,6 +107,20 @@
     <hr />
     <div class="row mb-3">
         <div class="col-lg-6">
+            <label class="form-label"> Mapping Projects</label>
+            @foreach (var item in Model.respModel.ProjectList)
+            {
+                <div style="display: flex; align-items: center;">
+                    <!-- Flexbox applied here -->
+                    <input type="checkbox" id="checklist-@item.ProjectID" class="checklist-item large-checkbox" data-id="@item.ProjectID" @(item.IsChecked ? "checked" : "") style="width: 20px; height: 20px; margin-right: 10px;" />
+                    <label for="checklist-@item.ProjectID" style="font-size: 1.2em;">@item.ProjectName</label>
+                </div>
+            }
+        </div>
+    </div>
+    <hr />
+    <div class="row mb-3">
+        <div class="col-lg-6">
             <button id="open-image-btn" class="btn btn-info">
                 <i class="fa-solid fa-signature"></i> &nbsp; แสดงรูปภาพลายเซ็นต์
             </button>
@@ -140,7 +154,6 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">

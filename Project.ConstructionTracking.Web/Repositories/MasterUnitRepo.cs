@@ -179,7 +179,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             tm_Unit? edit = _context.tm_Unit.Where(o => o.UnitID == model.UnitID && o.FlagActive == true).FirstOrDefault();
             if (edit == null) throw new Exception("ไม่พบข้อมูลของยูนิต");
 
-            edit.VendorID = model.VendorID;
+            edit.CompanyVendorID = model.CompanyVendorID;
             edit.PONo = model.PONo;
             edit.StartDate = model.StartDate;
             edit.UpdateDate = DateTime.Now;
@@ -216,14 +216,13 @@ namespace Project.ConstructionTracking.Web.Repositories
         public dynamic GetProjectCompanyVendor(Guid projectID)
         {
             var query = (from cvp in _context.tr_CompanyVendorProject
-                         join cv in _context.tr_CompanyVendor on cvp.CompanyVendorID equals cv.CompanyVendorID
-                         join v in _context.tm_Vendor on cv.VendorID equals v.ID
+                         join mcv in _context.tm_CompanyVendor on cvp.CompanyVendorID equals mcv.ID
                          where cvp.ProjectID == projectID && cvp.FlagActive == true
-                         && cv.FlagActive == true && v.FlagActive == true
+                         && mcv.FlagActive == true
                          select new
                          {
-                             v.ID,
-                             v.Name
+                             mcv.ID,
+                             mcv.Name
                          }).ToList();
 
             return query;
@@ -237,7 +236,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                          {
                              u.UnitID,
                              u.ProjectID,
-                             u.VendorID,
+                             u.CompanyVendorID,
                              u.PONo,
                              u.StartDate
                          }).FirstOrDefault();
