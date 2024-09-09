@@ -48,7 +48,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             Guid userID = Guid.Parse(decode);
 
             DetailUserResp detailResp = _masterUserService.DetailUser(userID);
-            detailResp.respModel = _masterUserService.GetUnitResp();
+            detailResp.respModel = _masterUserService.GetUnitResp(detailResp.UserID);
 
             return View(detailResp);
         }

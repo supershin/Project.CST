@@ -47,6 +47,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tr_CompanyVendorProject> tr_CompanyVendorProject { get; set; } = null!;
         public virtual DbSet<tr_Form_QCCheckList> tr_Form_QCCheckList { get; set; } = null!;
         public virtual DbSet<tr_ProjectModelForm> tr_ProjectModelForm { get; set; } = null!;
+        public virtual DbSet<tr_ProjectPermission> tr_ProjectPermission { get; set; } = null!;
         public virtual DbSet<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; } = null!;
         public virtual DbSet<tr_QC_UnitCheckList_Action> tr_QC_UnitCheckList_Action { get; set; } = null!;
         public virtual DbSet<tr_QC_UnitCheckList_Defect> tr_QC_UnitCheckList_Defect { get; set; } = null!;
@@ -253,8 +254,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tm_QC_CheckList>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
@@ -318,6 +317,11 @@ namespace Project.ConstructionTracking.Web.Data
                 entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.CompanyVendor)
+                    .WithMany(p => p.tm_Unit)
+                    .HasForeignKey(d => d.CompanyVendorID)
+                    .HasConstraintName("FK_tm_Unit_tm_CompanyVendor");
 
                 entity.HasOne(d => d.ModelType)
                     .WithMany(p => p.tm_Unit)
@@ -454,6 +458,19 @@ namespace Project.ConstructionTracking.Web.Data
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
             });
 
+            modelBuilder.Entity<tr_ProjectPermission>(entity =>
+            {
+                entity.HasOne(d => d.Project)
+                    .WithMany(p => p.tr_ProjectPermission)
+                    .HasForeignKey(d => d.ProjectID)
+                    .HasConstraintName("FK_tr_ProjectPermission_tm_Project");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.tr_ProjectPermission)
+                    .HasForeignKey(d => d.UserID)
+                    .HasConstraintName("FK_tr_ProjectPermission_tm_User");
+            });
+
             modelBuilder.Entity<tr_QC_UnitCheckList>(entity =>
             {
                 entity.Property(e => e.ID).ValueGeneratedNever();
@@ -502,8 +519,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_QC_UnitCheckList_Action>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.HasOne(d => d.QCUnitCheckList)
                     .WithMany(p => p.tr_QC_UnitCheckList_Action)
                     .HasForeignKey(d => d.QCUnitCheckListID)
@@ -522,8 +537,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_QC_UnitCheckList_Defect>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
@@ -533,8 +546,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_QC_UnitCheckList_Detail>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
@@ -554,8 +565,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_QC_UnitCheckList_Resource>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
@@ -602,6 +611,11 @@ namespace Project.ConstructionTracking.Web.Data
                 entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.CompanyVendor)
+                    .WithMany(p => p.tr_UnitForm)
+                    .HasForeignKey(d => d.CompanyVendorID)
+                    .HasConstraintName("FK_tr_UnitForm_tm_CompanyVendor");
 
                 entity.HasOne(d => d.Form)
                     .WithMany(p => p.tr_UnitForm)

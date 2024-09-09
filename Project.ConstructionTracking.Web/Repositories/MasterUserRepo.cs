@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Net.Mime;
+using System.Collections.Generic;
+using System.Linq;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
@@ -12,9 +13,10 @@ namespace Project.ConstructionTracking.Web.Repositories
 	{
 		dynamic GetUserList(DTParamModel param, MasterUserModel criteria);
         dynamic GetBU();
+        dynamic GetProject(int buID);
         dynamic GetRole();
         dynamic GetPosition();
-
+        List<ListProjectByBUResp> GetProjectByBU(Guid userID);
         dynamic CreateUser(CreateUserModel model);
 
         dynamic EditUser(EditUserModel model);
@@ -142,6 +144,24 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 _context.tm_User.Add(create);
                 _context.SaveChanges();
+
+                if (model.MappingProject != null)
+                {
+                    foreach (var permission in model.MappingProject)
+                    {
+                        tr_ProjectPermission createPermission = new tr_ProjectPermission();
+                        createPermission.ProjectID = permission;
+                        createPermission.UserID = create.ID;
+                        createPermission.FlagActive = true;
+                        createPermission.CraeteDate = DateTime.Now;
+                        createPermission.UpdateDate = DateTime.Now;
+                        createPermission.CreateBy = model.RequestUserID;
+                        createPermission.UpdateBy = model.RequestUserID;
+
+                        _context.tr_ProjectPermission.Add(createPermission);
+                        _context.SaveChanges();
+                    }
+                }
             }
             return create;
         }
@@ -192,6 +212,82 @@ namespace Project.ConstructionTracking.Web.Repositories
             edit.Mobile = model.MobileNo;
             edit.UpdateDate = DateTime.Now;
             edit.UpdateBy = model.RequestUserID;
+
+            // Mapping project
+            List<Guid?> permissionList = _context.tr_ProjectPermission
+                                                .Where(o => o.UserID == model.UserID)
+                                                .Select(o => o.ProjectID)
+                                                .ToList();
+
+            if(model.MappingProject != null && model.MappingProject.Count > 0)
+            {
+                // Ensure MappingProject is not null and handle nullable GUIDs
+                List<Guid?> checkListMapping = permissionList
+                                                .Where(p => p.HasValue) // Ensure you're working with non-nullable GUIDs if necessary
+                                                .Select(p => p.Value)   // Select non-nullable values
+                                                .Except(model.MappingProject) // Perform Except with the model's list
+                                                .Cast<Guid?>()          // Cast back to nullable GUIDs if needed
+                                                .ToList();
+
+                if (checkListMapping != null && checkListMapping.Any())
+                {
+                    foreach (var permission in checkListMapping)
+                    {
+                        tr_ProjectPermission? updatePermission = _context.tr_ProjectPermission
+                                                                .Where(o => o.UserID == model.UserID
+                                                                && o.ProjectID == permission
+                                                                && o.FlagActive == true).FirstOrDefault();
+                        if (updatePermission != null)
+                        {
+                            updatePermission.FlagActive = false;
+                            updatePermission.UpdateBy = model.RequestUserID;
+                            updatePermission.UpdateDate = DateTime.Now;
+
+                            _context.tr_ProjectPermission.Update(updatePermission);
+                            _context.SaveChanges();
+                        }
+                    }
+                }
+
+                else
+                {
+                    // If checkListMapping is null or empty, create new permissions
+                    foreach (var projectID in model.MappingProject)
+                    {
+                        tr_ProjectPermission newPermission = new tr_ProjectPermission
+                        {
+                            UserID = model.UserID,
+                            ProjectID = projectID,
+                            FlagActive = true,
+                            CreateBy = model.RequestUserID,
+                            CraeteDate = DateTime.Now,
+                            UpdateDate = DateTime.Now,
+                            UpdateBy = model.RequestUserID
+                        };
+
+                        _context.tr_ProjectPermission.Add(newPermission);
+                    }
+
+                    _context.SaveChanges(); // Save all new permissions
+                }
+            }
+            else
+            {
+                // Optionally, handle the case where model.MappingProject is null or empty
+                // For example, you might want to deactivate all permissions for the user
+                var allPermissions = _context.tr_ProjectPermission
+                                             .Where(o => o.UserID == model.UserID && o.FlagActive == true)
+                                             .ToList();
+
+                foreach (var permission in allPermissions)
+                {
+                    permission.FlagActive = false;
+                    permission.UpdateBy = model.RequestUserID;
+                    permission.UpdateDate = DateTime.Now;
+                }
+
+                _context.SaveChanges();
+            }
 
             _context.tm_User.Update(edit);
             _context.SaveChanges();
@@ -431,6 +527,61 @@ namespace Project.ConstructionTracking.Web.Repositories
             _context.SaveChanges();
 
             return true;
+        }
+
+        public List<ListProjectByBUResp> GetProjectByBU(Guid userID)
+        {
+            tm_User? user = _context.tm_User.Where(o => o.ID == userID && o.FlagActive == true).FirstOrDefault();
+
+            List<tm_Project> query = _context.tm_Project.Where(o => o.BUID == user.BUID && o.FlagActive == true).ToList();
+
+            List<ListProjectByBUResp> newResp = new List<ListProjectByBUResp>();
+
+            foreach ( var data in query)
+            {
+                tr_ProjectPermission? permission = _context.tr_ProjectPermission
+                                                .Where(o => o.ProjectID == data.ProjectID
+                                                && o.UserID == user.ID && o.FlagActive == true)
+                                                .FirstOrDefault();
+
+                if (permission != null)
+                {
+                    ListProjectByBUResp model = new ListProjectByBUResp()
+                    {
+                        ProjectID = (Guid)permission.ProjectID,
+                        ProjectName = data.ProjectName,
+                        IsChecked = true
+                    };
+
+                    newResp.Add(model);
+                }
+                else
+                {
+                    ListProjectByBUResp model = new ListProjectByBUResp()
+                    {
+                        ProjectID = data.ProjectID,
+                        ProjectName = data.ProjectName,
+                        IsChecked = false
+                    };
+
+                    newResp.Add(model);
+                }
+            }
+
+            return newResp;
+        }
+
+        public dynamic GetProject(int buID)
+        {
+            var query = (from mp in _context.tm_Project
+                        where mp.BUID == buID && mp.FlagActive == true
+                        select new
+                        {
+                            mp.ProjectID,
+                            mp.ProjectName
+                        }).ToList();
+
+            return query;
         }
     }
 }

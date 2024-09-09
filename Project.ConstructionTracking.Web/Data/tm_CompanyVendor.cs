@@ -10,8 +10,10 @@ namespace Project.ConstructionTracking.Web.Data
     {
         public tm_CompanyVendor()
         {
+            tm_Unit = new HashSet<tm_Unit>();
             tr_CompanyVendor = new HashSet<tr_CompanyVendor>();
             tr_CompanyVendorProject = new HashSet<tr_CompanyVendorProject>();
+            tr_UnitForm = new HashSet<tr_UnitForm>();
         }
 
         [Key]
@@ -28,8 +30,12 @@ namespace Project.ConstructionTracking.Web.Data
         public Guid? UpdateBy { get; set; }
 
         [InverseProperty("CompanyVendor")]
+        public virtual ICollection<tm_Unit> tm_Unit { get; set; }
+        [InverseProperty("CompanyVendor")]
         public virtual ICollection<tr_CompanyVendor> tr_CompanyVendor { get; set; }
         [InverseProperty("CompanyVendor")]
         public virtual ICollection<tr_CompanyVendorProject> tr_CompanyVendorProject { get; set; }
+        [InverseProperty("CompanyVendor")]
+        public virtual ICollection<tr_UnitForm> tr_UnitForm { get; set; }
     }
 }

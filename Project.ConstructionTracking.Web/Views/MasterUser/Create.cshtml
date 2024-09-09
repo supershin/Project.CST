@@ -18,7 +18,7 @@
     </div>
 </div>
 <div class="container mt-5">
-    <h2>Edit User</h2>
+    <h2>Create User</h2>
     <hr />
     <div class="row mb-3">
         <div class="col-lg-6">
@@ -90,6 +90,14 @@
         </div>
     </div>
     <hr />
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <label for="project-list" class="form-label">Mapping Projects</label>
+            <div id="project-list">
+            </div>
+        </div>
+    </div>
+    <hr />
     <div class="d-flex justify-content-end">
         <button id="create-user-save" class="btn btn-success">
             บันทึก
@@ -115,6 +123,34 @@
             // Apply autocomplete to the input field
             $("#user-position").autocomplete({
                 source: positionNames
+            });
+
+
+            $('#user-bu-id').change(function() {
+                var buId = $(this).val();
+                var buProjectData = @Html.Raw(Json.Serialize(Model.BUList));
+                // Clear the existing projects section
+                $('#project-list').empty();
+
+                if (buId !== '0') {
+                    // Find the BU by its ID in the buProjectData object
+                    var selectedBU = buProjectData.find(function(bu) {
+                        return bu.ID == buId;
+                    });
+
+                    if (selectedBU && selectedBU.ProjectByBu && selectedBU.ProjectByBu.length > 0) {
+                        var projectHtml = '';
+                        $.each(selectedBU.ProjectByBu, function(index, project) {
+                            projectHtml += '<div style="display: flex; align-items: center;">';
+                            projectHtml += '<input type="checkbox" id="checklist-' + project.ProjectID + '" class="checklist-item large-checkbox" data-id="' + project.ProjectID + '" ' + (project.IsChecked ? 'checked' : '') + ' style="width: 20px; height: 20px; margin-right: 10px;" />';
+                            projectHtml += '<label for="checklist-' + project.ProjectID + '" style="font-size: 1.2em;">' + project.ProjectName + '</label>';
+                            projectHtml += '</div>';
+                        });
+                        $('#project-list').html(projectHtml);
+                    } else {
+                        $('#project-list').html('<p>No projects available for this BU.</p>');
+                    }
+                }
             });
 
             userCreate.init();

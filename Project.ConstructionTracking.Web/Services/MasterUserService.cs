@@ -13,8 +13,9 @@ namespace Project.ConstructionTracking.Web.Services
 		dynamic UserList(DTParamModel param, MasterUserModel criteria);
 
 		UnitRespModel GetUnitResp();
+        UnitRespModel GetUnitResp(Guid userID);
 
-		CreateUserResp CreateUser(CreateUserModel model);
+        CreateUserResp CreateUser(CreateUserModel model);
 
 		DetailUserResp DetailUser(Guid userID);
 
@@ -40,11 +41,12 @@ namespace Project.ConstructionTracking.Web.Services
 
 		public UnitRespModel GetUnitResp()
 		{
-			UnitRespModel resp = new UnitRespModel()
-			{
-				BUList = new List<BUModel>(),
-				RoleList = new List<RoleModel>(),
-				PositionList = new List<PositionModel>()
+            UnitRespModel resp = new UnitRespModel()
+            {
+                BUList = new List<BUModel>(),
+                RoleList = new List<RoleModel>(),
+                PositionList = new List<PositionModel>(),
+                ProjectList = new List<ProjectByBU>()
 			};
 
 			var bu = _masterUserRepo.GetBU();
@@ -53,8 +55,22 @@ namespace Project.ConstructionTracking.Web.Services
                 BUModel model = new BUModel()
 				{
 					ID = b.ID,
-					Name = b.Name
+					Name = b.Name,
+                    ProjectByBu = new List<ProjectByBuModel>()
 				};
+
+                var projectBU = _masterUserRepo.GetProject(b.ID);
+                foreach (var pb in projectBU)
+                {
+                    ProjectByBuModel pbModel = new ProjectByBuModel()
+                    {
+                        ProjectID = pb.ProjectID,
+                        ProjectName = pb.ProjectName,
+                        IsChecked = false
+                    };
+
+                    model.ProjectByBu.Add(pbModel);
+                }
 
 				resp.BUList.Add(model);
 			}
@@ -85,7 +101,69 @@ namespace Project.ConstructionTracking.Web.Services
 			return resp;
 		}
 
-		public CreateUserResp CreateUser(CreateUserModel model)
+        public UnitRespModel GetUnitResp(Guid userID)
+        {
+            UnitRespModel resp = new UnitRespModel()
+            {
+                BUList = new List<BUModel>(),
+                RoleList = new List<RoleModel>(),
+                PositionList = new List<PositionModel>(),
+                ProjectList = new List<ProjectByBU>()
+            };
+
+            var bu = _masterUserRepo.GetBU();
+            foreach (var b in bu)
+            {
+                BUModel model = new BUModel()
+                {
+                    ID = b.ID,
+                    Name = b.Name
+                };
+
+                resp.BUList.Add(model);
+            }
+
+            var role = _masterUserRepo.GetRole();
+            foreach (var r in role)
+            {
+                RoleModel roles = new RoleModel()
+                {
+                    ID = r.ID,
+                    Name = r.Name
+                };
+
+                resp.RoleList.Add(roles);
+            }
+
+            var position = _masterUserRepo.GetPosition();
+            foreach (var p in position)
+            {
+                PositionModel positions = new PositionModel()
+                {
+                    Name = p.Name
+                };
+
+                resp.PositionList.Add(positions);
+            }
+
+
+            var project = _masterUserRepo.GetProjectByBU(userID);
+            foreach(var data in project)
+            {
+                ProjectByBU projectByBU = new ProjectByBU()
+                {
+                    ProjectID = data.ProjectID,
+                    ProjectName = data.ProjectName,
+                    IsChecked = data.IsChecked
+                };
+
+                resp.ProjectList.Add(projectByBU);
+            }
+
+            return resp;
+        }
+
+        public CreateUserResp CreateUser(CreateUserModel model)
 		{
             TransactionOptions option = new TransactionOptions();
             option.Timeout = new TimeSpan(1, 0, 0);
