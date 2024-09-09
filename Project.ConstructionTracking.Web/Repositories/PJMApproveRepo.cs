@@ -180,7 +180,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                             if (passCondition != null)
                             {
                                 passCondition.StatusID = passConditionModel.StatusID;
-                                if (!string.IsNullOrEmpty(model.Remark))
+                                if (!string.IsNullOrEmpty(passConditionModel.PJM_Remark))
                                 {
                                     if (passCondition.PJM_Remark != passConditionModel.PJM_Remark)
                                     {

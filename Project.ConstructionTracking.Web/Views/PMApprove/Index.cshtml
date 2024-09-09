@@ -133,7 +133,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        @if (comeFrom == "SummaryUnitForm")
+                        @if (comeFrom == "SummaryUnitForm" || ViewBag.UserRole == SystemConstant.UserRole.PE.ToString())
                         {
                             <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
                                 <input type="hidden" name="projectId" id="projectId" value="@ProjectID" />
@@ -146,9 +146,17 @@
                                 </button>
                             </form>
                         }
+                        else if (ViewBag.UserRole == SystemConstant.UserRole.PJM.ToString())
+                        {
+                            <form action="@Url.Action("index","MyTaskPJM")" method="post">
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
                         else
                         {
-                            <form action="@Url.Action("index","PMFormcheck")" method="post">
+                            <form action="@Url.Action("index","MyTaskPM")" method="post">
                                 <button class="status-dot bg-transparent">
                                     <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
                                 </button>

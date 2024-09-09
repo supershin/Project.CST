@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient.Server;
 using Newtonsoft.Json;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Services;
 using System.Text.RegularExpressions;
@@ -37,9 +38,10 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.UnitFormID = listPJMApprove.UnitFormID;
                 ViewBag.UnitFormStatus = listPJMApprove?.UnitFormStatus?.ToString() ?? "";
                 ViewBag.FormID = listPJMApprove?.FormID;
+                ViewBag.PJM_ActionBy = listPJMApprove?.PJM_ActionBy;
                 ViewBag.FormName = listPJMApprove?.FormName;
                 ViewBag.PJM_Actiontype = listPJMApprove?.PJM_Actiontype ?? string.Empty;
-                ViewBag.PJM_ActionDate = listPJMApprove?.PJM_ActionDate?.ToString("dd/MM/yyyy") ?? string.Empty;
+                ViewBag.PJM_ActionDate = listPJMApprove?.PJM_ActionDate?.ToStringDateTime();
                 ViewBag.PJM_StatusID = listPJMApprove?.PJM_StatusID ?? (int?)null;
                 ViewBag.PJMUnitFormRemark = listPJMApprove?.PJMUnitFormRemark ?? string.Empty;
                 _FormID = listPJMApprove?.FormID;

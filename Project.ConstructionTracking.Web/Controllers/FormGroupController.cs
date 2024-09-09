@@ -21,13 +21,14 @@ namespace Project.ConstructionTracking.Web.Controllers
             _FormChecklistService = formChecklistService;
         }
 
-        public IActionResult Index(int FormID, Guid unitId)
+        public IActionResult Index(int FormID, Guid unitId , string comeFrom)
         {
 
             ViewBag.GobackTo = "Forgroup";
 
             var userRole = Request.Cookies["CST.Role"];
             ViewBag.RoleID = userRole;
+            ViewBag.comeFrom = comeFrom;
 
             var filterunitData = new FormCheckListModel.Form_getUnitFormData { UnitID = unitId, FormID = FormID};
 

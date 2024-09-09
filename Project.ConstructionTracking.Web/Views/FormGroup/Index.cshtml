@@ -12,6 +12,7 @@
     var FormGroupDetail = ViewBag.FormGroupDetail;
     var Signaldate = ViewBag.Signaldate;
     var GobackTo = ViewBag.GobackTo;
+    var comeFrom = ViewBag.comeFrom;
     var RoleID = ViewBag.RoleID;
     var grade = FormGroupDetail?.Grade;
     var VenderName = FormGroupDetail?.VenderName;
@@ -312,18 +313,30 @@
             </div>
             <div class="card-body">
                 <input type="hidden" name="UnitFormID" id="UnitFormID" value="@UnitFormID" />
+                <input type="hidden" name="projectId" id="projectId" value="@projectId" />
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
-                            <input type="hidden" name="projectId" id="projectId" value="@projectId" />
-                            <input type="hidden" name="projectName" value="@projectName" />
-                            <input type="hidden" name="unitId" value="@unitId" />
-                            <input type="hidden" name="UnitCode" value="@UnitCode" />
-                            <input type="hidden" name="UnitStatusName" value="@UnitStatusName" />
-                            <button class="status-dot bg-transparent">
-                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
-                            </button>
-                        </form>
+                        @if (comeFrom == "MyTaskPE")
+                        {
+                            <form asp-controller="MyTaskPE" asp-action="Index" method="post">
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
+                                <input type="hidden" name="projectId" id="projectId" value="@projectId" />
+                                <input type="hidden" name="projectName" value="@projectName" />
+                                <input type="hidden" name="unitId" value="@unitId" />
+                                <input type="hidden" name="UnitCode" value="@UnitCode" />
+                                <input type="hidden" name="UnitStatusName" value="@UnitStatusName" />
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
                         <h3 class="mb-0 header-text"> @UnitFormName ( Unit : @UnitCode )</h3>
