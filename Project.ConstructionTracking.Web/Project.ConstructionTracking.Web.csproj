@@ -10,7 +10,6 @@
   <ItemGroup>
     <Folder Include="Data\" />
     <Folder Include="wwwroot\lib\datatable\" />
-    <Folder Include="Views\FormOverall\" />
     <Folder Include="Views\MasterForm\" />
     <Folder Include="Views\MasterProject\" />
     <Folder Include="Models\MProjectModel\" />
@@ -46,7 +45,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Views\FormOverall\" />
     <None Remove="Views\MasterForm\" />
     <None Remove="Views\MasterProject\" />
     <None Remove="Models\MProjectModel\" />

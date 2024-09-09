@@ -67,6 +67,17 @@
             }
             
         }
+
+        public static class QcTypeID
+        {
+            public const int QC1 = 12;
+            public const int QC2 = 13;
+            public const int QC3 = 14;
+            public const int QC4 = 26;
+            public const int QC41 = 15;
+            public const int QC42 = 16;
+            public const int QC5 = 17;
+        }
     }
 
 }
