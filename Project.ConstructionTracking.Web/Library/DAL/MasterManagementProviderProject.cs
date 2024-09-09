@@ -35,6 +35,10 @@ namespace Project.ConstructionTracking.Web.Library.DAL
 
         public abstract List<PEMyTaskModel> sp_get_mytask_pe(PEMyTaskModel EN);
 
+        public abstract List<PMMyTaskModel> sp_get_mytask_pm(PMMyTaskModel EN);
+
+        public abstract List<PJMMyTaskModel> sp_get_mytask_pjm(PJMMyTaskModel EN);
+
 
         #region __ Reader __
         public static List<ProjectModel> SP_Get_Project_ListReader(IDataReader reader)
@@ -139,6 +143,82 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.PMActionDate = Commons.FormatExtension.NullToString(reader["PMActionDate"]);
             Entity.PJMActionBy = Commons.FormatExtension.NullToString(reader["PJMActionBy"]);
             Entity.PJMActionDate = Commons.FormatExtension.NullToString(reader["PJMActionDate"]);
+            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassConditionIcon"]);
+            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassConditionColor"]);
+            return Entity;
+        }
+
+
+
+        public static List<PMMyTaskModel> sp_get_mytask_pm_ListReader(IDataReader reader)
+        {
+            List<PMMyTaskModel> list = new List<PMMyTaskModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_mytask_pm_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static PMMyTaskModel sp_get_mytask_pm_Reader(IDataReader reader, int index)
+        {
+            PMMyTaskModel Entity = new PMMyTaskModel();
+
+            Entity.index = index;
+            Entity.UnitID = Commons.FormatExtension.NullToString(reader["UnitID"]);
+            Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.ProjectName = Commons.FormatExtension.NullToString(reader["ProjectName"]);
+            Entity.FormID = Commons.FormatExtension.Nulltoint(reader["FormID"]);
+            Entity.FormName = Commons.FormatExtension.NullToString(reader["FormName"]);
+            Entity.ComVendorName = Commons.FormatExtension.NullToString(reader["ComVendorName"]);
+            Entity.StatusID = Commons.FormatExtension.Nulltoint(reader["StatusID"]);
+            Entity.StatusDescription = Commons.FormatExtension.NullToString(reader["StatusDescription"]);
+            Entity.StatusIcon = Commons.FormatExtension.NullToString(reader["StatusIcon"]);
+            Entity.StatusColor = Commons.FormatExtension.NullToString(reader["StatusColor"]);
+            Entity.PEActionBy = Commons.FormatExtension.NullToString(reader["PEActionBy"]);
+            Entity.PEActionDate = Commons.FormatExtension.NullToString(reader["PEActionDate"]);
+            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassConditionIcon"]);
+            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassConditionColor"]);
+            return Entity;
+        }
+
+
+        public static List<PJMMyTaskModel> sp_get_mytask_pjm_ListReader(IDataReader reader)
+        {
+            List<PJMMyTaskModel> list = new List<PJMMyTaskModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_mytask_pjm_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static PJMMyTaskModel sp_get_mytask_pjm_Reader(IDataReader reader, int index)
+        {
+            PJMMyTaskModel Entity = new PJMMyTaskModel();
+
+            Entity.index = index;
+            Entity.UnitID = Commons.FormatExtension.NullToString(reader["UnitID"]);
+            Entity.UnitFormID = Commons.FormatExtension.NullToString(reader["UnitFormID"]);
+            Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.ProjectName = Commons.FormatExtension.NullToString(reader["ProjectName"]);
+            Entity.FormID = Commons.FormatExtension.Nulltoint(reader["FormID"]);
+            Entity.FormName = Commons.FormatExtension.NullToString(reader["FormName"]);
+            Entity.ComVendorName = Commons.FormatExtension.NullToString(reader["ComVendorName"]);
+            Entity.StatusID = Commons.FormatExtension.Nulltoint(reader["StatusID"]);
+            Entity.StatusDescription = Commons.FormatExtension.NullToString(reader["StatusDescription"]);
+            Entity.StatusIcon = Commons.FormatExtension.NullToString(reader["StatusIcon"]);
+            Entity.StatusColor = Commons.FormatExtension.NullToString(reader["StatusColor"]);
+            Entity.PEActionBy = Commons.FormatExtension.NullToString(reader["PEActionBy"]);
+            Entity.PEActionDate = Commons.FormatExtension.NullToString(reader["PEActionDate"]);
+            Entity.PMActionBy = Commons.FormatExtension.NullToString(reader["PMActionBy"]);
+            Entity.PMActionDate = Commons.FormatExtension.NullToString(reader["PMActionDate"]);
             Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassConditionIcon"]);
             Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassConditionColor"]);
             return Entity;

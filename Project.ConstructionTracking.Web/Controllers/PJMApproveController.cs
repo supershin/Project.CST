@@ -72,6 +72,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 {
                     model.ListPCIC = JsonConvert.DeserializeObject<List<PJMIUPC>>(param);
                 }
+                model.UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
                 model.ApplicationPath = _hosting.ContentRootPath;
                 _PJMApproveService.SaveOrUpdateUnitFormAction(model);
 

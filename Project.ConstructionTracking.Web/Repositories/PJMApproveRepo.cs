@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
+using System;
 using System.Transactions;
 using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
 
@@ -73,6 +74,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                           join t8 in _context.tr_UnitFormAction.Where(a => a.RoleID == 3)
                               on t1.ID equals t8.UnitFormID into actions
                           from t8 in actions.DefaultIfEmpty()
+                          join t9 in _context.tm_User on t8.UpdateBy equals t9.ID into users
+                          from t9 in users.DefaultIfEmpty()
                           where t1.ID == filterData.UnitFormID && t3.ID != null
                           select new GetlistChecklistPC
                           {
@@ -95,6 +98,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               PM_Remark = t3.PM_Remark,
                               PJM_Remark = t3.PJM_Remark,
                               PJM_Actiontype = t8.ActionType,
+                              PJM_ActionBy = t9.FirstName + ' ' + t9.LastName,
                               PJM_ActionDate = t8.ActionDate,
                               PJM_StatusID = t8.StatusID,   
                               PJMUnitFormRemark = t8.Remark
@@ -131,7 +135,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                             StatusID = statusToUpdate, 
                             Remark = !string.IsNullOrEmpty(model.Remark) ? model.Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy") : "",
                             ActionDate = DateTime.Now,
+                            UpdateBy = model.UserID,
                             UpdateDate = DateTime.Now,
+                            CreateBy = model.UserID,    
                             CraeteDate = DateTime.Now
                         };
 
@@ -155,6 +161,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         }
                         unitFormAction.ActionDate = DateTime.Now;
                         unitFormAction.UpdateDate = DateTime.Now;
+                        unitFormAction.UpdateBy = model.UserID;
 
                         _context.tr_UnitFormAction.Update(unitFormAction);
                     }
@@ -162,14 +169,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                     _context.SaveChanges();
 
                     int? statusForm = (statusToUpdate == 8) ? 7 : 8;
-                    UpdateUnitForm(model.UnitFormID, model.ActionType, statusForm);
+                    UpdateUnitForm(model.UnitFormID, model.ActionType, statusForm , model.UserID);
 
                     if (model.ListPCIC != null && model.ListPCIC.Count > 0)
                     {
                         foreach (var passConditionModel in model.ListPCIC)
                         {
-                            var passCondition = _context.tr_UnitFormPassCondition
-                                .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.ID == passConditionModel.PC_ID && pc.FlagActive == true);
+                            var passCondition = _context.tr_UnitFormPassCondition.FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.ID == passConditionModel.PC_ID && pc.FlagActive == true);
 
                             if (passCondition != null)
                             {
@@ -185,6 +191,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 {
                                     passCondition.PJM_Remark = "";
                                 }
+                                passCondition.UpdateBy = model.UserID;
                                 passCondition.UpdateDate = DateTime.Now;
 
                                 _context.tr_UnitFormPassCondition.Update(passCondition);
@@ -194,7 +201,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     }
 
 
-                    InsertImagesPM(model, null, 3); // RoleID = 3 for PJM
+                    InsertImagesPM(model, model.UserID, 3); // RoleID = 3 for PJM
 
                     scope.Complete();
                 }
@@ -205,13 +212,14 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-        private void UpdateUnitForm(Guid? unitformID, string? actiontype, int? StatusID)
+        private void UpdateUnitForm(Guid? unitformID, string? actiontype, int? StatusID , Guid? UserID)
         {
             var UnitForm = _context.tr_UnitForm.FirstOrDefault(tr => tr.ID == unitformID);
 
             if (UnitForm != null)
             {
                 UnitForm.StatusID = actiontype == "save" ? 9 : StatusID;
+                UnitForm.UpdateBy = UserID;
                 UnitForm.UpdateDate = DateTime.Now;
 
                 _context.tr_UnitForm.Update(UnitForm);
@@ -254,7 +262,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                             FilePath = relativeFilePath, // Store the relative path with forward slashes
                             MimeType = "image/jpeg", // Ensure the MimeType is set to "image/jpeg"
                             FlagActive = true,
+                            CreateBy = userID,
                             CreateDate = DateTime.Now,
+                            UpdateBy = userID,
                             UpdateDate = DateTime.Now,
                         };
                         _context.tm_Resource.Add(newResource);
@@ -267,6 +277,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                             UnitFormID = model.UnitFormID,
                             ResourceID = newResource.ID,
                             CreateDate = DateTime.Now,
+                            CreateBy = userID,
+                            UpdateBy = userID,
+                            UpdateDate = DateTime.Now,
                         };
                         _context.tr_UnitFormResource.Add(newFormResource);
                     }

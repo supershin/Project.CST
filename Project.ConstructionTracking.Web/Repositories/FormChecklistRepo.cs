@@ -303,11 +303,9 @@ public class FormChecklistRepo : IFormChecklistRepo
         var form = _context.tm_Form.Find(package.FormID);
         if (form != null)
         {
-            var unitForm = _context.tr_UnitForm
-                .Where(uf => uf.ID == package.UnitFormID && uf.FormID == package.FormID && uf.UnitID == package.UnitId)
-                .FirstOrDefault();
+            var unitForm = _context.tr_UnitForm.Where(uf => uf.FormID == package.FormID && uf.UnitID == package.UnitId).FirstOrDefault();
 
-            if (package.UnitFormID == Guid.Empty)
+            if (unitForm == null)
             {
                 unitForm = new tr_UnitForm
                 {
@@ -334,9 +332,7 @@ public class FormChecklistRepo : IFormChecklistRepo
 
     private void InsertOrUpdateUnitFormAction(PackageModel package, Guid unitFormIDUse, Guid? userID)
     {
-        var unitFormAction = _context.tr_UnitFormAction
-        .Where(uf => uf.ID == package.UnitFormActionID && uf.UnitFormID == package.UnitFormID)
-        .FirstOrDefault();
+        var unitFormAction = _context.tr_UnitFormAction.Where(uf => uf.RoleID == 1 && uf.UnitFormID == unitFormIDUse).FirstOrDefault();
 
         if (unitFormAction == null)
         {
@@ -370,9 +366,7 @@ public class FormChecklistRepo : IFormChecklistRepo
     {
         foreach (var packagelist in packages)
         {
-            var existingUnitFormPackage = _context.tr_UnitFormPackage
-                .Where(ufp => ufp.ID == packagelist.UnitPackageID && ufp.UnitFormID == unitFormIDUse)
-                .FirstOrDefault();
+            var existingUnitFormPackage = _context.tr_UnitFormPackage.Where(ufp => ufp.ID == packagelist.UnitPackageID && ufp.UnitFormID == unitFormIDUse).FirstOrDefault();
 
             if (existingUnitFormPackage == null)
             {
