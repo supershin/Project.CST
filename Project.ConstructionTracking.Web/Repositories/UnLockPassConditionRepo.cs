@@ -30,6 +30,12 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from t6 in vendors.DefaultIfEmpty()
                           join t7 in _context.tm_FormGroup on t1.GroupID equals t7.ID into groups
                           from t7 in groups.DefaultIfEmpty()
+                          join t2Pe in _context.tr_UnitFormAction on new { t1.UnitFormID , RoleID = (int?)1 } equals new { t2Pe.UnitFormID, t2Pe.RoleID } into unitFormsPE
+                          from t2pe in unitFormsPE.DefaultIfEmpty()
+                          join t2Pm in _context.tr_UnitFormAction on new { t1.UnitFormID, RoleID = (int?)2 } equals new { t2Pm.UnitFormID, t2Pm.RoleID } into unitFormsPM
+                          from t2pm in unitFormsPM.DefaultIfEmpty()
+                          join t2PJm in _context.tr_UnitFormAction on new { t1.UnitFormID, RoleID = (int?)3 } equals new { t2PJm.UnitFormID, t2PJm.RoleID } into unitFormsPJM
+                          from t2PJm in unitFormsPJM.DefaultIfEmpty()
                           where t1.UnitFormID == filterData.UnitFormID
                               && (filterData.GroupID == -1 || t1.GroupID == filterData.GroupID)
                               //&& (t1.StatusID == 8 || t1.StatusID == 12 || t1.StatusID == 13 || t1.StatusID == 14)
@@ -49,8 +55,11 @@ namespace Project.ConstructionTracking.Web.Repositories
                               LockStatusID = t1.LockStatusID,
                               StatusID = t1.StatusID,
                               PE_Remark = t1.PE_Remark,
+                              PE_ActionDate = t2pe.ActionDate.HasValue ? t2pe.ActionDate.Value.ToString("dd/MM/yyyy") : "",
                               PM_Remark = t1.PM_Remark,
+                              PM_ActionDate = t2pm.ActionDate.HasValue ? t2pm.ActionDate.Value.ToString("dd/MM/yyyy") : "",
                               PJM_Remark = t1.PJM_Remark,
+                              PJM_ActionDate = t2PJm.ActionDate.HasValue ? t2PJm.ActionDate.Value.ToString("dd/MM/yyyy") : "",
                               PEUnLock_Remark = t1.PEUnLock_Remark,
                               PMUnLock_Remark = t1.PMUnLock_Remark,
                               // Fetch images related to this item
@@ -88,6 +97,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return result;
         }
+
         public void RequestUnlock(UnLockPassConditionModel.UpdateUnlockPC model)
         {
 
@@ -111,11 +121,24 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 passCondition.LockStatusID = 8;
                 passCondition.StatusID = 12;
-                passCondition.PEUnLock_Remark = model.PEUnLock_Remark;
+
+                // Check if model.PEUnLock_Remark has a value
+                if (!string.IsNullOrEmpty(model.PEUnLock_Remark))
+                {
+                    if (passCondition.PEUnLock_Remark != model.PEUnLock_Remark)
+                    {
+                        passCondition.PEUnLock_Remark = model.PEUnLock_Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                    }
+                }
+                else {
+                    passCondition.PEUnLock_Remark = "";
+                }
+
                 passCondition.UpdateBy = model.UserID;
                 passCondition.UpdateDate = DateTime.Now;
                 _context.tr_UnitFormPassCondition.Update(passCondition);
             }
+
 
             var actionLog = new tr_UnitFormActionLog
             {
@@ -196,7 +219,18 @@ namespace Project.ConstructionTracking.Web.Repositories
             if (passCondition != null)
             {
                 passCondition.StatusID = model.Action == "Approved" ? 13 : 14;
-                passCondition.PMUnLock_Remark = model.PMUnLock_Remark;
+                // Check if model.PEUnLock_Remark has a value
+                if (!string.IsNullOrEmpty(model.PMUnLock_Remark))
+                {
+                    if (passCondition.PMUnLock_Remark != model.PMUnLock_Remark)
+                    {
+                        passCondition.PMUnLock_Remark = model.PMUnLock_Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                    }                 
+                }
+                else
+                {
+                    passCondition.PMUnLock_Remark = "";
+                }
                 passCondition.UpdateBy = model.UserID;
                 passCondition.UpdateDate = DateTime.Now;
                 _context.tr_UnitFormPassCondition.Update(passCondition);

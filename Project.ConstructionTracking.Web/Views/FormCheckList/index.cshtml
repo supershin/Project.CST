@@ -50,9 +50,9 @@
         align-items: center;
     }
 
-    .align-center .material-icons {
-        margin-right: 8px;
-    }
+        .align-center .material-icons {
+            margin-right: 8px;
+        }
 
     .card {
         border: none;
@@ -113,8 +113,25 @@
         padding: 0;
     }
 
+    .BackButton {
+        width: 50px; /* Set a fixed width */
+        height: 50px; /* Set a fixed height */
+        background-color: white;
+        border-radius: 50%;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border: none;
+        display: flex; /* Align the icon */
+        align-items: center;
+        justify-content: center;
+        padding: 0; /* Remove padding for a perfect circle */
+        cursor: pointer; /* Add cursor pointer for better UX */
+    }
+
 </style>
 <div class="page-wrapper">
+    <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@UnitFormName','@UnitCode')">
+        <i class="fa-solid fa-message fa-xl" style="color: #74C0FC;"></i>
+    </button>
     <!-- Page header -->
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
@@ -246,8 +263,7 @@
                                           id="input-remark-@item.PackagesID"
                                           name="Packages[@packageIndex].Remark"
                                           placeholder="ความคิดเห็น"
-                                          data-package-id="@item.PackagesID"
-                                >@item.Remark</textarea>
+                                          data-package-id="@item.PackagesID">@item.Remark</textarea>
                             </div>
                         </div>
                     </div>
@@ -265,9 +281,8 @@
                             </svg>
                         </div>
                         <h3 class="card-title align-center">
-                            <button type="button" 
-                                    class="status-dot bg-secondary" 
-                                    >
+                            <button type="button"
+                                    class="status-dot bg-secondary">
                                 <i class="fa-solid fa-user"></i>
                             </button>
                             <div class="ms-2 c-details">
@@ -326,24 +341,35 @@
                                 }
                             </div>
                             <div class="col-12 mb-2">
-                            @if (ViewBag.UserRole == "1")
-                            {
-                                @if (ViewBag.StatusActionType == "submit")
+                                @if (ViewBag.UserRole == "1")
                                 {
-                                    if (UnitFormStatusID == 5 && PM_ActionType == "submit")
+                                    @if (ViewBag.StatusActionType == "submit")
                                     {
+                                        if (UnitFormStatusID == 5 && PM_ActionType == "submit")
+                                        {
 
-                                        <div id="drop-zone" class="drop-zone">
-                                            <p class="drop-zone-text">
-                                                <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
-                                            </p>
-                                            <input type="file" id="file-input" class="drop-zone-input" multiple>
-                                            <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
-                                        </div>
+                                            <div id="drop-zone" class="drop-zone">
+                                                <p class="drop-zone-text">
+                                                    <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                                </p>
+                                                <input type="file" id="file-input" class="drop-zone-input" multiple>
+                                                <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
+                                            </div>
+                                        }
+                                        else if (UnitFormStatusID == 8 && PCStatusID != 8 && PJM_ActionType == "submit" || UnitFormStatusID == 9 && PJM_ActionType == "save")
+                                        {
+
+                                            <div id="drop-zone" class="drop-zone">
+                                                <p class="drop-zone-text">
+                                                    <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                                </p>
+                                                <input type="file" id="file-input" class="drop-zone-input" multiple>
+                                                <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
+                                            </div>
+                                        }
                                     }
-                                    else if (UnitFormStatusID == 8 && PCStatusID != 8 && PJM_ActionType == "submit" || UnitFormStatusID == 9 && PJM_ActionType == "save")
+                                    else
                                     {
-
                                         <div id="drop-zone" class="drop-zone">
                                             <p class="drop-zone-text">
                                                 <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
@@ -353,21 +379,16 @@
                                         </div>
                                     }
                                 }
-                                else
-                                {
-                                    <div id="drop-zone" class="drop-zone">
-                                        <p class="drop-zone-text">
-                                            <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
-                                        </p>
-                                        <input type="file" id="file-input" class="drop-zone-input" multiple>
-                                        <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
-                                    </div>
-                                }
-                            }
+                            </div>
+                            <div class="col-12" style="padding-top : 2rem;">
+                                <label class="form-label" style="background-color: #B1CAF6; font-size: 20px;">กรณีผ่านแบบมีเงื่อนไขใส่ข้อมูลด้านล่าง</label>
+                                <input type="hidden" name="PM_StatusActionType" value="@ViewBag.StatusActionType" ID="PM_StatusActionType" />
+                                <input type="hidden" name="PC_StatusID" value="@PCStatusID" ID="PC_StatusID" />
+                                <input type="hidden" name="UnitFormStatusIDchk" value="@UnitFormStatusID" ID="UnitFormStatusIDchk" />
                             </div>
                             <div class="col-12">
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="PcCheck.IsChecked" id="pc-radio" value="true" onclick="checkPC(this)" @(LockStatusID!= null ? "checked" : "")>
+                                    <input class="form-check-input" type="radio" name="PcCheck.IsChecked" id="pc-radio" value="true" onclick="checkPC(this)" @(LockStatusID != null ? "checked" : "")>
                                     <span class="form-check-label">ผ่านแบบมีเงื่อนไข (PC)</span>
                                 </label>
                             </div>
@@ -377,27 +398,68 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <div class="row">
-                            <div class="col-6">
-                                <label class="form-label"> แก้ไขล่าสุด @ViewBag.StatusUpdateDate</label>
-                                <input type="hidden" name="PM_StatusActionType" value="@ViewBag.StatusActionType" ID="PM_StatusActionType"/>
-                                <input type="hidden" name="PC_StatusID" value="@PCStatusID" ID="PC_StatusID" />
-                                <input type="hidden" name="UnitFormStatusIDchk" value="@UnitFormStatusID" ID="UnitFormStatusIDchk" />
+                        <label class="form-label"> บันทึกล่าสุด @ViewBag.StatusUpdateDate</label>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex">
+                            <div>
+                                @if (GobackTo == "Forgroup")
+                                {                                
+                                    <a class="BackButton" href="@Url.Action("Index","FormGroup"
+                                        , new{projectId =@projectId,
+                                            projectName = @projectName,
+                                            FormID = @FormID,
+                                            UnitFormID = @UnitFormID,
+                                            UnitFormName = @UnitFormName,
+                                            unitId  = @unitId,
+                                            UnitCode = @UnitCode,
+                                            UnitStatusName = @UnitStatusName})" >
+                                        <i class="fa-solid fa-chevron-left fa-xl" style="color: #77a0ed;"></i>
+                                    </a>
+                                }
+                                else if (GobackTo == "PMApprove")
+                                {
+                                    <a class="BackButton" href="@Url.Action("Index","PMApprove"
+                                        , new{
+                                                formId = @FormID,
+                                                unitId  = @unitId
+                                              })" >
+                                        <i class="fa-solid fa-chevron-left fa-xl" style="color: #77a0ed;"></i>
+                                    </a>
+                                }
+                                else if (GobackTo == "PJMApprove")
+                                {
+                                    <a class="BackButton" href="@Url.Action("Index","PJMApprove"
+                                        , new{
+                                                UnitFormID = @UnitFormID
+                                              })">
+                                        <i class="fa-solid fa-chevron-left fa-xl" style="color: #77a0ed;"></i>
+                                    </a>
+                                }
                             </div>
-                            <div class="col-6">
-                            @if (ViewBag.UserRole == SystemConstant.UserRole.PE.ToString())
-                            {
-                                @if (ViewBag.StatusActionType == "submit")
+                            <div class="ms-auto">
+                                @if (ViewBag.UserRole == SystemConstant.UserRole.PE.ToString())
                                 {
-                                    if (UnitFormStatusID == 5 && PM_ActionType == "submit")
+                                    @if (ViewBag.StatusActionType == "submit")
                                     {
-                                        <div class="btn-list justify-content-end">
-                                            <button type="button" class="btn btn-primary" id="saveButton">
-                                                บันทึก
-                                            </button>
-                                        </div>
+                                        if (UnitFormStatusID == 5 && PM_ActionType == "submit")
+                                        {
+                                            <div class="btn-list justify-content-end">
+                                                <button type="button" class="btn btn-primary" id="saveButton">
+                                                    บันทึก
+                                                </button>
+                                            </div>
+                                        }
+                                        else if (UnitFormStatusID == 8 && PCStatusID != 8 && PJM_ActionType == "submit")
+                                        {
+                                            <div class="btn-list justify-content-end">
+                                                <button type="button" class="btn btn-primary" id="saveButton">
+                                                    บันทึก
+                                                </button>
+                                            </div>
+                                        }
                                     }
-                                    else if (UnitFormStatusID == 8 &&  PCStatusID != 8 && PJM_ActionType == "submit")
+                                    else
                                     {
                                         <div class="btn-list justify-content-end">
                                             <button type="button" class="btn btn-primary" id="saveButton">
@@ -406,15 +468,6 @@
                                         </div>
                                     }
                                 }
-                                else
-                                {
-                                    <div class="btn-list justify-content-end">
-                                        <button type="button" class="btn btn-primary" id="saveButton">
-                                            บันทึก
-                                        </button>
-                                    </div>
-                                }
-                            }
                             </div>
                         </div>
                     </div>
@@ -426,7 +479,7 @@
 
 <link href="~/lib/core-ui/dist/css/tabler-vendors.min.css?1692870487" rel="stylesheet" />
 <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
-@section scripts{
+@section scripts {
     <script src="~/js/pages/FormCheckList.js?ver=@DateTime.Now.Ticks.ToString()"></script>
     <script>
         $(document).ready(function () {
@@ -441,5 +494,6 @@
             adjustTextareaRows(); // Initial call
             $(window).resize(adjustTextareaRows); // Call on window resize
         });
+
     </script>
 }

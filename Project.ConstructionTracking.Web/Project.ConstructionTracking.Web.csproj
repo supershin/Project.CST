@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
+    <Folder Include="Upload\" />
     <Folder Include="wwwroot\lib\datatable\" />
     <Folder Include="Views\FormOverall\" />
     <Folder Include="Views\MasterForm\" />
@@ -42,6 +43,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
     <PackageReference Include="MimeTypesMap" Version="1.0.8" />
+    <PackageReference Include="Serilog" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>

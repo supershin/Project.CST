@@ -4,6 +4,8 @@
     var ProjectID = ViewBag.ProjectID;
     var ProjectName = ViewBag.ProjectName;
     var UnitID = ViewBag.UnitID;
+    var UnitFormID = ViewBag.UnitFormID;
+    var FormID = ViewBag.FormID;
     var UnitCode = ViewBag.UnitCode;
     var FormName = ViewBag.FormName;
     var ListGroupPC = ViewBag.ListGroupPC;
@@ -88,6 +90,9 @@
 
 <div class="page-wrapper">
     <!-- Page header -->
+    <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@FormName','@UnitCode')">
+        <i class="fa-solid fa-message fa-xl" style="color: #74C0FC;"></i>
+    </button>
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
             <div class="card-stamp">
@@ -204,15 +209,15 @@
                                 <label class="form-label">
                                     ความเห็นจากวิศวกร
                                 </label>
-                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PE_Remark</textarea>
+                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PE_Remark : วันที่ @item.PE_ActionDate</textarea>
                                 <label class="form-label">
                                     ความเห็นจาก PM
                                 </label>
-                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PM_Remark</textarea>
+                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PM_Remark : วันที่ @item.PM_ActionDate</textarea>
                                 <label class="form-label">
                                     ความเห็นจาก PJM Head
                                 </label>
-                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PJM_Remark</textarea>
+                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PJM_Remark : วันที่ @item.PJM_ActionDate</textarea>
                                 <br>
                                 @foreach (var listimage in item.listImageUnlock)
                                 {

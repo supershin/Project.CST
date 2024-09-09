@@ -1,4 +1,5 @@
-﻿@model List<Project.ConstructionTracking.Web.Models.SummeryUnitForm>
+﻿@model List<Project.ConstructionTracking.Web.Models.SummeryUnitModel.SummeryUnitForm>
+
 @{
     var projectId = ViewBag.ProjectId;
     var projectName = ViewBag.ProjectName;
@@ -19,7 +20,19 @@
                                     @{
                                         string bgColorClass;
 
-                                        if (item.PE == "success" && item.PM == "success")
+                                        if (item.PE == "success" && item.PM == "success" && @item.PassConditionStatus == "primary")
+                                        {
+                                            bgColorClass = "btn-primary";
+                                        }
+                                        else if (item.PE == "success" && item.PM == "success" && @item.PassConditionStatus == "success")
+                                        {
+                                            bgColorClass = "btn-success";
+                                        }
+                                        else if (item.PE == "success" && item.PM == "success" && @item.PassConditionStatus == "danger")
+                                        {
+                                            bgColorClass = "btn-danger";
+                                        }
+                                        else if(item.PE == "success" && item.PM == "success")
                                         {
                                             bgColorClass = "btn-success";
                                         }
@@ -41,12 +54,12 @@
                                         <input type="hidden" name="projectName" value="@projectName" />
                                         <input type="hidden" name="FormID" value="@item.FormID" />
                                         <input type="hidden" name="UnitFormID" value="@item.UnitFormID" />
-                                        <input type="hidden" name="UnitFormName" value="@item.UnitFormName" />
+                                        <input type="hidden" name="UnitFormName" value="@item.FormName" />
                                         <input type="hidden" name="unitId" value="@item.UnitID" />
                                         <input type="hidden" name="UnitCode" value="@UnitCode" />
                                         <input type="hidden" name="UnitStatusName" value="@UnitStatusName" />
                                         <button type="submit" class="btn @bgColorClass fixed-size-btn">
-                                            @item.UnitFormName
+                                            @item.FormName
                                         </button>
                                     </form>
                                 </div>
@@ -56,7 +69,7 @@
                                         <input type="hidden" name="projectName" value="@projectName" />
                                         <input type="hidden" name="FormID" value="@item.FormID" />
                                         <input type="hidden" name="UnitFormID" value="@item.UnitFormID" />
-                                        <input type="hidden" name="UnitFormName" value="@item.UnitFormName" />
+                                        <input type="hidden" name="UnitFormName" value="@item.FormName" />
                                         <input type="hidden" name="unitId" value="@item.UnitID" />
                                         <input type="hidden" name="UnitCode" value="@UnitCode" />
                                         <input type="hidden" name="UnitStatusName" value="@UnitStatusName" />
@@ -158,18 +171,6 @@
                                                 </button>
                                             </form>
                                         }
-                    @*                     <div class="status-dot bg-@item.PassConditionStatus">
-                                            <span class="status-text">
-                                                @if (@item.LockStatusID == 8)
-                                                {
-                                                    <i class="fa-solid fa-lock-open"></i>
-                                                }
-                                                else
-                                                {
-                                                    <i class="fa-solid fa-lock"></i>
-                                                }
-                                            </span>
-                                        </div> *@
                                     }
                                 </div>
                             </div>

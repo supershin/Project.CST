@@ -30,7 +30,9 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.ProjectID = resultModel.ProjectID;
                 ViewBag.ProjectName = resultModel.ProjectName;
                 ViewBag.UnitID = resultModel.UnitID;
+                ViewBag.UnitFormID = resultModel.UnitFormID;
                 ViewBag.UnitCode = resultModel.UnitCode;
+                ViewBag.FormID = resultModel.FormID;
                 ViewBag.FormName = resultModel.FormName;
                 ViewBag.UnitFormStatusID = resultModel.UnitFormStatusID;
                 ViewBag.Actiondate = resultModel.Actiondate?.ToString("dd/MM/yyyy") ?? "";

@@ -32,13 +32,29 @@ namespace Project.ConstructionTracking.Web.Services
 
         public void InsertOrUpdate(FormChecklistIUDModel model, Guid? userID, int RoleID)
         {
-            _IFormChecklistRepo.InsertOrUpdate(model , userID , RoleID);
+            try
+            {
+                _IFormChecklistRepo.InsertOrUpdate(model, userID, RoleID);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+            }
         }
 
         public bool DeleteImage(Guid resourceId, string ApplicationPath)
         {
-            var Result = _IFormChecklistRepo.DeleteImage(resourceId, ApplicationPath);
-            return Result;
+            try
+            {
+                var result = _IFormChecklistRepo.DeleteImage(resourceId, ApplicationPath);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions, log if necessary
+                throw new Exception("ลบรูปภาพไม่สำเร็จ", ex);
+            }
         }
+
     }
 }

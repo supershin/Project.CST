@@ -4,7 +4,9 @@
     var ProjectID = ViewBag.ProjectID;
     var ProjectName = ViewBag.ProjectName;
     var UnitID = ViewBag.UnitID;
+    var UnitFormID = ViewBag.UnitFormID;
     var UnitCode = ViewBag.UnitCode;
+    var FormID = ViewBag.FormID;
     var FormName = ViewBag.FormName;
     var UnitFormStatusID = ViewBag.UnitFormStatusID;
     var Actiondate = ViewBag.Actiondate;
@@ -108,6 +110,9 @@
 
 <div class="page-wrapper">
     <!-- Page header -->
+    <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@FormName','@UnitCode')">
+        <i class="fa-solid fa-message fa-xl" style="color: #74C0FC;"></i>
+    </button>
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
             <div class="card-stamp">
@@ -123,15 +128,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        @if (comeFrom == "PMFormcheck")
-                        {
-                            <form action="@Url.Action("index","PMFormcheck")" method="post">
-                                <button class="status-dot bg-transparent">
-                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
-                                </button>
-                            </form>
-                        }
-                        else if (comeFrom == "SummaryUnitForm")
+                        @if (comeFrom == "SummaryUnitForm")
                         {
                             <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
                                 <input type="hidden" name="projectId" id="projectId" value="@ProjectID" />
@@ -139,6 +136,14 @@
                                 <input type="hidden" name="unitId" value="@UnitID" />
                                 <input type="hidden" name="UnitCode" value="@UnitCode" />
                                 <input type="hidden" name="UnitStatusName" value="" />
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form action="@Url.Action("index","PMFormcheck")" method="post">
                                 <button class="status-dot bg-transparent">
                                     <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
                                 </button>
@@ -222,7 +227,7 @@
                                                 string iconClass = "fa-solid fa-magnifying-glass"; // Default icon
 
                                                 // Logic to determine button class and icon
-                                                if (group.LockStatusID == 7)
+                                                if (group.LockStatusID == 7 && group.PCFlageActive == true)
                                                 {
                                                     if ((group.PC_StatusID == 7 && PM_Actiontype == "submit") || (group.PC_StatusID == 9 && PJM_Actiontype == "submit"))
                                                     {
@@ -240,7 +245,7 @@
                                                         iconClass = "fa-solid fa-lock";
                                                     }
                                                 }
-                                                else if (group.LockStatusID == 8)
+                                                else if (group.LockStatusID == 8 && group.PCFlageActive == true)
                                                 {
                                                     if (group.PC_StatusID == 14)
                                                     {
@@ -334,14 +339,11 @@
                                                    type="radio"
                                                    group-id="@group.Group_ID"
                                                    name="radios-inline-@Model.ID-@group.Group_ID"
+                                                   data-pc-flag-active="@group.PCFlageActive"  
                                                    value="7"
                                                    onclick="toggleRadio(this, '@Model.ID')"
                                                    @(group.PC_StatusID == 7 ? "checked" : "")
-                                                    @(
-                                                  (PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (PM_Actiontype == "submit" && (UnitFormStatusID != 2) || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
-                                                ? "disabled"
-                                                    : ""
-                                                    )
+                                                   @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (PM_Actiontype == "submit" && (UnitFormStatusID != 2) || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()? "disabled": "")
                                             >
                                           <span class="form-check-label">ไม่ผ่าน</span>
                                         </label>
@@ -351,8 +353,7 @@
                                                   rows="1"
                                                   class="form-control"
                                                   placeholder="ระบุเหตุผลเพื่อขออนุมัติ"
-                                                @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) ||
-                                                (PM_Actiontype == "submit" && (UnitFormStatusID != 2 || group.PCFlageActive == false)) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
+                                                  @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (PM_Actiontype == "submit" && (UnitFormStatusID != 2 || group.PCFlageActive == false)) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
                                             ? "disabled"
                                                 : "")>@group.PM_RemarkPC</textarea>
                                     </div>
@@ -428,7 +429,7 @@
                                     <label class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="radios-inline-approval"
                                                value="@(LockStatusID != null && PCALLPASS != "yes" ? 6 : 4)"
-                                                @(Model.PM_StatusID == (LockStatusID != null ? 6 : 4) ? "checked" : "")
+                                                @(Model.PM_StatusID == 4 ? "checked" : Model.PM_StatusID == 6 ? "checked" : "")
                                                 @((PM_Actiontype == "submit" && UnitFormStatusID != 2) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
                                                onclick="toggleRadio(this, '@Model.ID')">
                                         <span class="form-check-label">

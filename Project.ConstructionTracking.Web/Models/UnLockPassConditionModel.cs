@@ -20,10 +20,15 @@ namespace Project.ConstructionTracking.Web.Models
             public int? LockStatusID { get; set; }
             public int? StatusID { get; set; }
             public string? PE_Remark { get; set; }
+            public string? PE_ActionDate { get; set; }
             public string? PM_Remark { get; set; }
+            public string? PM_ActionDate { get; set; }
             public string? PJM_Remark { get; set; }
+            public string? PJM_ActionDate { get; set; }
             public string? PEUnLock_Remark { get; set; }
+            public string? PEUnLock_UpdateDate { get; set; }
             public string? PMUnLock_Remark { get; set; }
+            public string? PMUnLock_UpdateDate { get; set; }
             public List<GetImageUnlock>? listImageUnlock { get; set; }
 
         }

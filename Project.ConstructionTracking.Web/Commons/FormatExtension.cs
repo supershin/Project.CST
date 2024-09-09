@@ -121,7 +121,6 @@ namespace Project.ConstructionTracking.Web.Commons
             //Return the string
             return sValue;
         }
-
         public static string Left(this string value, int maxLength)
         {
             if (string.IsNullOrEmpty(value)) return value;
@@ -132,7 +131,6 @@ namespace Project.ConstructionTracking.Web.Commons
                    : value.Substring(0, maxLength)
                    );
         }
-
         public static string GetExtension(this string contentType)
         {
             return MimeTypesMap.GetExtension(contentType);
@@ -207,64 +205,20 @@ namespace Project.ConstructionTracking.Web.Commons
             return Temp;
         }
 
-        public static string ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(string dtDate, bool isAD = false)
+        public static string ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(object dateObject)
         {
-            string StrDate = null;
-            string DayDate = null;
-            string MonthDate = null;
-            string YearDate = null;
-            try
+            if (dateObject == null || dateObject == DBNull.Value)
             {
-                if (dtDate == null)
-                {
-                    StrDate = "";
-                }
-                else if (Information.IsDBNull(dtDate))
-                {
-                    StrDate = "";
-                }
-                else if (string.IsNullOrEmpty(Strings.Trim(dtDate.ToString())))
-                {
-                    StrDate = "";
-
-                }
-                else
-                {
-                    string _Time = "";
-                    if (dtDate.Length > 10)
-                    {
-                        _Time = dtDate.Substring(10, dtDate.Length - 10);
-                        dtDate = dtDate.Substring(0, 10);
-                    }
-
-                    string[] ArrDate = null;
-                    ArrDate = dtDate.Split('/');
-                    DayDate = ArrDate[0];
-                    MonthDate = ArrDate[1];
-                    YearDate = ArrDate[2];
-
-                    if (isAD == true)
-                    {
-                        if (Nulltoint(YearDate) > 2300)
-                        {
-                            YearDate = (Nulltoint(YearDate) - 543).ToString();
-                        }
-                    }
-                    else
-                    {
-                        if (Nulltoint(YearDate) < 2300)
-                        {
-                            YearDate = (Nulltoint(YearDate) + 543).ToString();
-                        }
-                    }
-                    StrDate = Strings.Trim(DayDate) + "/" + Strings.Trim(MonthDate) + "/" + Strings.Trim(YearDate) + _Time;
-                }
-                return StrDate;
+                return string.Empty;
             }
-            catch (Exception ex)
+
+            if (DateTime.TryParse(dateObject.ToString(), out DateTime date))
             {
-                return "";
+                return date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
             }
+
+            return string.Empty;
         }
+
     }
 }
