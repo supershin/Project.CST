@@ -24,7 +24,7 @@ var unitEquipment = {
         unitEquipment.initSignaturePad();
 
         $("#btn-submit-form").click(() => {
-            unitEquipment.submitUnitEquipmentSign();           
+            unitEquipment.submitUnitEquipmentSign();
             return false;
         });
 
@@ -247,10 +247,10 @@ var unitEquipment = {
                 Swal.close(); // Close the loading indicator
                 if (res.success) {
                     Swal.fire({
-                        title: 'Success!',
+                        title: 'สำเร็จ!',
                         text: 'บันทึกข้อมูลสำเร็จ',
                         icon: 'success',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'ตกลง'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             window.location.reload();
@@ -258,20 +258,20 @@ var unitEquipment = {
                     });
                 } else {
                     Swal.fire({
-                        title: 'Error!',
+                        title: 'ผิดพลาด!',
                         text: 'บันทึกข้อมูลไม่สำเร็จ',
                         icon: 'error',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'ตกลง'
                     });
                 }
             },
             error: function (xhr, status, error) {
                 Swal.close(); // Close the loading indicator
                 Swal.fire({
-                    title: 'Error!',
-                    text: 'An error occurred while saving the data.',
+                    title: 'ผิดพลาด!',
+                    text: 'บันทึกข้อมูลไม่สำเร็จ',
                     icon: 'error',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'ตกลง'
                 });
             }
         });
@@ -292,7 +292,7 @@ var unitEquipment = {
             StorageBase64: storage
         };
     },
-}
+};
 
 function previewImage(event) {
     var reader = new FileReader();

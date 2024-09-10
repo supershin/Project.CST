@@ -173,11 +173,13 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 $('#saveButton').on('click', function () {
+    // Disable the save button to prevent multiple clicks
+    $(this).prop('disabled', true);
+
     var packages = [];
     var checklists = [];
     var pcCheck = null;
-    var valid = true; 
-
+    var valid = true;
 
     var files = $('#file-input')[0].files;
     var imagpreview = parseInt($('#hd_imageListcnt').val(), 10) || 0;
@@ -189,7 +191,7 @@ $('#saveButton').on('click', function () {
             icon: 'error',
             confirmButtonText: 'ตกลง'
         });
-        valid = false; 
+        valid = false;
     }
 
     $('div.container-xl.mb-3').each(function (index) {
@@ -235,7 +237,7 @@ $('#saveButton').on('click', function () {
             icon: 'error',
             confirmButtonText: 'ตกลง'
         });
-        valid = false; 
+        valid = false;
     }
 
     var pcRadioChecked = $('#pc-radio').is(':checked');
@@ -248,7 +250,7 @@ $('#saveButton').on('click', function () {
                 icon: 'error',
                 confirmButtonText: 'ตกลง'
             });
-            valid = false; 
+            valid = false;
         } else {
             pcCheck = {
                 UnitFormID: packages[0]?.UnitFormID,
@@ -259,14 +261,15 @@ $('#saveButton').on('click', function () {
         }
     }
 
-    if (valid) {
+    if (valid)
+    {
 
         Swal.fire({
             title: 'กำลังบันทึก...',
             text: 'กรุณารอสักครู่กำลังบันทึกข้อมูล.',
             allowOutsideClick: false,
             didOpen: () => {
-                Swal.showLoading(); 
+                Swal.showLoading();
             }
         });
 
@@ -301,7 +304,7 @@ $('#saveButton').on('click', function () {
             processData: false,
             data: data,
             success: function (res) {
-                Swal.close(); 
+                Swal.close();
                 if (res.success) {
                     Swal.fire({
                         title: 'สำเร็จ!',
@@ -321,21 +324,29 @@ $('#saveButton').on('click', function () {
                         confirmButtonText: 'ตกลง'
                     });
                 }
+                $('#saveButton').prop('disabled', true); 
             },
             error: function (xhr, status, error) {
-                Swal.close(); // Close the loading indicator
+                Swal.close(); 
                 Swal.fire({
                     title: 'ผิดพลาด!',
                     text: 'บันทึกข้อมูลไม่สำเร็จ',
                     icon: 'error',
                     confirmButtonText: 'ตกลง'
                 });
+                $('#saveButton').prop('disabled', true); 
             }
         });
     }
+    else
+    {
+        $('#saveButton').prop('disabled', false); 
+    }
+
 
     return false;
 });
+
 
 function deleteImage(resourceId) {
     Swal.fire({
