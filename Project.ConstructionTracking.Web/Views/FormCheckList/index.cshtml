@@ -22,6 +22,7 @@
     var PJM_StatusID = ViewBag.PJM_StatusID;
     var PJM_ActionType = ViewBag.PJM_ActionType;
     var StatusUpdateDate = ViewBag.StatusUpdateDate;
+    var StatusUpdateBy = ViewBag.StatusUpdateBy;
     var PCStatusID = ViewBag.PCStatusID;
     var UserName = ViewBag.UserName;
     var UserRole = ViewBag.UserRole;
@@ -50,9 +51,9 @@
         align-items: center;
     }
 
-        .align-center .material-icons {
-            margin-right: 8px;
-        }
+    .align-center .material-icons {
+        margin-right: 8px;
+    }
 
     .card {
         border: none;
@@ -88,13 +89,13 @@
         max-height: 100px;
     }
 
-        .preview-image img {
-            max-width: 100%;
-            max-height: 100%;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            display: block;
-        }
+    .preview-image img {
+        max-width: 100%;
+        max-height: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        display: block;
+    }
 
     .remove-button {
         position: absolute;
@@ -127,6 +128,11 @@
         cursor: pointer; /* Add cursor pointer for better UX */
     }
 
+    .form-control[readonly] {
+        background-color: #e9ecef; /* Light background for readonly input */
+        cursor: not-allowed; /* Change cursor to indicate non-editable field */
+    }
+
 </style>
 <div class="page-wrapper">
     <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@UnitFormName','@UnitCode')">
@@ -146,6 +152,8 @@
                 </div>
             </div>
             <div class="card-body">
+                <input type="hidden" name="UnitFormID" id="UnitFormID" value="@UnitFormID" />
+                <input type="hidden" name="projectId" id="projectId" value="@projectId" />
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
                         @if (GobackTo == "Forgroup")
@@ -185,10 +193,9 @@
                         }
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
-                        <h3 class="mb-0 header-text"> @GroupName</h3>
+                        <h3 class="mb-0 header-text"> ตรวจงาน : @GroupName </h3>
                         <div class="text-muted">
-                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@UnitFormName  (Unit : @UnitCode )</h5>
-                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@projectName (สถานะ : @UnitStatusName)</h5>
+                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@UnitFormName ( Unit : @UnitCode )</h5>
                         </div>
                     </div>
                     <div class="align-items-right">
@@ -287,7 +294,7 @@
                             </button>
                             <div class="ms-2 c-details">
                                 <h3 class="mb-0">
-                                    บันทึกผู้ตรวจ
+                                    บันทึกการตรวจ
                                 </h3>
                             </div>
                         </h3>
@@ -398,7 +405,7 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <label class="form-label"> บันทึกล่าสุด @ViewBag.StatusUpdateDate</label>
+                        <input type="text" id="PERemark" class="form-control" value="ทำรายการโดย :@StatusUpdateDate @StatusUpdateBy" readonly>
                     </div>
                     <div class="card-footer">
                         <div class="d-flex">

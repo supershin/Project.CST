@@ -220,5 +220,21 @@ namespace Project.ConstructionTracking.Web.Commons
             return string.Empty;
         }
 
+
+        public static string FormatDateToDayMonthNameYearTime(object dateObject)
+        {
+            if (dateObject == null || dateObject == DBNull.Value)
+            {
+                return string.Empty;
+            }
+
+            if (DateTime.TryParse(dateObject.ToString(), out DateTime date))
+            {
+                return date.ToString("dd-MMM-yyyy HH:mm", CultureInfo.InvariantCulture);
+            }
+
+            return string.Empty;
+        }
+
     }
 }

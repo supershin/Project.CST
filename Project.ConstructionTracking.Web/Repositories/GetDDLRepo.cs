@@ -84,7 +84,18 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 return ListUnitFormStatus.ToList();
 
+                case "UserName":
+                    var UserName = from us in _context.tm_User
+                                   where us.ID == Model.ValueGuid
+                                   select new GetDDL
+                                   {
+                                       Text = us.FirstName + " " + us.LastName 
+                                   };
+
+                 return UserName.ToList();
+
                 default:
+
                 return new List<GetDDL>();
             }
         }

@@ -355,7 +355,7 @@
     <div class="page-body">
         @if (PE_ActionType == "save")
         {
-            <label class="form-label custom-label">ยังไม่ได้ Submit</label>
+            <label id="statusLabel" class="form-label custom-label">ยังไม่ได้ Submit</label>
         }
         else if (PE_ActionType == "submit")
         {
@@ -576,7 +576,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex justify-content-center">
+                            <div class="d-flex justify-content-center" style="padding-top: 1.5rem; background-color: #e0f0ff; border-radius: 5px; padding: 10px;">
                                 <label class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="radios-inline" value="A" onclick="toggleRadio(this)" @(grade == "A" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "") >
                                     <span class="form-check-label">A</span>
@@ -595,7 +595,7 @@
                                 </label>
                             </div>
                             <div class="mt-3">
-                                <label class="form-label">วิศวะกรผู้ควบคุมงาน</label>
+                                <label class="form-label">PE ผู้ควบคุมงาน</label>
                                 <input type="text" class="form-control" name="example-disabled-input" placeholder="Disabled..." value="นาย สมชาย ใจดี" disabled>
                             </div>
                             <!-- Card A -->
@@ -615,7 +615,7 @@
                             <div id="cardB" class="col-sm-12 mt-1 mb-2">
                                 <div class="col-sm-12 mt-1 mb-2" style="position: relative;">
                                     <label class="form-label">ผู้รับเหมา</label>
-                                    <input type="text" class="form-control" name="example-disabled-input" placeholder="เลือกผู้รับเหมา" value="@(!string.IsNullOrEmpty(VenderName) ? VenderName : "ยังไม่ได้เลือกผู้รับเหมา")" disabled>
+                                    <input type="text" class="form-control" name="example-disabled-input" placeholder="เลือกผู้รับเหมา" value="@(!string.IsNullOrEmpty(VenderName) ? VenderName : "")" disabled>
                                     <!-- Hidden input for VenderName -->
                                     <input type="hidden" id="hiddenVenderName" name="hiddenVenderName" value="@VenderName">
                                 </div>
@@ -745,6 +745,27 @@
     <script>
 
         $(document).ready(() => {
+
+            let allChecked = true; // Assume all tasks are complete until proven otherwise
+
+            $('div.card-link').each(function () {
+                const statusUse = $(this).find('button.status-dot').data('status-use');
+                const cntCheckListAll = parseInt($(this).find('.text1').text().split(' ')[1]);
+                const cntCheckListUnit = parseInt($(this).find('.text2').text().split(' ')[1]);
+                const cntCheckListNotPass = parseInt($(this).find('.text3').text().split(' ')[1]);
+
+                if (statusUse !== 'success' && !(cntCheckListAll === cntCheckListUnit && cntCheckListNotPass === 0)) {
+                    $('#statusLabel').text("ยังตรวจงานไม่ครบ");
+                    allChecked = false;
+                    return false; // Exit the loop early if any condition fails
+                }
+            });
+
+            // Optionally, if all checks pass, you can update the text to something else
+            if (allChecked) {
+                $('#statusLabel').text("ยังไม่ได้ Submit");
+            }
+
             var cardA = $("#cardA");
             var cardB = $("#cardB");
             var cardC = $("#cardC");

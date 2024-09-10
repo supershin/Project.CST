@@ -132,13 +132,15 @@ public class FormChecklistRepo : IFormChecklistRepo
 
         // จัดกลุ่มข้อมูลที่ได้จาก query
         var result = query
-            .GroupBy(g => new { g.t1.GroupID, g.t1.ID, g.t1.Name, Unit_PackagesID = g.t5.ID, g.t5.Remark })
+            .GroupBy(g => new { g.t1.GroupID, g.t1.ID, g.t1.Name, Unit_PackagesID = g.t5.ID, g.t5.Remark , g.t5.UpdateDate, g.t5.UpdateBy })
             .Select(g => new FormCheckListModel.Form_getListPackages
             {
                 UnitPackagesID = g.Key.Unit_PackagesID, // กำหนดค่า UnitPackagesID
                 GroupID = g.Key.GroupID, // กำหนดค่า GroupID
                 PackagesID = g.Key.ID, // กำหนดค่า PackageID
                 PackagesName = g.Key.Name, // กำหนดชื่อ Package
+                UpDatedate = g.Key.UpdateDate,
+                UpDateby = g.Key.UpdateBy,
                 Remark = g.Key.Remark, // กำหนด Remark
 
                 // สร้าง ListCheckLists โดยการเลือกข้อมูลจากแต่ละกลุ่ม
@@ -376,7 +378,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                     FormID = packagelist.FormID,
                     GroupID = packagelist.GroupID,
                     PackageID = packagelist.PackageID,
-                    Remark = string.IsNullOrEmpty(packagelist.Remark) ? "" : packagelist.Remark + " : วันที่ " + DateTime.Now.ToStringDateTime(),
+                    Remark = string.IsNullOrEmpty(packagelist.Remark) ? "" : FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + packagelist.Remark ,
                     UpdateDate = DateTime.Now,
                     UpdateBy = userID,
                     CreateDate = DateTime.Now,
@@ -390,7 +392,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                 {
                     if (existingUnitFormPackage.Remark != packagelist.Remark)
                     {
-                        existingUnitFormPackage.Remark = packagelist.Remark + " : วันที่ " + DateTime.Now.ToStringDateTime();
+                        existingUnitFormPackage.Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + packagelist.Remark;
                     }
                 }
                 else
@@ -460,7 +462,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                 UnitFormID = unitFormIDUse,
                 GroupID = pcCheck.GroupID,
                 LockStatusID = 7,
-                PE_Remark = pcCheck.Remark + " : วันที่ " + DateTime.Now.ToStringDateTime(),
+                PE_Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + pcCheck.Remark,
                 FlagActive = true,
                 ActionDate = DateTime.Now,
                 CraeteDate = DateTime.Now,
@@ -476,7 +478,7 @@ public class FormChecklistRepo : IFormChecklistRepo
             {
                 if (passCondition.PE_Remark != pcCheck.Remark)
                 {
-                    passCondition.PE_Remark = pcCheck.Remark + " : วันที่ " + DateTime.Now.ToStringDateTime();
+                    passCondition.PE_Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + pcCheck.Remark;
                 }
             }
             else

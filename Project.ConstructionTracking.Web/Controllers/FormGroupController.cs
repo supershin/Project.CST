@@ -51,7 +51,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             if (FormGroupDetail != null)
             {
                 ViewBag.FormGroupDetail = FormGroupDetail;
-                ViewBag.Signaldate = FormGroupDetail.FileDate.ToStringDateTime();
+                ViewBag.Signaldate = FormatExtension.FormatDateToDayMonthNameYearTime(FormGroupDetail.FileDate);
             }
 
             var ddlModel = new GetDDL { Act = "Vender", ID = UnitFormData.CompanyvenderID };
