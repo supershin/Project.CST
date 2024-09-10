@@ -30,7 +30,8 @@ namespace Project.ConstructionTracking.Web.Controllers
         [HttpPost]
         public IActionResult GoToFormGroup(Guid projectId, string projectName, int FormID, Guid UnitFormID, string UnitFormName, Guid unitId, string UnitCode, string UnitStatusName)
         {
-            return RedirectToAction("Index", "FormGroup", new { projectId, projectName, FormID, UnitFormID, UnitFormName, unitId, UnitCode, UnitStatusName });
+            string comeFrom = "SummaryUnitForm";
+            return RedirectToAction("Index", "FormGroup", new {FormID, unitId, comeFrom });
         }
 
         [HttpPost]

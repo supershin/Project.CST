@@ -135,13 +135,13 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function saveOrSubmit(actionType) {
-
     var remarkElement = document.getElementById("mainRemark").value;
     var listimagecnt = document.getElementById("listimagecnt").value;
     var files = document.getElementById("file-input").files;
     var mainStatus = document.querySelector('input[name="radios-inline-approval"]:checked');
 
-    if (actionType === "submit") {       
+    // Validation checks
+    if (actionType === "submit") {
         if (!mainStatus) {
             Swal.fire({
                 title: 'Warning!',
@@ -162,18 +162,31 @@ function saveOrSubmit(actionType) {
             });
             return;
         }
-        //if (files.length === 0 && listimagecnt === "0") {
-        //    Swal.fire({
-        //        title: 'Warning!',
-        //        text: 'กรุณาแนบไฟล์ภาพ เมื่อไม่อนุมัติงวดงานนี้',
-        //        icon: 'warning',
-        //        confirmButtonText: 'OK'
-        //    });
-        //    return;
-        //}
     }
 
+    
+    // Confirmation step for submit action
+    if (actionType === "submit") {
+        Swal.fire({
+            title: 'ยืนยันการดำเนินการ',
+            text: 'คุณต้องการยืนยันงวดงานนี้หรือไม่',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'ใช่',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If confirmed, proceed with the AJAX request
+                performAjaxRequest(actionType);
+            }
+        });
+    } else {
+        // For save action, directly proceed with the AJAX request
+        performAjaxRequest(actionType);
+    }
+}
 
+function performAjaxRequest(actionType) {
     var data = new FormData();
 
     // Option 1: Getting values from hidden fields
@@ -187,12 +200,14 @@ function saveOrSubmit(actionType) {
     data.append("ActionType", actionType);
 
     // Add main form status and remark
+    var mainStatus = document.querySelector('input[name="radios-inline-approval"]:checked');
     if (mainStatus) {
         data.append("UnitFormStatus", mainStatus.value);
     }
     data.append("Remark", document.getElementById("mainRemark").value);
 
     // Collect images if any
+    var files = document.getElementById("file-input").files;
     for (var i = 0; i < files.length; i++) {
         data.append("Images", files[i]);
     }
@@ -204,10 +219,7 @@ function saveOrSubmit(actionType) {
         var PassConditionsElement = document.getElementById(`pass_ID_${group_id}`);
         let PassConditionsval = $(this).is(":checked") ? $(this).val() : null;
 
-        // Check if this group_id is already added
         let existingCondition = passConditions.find(pc => pc.Group_ID === group_id);
-
-        // If not already added, add it
         if (!existingCondition) {
             passConditions.push({
                 PassConditionsID: PassConditionsElement ? PassConditionsElement.value : null,
@@ -216,7 +228,6 @@ function saveOrSubmit(actionType) {
                 Remark: remarkElement ? remarkElement.value : '',
             });
         } else {
-            // Update the existing entry if the radio is checked
             if (PassConditionsval !== null) {
                 existingCondition.PassConditionsvalue = PassConditionsval;
             }
@@ -227,13 +238,25 @@ function saveOrSubmit(actionType) {
         data.append("PassConditionsIUD", JSON.stringify(passConditions));
     }
 
+    // Show loading screen
+    Swal.fire({
+        title: 'กำลังบันทึกข้อมูล...',
+        text: 'กรุณารอสักครู่',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
     $.ajax({
-        url: baseUrl + 'PMApprove/SaveOrSubmit', // Replace with your actual controller action
+        url: baseUrl + 'PMApprove/SaveOrSubmit',
         type: 'POST',
         contentType: false,
         processData: false,
         data: data,
         success: function (res) {
+            Swal.close(); // Close the loading indicator
+
             if (res.success) {
                 Swal.fire({
                     title: 'Success!',
@@ -255,6 +278,7 @@ function saveOrSubmit(actionType) {
             }
         },
         error: function (xhr, status, error) {
+            Swal.close(); // Close the loading indicator
             Swal.fire({
                 title: 'Error!',
                 text: 'An error occurred while processing the request.',

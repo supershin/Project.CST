@@ -1,5 +1,8 @@
-﻿using Project.ConstructionTracking.Web.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
+using System;
+using System.Transactions;
 using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
@@ -71,6 +74,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                           join t8 in _context.tr_UnitFormAction.Where(a => a.RoleID == 3)
                               on t1.ID equals t8.UnitFormID into actions
                           from t8 in actions.DefaultIfEmpty()
+                          join t9 in _context.tm_User on t8.UpdateBy equals t9.ID into users
+                          from t9 in users.DefaultIfEmpty()
                           where t1.ID == filterData.UnitFormID && t3.ID != null
                           select new GetlistChecklistPC
                           {
@@ -93,6 +98,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               PM_Remark = t3.PM_Remark,
                               PJM_Remark = t3.PJM_Remark,
                               PJM_Actiontype = t8.ActionType,
+                              PJM_ActionBy = t9.FirstName + ' ' + t9.LastName,
                               PJM_ActionDate = t8.ActionDate,
                               PJM_StatusID = t8.StatusID,   
                               PJMUnitFormRemark = t8.Remark
@@ -103,77 +109,117 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public void SaveOrUpdateUnitFormAction(PJMApproveModel.PJMApproveIU model)
         {
-
-            // Determine the StatusID based on the ListPCIC
-            int? statusToUpdate = model.ListPCIC != null && model.ListPCIC.Any(pc => pc.StatusID == 9 && pc.PC_FlagActive != 0) ? 9 : 8;
-
-            var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == model.UnitFormID && a.RoleID == 3);
-
-            if (unitFormAction == null)
+            var transactionOptions = new TransactionOptions
             {
-                // Insert a new UnitFormAction record
-                unitFormAction = new tr_UnitFormAction
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TimeSpan.FromMinutes(3)
+            };
+
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            {
+                try
                 {
-                    UnitFormID = model.UnitFormID,
-                    RoleID = 3,
-                    ActionType = model.ActionType,
-                    StatusID = statusToUpdate, // Use the determined StatusID
-                    Remark = model.Remark,
-                    ActionDate = DateTime.Now,
-                    UpdateDate = DateTime.Now,
-                    CraeteDate = DateTime.Now
-                };
+                    // Determine the StatusID based on the ListPCIC
+                    int? statusToUpdate = model.ListPCIC != null && model.ListPCIC.Any(pc => pc.StatusID == 9 && pc.PC_FlagActive != 0) ? 9 : 8;
 
-                _context.tr_UnitFormAction.Add(unitFormAction);
-            }
-            else
-            {
-                // Update the existing UnitFormAction record
-                unitFormAction.ActionType = model.ActionType;
-                unitFormAction.StatusID = statusToUpdate; // Use the determined StatusID if not null
-                unitFormAction.Remark = model.Remark;
-                unitFormAction.ActionDate = DateTime.Now;
-                unitFormAction.UpdateDate = DateTime.Now;
+                    var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == model.UnitFormID && a.RoleID == 3);
 
-                _context.tr_UnitFormAction.Update(unitFormAction);
-            }
-
-            _context.SaveChanges();
-
-            int? statusForm = (statusToUpdate == 8) ? 7 : 8;
-            UpdateUnitForm(model.UnitFormID, model.ActionType, statusForm);
-
-            if (model.ListPCIC != null && model.ListPCIC.Count > 0)
-            {
-                foreach (var passConditionModel in model.ListPCIC)
-                {
-                    var passCondition = _context.tr_UnitFormPassCondition
-                        .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.ID == passConditionModel.PC_ID && pc.FlagActive == true);
-
-                    if (passCondition != null)
+                    if (unitFormAction == null)
                     {
-                        passCondition.StatusID = passConditionModel.StatusID;
-                        passCondition.PJM_Remark = passConditionModel.PJM_Remark;
-                        passCondition.UpdateDate = DateTime.Now;
+                        // Insert a new UnitFormAction record
+                        unitFormAction = new tr_UnitFormAction
+                        {
+                            UnitFormID = model.UnitFormID,
+                            RoleID = 3,
+                            ActionType = model.ActionType,
+                            StatusID = statusToUpdate, 
+                            Remark = !string.IsNullOrEmpty(model.Remark) ? model.Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy") : "",
+                            ActionDate = DateTime.Now,
+                            UpdateBy = model.UserID,
+                            UpdateDate = DateTime.Now,
+                            CreateBy = model.UserID,    
+                            CraeteDate = DateTime.Now
+                        };
 
-                        _context.tr_UnitFormPassCondition.Update(passCondition);
+                        _context.tr_UnitFormAction.Add(unitFormAction);
                     }
-                    // Save changes for each PassCondition
+                    else
+                    {
+
+                        unitFormAction.ActionType = model.ActionType;
+                        unitFormAction.StatusID = statusToUpdate; 
+                        if (!string.IsNullOrEmpty(model.Remark))
+                        {
+                            if (unitFormAction.Remark != model.Remark)
+                            {
+                                unitFormAction.Remark = model.Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                            }
+                        }
+                        else
+                        {
+                            unitFormAction.Remark = "";
+                        }
+                        unitFormAction.ActionDate = DateTime.Now;
+                        unitFormAction.UpdateDate = DateTime.Now;
+                        unitFormAction.UpdateBy = model.UserID;
+
+                        _context.tr_UnitFormAction.Update(unitFormAction);
+                    }
+
                     _context.SaveChanges();
+
+                    int? statusForm = (statusToUpdate == 8) ? 7 : 8;
+                    UpdateUnitForm(model.UnitFormID, model.ActionType, statusForm , model.UserID);
+
+                    if (model.ListPCIC != null && model.ListPCIC.Count > 0)
+                    {
+                        foreach (var passConditionModel in model.ListPCIC)
+                        {
+                            var passCondition = _context.tr_UnitFormPassCondition.FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.ID == passConditionModel.PC_ID && pc.FlagActive == true);
+
+                            if (passCondition != null)
+                            {
+                                passCondition.StatusID = passConditionModel.StatusID;
+                                if (!string.IsNullOrEmpty(passConditionModel.PJM_Remark))
+                                {
+                                    if (passCondition.PJM_Remark != passConditionModel.PJM_Remark)
+                                    {
+                                        passCondition.PJM_Remark = passConditionModel.PJM_Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                                    }
+                                }
+                                else
+                                {
+                                    passCondition.PJM_Remark = "";
+                                }
+                                passCondition.UpdateBy = model.UserID;
+                                passCondition.UpdateDate = DateTime.Now;
+
+                                _context.tr_UnitFormPassCondition.Update(passCondition);
+                            }
+                            _context.SaveChanges();
+                        }
+                    }
+
+
+                    InsertImagesPM(model, model.UserID, 3); // RoleID = 3 for PJM
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
                 }
             }
-
-            // Save iamge 
-            InsertImagesPM(model, null, 3); // RoleID = 2 for PM
         }
 
-        private void UpdateUnitForm(Guid? unitformID, string? actiontype, int? StatusID)
+        private void UpdateUnitForm(Guid? unitformID, string? actiontype, int? StatusID , Guid? UserID)
         {
             var UnitForm = _context.tr_UnitForm.FirstOrDefault(tr => tr.ID == unitformID);
 
-            if (UnitForm != null) 
+            if (UnitForm != null)
             {
                 UnitForm.StatusID = actiontype == "save" ? 9 : StatusID;
+                UnitForm.UpdateBy = UserID;
                 UnitForm.UpdateDate = DateTime.Now;
 
                 _context.tr_UnitForm.Update(UnitForm);
@@ -216,7 +262,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                             FilePath = relativeFilePath, // Store the relative path with forward slashes
                             MimeType = "image/jpeg", // Ensure the MimeType is set to "image/jpeg"
                             FlagActive = true,
+                            CreateBy = userID,
                             CreateDate = DateTime.Now,
+                            UpdateBy = userID,
                             UpdateDate = DateTime.Now,
                         };
                         _context.tm_Resource.Add(newResource);
@@ -229,6 +277,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                             UnitFormID = model.UnitFormID,
                             ResourceID = newResource.ID,
                             CreateDate = DateTime.Now,
+                            CreateBy = userID,
+                            UpdateBy = userID,
+                            UpdateDate = DateTime.Now,
                         };
                         _context.tr_UnitFormResource.Add(newFormResource);
                     }
@@ -237,6 +288,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 _context.SaveChanges();
             }
         }
+
 
     }
 }

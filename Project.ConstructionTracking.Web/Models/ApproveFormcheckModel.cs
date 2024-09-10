@@ -21,6 +21,7 @@
         public int? PM_StatusID { get; set; }
         public string? PM_Remarkaction { get; set; }
         public string? PM_Actiontype { get; set; }
+        public string? PM_ActionBy { get; set; }
         public int? PJM_StatusID { get; set; }
         public string? PJM_Remarkaction { get; set; }
         public string? PJM_Actiontype { get; set; }

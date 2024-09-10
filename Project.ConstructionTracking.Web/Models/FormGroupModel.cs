@@ -74,6 +74,7 @@ namespace Project.ConstructionTracking.Web.Models
             public int? PJM_StatusID { get; set; }
             public string? FilePath { get; set; }
             public string? FileName { get; set; }
+            public DateTime? FileDate { get; set; }
 
         }
     }

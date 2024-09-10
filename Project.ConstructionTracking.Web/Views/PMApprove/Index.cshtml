@@ -106,12 +106,17 @@
         text-align: center;
         padding: 0;
     }
+
+    .form-control[readonly] {
+        background-color: #e9ecef; /* Light background for readonly input */
+        cursor: not-allowed; /* Change cursor to indicate non-editable field */
+    }
 </style>
 
 <div class="page-wrapper">
     <!-- Page header -->
     <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@FormName','@UnitCode')">
-        <i class="fa-solid fa-message fa-xl" style="color: #74C0FC;"></i>
+        <i id="chatIcon" class="fa-solid fa-message fa-xl"></i>
     </button>
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
@@ -128,7 +133,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        @if (comeFrom == "SummaryUnitForm")
+                        @if (comeFrom == "SummaryUnitForm" || ViewBag.UserRole == SystemConstant.UserRole.PE.ToString())
                         {
                             <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
                                 <input type="hidden" name="projectId" id="projectId" value="@ProjectID" />
@@ -141,9 +146,17 @@
                                 </button>
                             </form>
                         }
+                        else if (ViewBag.UserRole == SystemConstant.UserRole.PJM.ToString())
+                        {
+                            <form action="@Url.Action("index","MyTaskPJM")" method="post">
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
                         else
                         {
-                            <form action="@Url.Action("index","PMFormcheck")" method="post">
+                            <form action="@Url.Action("index","MyTaskPM")" method="post">
                                 <button class="status-dot bg-transparent">
                                     <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
                                 </button>
@@ -307,9 +320,9 @@
                                 @if (group.LockStatusID != null)
                                 {
                                     <label class="form-label">
-                                        ความเห็นจากวิศวกร
+                                        ความเห็นจากวิศวกรกรณีผ่านแบบมีเงื่อนไข
                                     </label>
-                                    <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@group.PE_RemarkPC</textarea>
+                                    <textarea rows="2" class="form-control mb-3" placeholder="ความคิดเห็น" disabled>@group.PE_RemarkPC</textarea>
                                     <input type="hidden" id="pass_ID_@group.Group_ID" value="@group.PassConditionsID" />
                                     <div class="col-12 p-1">
                                         <label class="form-label">
@@ -349,6 +362,9 @@
                                         </label>
                                     </div>
                                     <div class="col-12 p-1 mb-2">
+                                        <label class="form-label">
+                                            ความเห็น PM ผ่านกรณีผ่านแบบมีเงื่อนไข
+                                        </label>
                                         <textarea id="remark_@group.Group_ID"
                                                   rows="1"
                                                   class="form-control"
@@ -425,7 +441,7 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="row">
-                                <div class="col-12">
+                                <div class="col-12 mb-2">
                                     <label class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="radios-inline-approval"
                                                value="@(LockStatusID != null && PCALLPASS != "yes" ? 6 : 4)"
@@ -445,6 +461,28 @@
                                         >
                                         <span class="form-check-label">ไม่อนุมัติ</span>
                                     </label>
+                                </div>
+@*                                 <div class="form-floating mb-2">
+                                    <textarea id="PMRemark" rows="1" class="form-control" placeholder=" " disabled>PM ผู้ตรวจ : สมชาย ใจดี</textarea>
+                                    <label for="PMRemark"> ทำรายการโดย</label>
+                                </div>
+                                <style>
+                                    .form-floating label {
+                                        font-size: 14px;
+                                        color: #6c757d; /* Muted color for the label */
+                                    }
+
+                                    .form-floating textarea:focus ~ label {
+                                        color: #007bff; /* Change label color on focus */
+                                    }
+
+                                    .form-floating textarea {
+                                        border-radius: 8px; /* Rounded corners for a modern look */
+                                    }
+                                </style> *@
+
+                                <div class="col-12 mb-2">
+                                    <input type="text" id="PMRemark" class="form-control" value="ทำรายการโดย : @Model.PM_ActionBy" readonly>
                                 </div>
                                 <div class="col-12">
                                     <textarea id="mainRemark" rows="2" class="form-control" placeholder=""
@@ -501,14 +539,14 @@
                                     @if (PM_Actiontype == "submit"){
                                         if (UnitFormStatusID == 2)
                                         {
-                                            <button class="btn" onclick="saveOrSubmit('save')">Save</button>
-                                            <button class="btn btn-primary" onclick="saveOrSubmit('submit')">Submit</button>
+                                            <button class="btn" onclick="saveOrSubmit('save')">บันทึกร่าง</button>
+                                            <button class="btn btn-primary" onclick="saveOrSubmit('submit')">ยืนยัน</button>
                                         }
                                     }
                                     else
                                     {
-                                        <button class="btn" onclick="saveOrSubmit('save')">Save</button>
-                                        <button class="btn btn-primary" onclick="saveOrSubmit('submit')">Submit</button>
+                                        <button class="btn" onclick="saveOrSubmit('save')">บันทึกร่าง</button>
+                                        <button class="btn btn-primary" onclick="saveOrSubmit('submit')">ยืนยัน</button>
                                     }
                                 }
                             </div>

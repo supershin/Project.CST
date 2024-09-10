@@ -23,10 +23,17 @@ namespace Project.ConstructionTracking.Web.Services
             var ListGetImage = _IUnLockPassConditionRepo.GetImage(filterData);
             return ListGetImage;
         }
-
         public void RequestUnlock(UnLockPassConditionModel.UpdateUnlockPC model)
         {
-            _IUnLockPassConditionRepo.RequestUnlock(model);
+            try
+            {
+                _IUnLockPassConditionRepo.RequestUnlock(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+            }
         }
+
     }
 }

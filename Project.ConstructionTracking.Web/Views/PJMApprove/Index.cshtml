@@ -11,6 +11,7 @@
     var FormName = ViewBag.FormName;
     var PJM_Actiontype = ViewBag.PJM_Actiontype;
     var PJM_ActionDate = ViewBag.PJM_ActionDate;
+    var PJM_ActionBy = ViewBag.PJM_ActionBy;
     var PJM_StatusID = ViewBag.PJM_StatusID;
     var PJMUnitFormRemark = ViewBag.PJMUnitFormRemark;
     var ListChecklistPJMApprove = ViewBag.ListChecklistPJMApprove;
@@ -89,11 +90,17 @@
         text-align: center;
         padding: 0;
     }
+
+    .form-control[readonly] {
+        background-color: #e9ecef; /* Light background for readonly input */
+        cursor: not-allowed; /* Change cursor to indicate non-editable field */
+    }
+
 </style>
 
 <div class="page-wrapper">
     <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@FormName','@UnitCode')">
-        <i class="fa-solid fa-message fa-xl" style="color: #74C0FC;"></i>
+        <i id="chatIcon" class="fa-solid fa-message fa-xl"></i>
     </button>
 
     <div class="page-header d-print-none">
@@ -111,7 +118,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        <form action="@Url.Action("index","PJMFormcheck")" method="post">
+                        <form action="@Url.Action("index","MyTaskPJM")" method="post">
                             <button class="status-dot bg-transparent">
                                 <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
                             </button>
@@ -248,6 +255,9 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="row">
+                                <div class="col-12 mb-2">
+                                    <input type="text" id="PJM_ActionBy" class="form-control" value="ทำรายการโดย : @PJM_ActionBy" readonly>
+                                </div>
                                 <div class="col-12">
                                     <textarea id="mainRemark" rows="2" class="form-control" placeholder="หมายเหตุ" @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || ViewBag.UserRole != SystemConstant.UserRole.PJM.ToString() ? "disabled" : "")
                                     >@PJMUnitFormRemark</textarea>
@@ -304,8 +314,8 @@
                                             <input type="hidden" id="UnitID" value="@UnitID" />
                                             <input type="hidden" id="UnitCode" value="@UnitCode" />
                                             <input type="hidden" id="FormID" value="@FormID" />
-                                            <button class="btn" onclick="saveOrSubmit('save')">Save</button>
-                                            <button class="btn btn-primary" onclick="saveOrSubmit('submit')">Submit</button>                                       
+                                            <button class="btn" onclick="saveOrSubmit('save')">บันทึกร่าง</button>
+                                            <button class="btn btn-primary" onclick="saveOrSubmit('submit')">ยืนยัน</button>                                       
                                         }
                                     }
                                     else
@@ -315,8 +325,8 @@
                                         <input type="hidden" id="UnitID" value="@UnitID" />
                                         <input type="hidden" id="UnitCode" value="@UnitCode" />
                                         <input type="hidden" id="FormID" value="@FormID" />
-                                        <button class="btn" onclick="saveOrSubmit('save')">Save</button>
-                                        <button class="btn btn-primary" onclick="saveOrSubmit('submit')">Submit</button>
+                                        <button class="btn" onclick="saveOrSubmit('save')">บันทึกร่าง</button>
+                                        <button class="btn btn-primary" onclick="saveOrSubmit('submit')">ยืนยัน</button>       
                                     }
                                 }
                             </div>
@@ -361,7 +371,7 @@
 @section scripts{
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
-    <script src="~/js/pages/PMApprove.js?ver=@DateTime.Now.Ticks.ToString()"></script>
+    <script src="~/js/pages/PJMApprove.js?ver=@DateTime.Now.Ticks.ToString()"></script>
     <script>
         $(document).ready(function () {
             function adjustTextareaRows() {
@@ -376,136 +386,138 @@
             $(window).resize(adjustTextareaRows); // Call on window resize
         });
 
-        function saveOrSubmit(actionType) {
-            var data = new FormData();
+    function saveOrSubmit(actionType) {
+        var data = new FormData();
 
-            data.append("ActionType", actionType);
-            data.append("Remark", document.getElementById("mainRemark").value.trim());
-            data.append("UnitFormID", document.getElementById("UnitFormID").value);
-            data.append("ProjectID", document.getElementById("ProjectID").value);
-            data.append("UnitID", document.getElementById("UnitID").value);
-            data.append("FormID", document.getElementById("FormID").value);
+        data.append("ActionType", actionType);
+        data.append("Remark", document.getElementById("mainRemark").value.trim());
+        data.append("UnitFormID", document.getElementById("UnitFormID").value);
+        data.append("ProjectID", document.getElementById("ProjectID").value);
+        data.append("UnitID", document.getElementById("UnitID").value);
+        data.append("FormID", document.getElementById("FormID").value);
 
-            var passConditions = [];
-            var allGroupsChecked = true; // To track if all groups have a selected radio button
-            var allRemarksFilled = true; // To track if all required remarks are filled
+        var passConditions = [];
+        var allGroupsChecked = true;
+        var allRemarksFilled = true;
 
-            $("input[data-action='gr-pass']").each(function () {
-                let group_id = $(this).attr("group-id");
-                let passconID = $(this).attr("passconID");
-                let _statusID = $(this).is(":checked") ? $(this).val() : null;
-                let remark = document.getElementById(`remark_${group_id}`).value;
-                let FlagActive = document.getElementById(`Flag-Active-${group_id}`).value;
+        $("input[data-action='gr-pass']").each(function () {
+            let group_id = $(this).attr("group-id");
+            let passconID = $(this).attr("passconID");
+            let _statusID = $(this).is(":checked") ? $(this).val() : null;
+            let remark = document.getElementById(`remark_${group_id}`).value;
+            let FlagActive = document.getElementById(`Flag-Active-${group_id}`).value;
 
-                // Convert FlagActive to integer for comparison
-                FlagActive = parseInt(FlagActive);
+            FlagActive = parseInt(FlagActive);
 
-                // Only proceed if FlagActive is 1
-                if (FlagActive === 1) {
-                    let existingCondition = passConditions.find(pc => pc.Group_ID === group_id);
+            if (FlagActive === 1) {
+                let existingCondition = passConditions.find(pc => pc.Group_ID === group_id);
 
-                    // If not already added, add it
-                    if (!existingCondition) {
-                        passConditions.push({
-                            PC_ID: passconID,
-                            Group_ID: group_id,
-                            StatusID: _statusID,
-                            PC_FlagActive: FlagActive,
-                            PJM_Remark: remark ? remark.trim() : '',
-                        });
-                    } else {
-                        if (_statusID !== null) {
-                            existingCondition.StatusID = _statusID;
-                        }
-                    }
-
-                    // If "ไม่อนุมัติ" (value "9") is selected, check if the remarks are filled
-                    if (_statusID === "9") {
-                        if (remark.trim() === "" || document.getElementById("mainRemark").value.trim() === "") {
-                            allRemarksFilled = false; // Set to false if required remarks are empty
-                        }
-                    }
-
-                    // Check if each group of radio buttons has a selected option
-                    let groupChecked = $("input[data-action='gr-pass'][group-id='" + group_id + "']:checked").length > 0;
-                    if (!groupChecked) {
-                        allGroupsChecked = false; // If any group is not checked, set this to false
-                    }
-                }
-            });
-
-            if (passConditions.length > 0) {
-                data.append("PassConditionsIUD", JSON.stringify(passConditions));
-            }
-
-            // Collect images if any
-            var files = document.getElementById("file-input").files;
-            for (var i = 0; i < files.length; i++) {
-                data.append("Images", files[i]);
-            }
-
-            // Validation: Check if all radio button groups are checked when actionType is "submit"
-            if (actionType === "submit") {
-                if (!allGroupsChecked) {
-                    Swal.fire({
-                        title: 'Warning!',
-                        text: 'กรุณาเลือกการอนุมัติหรือไม่อนุมัติในทุกงานที่ใช้งานอยู่',
-                        icon: 'warning',
-                        confirmButtonText: 'OK'
+                if (!existingCondition) {
+                    passConditions.push({
+                        PC_ID: passconID,
+                        Group_ID: group_id,
+                        StatusID: _statusID,
+                        PC_FlagActive: FlagActive,
+                        PJM_Remark: remark ? remark.trim() : '',
                     });
-                    return;
+                } else {
+                    if (_statusID !== null) {
+                        existingCondition.StatusID = _statusID;
+                    }
                 }
-                if (!allRemarksFilled) {
-                    Swal.fire({
-                        title: 'Warning!',
-                        text: 'กรุณาระบุเหตุผลสำหรับการไม่อนุมัติในทุกงานและหมายเหตุงวดนี้',
-                        icon: 'warning',
-                        confirmButtonText: 'OK'
-                    });
-                    return;
+
+                if (_statusID === "9") {
+                    if (remark.trim() === "" || document.getElementById("mainRemark").value.trim() === "") {
+                        allRemarksFilled = false;
+                    }
+                }
+
+                let groupChecked = $("input[data-action='gr-pass'][group-id='" + group_id + "']:checked").length > 0;
+                if (!groupChecked) {
+                    allGroupsChecked = false;
                 }
             }
+        });
 
-            // Uncomment the AJAX part for actual data submission
-            $.ajax({
-                url: '@ViewBag.baseUrl' + 'PJMApprove/SaveOrSubmit',
-                type: 'POST',
-                contentType: false,
-                processData: false,
-                data: data,
-                success: function (res) {
-                    if (res.success) {
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'บันทึกสำเร็จ',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.reload();
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Failed to ' + actionType + ' the data.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                },
-                error: function (xhr, status, error) {
+        if (passConditions.length > 0) {
+            data.append("PassConditionsIUD", JSON.stringify(passConditions));
+        }
+
+        var files = document.getElementById("file-input").files;
+        for (var i = 0; i < files.length; i++) {
+            data.append("Images", files[i]);
+        }
+
+        if (actionType === "submit") {
+            if (!allGroupsChecked) {
+                Swal.fire({
+                    title: 'คำเตือน',
+                    text: 'กรุณาเลือกการอนุมัติหรือไม่อนุมัติในทุกงานที่ใช้งานอยู่',
+                    icon: 'warning',
+                    confirmButtonText: 'ตกลง'
+                });
+                return;
+            }
+            if (!allRemarksFilled) {
+                Swal.fire({
+                    title: 'คำเตือน!',
+                    text: 'กรุณาระบุเหตุผลสำหรับการไม่อนุมัติในทุกงานและหมายเหตุงวดนี้',
+                    icon: 'warning',
+                    confirmButtonText: 'ตกลง'
+                });
+                return;
+            }
+        }
+
+        // Show loading screen
+        Swal.fire({
+            title: 'กำลังบันทึกข้อมูล...',
+            text: 'กรุณารอสักครู่',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '@ViewBag.baseUrl' + 'PJMApprove/SaveOrSubmit',
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (res) {
+                Swal.close(); // Close the loading indicator
+                if (res.success) {
                     Swal.fire({
-                        title: 'Error!',
-                        text: 'An error occurred while processing the request.',
+                        title: 'สำเร็จ!',
+                        text: 'บันทึกสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'ผิดพลาด!',
+                        text: 'ผิดพลาด ' + actionType + ' ไม่สำเร็จ',
                         icon: 'error',
                         confirmButtonText: 'OK'
                     });
                 }
-            });
-        }
-
-
+            },
+            error: function (xhr, status, error) {
+                Swal.close(); // Close the loading indicator
+                Swal.fire({
+                    title: 'ผิดพลาด!',
+                    text: 'บันทึกข้อมูลไม่สำเร็จ',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    }
 
     </script>
 }

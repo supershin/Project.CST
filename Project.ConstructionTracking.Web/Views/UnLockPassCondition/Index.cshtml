@@ -91,7 +91,7 @@
 <div class="page-wrapper">
     <!-- Page header -->
     <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@FormName','@UnitCode')">
-        <i class="fa-solid fa-message fa-xl" style="color: #74C0FC;"></i>
+        <i id="chatIcon" class="fa-solid fa-message fa-xl"></i>
     </button>
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
@@ -243,6 +243,14 @@
                                     <br>
                                 }
                                 <label class="form-label">
+                                    ระบุคำขอปลดล็อค
+                                </label>
+                                <textarea id="remark_@item.GroupID"
+                                          rows="2"
+                                          class="form-control"
+                                          placeholder="ระบุเหตุผลเพื่อขออนุมัติปลดล็อค"
+                                @(item.StatusID != 8 && item.StatusID != 14 ? "disabled" : "")>@item.PEUnLock_Remark</textarea>
+                                <label class="form-label">
                                     ความคิดเห็น PM
                                 </label>
                                 <textarea id="remark_pm" 
@@ -250,15 +258,6 @@
                                           class="form-control" 
                                           disabled
                                 >@item.PMUnLock_Remark</textarea>
-                                <label class="form-label">
-                                    ระบุคำขอปลดล็อค
-                                </label>
-                                <textarea id="remark_@item.GroupID" 
-                                          rows="2" 
-                                          class="form-control" 
-                                          placeholder="ระบุเหตุผลเพื่อขออนุมัติปลดล็อค" 
-                                          @(item.StatusID != 8 && item.StatusID != 14 ? "disabled" : "")
-                                >@item.PEUnLock_Remark</textarea>
                                 @if (item.StatusID == 8 || item.StatusID == 14)
                                 {
                                     <button type="button" class="btn btn-primary" style="margin-top: 15px; float: right;" onclick="saveData('@item.PC_ID','@item.UnitFormID','@item.GroupID')">ขออนุมัติปลดล็อค</button>
@@ -392,71 +391,6 @@
             }
         });
 
-        function saveData(PC_ID, UnitFormID, groupId) {
-            var remark = document.getElementById(`remark_${groupId}`).value;
-            var files = document.getElementById(`file-input-${groupId}`).files;
-
-            var formData = new FormData();
-            formData.append("PC_ID", PC_ID);
-            formData.append("UnitFormID", UnitFormID);
-            formData.append("GroupID", groupId);
-            formData.append("PEUnLock_Remark", remark);
-
-            for (var i = 0; i < files.length; i++) {
-                formData.append("Images", files[i]);
-            }
-
-            // Show SweetAlert confirmation before making AJAX request
-            Swal.fire({
-                title: 'Confirm Unlock Request',
-                text: 'ต้องการขอปลดล็อกหรือไม่',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'ใช่',
-                cancelButtonText: 'ยกเลิก'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // User confirmed, proceed with AJAX request
-                    $.ajax({
-                        url: '@ViewBag.baseUrl' + 'UnLockPassCondition/RequestUnlock',
-                        type: 'POST',
-                        data: formData,
-                        contentType: false,
-                        processData: false,
-                        success: function (response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    title: 'Success!',
-                                    text: 'Data saved successfully!',
-                                    icon: 'success',
-                                    confirmButtonText: 'OK'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload(); // Reload the page when "OK" is clicked
-                                    }
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: 'Failed to save data: ' + response.message,
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            Swal.fire({
-                                title: 'Error!',
-                                text: 'An error occurred while saving data.',
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
-                        }
-                    });
-                }
-            });
-        }
-
         function openModal(UnitFormID, GroupID, FormID) {
             // Fetch images for RoleID = 1
             $.ajax({
@@ -588,6 +522,108 @@
                         error: function (xhr, status, error) {
                             Swal.fire('Error!', 'An error occurred while processing your request.', 'error');
                         }
+                    });
+                }
+            });
+        }
+
+        function validateBeforeSave(groupId) {
+            var fileInput = document.getElementById(`file-input-${groupId}`);
+            var remarkInput = document.getElementById(`remark_${groupId}`);
+            var remarkValue = remarkInput.value.trim();
+
+            // Validate that a file is selected
+            if (fileInput.files.length === 0) {
+                Swal.fire({
+                    title: 'คำเตือน!',
+                    text: 'กรุณาเลือกไฟล์รูปภาพก่อน',
+                    icon: 'error',
+                    confirmButtonText: 'ตกลง'
+                });
+                return false;
+            }
+
+            // Validate that a remark is provided
+            if (remarkValue === "") {
+                Swal.fire({
+                    title: 'คำเตือน!',
+                    text: 'กรุณาใส่เหตุผลเพื่อขออนุมัติปลดล็อค',
+                    icon: 'error',
+                    confirmButtonText: 'ตกลง'
+                });
+                return false;
+            }
+
+            // If both validations pass, return true
+            return true;
+        }
+
+        function saveData(PC_ID, UnitFormID, groupId) {
+            // Run validation before saving data
+            if (!validateBeforeSave(groupId)) {
+                return; // Stop if validation fails
+            }
+
+            var remark = document.getElementById(`remark_${groupId}`).value;
+            var files = document.getElementById(`file-input-${groupId}`).files;
+
+            var formData = new FormData();
+            formData.append("PC_ID", PC_ID);
+            formData.append("UnitFormID", UnitFormID);
+            formData.append("GroupID", groupId);
+            formData.append("PEUnLock_Remark", remark);
+
+            for (var i = 0; i < files.length; i++) {
+                formData.append("Images", files[i]);
+            }
+
+            // Show SweetAlert loading screen before making AJAX request
+            Swal.fire({
+                title: 'กำลังบันทึก...',
+                text: 'กรุณารอสักครู่กำลังบันทึกข้อมูล.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Perform the AJAX request
+            $.ajax({
+                url: '@ViewBag.baseUrl' + 'UnLockPassCondition/RequestUnlock',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    Swal.close(); // Close the loading indicator
+
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'สำเร็จ!',
+                            text: 'บันทึกข้อมูลสำเร็จ',
+                            icon: 'success',
+                            confirmButtonText: 'ตกลง'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload(); // Reload the page when "OK" is clicked
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'ผิดพลาด!',
+                            text: 'บันทึกข้อมูลไม่สำเร็จ: ' + response.message,
+                            icon: 'error',
+                            confirmButtonText: 'ตกลง'
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.close(); // Close the loading indicator
+                    Swal.fire({
+                        title: 'ผิดพลาด!',
+                        text: 'เกิดข้อผิดพลาดขณะบันทึกข้อมูล.',
+                        icon: 'error',
+                        confirmButtonText: 'ตกลง'
                     });
                 }
             });

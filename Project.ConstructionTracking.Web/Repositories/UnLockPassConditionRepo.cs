@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
+using System.Transactions;
 using static Project.ConstructionTracking.Web.Models.UnLockPassConditionModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
@@ -100,17 +101,34 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public void RequestUnlock(UnLockPassConditionModel.UpdateUnlockPC model)
         {
-
-
-            if (model.RoleID == 1)
+            var transactionOptions = new TransactionOptions
             {
-                PERequestUnlock(model);
-            }
-            else {
-                PMRequestUnlock(model);
-            }
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TimeSpan.FromMinutes(3)
+            };
 
-            _context.SaveChanges();
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            {
+                try
+                {
+                    if (model.RoleID == 1)
+                    {
+                        PERequestUnlock(model);
+                    }
+                    else
+                    {
+                        PMRequestUnlock(model);
+                    }
+
+                    _context.SaveChanges();
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+                }
+            }
         }
 
         public void PERequestUnlock(UnLockPassConditionModel.UpdateUnlockPC model)

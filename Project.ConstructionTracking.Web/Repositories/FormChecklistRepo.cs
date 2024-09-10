@@ -33,7 +33,9 @@ public class FormChecklistRepo : IFormChecklistRepo
                       from formGroup in formGroups.DefaultIfEmpty()
                       join t6 in _context.tr_UnitForm on new { ProjectID = (Guid?)t1.ProjectID, UnitID = (Guid?)unit.UnitID, FormID = (int?)form.ID } equals new { t6.ProjectID, t6.UnitID, t6.FormID } into unitForms
                       from unitForm in unitForms.DefaultIfEmpty()
-                      where unit.UnitID == filterData.UnitID && form.ID == filterData.FormID && formGroup.ID == filterData.GroupID
+                      where unit.UnitID == filterData.UnitID 
+                             && form.ID == filterData.FormID
+                             && (filterData.GroupID == 0 || formGroup.ID == filterData.GroupID) // Conditional check
                       select new FormCheckListModel.Form_getUnitFormData
                       {
                           ProjectID = t1.ProjectID,
@@ -47,6 +49,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                           UnitFormID = unitForm.ID,
                           UnitFormStatusID = unitForm.StatusID,
                           UnitStatusName = subT2.Name,
+                          CompanyvenderID = unit.CompanyVendorID
                       }).FirstOrDefault();
 
         return result;
@@ -300,11 +303,9 @@ public class FormChecklistRepo : IFormChecklistRepo
         var form = _context.tm_Form.Find(package.FormID);
         if (form != null)
         {
-            var unitForm = _context.tr_UnitForm
-                .Where(uf => uf.ID == package.UnitFormID && uf.FormID == package.FormID && uf.UnitID == package.UnitId)
-                .FirstOrDefault();
+            var unitForm = _context.tr_UnitForm.Where(uf => uf.FormID == package.FormID && uf.UnitID == package.UnitId).FirstOrDefault();
 
-            if (package.UnitFormID == Guid.Empty)
+            if (unitForm == null)
             {
                 unitForm = new tr_UnitForm
                 {
@@ -331,9 +332,7 @@ public class FormChecklistRepo : IFormChecklistRepo
 
     private void InsertOrUpdateUnitFormAction(PackageModel package, Guid unitFormIDUse, Guid? userID)
     {
-        var unitFormAction = _context.tr_UnitFormAction
-        .Where(uf => uf.ID == package.UnitFormActionID && uf.UnitFormID == package.UnitFormID)
-        .FirstOrDefault();
+        var unitFormAction = _context.tr_UnitFormAction.Where(uf => uf.RoleID == 1 && uf.UnitFormID == unitFormIDUse).FirstOrDefault();
 
         if (unitFormAction == null)
         {
@@ -367,9 +366,7 @@ public class FormChecklistRepo : IFormChecklistRepo
     {
         foreach (var packagelist in packages)
         {
-            var existingUnitFormPackage = _context.tr_UnitFormPackage
-                .Where(ufp => ufp.ID == packagelist.UnitPackageID && ufp.UnitFormID == unitFormIDUse)
-                .FirstOrDefault();
+            var existingUnitFormPackage = _context.tr_UnitFormPackage.Where(ufp => ufp.ID == packagelist.UnitPackageID && ufp.UnitFormID == unitFormIDUse).FirstOrDefault();
 
             if (existingUnitFormPackage == null)
             {

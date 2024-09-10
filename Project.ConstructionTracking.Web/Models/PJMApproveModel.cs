@@ -44,6 +44,7 @@
             public string? PM_Remark { get; set; }
             public string? PJM_Remark { get; set; }
             public string? PJM_Actiontype { get; set; }
+            public string? PJM_ActionBy { get; set; }
             public DateTime? PJM_ActionDate { get; set; }
             public int? PJM_StatusID { get; set; }
             public string? PJMUnitFormRemark { get; set; }
@@ -53,6 +54,7 @@
             public Guid? UnitFormID { get; set; }
             public Guid? ProjectID { get; set; }
             public Guid? UnitID { get; set; }
+            public Guid? UserID { get; set; }
             public int? FormID { get; set; }
             public string? ActionType { get; set; }
             public string? Remark { get; set; }
