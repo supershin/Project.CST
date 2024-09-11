@@ -12,8 +12,9 @@ namespace Project.ConstructionTracking.Web.Models.MUserModel
 		public string JobPosition { get; set; }
 		public string Password { get; set; }
 		public string ConfirmPassword { get; set; }
+        public List<Guid>? MappingProject { get; set; }
 
-		public string? PasswordKey { get; set; }
+        public string? PasswordKey { get; set; }
 		public Guid RequestUserID { get; set; }
 		public int RequestRoleID { get; set; }
 	}

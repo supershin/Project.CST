@@ -460,8 +460,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tr_ProjectPermission>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.HasOne(d => d.Project)
                     .WithMany(p => p.tr_ProjectPermission)
                     .HasForeignKey(d => d.ProjectID)

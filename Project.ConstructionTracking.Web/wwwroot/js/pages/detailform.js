@@ -399,8 +399,8 @@ const detail = {
                     });
                 }
             },
-            "ordering": true,
-            "order": [[0, "ASC"]],
+            "paging": false,
+            "ordering": false,
             "columns": [
                 {
                     'data': 'ID',
@@ -516,8 +516,8 @@ const detail = {
                     FGCheckboxChange(checkboxesG, 'Lv.3 - FormPackage');
                 }
             },
-            "ordering": true,
-            "order": [[0, "ASC"]],
+            "paging": false,
+            "ordering": false,
             "columns": [
                 {
                     'data': 'ID',
@@ -630,8 +630,8 @@ const detail = {
                     FPCheckboxChange(checkboxesP, 'Lv.4 - FormCheckList');
                 }
             },
-            "ordering": true,
-            "order": [[0, "ASC"]],
+            "paging": false,
+            "ordering": false,
             "columns": [
                 {
                     'data': 'ID',
@@ -740,8 +740,8 @@ const detail = {
 
                 }
             },
-            "ordering": true,
-            "order": [[0, "ASC"]],
+            "paging": false,
+            "ordering": false,
             "columns": [
                 { 'data': 'Name', "className": "text-center " },
                 {

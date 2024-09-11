@@ -129,11 +129,11 @@
             });
 
             // Validate Vendor
-            const vendor = document.getElementById('vendor');
+            const vendor = document.getElementById('company-vendor');
             if (vendor.value.trim() === '') {
                 isValid = false;
                 vendor.style.borderColor = 'red';
-                document.getElementById('vendor-error').textContent = 'กรุณาเลือกผู้ควบคุมงาน';
+                document.getElementById('company-vendor-error').textContent = 'กรุณาเลือกบริษัทผู้รับเหมา';
             }
 
             // Validate PO Number
@@ -155,14 +155,14 @@
             if (isValid) {
                 var unitId = $('#edit-unit-id').val();
                 var projectId = $('#edit-project-id').val();
-                var vendorId = $('#vendor').val();
+                var companyVendorId = $('#company-vendor').val();
                 var poNos = $('#po-no').val();
                 var startDates = $('#start-date').val();
 
                 var data = {
                     UnitID: unitId,
                     ProjectID: projectId,
-                    vendorID: vendorId,
+                    CompanyVendorID: companyVendorId,
                     PONo: poNos,
                     StartDate: startDates
                 }
@@ -264,7 +264,7 @@
                     $('#edit-project-id').val(resp.data.ProjectID);
 
                     // Populate vendor dropdown
-                    var vendorSelect = $('#vendor');
+                    var vendorSelect = $('#company-vendor');
                     vendorSelect.empty(); // Clear existing options
                     vendorSelect.append('<option value="">กรุณาเลือกผู้ควบคุมงาน</option>'); // Default option
 
@@ -273,10 +273,10 @@
                     });
 
                     // Set other values in the modal with null checks
-                    if (resp.data.VendorID !== null) {
-                        $('#vendor').val(resp.data.VendorID);
+                    if (resp.data.CompanyVendorID !== null) {
+                        $('#company-vendor').val(resp.data.CompanyVendorID);
                     } else {
-                        $('#vendor').val(''); // Set to empty if null
+                        $('#company-vendor').val(''); // Set to empty if null
                     }
 
                     $('#po-no').val(resp.data.PONo || ''); // Set PO number or empty if null

@@ -133,7 +133,7 @@ namespace Project.ConstructionTracking.Web.Services
 			{
 				UnitID = data.UnitID,
 				ProjectID = data.ProjectID,
-				VendorID = data.VendorID,
+				CompanyVendorID = data.CompanyVendorID,
 				PONo = data.PONo,
 				StartDate = data.StartDate,
 				CompanyVendorList = new List<Companys>()

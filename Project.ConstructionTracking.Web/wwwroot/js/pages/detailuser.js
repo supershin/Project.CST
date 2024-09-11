@@ -84,6 +84,12 @@
                 document.getElementById('user-password-confirm-error').textContent = 'รหัสผ่านไม่ตรงกัน';
             }
 
+            // Get checkbox values (Mapping Project)
+            var checkedProjects = [];
+            document.querySelectorAll('.checklist-item:checked').forEach(function (checkbox) {
+                checkedProjects.push(checkbox.getAttribute('data-id'));
+            });
+
             if (isValid) {
                 const data = {
                     UserID: userId,
@@ -95,6 +101,7 @@
                     JobPosition: userPosition.value.trim(),
                     RoleID: userRole.value,
                     Password: userPassword.value.trim(),
+                    MappingProject: checkedProjects
                 };
 
                 detailUser.EditUser(data);
