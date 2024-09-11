@@ -96,6 +96,30 @@
         cursor: not-allowed; /* Change cursor to indicate non-editable field */
     }
 
+    .align-center {
+        display: flex;
+        align-items: center;
+    }
+
+    .align-center .material-icons {
+        margin-right: 8px;
+    }
+
+
+    .BackButton {
+        width: 50px; /* Set a fixed width */
+        height: 50px; /* Set a fixed height */
+        background-color: white;
+        border-radius: 50%;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border: none;
+        display: flex; /* Align the icon */
+        align-items: center;
+        justify-content: center;
+        padding: 0; /* Remove padding for a perfect circle */
+        cursor: pointer; /* Add cursor pointer for better UX */
+    }
+
 </style>
 
 <div class="page-wrapper">
@@ -125,15 +149,15 @@
                         </form>
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
-                        <h1 class="mb-0 header-text">@UnitCode : @FormName</h1>
+                        <h3 class="mb-0 header-text">PJM อนุมัติผ่านแบบมีเงื่อนไข @FormName</h3>
                         <div class="text-muted">
-                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@ProjectName</h5>
+                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@ProjectName ( Unit : @UnitCode )</h5>
                         </div>
                     </div>
                     <div class="align-items-right">
                         <button class="status-dot bg-transparent">
                         </button>
-                    </div>
+                    </div
                 </div>
             </div>
         </div>
@@ -152,12 +176,53 @@
                                             string buttonClass = "bg-green";
                                             string iconClass = "fa-solid fa-magnifying-glass";
 
-                                            if (item.LockStatusID != null && item.PC_FlagActive == true)
-                                            {
-                                                buttonClass = "bg-primary";
-                                                iconClass = "fa-solid fa-lock";
+                                                if (item.LockStatusID == 7 && item.PC_FlagActive == true)
+                                                {
+                                                    if ((item.PC_StatusID == 7 && item.PM_Actiontype == "submit") || (item.PC_StatusID == 9 && PJM_Actiontype == "submit"))
+                                                    {
+                                                        buttonClass = "bg-danger";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                    else if (item.PC_StatusID == 6 && item.PM_Actiontype == "submit")
+                                                    {
+                                                        buttonClass = "bg-primary";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                    else if (item.PC_StatusID == 8 && PJM_Actiontype == "submit")
+                                                    {
+                                                        buttonClass = "bg-success";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                    else if (item.PC_StatusID == null)
+                                                    {
+                                                        buttonClass = "bg-warning";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                    else
+                                                    {
+                                                        buttonClass = "bg-primary";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                }
+                                                else if (item.LockStatusID == 8 && item.PC_FlagActive == true)
+                                                {
+                                                    if (item.PC_StatusID == 14)
+                                                    {
+                                                        buttonClass = "bg-danger";
+                                                        iconClass = "fa-solid fa-lock-open";
+                                                    }
+                                                    else if (item.PC_StatusID == 13)
+                                                    {
+                                                        buttonClass = "bg-success";
+                                                        iconClass = "fa-solid fa-lock-open";
+                                                    }
+                                                    else
+                                                    {
+                                                        buttonClass = "bg-warning";
+                                                        iconClass = "fa-solid fa-lock-open";
+                                                    }
+                                                }
                                             }
-                                        }
                                         <button class="status-dot @buttonClass">
                                             <i class="@iconClass"></i>
                                         </button>
@@ -177,11 +242,11 @@
                                 </div>
                             </div>
                             <label class="form-label">
-                                ความเห็นจากวิศวกร
+                                ความเห็นจาก PE/SE
                             </label>
                             <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PE_Remark</textarea>
                             <label class="form-label">
-                                ความเห็นจากวิศวกรผู้คุมโครงการ
+                                ความเห็นจาก PM
                             </label>
                             <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PM_Remark</textarea>
                                 <div class="col-12 p-1">
@@ -189,11 +254,11 @@
                                         อนุมัติการผ่านแบบมีเงื่อนไข
                                     </label>
                                     <label class="form-check form-check-inline">
-                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="8" @(item.PC_StatusID == 8 ? "checked" : "") @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || item.PC_FlagActive == false || ViewBag.UserRole != SystemConstant.UserRole.PJM.ToString() ? "disabled" : "") onclick="toggleRadio(this)">
+                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="8" @(item.PC_StatusID == 8 ? "checked" : item.PC_StatusID == 12 ? "checked" : item.PC_StatusID == 13 ? "checked" : item.PC_StatusID == 14 ? "checked" :"") @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || item.PC_FlagActive == false || ViewBag.UserRole != SystemConstant.UserRole.PJM.ToString() ? "disabled" : "") onclick="toggleRadio(this)">
                                         <span class="form-check-label">อนุมัติ</span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="9" @((PJM_Actiontype == "submit" && item.PC_StatusID != 8 && item.PC_StatusID != null) || item.PC_StatusID == 9 ? "checked" : "") @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || item.PC_FlagActive == false || ViewBag.UserRole != SystemConstant.UserRole.PJM.ToString()? "disabled" : "") onclick="toggleRadio(this)">
+                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="9" @((PJM_Actiontype == "submit" && item.PC_StatusID != 8 && item.PC_StatusID != 12 && item.PC_StatusID != 13 && item.PC_StatusID != 14 && item.PC_StatusID != null) || item.PC_StatusID == 9 ? "checked" : "") @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || item.PC_FlagActive == false || ViewBag.UserRole != SystemConstant.UserRole.PJM.ToString()? "disabled" : "") onclick="toggleRadio(this)">
                                         <span class="form-check-label">ไม่อนุมัติ</span>
                                     </label>
                                 </div>
@@ -201,12 +266,21 @@
                                 <textarea id="remark_@item.GroupID" rows="1" class="form-control" placeholder="ระบุเหตุผลเพื่อขออนุมัติ" @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || item.PC_FlagActive == false || ViewBag.UserRole != SystemConstant.UserRole.PJM.ToString() ? "disabled" : "")>@item.PJM_Remark</textarea>
                                 </div>
                                 <input type="hidden" id="Flag-Active-@item.GroupID" value="@(item.PC_FlagActive == true ? 1 : 0)" />
+                                @if (item.PC_StatusID == 13)
+                                {
+                                    <div class="d-flex justify-content-center mt-2">
+                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                            <button type="submit" class="btn custom-btn btn-success" id="btn-toggle-card">ปลดล็อคแล้ว</button>
+                                        </form>
+                                    </div>                                    
+                                }
                                 @if (item.PC_FlagActive == false)
                                 {
-                                <label class="form-label">
-                                    งานนี้ผ่านแบบปกติแล้ว
-                                </label>
-                            }
+                                    <label class="form-label">
+                                        งานนี้ผ่านแบบปกติแล้ว
+                                    </label>
+                                }
                         </div>
                     </div>
                 }
@@ -223,7 +297,15 @@
                         </svg>
                     </div>
                     <h3 class="card-title align-center">
-                        <span class="material-icons"> account_circle </span> บันทึกผลการอนุมัติผ่านแบบมีเงื่อนไขในงวดนี้
+                        <button type="button"
+                                class="status-dot bg-secondary">
+                            <i class="fa-solid fa-user"></i>
+                        </button>
+                        <div class="ms-2 c-details">
+                            <h3 class="mb-0">
+                                บันทึกผลการอนุมัติผ่านแบบมีเงื่อนไขในงวดนี้
+                            </h3>
+                        </div>
                     </h3>
                 </div>
                 <div class="card-body">
@@ -256,7 +338,7 @@
                         <div class="col-12 col-sm-6">
                             <div class="row">
                                 <div class="col-12 mb-2">
-                                    <input type="text" id="PJM_ActionBy" class="form-control" value="ทำรายการโดย : @PJM_ActionBy" readonly>
+                                    <input type="text" id="PJM_ActionBy" class="form-control" value="ทำรายการโดย : @PJM_ActionBy @PJM_ActionDate" readonly>
                                 </div>
                                 <div class="col-12">
                                     <textarea id="mainRemark" rows="2" class="form-control" placeholder="หมายเหตุ" @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || ViewBag.UserRole != SystemConstant.UserRole.PJM.ToString() ? "disabled" : "")
@@ -297,11 +379,13 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <div class="row">
-                        <div class="col-6">
-                            <label class="form-label">&nbsp; แก้ไขล่าสุด @PJM_ActionDate</label>
+                    <div class="d-flex">
+                        <div>
+                            <a class="BackButton" href="@Url.Action("Index","MyTaskPJM")">
+                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #77a0ed;"></i>
+                            </a>
                         </div>
-                        <div class="col-6">
+                        <div class="ms-auto">
                             <div class="justify-content-end">
                                 @if (ViewBag.UserRole == SystemConstant.UserRole.PJM.ToString())
                                 {
@@ -347,7 +431,7 @@
                 <div class="modal-body">
                     <!-- Label and Images for RoleID = 1 -->
                     <div class="row g-2 g-md-3">
-                        <label class="form-label" id="role1-label">รูปภาพวิศวะกร</label>
+                        <label class="form-label" id="role1-label">รูปภาพการตรวจงาน PE/SE</label>
                     </div>
                     <div class="row g-2 g-md-3" id="image-container-role-1">
                         <!-- Images for RoleID = 1 will be injected here -->
@@ -355,7 +439,7 @@
 
                     <!-- Label and Images for RoleID = 2 -->
                     <div class="row g-2 g-md-3 mt-4">
-                        <label class="form-label" id="role2-label">รูปภาพวิศวะกรผู้คุมโครงการ</label>
+                        <label class="form-label" id="role2-label">รูปภาพการตรวจงาน PM</label>
                     </div>
                     <div class="row g-2 g-md-3" id="image-container-role-2">
                         <!-- Images for RoleID = 2 will be injected here -->
@@ -386,138 +470,151 @@
             $(window).resize(adjustTextareaRows); // Call on window resize
         });
 
-    function saveOrSubmit(actionType) {
-        var data = new FormData();
+        function saveOrSubmit(actionType) {
+            var data = new FormData();
 
-        data.append("ActionType", actionType);
-        data.append("Remark", document.getElementById("mainRemark").value.trim());
-        data.append("UnitFormID", document.getElementById("UnitFormID").value);
-        data.append("ProjectID", document.getElementById("ProjectID").value);
-        data.append("UnitID", document.getElementById("UnitID").value);
-        data.append("FormID", document.getElementById("FormID").value);
+            data.append("ActionType", actionType);
+            data.append("Remark", document.getElementById("mainRemark").value.trim());
+            data.append("UnitFormID", document.getElementById("UnitFormID").value);
+            data.append("ProjectID", document.getElementById("ProjectID").value);
+            data.append("UnitID", document.getElementById("UnitID").value);
+            data.append("FormID", document.getElementById("FormID").value);
 
-        var passConditions = [];
-        var allGroupsChecked = true;
-        var allRemarksFilled = true;
+            var passConditions = [];
+            var allGroupsChecked = true;
+            var allRemarksFilled = true;
 
-        $("input[data-action='gr-pass']").each(function () {
-            let group_id = $(this).attr("group-id");
-            let passconID = $(this).attr("passconID");
-            let _statusID = $(this).is(":checked") ? $(this).val() : null;
-            let remark = document.getElementById(`remark_${group_id}`).value;
-            let FlagActive = document.getElementById(`Flag-Active-${group_id}`).value;
+            $("input[data-action='gr-pass']").each(function () {
+                let group_id = $(this).attr("group-id");
+                let passconID = $(this).attr("passconID");
+                let _statusID = $(this).is(":checked") ? $(this).val() : null;
+                let remark = document.getElementById(`remark_${group_id}`).value;
+                let FlagActive = document.getElementById(`Flag-Active-${group_id}`).value;
 
-            FlagActive = parseInt(FlagActive);
+                FlagActive = parseInt(FlagActive);
 
-            if (FlagActive === 1) {
-                let existingCondition = passConditions.find(pc => pc.Group_ID === group_id);
+                if (FlagActive === 1) {
+                    let existingCondition = passConditions.find(pc => pc.Group_ID === group_id);
 
-                if (!existingCondition) {
-                    passConditions.push({
-                        PC_ID: passconID,
-                        Group_ID: group_id,
-                        StatusID: _statusID,
-                        PC_FlagActive: FlagActive,
-                        PJM_Remark: remark ? remark.trim() : '',
-                    });
-                } else {
-                    if (_statusID !== null) {
-                        existingCondition.StatusID = _statusID;
+                    if (!existingCondition) {
+                        passConditions.push({
+                            PC_ID: passconID,
+                            Group_ID: group_id,
+                            StatusID: _statusID,
+                            PC_FlagActive: FlagActive,
+                            PJM_Remark: remark ? remark.trim() : '',
+                        });
+                    } else {
+                        if (_statusID !== null) {
+                            existingCondition.StatusID = _statusID;
+                        }
+                    }
+
+                    if (_statusID === "9") {
+                        if (remark.trim() === "" || document.getElementById("mainRemark").value.trim() === "") {
+                            allRemarksFilled = false;
+                        }
+                    }
+
+                    let groupChecked = $("input[data-action='gr-pass'][group-id='" + group_id + "']:checked").length > 0;
+                    if (!groupChecked) {
+                        allGroupsChecked = false;
                     }
                 }
+            });
 
-                if (_statusID === "9") {
-                    if (remark.trim() === "" || document.getElementById("mainRemark").value.trim() === "") {
-                        allRemarksFilled = false;
-                    }
-                }
-
-                let groupChecked = $("input[data-action='gr-pass'][group-id='" + group_id + "']:checked").length > 0;
-                if (!groupChecked) {
-                    allGroupsChecked = false;
-                }
+            if (passConditions.length > 0) {
+                data.append("PassConditionsIUD", JSON.stringify(passConditions));
             }
-        });
 
-        if (passConditions.length > 0) {
-            data.append("PassConditionsIUD", JSON.stringify(passConditions));
-        }
-
-        var files = document.getElementById("file-input").files;
-        for (var i = 0; i < files.length; i++) {
-            data.append("Images", files[i]);
-        }
-
-        if (actionType === "submit") {
-            if (!allGroupsChecked) {
-                Swal.fire({
-                    title: 'คำเตือน',
-                    text: 'กรุณาเลือกการอนุมัติหรือไม่อนุมัติในทุกงานที่ใช้งานอยู่',
-                    icon: 'warning',
-                    confirmButtonText: 'ตกลง'
-                });
-                return;
+            var files = document.getElementById("file-input").files;
+            for (var i = 0; i < files.length; i++) {
+                data.append("Images", files[i]);
             }
-            if (!allRemarksFilled) {
-                Swal.fire({
-                    title: 'คำเตือน!',
-                    text: 'กรุณาระบุเหตุผลสำหรับการไม่อนุมัติในทุกงานและหมายเหตุงวดนี้',
-                    icon: 'warning',
-                    confirmButtonText: 'ตกลง'
-                });
-                return;
-            }
-        }
 
-        // Show loading screen
-        Swal.fire({
-            title: 'กำลังบันทึกข้อมูล...',
-            text: 'กรุณารอสักครู่',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
-        $.ajax({
-            url: '@ViewBag.baseUrl' + 'PJMApprove/SaveOrSubmit',
-            type: 'POST',
-            contentType: false,
-            processData: false,
-            data: data,
-            success: function (res) {
-                Swal.close(); // Close the loading indicator
-                if (res.success) {
+            if (actionType === "submit") {
+                if (!allGroupsChecked) {
                     Swal.fire({
-                        title: 'สำเร็จ!',
-                        text: 'บันทึกสำเร็จ',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.reload();
+                        title: 'คำเตือน',
+                        text: 'กรุณาเลือกการอนุมัติหรือไม่อนุมัติในทุกงานที่ใช้งานอยู่',
+                        icon: 'warning',
+                        confirmButtonText: 'ตกลง'
+                    });
+                    return;
+                }
+                if (!allRemarksFilled) {
+                    Swal.fire({
+                        title: 'คำเตือน!',
+                        text: 'กรุณาระบุเหตุผลสำหรับการไม่อนุมัติในทุกงานและหมายเหตุงวดนี้',
+                        icon: 'warning',
+                        confirmButtonText: 'ตกลง'
+                    });
+                    return;
+                }
+            }
+
+            // Confirm alert before AJAX call
+            Swal.fire({
+                title: 'ยืนยันการดำเนินการ',
+                text: 'คุณต้องการยืนยันงวดงานนี้หรือไม่',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ใช่',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading screen
+                    Swal.fire({
+                        title: 'กำลังบันทึกข้อมูล...',
+                        text: 'กรุณารอสักครู่',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
                         }
                     });
-                } else {
-                    Swal.fire({
-                        title: 'ผิดพลาด!',
-                        text: 'ผิดพลาด ' + actionType + ' ไม่สำเร็จ',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
+
+                    $.ajax({
+                        url: '@ViewBag.baseUrl' + 'PJMApprove/SaveOrSubmit',
+                        type: 'POST',
+                        contentType: false,
+                        processData: false,
+                        data: data,
+                        success: function (res) {
+                            Swal.close(); // Close the loading indicator
+                            if (res.success) {
+                                Swal.fire({
+                                    title: 'สำเร็จ!',
+                                    text: 'บันทึกสำเร็จ',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.reload();
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'ผิดพลาด!',
+                                    text: 'ผิดพลาด ' + actionType + ' ไม่สำเร็จ',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.close(); // Close the loading indicator
+                            Swal.fire({
+                                title: 'ผิดพลาด!',
+                                text: 'บันทึกข้อมูลไม่สำเร็จ',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
                     });
                 }
-            },
-            error: function (xhr, status, error) {
-                Swal.close(); // Close the loading indicator
-                Swal.fire({
-                    title: 'ผิดพลาด!',
-                    text: 'บันทึกข้อมูลไม่สำเร็จ',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
-        });
-    }
+            });
+        }
+
 
     </script>
 }

@@ -122,9 +122,12 @@
                         <div class="card card-link card-link-pop p-3 mb-2" onclick="this.closest('form').submit();">
                             <div class="d-flex justify-content-between">
                                 <div class="d-flex flex-row align-items-center">
-                                    <button type="button" class="status-dot @item.StatusColor @(item.StatusColor == "bg-danger" || item.StatusColor== "bg-warning" ? "status-dot-animated" : "")">
-                                        <i class="@item.StatusIcon"></i>
-                                    </button>
+                                    @if (@item.StatusID == 5 || @item.StatusID == 8)
+                                    {
+                                        <button type="button" class="status-dot @item.StatusColor @(item.StatusColor == "bg-danger" || item.StatusColor== "bg-warning" ? "status-dot-animated" : "")">
+                                            <i class="@item.StatusIcon"></i>
+                                        </button>
+                                    }
 
                                     <div class="ms-2 c-details">
                                         <h3 class="mb-0 text-primary">@item.UnitCode <small class="text-yellow"> @item.ProjectName : @item.FormName</small></h3>
@@ -141,28 +144,20 @@
                                     </div>
                                 }
                             </div>
-                            <div class="mt-3">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-list-check"></i> &nbsp; สถานะ</span></li>
-                                    <li class="breadcrumb-item" aria-current="page"><span class="text2"> @item.StatusDescription </span></li>
-                                </ol>
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-user-pen"></i> &nbsp;PM ผู้ตรวจ</span></li>
-                                    <li class="breadcrumb-item" aria-current="page"><span class="text2">@item.PMActionBy</span></li>
-                                </ol>
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-calendar-days"></i> &nbsp; PM ตรวจวันที่</span></li>
-                                    <li class="breadcrumb-item" aria-current="page"><span class="text2">@item.PMActionDate </span></li>
-                                </ol>
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-user-pen"></i> &nbsp;PJM ผู้ตรวจ</span></li>
-                                    <li class="breadcrumb-item" aria-current="page"><span class="text2">@item.PJMActionBy</span></li>
-                                </ol>
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-calendar-days"></i> &nbsp; PJM ตรวจวันที่</span></li>
-                                    <li class="breadcrumb-item" aria-current="page"><span class="text2">@item.PJMActionDate </span></li>
-                                </ol>
-                            </div>
+                                <div class="mt-3">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1">สร้างโดย</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">@item.ComVendorName</span></li>
+                                    </ol>
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1">สถานะ</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="badge @item.StatusColor text-white">@item.StatusDescription</span></li>
+                                    </ol>
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1">PM ผู้ตรวจ</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">@item.PMActionBy @item.PMActionDate</span></li>
+                                    </ol>
+                                </div>
                         </div>
                     </form>
                 </div>
@@ -254,7 +249,7 @@
                 type: 'GET',
                 data: {
                     selectedProjectValue: project,
-                    selectedUnitValue: selectedUnitsString, // Send as a comma-separated string
+                    selectedUnitValue: selectedUnitsString, 
                     selectedUnitFormStatus: statusString
                 },
                 success: function (data) {
@@ -275,56 +270,52 @@
 
             $.each(data, function (index, item) {
                 // Construct the full action URL dynamically
-                var actionUrl = `${baseUrl}?unitId=${item.UnitID}&FormID=${item.FormID}comeFrom=${'MyTaskPE'}`;
+            var actionUrl = `${baseUrl}?unitId=${item.UnitID}&FormID=${item.FormID}&comeFrom=${'MyTaskPE'}`;
+            var card = `
+                <div class="col-md-4">
+                    <form action="${actionUrl}" method="post">
+                        <div class="card card-link card-link-pop p-3 mb-2" onclick="this.closest('form').submit();">
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex flex-row align-items-center">
+                                    ${(item.StatusID == 5 || item.StatusID == 8) ? `
+                                        <button type="button" class="status-dot ${item.StatusColor} ${(item.StatusColor == "bg-danger" || item.StatusColor == "bg-warning") ? "status-dot-animated" : ""}">
+                                            <i class="${item.StatusIcon}"></i>
+                                        </button>
+                                    ` : ''}
 
-                var card = `
-                            <div class="col-md-4">
-                                <form action="${actionUrl}" method="post">
-                                    <div class="card card-link card-link-pop p-3 mb-2" onclick="this.closest('form').submit();">
-                                        <div class="d-flex justify-content-between">
-                                            <div class="d-flex flex-row align-items-center">
-                                                <button type="button" class="status-dot ${item.StatusColor} ${(item.StatusColor == "bg-danger" || item.StatusColor == "bg-warning") ? "status-dot-animated" : ""}">
-                                                    <i class="${item.StatusIcon}"></i>
-                                                </button>
-
-                                                <div class="ms-2 c-details">
-                                                    <h3 class="mb-0 text-primary">${item.UnitCode} <small class="text-yellow"> ${item.ProjectName} : ${item.FormName}</small></h3>
-                                                </div>
-                                            </div>
-                                            ${item.PassConditionIcon ? `
-                                            <div class="ms-auto">
-                                                <button type="button" class="status-dot ${item.PassConditionColor}">
-                                                    <span class="status-text">
-                                                        <i class="${item.PassConditionIcon}"></i>
-                                                    </span>
-                                                </button>
-                                            </div>` : ''}
-                                        </div>
-                                        <div class="mt-3">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-list-check"></i> &nbsp; สถานะ</span></li>
-                                                <li class="breadcrumb-item" aria-current="page"><span class="text2"> ${item.StatusDescription} </span></li>
-                                            </ol>
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-user-pen"></i> &nbsp;PM ผู้ตรวจ</span></li>
-                                                <li class="breadcrumb-item" aria-current="page"><span class="text2">${item.PMActionBy}</span></li>
-                                            </ol>
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-calendar-days"></i> &nbsp; PM ตรวจวันที่</span></li>
-                                                <li class="breadcrumb-item" aria-current="page"><span class="text2">${item.PMActionDate} </span></li>
-                                            </ol>
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-user-pen"></i> &nbsp;PJM ผู้ตรวจ</span></li>
-                                                <li class="breadcrumb-item" aria-current="page"><span class="text2">${item.PJMActionBy}</span></li>
-                                            </ol>
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item"><span class="text1"><i class="fa-solid fa-calendar-days"></i> &nbsp; PJM ตรวจวันที่</span></li>
-                                                <li class="breadcrumb-item" aria-current="page"><span class="text2">${item.PJMActionDate} </span></li>
-                                            </ol>
-                                        </div>
+                                    <div class="ms-2 c-details">
+                                        <h3 class="mb-0 text-primary">${item.UnitCode} <small class="text-yellow"> ${item.ProjectName} : ${item.FormName}</small></h3>
                                     </div>
-                                </form>
-                            </div>`;
+                                </div>
+                                ${item.PassConditionIcon ? `
+                                <div class="ms-auto">
+                                    <button type="button" class="status-dot ${item.PassConditionColor}">
+                                        <span class="status-text">
+                                            <i class="${item.PassConditionIcon}"></i>
+                                        </span>
+                                    </button>
+                                </div>` : ''}
+                            </div>
+                            <div class="mt-3">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><span class="text1">สร้างโดย</span></li>
+                                    <li class="breadcrumb-item" aria-current="page"><span class="text2">${item.ComVendorName}</span></li>
+                                </ol>
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><span class="text1">สถานะ</span></li>
+                                    <li class="breadcrumb-item" aria-current="page">
+                                        <span class="badge ${item.StatusColor} text-white">${item.StatusDescription}</span>
+                                    </li>
+                                </ol>
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><span class="text1">PM ผู้ตรวจ</span></li>
+                                    <li class="breadcrumb-item" aria-current="page"><span class="text2">${item.PMActionBy} ${item.PMActionDate}</span></li>
+                                </ol>
+                            </div>
+                        </div>
+                    </form>
+                </div>`;
+
                 container.append(card);
             });
         }

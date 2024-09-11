@@ -144,10 +144,10 @@ function saveOrSubmit(actionType) {
     if (actionType === "submit") {
         if (!mainStatus) {
             Swal.fire({
-                title: 'Warning!',
+                title: 'คำเตือน!',
                 text: 'กรุณาระบุตัวเลือกอนุมัติหรือไม่อนุมัติ',
                 icon: 'warning',
-                confirmButtonText: 'OK'
+                confirmButtonText: 'ตกลง'
             });
             return;
         }
@@ -155,10 +155,10 @@ function saveOrSubmit(actionType) {
     if (actionType === "submit" && mainStatus && mainStatus.value === "5") {
         if (remarkElement.trim() === "") {
             Swal.fire({
-                title: 'Warning!',
+                title: 'คำเตือน!',
                 text: 'กรุณาระบุหมายเหตุ เมื่อไม่อนุมัติงวดงานนี้',
                 icon: 'warning',
-                confirmButtonText: 'OK'
+                confirmButtonText: 'ตกลง'
             });
             return;
         }
@@ -259,10 +259,10 @@ function performAjaxRequest(actionType) {
 
             if (res.success) {
                 Swal.fire({
-                    title: 'Success!',
-                    text: 'Data has been successfully ' + actionType + 'd.',
+                    title: 'สำเร็จ!',
+                    text: 'บันทึกข้อมูลสำเร็จ',
                     icon: 'success',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'ตกลง'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         window.location.reload();
@@ -270,20 +270,20 @@ function performAjaxRequest(actionType) {
                 });
             } else {
                 Swal.fire({
-                    title: 'Error!',
-                    text: 'Failed to ' + actionType + ' the data.',
+                    title: 'ผิดพลาด!',
+                    text: 'บันทึกข้อมูลไม่สำเร็จ',
                     icon: 'error',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'ตกลง'
                 });
             }
         },
         error: function (xhr, status, error) {
             Swal.close(); // Close the loading indicator
             Swal.fire({
-                title: 'Error!',
-                text: 'An error occurred while processing the request.',
+                title: 'ผิดพลาด!',
+                text: 'บันทึกข้อมูลไม่สำเร็จ',
                 icon: 'error',
-                confirmButtonText: 'OK'
+                confirmButtonText: 'ตกลง'
             });
         }
     });

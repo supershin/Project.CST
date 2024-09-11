@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using System;
@@ -71,9 +72,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from t5 in units.DefaultIfEmpty()
                           join t6 in _context.tm_Form on t1.FormID equals t6.ID into forms
                           from t6 in forms.DefaultIfEmpty()
-                          join t8 in _context.tr_UnitFormAction.Where(a => a.RoleID == 3)
-                              on t1.ID equals t8.UnitFormID into actions
+                          join t8 in _context.tr_UnitFormAction.Where(a => a.RoleID == 3) on t1.ID equals t8.UnitFormID into actions
                           from t8 in actions.DefaultIfEmpty()
+                          join t8PM in _context.tr_UnitFormAction.Where(a => a.RoleID == 2) on t1.ID equals t8PM.UnitFormID into Pmactions
+                          from t8PM in Pmactions.DefaultIfEmpty()
                           join t9 in _context.tm_User on t8.UpdateBy equals t9.ID into users
                           from t9 in users.DefaultIfEmpty()
                           where t1.ID == filterData.UnitFormID && t3.ID != null
@@ -97,6 +99,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               PE_Remark = t3.PE_Remark,
                               PM_Remark = t3.PM_Remark,
                               PJM_Remark = t3.PJM_Remark,
+                              PM_Actiontype = t8PM.ActionType,
                               PJM_Actiontype = t8.ActionType,
                               PJM_ActionBy = t9.FirstName + ' ' + t9.LastName,
                               PJM_ActionDate = t8.ActionDate,
@@ -133,7 +136,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                             RoleID = 3,
                             ActionType = model.ActionType,
                             StatusID = statusToUpdate, 
-                            Remark = !string.IsNullOrEmpty(model.Remark) ? model.Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy") : "",
+                            Remark = string.IsNullOrEmpty(model.Remark) ? "" : FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + model.Remark,
                             ActionDate = DateTime.Now,
                             UpdateBy = model.UserID,
                             UpdateDate = DateTime.Now,
@@ -152,7 +155,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         {
                             if (unitFormAction.Remark != model.Remark)
                             {
-                                unitFormAction.Remark = model.Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                                unitFormAction.Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + model.Remark;
                             }
                         }
                         else
@@ -184,7 +187,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 {
                                     if (passCondition.PJM_Remark != passConditionModel.PJM_Remark)
                                     {
-                                        passCondition.PJM_Remark = passConditionModel.PJM_Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                                        passCondition.PJM_Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + passConditionModel.PJM_Remark;
                                     }
                                 }
                                 else

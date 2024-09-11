@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient.Server;
 using Newtonsoft.Json.Linq;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using System.Transactions;
@@ -54,6 +55,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               GroupID = t1.GroupID,
                               GroupName = t7.Name,
                               LockStatusID = t1.LockStatusID,
+                              UnitFormStatusID = t2.StatusID,
                               StatusID = t1.StatusID,
                               PE_Remark = t1.PE_Remark,
                               PE_ActionDate = t2pe.ActionDate.HasValue ? t2pe.ActionDate.Value.ToString("dd/MM/yyyy") : "",
@@ -145,7 +147,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 {
                     if (passCondition.PEUnLock_Remark != model.PEUnLock_Remark)
                     {
-                        passCondition.PEUnLock_Remark = model.PEUnLock_Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                        passCondition.PEUnLock_Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + model.PEUnLock_Remark;
                     }
                 }
                 else {
@@ -242,7 +244,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 {
                     if (passCondition.PMUnLock_Remark != model.PMUnLock_Remark)
                     {
-                        passCondition.PMUnLock_Remark = model.PMUnLock_Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                        passCondition.PMUnLock_Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + model.PMUnLock_Remark;
                     }                 
                 }
                 else

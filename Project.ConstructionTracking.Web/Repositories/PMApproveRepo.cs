@@ -160,6 +160,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from vendor in vendors.DefaultIfEmpty()
                           join t4 in _context.tm_Project on t1.ProjectID equals t4.ProjectID into projects
                           from project in projects.DefaultIfEmpty()
+                          join t4com in _context.tm_CompanyVendor on t1.CompanyVendorID equals t4com.ID into Companys
+                          from Company in Companys.DefaultIfEmpty()
                           join t5 in _context.tm_Unit on t1.UnitID equals t5.UnitID into units
                           from unit in units.DefaultIfEmpty()
                           join t8 in _context.tm_Form on t1.FormID equals t8.ID into forms
@@ -183,11 +185,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                               UnitCode = unit.UnitCode,
                               VendorID = t1.VendorID,
                               VenderName = vendor.Name,
+                              CompanyName = Company.Name,
                               VendorResourceID = t1.VendorResourceID,
                               Grade = t1.Grade,
                               UnitFormStatusID = t1.StatusID,
                               FormID = t1.FormID,
                               FormName = form.Name,
+                              ActionByPE = PEUnitFormAction.UpdateBy,
                               Actiondate = PEUnitFormAction.ActionDate,
                               ActiondatePm = PMUnitFormAction.ActionDate,
                               ActiondatePJm = PJMUnitFormAction.ActionDate,
@@ -233,7 +237,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                      ResourceID = res.ID,
                                                      FileName = res.FileName,
                                                      FilePath = res.FilePath
-                                                 }).ToList()
+                                                 }).ToList(),
+                              PCAllcount = _context.tr_UnitFormPassCondition.Count(x => x.UnitFormID == t1.ID)
+
+
                           }).FirstOrDefault();
 
              return result;
@@ -281,7 +288,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                             RoleID = 2,
                             ActionType = model.ActionType,
                             StatusID = model.UnitFormStatus,
-                            Remark = !string.IsNullOrEmpty(model.Remark) ? model.Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy") : "",
+                            Remark = string.IsNullOrEmpty(model.Remark) ? "" : FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + model.Remark ,
                             ActionDate = DateTime.Now,
                             UpdateBy = model.UserID,
                             UpdateDate = DateTime.Now,
@@ -299,7 +306,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         {
                             if (unitFormAction.Remark != model.Remark)
                             {
-                                unitFormAction.Remark = model.Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                                unitFormAction.Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + model.Remark;
                             }
                         }
                         else
@@ -336,7 +343,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                     {
                                         if (passCondition.PM_Remark != passConditionModel.Remark)
                                         {
-                                            passCondition.PM_Remark = passConditionModel.Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                                            passCondition.PM_Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + passConditionModel.Remark ;
                                         }
                                     }
                                     else

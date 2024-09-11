@@ -33,6 +33,8 @@ public class FormChecklistRepo : IFormChecklistRepo
                       from formGroup in formGroups.DefaultIfEmpty()
                       join t6 in _context.tr_UnitForm on new { ProjectID = (Guid?)t1.ProjectID, UnitID = (Guid?)unit.UnitID, FormID = (int?)form.ID } equals new { t6.ProjectID, t6.UnitID, t6.FormID } into unitForms
                       from unitForm in unitForms.DefaultIfEmpty()
+                      join t7 in _context.tm_CompanyVendor on new { unit.CompanyVendorID } equals new { CompanyVendorID = (int?)t7.ID } into CompanyVendorS
+                      from CompanyVendor in CompanyVendorS.DefaultIfEmpty()
                       where unit.UnitID == filterData.UnitID 
                              && form.ID == filterData.FormID
                              && (filterData.GroupID == 0 || formGroup.ID == filterData.GroupID) // Conditional check
@@ -49,7 +51,8 @@ public class FormChecklistRepo : IFormChecklistRepo
                           UnitFormID = unitForm.ID,
                           UnitFormStatusID = unitForm.StatusID,
                           UnitStatusName = subT2.Name,
-                          CompanyvenderID = unit.CompanyVendorID
+                          CompanyvenderID = unit.CompanyVendorID,
+                          CompanyvenderName = CompanyVendor.Name
                       }).FirstOrDefault();
 
         return result;

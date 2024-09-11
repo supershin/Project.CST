@@ -41,7 +41,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.PJM_ActionBy = listPJMApprove?.PJM_ActionBy;
                 ViewBag.FormName = listPJMApprove?.FormName;
                 ViewBag.PJM_Actiontype = listPJMApprove?.PJM_Actiontype ?? string.Empty;
-                ViewBag.PJM_ActionDate = listPJMApprove?.PJM_ActionDate?.ToStringDateTime();
+                ViewBag.PJM_ActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(listPJMApprove?.PJM_ActionDate);
                 ViewBag.PJM_StatusID = listPJMApprove?.PJM_StatusID ?? (int?)null;
                 ViewBag.PJMUnitFormRemark = listPJMApprove?.PJMUnitFormRemark ?? string.Empty;
                 _FormID = listPJMApprove?.FormID;

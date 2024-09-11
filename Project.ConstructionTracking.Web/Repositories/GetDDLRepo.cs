@@ -41,7 +41,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                   select new GetDDL
                                   {
                                       Value = t3.ID,
-                                      Text = t1.Name + " / " + t3.Name
+                                      Text = t3.Name
                                   };
 
                 return result.ToList();

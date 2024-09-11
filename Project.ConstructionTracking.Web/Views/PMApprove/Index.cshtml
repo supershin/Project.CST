@@ -10,17 +10,21 @@
     var FormName = ViewBag.FormName;
     var UnitFormStatusID = ViewBag.UnitFormStatusID;
     var Actiondate = ViewBag.Actiondate;
+    var PEActionBy = ViewBag.PEActionBy;
     var comeFrom = ViewBag.comeFrom;
     var ActiondatePm = ViewBag.ActiondatePm;
     var ActiondatePJm = ViewBag.ActiondatePJm;
     var Grade = ViewBag.Grade;
     var LockStatusID = ViewBag.LockStatusID;
     var VenderName = ViewBag.VenderName;
+    var CompanyName = ViewBag.CompanyName;
     var PM_Remarkaction = ViewBag.PM_Remarkaction;
     var PM_Actiontype = ViewBag.PM_Actiontype;
     var PJM_Remarkaction = ViewBag.PJM_Remarkaction;
     var PJM_Actiontype = ViewBag.PJM_Actiontype;
+    var PCAll = ViewBag.PCAll;
     var PCALLPASS = ViewBag.PCALLPASS;
+    var PCUnlock = ViewBag.PCUnlock;
 }
 
 @model Project.ConstructionTracking.Web.Models.ApproveFormcheckModel
@@ -59,6 +63,15 @@
         padding: 6px;
         text-align: center;
         cursor: pointer;
+    }
+
+    .align-center {
+        display: flex;
+        align-items: center;
+    }
+
+    .align-center .material-icons {
+        margin-right: 8px;
     }
 
     .drop-zone-text {
@@ -105,6 +118,20 @@
         line-height: 18px;
         text-align: center;
         padding: 0;
+    }
+
+    .BackButton {
+        width: 50px; /* Set a fixed width */
+        height: 50px; /* Set a fixed height */
+        background-color: white;
+        border-radius: 50%;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border: none;
+        display: flex; /* Align the icon */
+        align-items: center;
+        justify-content: center;
+        padding: 0; /* Remove padding for a perfect circle */
+        cursor: pointer; /* Add cursor pointer for better UX */
     }
 
     .form-control[readonly] {
@@ -164,9 +191,9 @@
                         }
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
-                        <h1 class="mb-0 header-text">@UnitCode</h1>
+                        <h3 class="mb-0 header-text">PM ตรวจงาน @FormName</h3>
                         <div class="text-muted">
-                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@ProjectName</h5>
+                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@ProjectName ( Unit : @UnitCode )</h5>
                         </div>
                     </div>
                     <div class="align-items-right">
@@ -185,28 +212,47 @@
                     <div class="col-12 col-sm-4">
                         <div class="card">
                             <div class="card-header">
-                                <div class="container mt-1">
-                                    <span class="badge bg-secondary text-white">@FormName</span> สร้างโดย @VenderName
-                                </div>
+                                <h3>ข้อมูลรายละเอียด</h3>
                             </div>
                             <div class="card-body">
                                 <div class="col-12">
                                     <div class="row">
                                         <div class="col-12">
-                                            <div class="container mt-1">
-                                                <label class="form-label align-center">
-                                                    วิศวกรผู้ควบคุมงาน  : นายสมชาย ใจดี
+                                            <div class="container mt-1 text-center">
+                                                <label class="form-label">
+                                                    PE/SE ผู้ควบคุมงาน : @PEActionBy
                                                 </label>
-                                                <label class="form-label align-center">
-                                                    เกรดที่วิศวกรประเมิณงวดนี้ : @Grade
+                                                <label class="form-label">
+                                                    เกรดที่ PE/SE ประเมิณงวดนี้ : @Grade
                                                 </label>
-                                                <label class="form-label align-center">
-                                                    การตรวจ QC : ผ่าน
-                                                </label>
-                                                <label class="form-label align-center">
+                                                <label class="form-label">
                                                     วันที่ส่งงาน : @Actiondate
                                                 </label>
+                                                <label class="form-label">
+                                                    การตรวจ QC : ผ่าน
+                                                </label>
+                                                <label class="form-label">
+                                                    สร้างโดย : @CompanyName
+                                                </label>
+                                                <label class="form-label">
+                                                    ชื่อผู้รับเหมาเซ็น : @VenderName
+                                                </label>
+                                                @if (PCAll != 0)
+                                                {
+                                                    <label class="form-label text-danger">มีการผ่านแบบมีเงื่อนไข!!!</label>
+                                                }
+                                                @if (PCUnlock != 0)
+                                                {
+                                                    <div class="d-flex justify-content-center mt-2">
+                                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                                            <button type="submit" class="btn custom-btn btn-success" id="btn-toggle-card">ปลดล็อค</button>
+                                                        </form>
+                                                    </div>
+                                                }
+
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -217,14 +263,6 @@
             </div>
         </div>
         <div class="container-xl mb-3">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">ผลการตรวจ</a></li>
-                @if (LockStatusID != null)
-                {
-                    <li class="breadcrumb-item active text-danger" aria-current="page">มีการผ่านแบบมีเงื่อนไข!!!</li>
-                }
-            </ol>
-            <br>
             <div class="row">
                 @if (Model.PM_getListgroup != null)
                 {
@@ -247,9 +285,19 @@
                                                         buttonClass = "bg-danger";
                                                         iconClass = "fa-solid fa-lock";
                                                     }
-                                                    else if ((group.PC_StatusID == 6 && PM_Actiontype == "submit") || (group.PC_StatusID == 8 && PJM_Actiontype == "submit"))
+                                                    else if (group.PC_StatusID == 6 && PM_Actiontype == "submit")
+                                                    {
+                                                        buttonClass = "bg-primary";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                    else if (group.PC_StatusID == 8 && PJM_Actiontype == "submit")
                                                     {
                                                         buttonClass = "bg-success";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                    else if (group.PC_StatusID == null)
+                                                    {
+                                                        buttonClass = "bg-warning";
                                                         iconClass = "fa-solid fa-lock";
                                                     }
                                                     else
@@ -272,7 +320,7 @@
                                                     }
                                                     else
                                                     {
-                                                        buttonClass = "bg-primary";
+                                                        buttonClass = "bg-warning";
                                                         iconClass = "fa-solid fa-lock-open";
                                                     }
                                                 }
@@ -300,7 +348,7 @@
                                 @if (group.PM_getListpackage != null)
                                 {
                                     <div class="mb-3">
-                                        <label class="form-label">ความเห็นจากวิศวกร</label>
+                                        <label class="form-label">ความเห็นจาก PE/SE</label>
                                         @* Build the content first *@
                                         @{
                                             var textareaContent = new System.Text.StringBuilder();
@@ -320,7 +368,7 @@
                                 @if (group.LockStatusID != null)
                                 {
                                     <label class="form-label">
-                                        ความเห็นจากวิศวกรกรณีผ่านแบบมีเงื่อนไข
+                                        ความเห็นจาก PE/SE กรณีผ่านแบบมีเงื่อนไข
                                     </label>
                                     <textarea rows="2" class="form-control mb-3" placeholder="ความคิดเห็น" disabled>@group.PE_RemarkPC</textarea>
                                     <input type="hidden" id="pass_ID_@group.Group_ID" value="@group.PassConditionsID" />
@@ -408,7 +456,15 @@
                         </svg>
                     </div>
                     <h3 class="card-title align-center">
-                        <span class="material-icons"> account_circle </span> บันทึกผลการอนุมัติในงวดนี้
+                        <button type="button"
+                                class="status-dot bg-secondary">
+                            <i class="fa-solid fa-user"></i>
+                        </button>
+                        <div class="ms-2 c-details">
+                            <h3 class="mb-0">
+                                บันทึกผลการอนุมัติในงวดนี้
+                            </h3>
+                        </div>
                     </h3>
                 </div>
                 <div class="card-body">
@@ -462,26 +518,8 @@
                                         <span class="form-check-label">ไม่อนุมัติ</span>
                                     </label>
                                 </div>
-@*                                 <div class="form-floating mb-2">
-                                    <textarea id="PMRemark" rows="1" class="form-control" placeholder=" " disabled>PM ผู้ตรวจ : สมชาย ใจดี</textarea>
-                                    <label for="PMRemark"> ทำรายการโดย</label>
-                                </div>
-                                <style>
-                                    .form-floating label {
-                                        font-size: 14px;
-                                        color: #6c757d; /* Muted color for the label */
-                                    }
-
-                                    .form-floating textarea:focus ~ label {
-                                        color: #007bff; /* Change label color on focus */
-                                    }
-
-                                    .form-floating textarea {
-                                        border-radius: 8px; /* Rounded corners for a modern look */
-                                    }
-                                </style> *@
                                 <div class="col-12 mb-2">
-                                    <input type="text" id="PMRemark" class="form-control" value="ทำรายการโดย : @Model.PM_ActionBy" readonly>
+                                    <input type="text" id="PMRemark" class="form-control" value="ทำรายการโดย : @Model.PM_ActionBy @ActiondatePm" readonly>
                                 </div>
                                 <div class="col-12">
                                     <textarea id="mainRemark" rows="2" class="form-control" placeholder=""
@@ -522,11 +560,34 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <div class="row">
-                        <div class="col-6">
-                            <label class="form-label">&nbsp; แก้ไขล่าสุด @ActiondatePm</label>
+                    <div class="d-flex">
+                        <div>
+                            @if (comeFrom == "SummaryUnitForm" || ViewBag.UserRole == SystemConstant.UserRole.PE.ToString())
+                            {
+                                <a class="BackButton" href="@Url.Action("Index","GoToByRole"
+                                        , new{projectId =@ProjectID,
+                                            projectName = @ProjectName,
+                                            FormID = @FormID,
+                                            UnitFormID = @UnitFormID,
+                                            unitId  = @UnitID,
+                                            UnitCode = @UnitCode})">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #77a0ed;"></i>
+                                </a>
+                            }
+                            else if (ViewBag.UserRole == SystemConstant.UserRole.PJM.ToString())
+                            {
+                                <a class="BackButton" href="@Url.Action("Index","MyTaskPJM")">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #77a0ed;"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="BackButton" href="@Url.Action("Index","MyTaskPM")">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #77a0ed;"></i>
+                                </a>
+                            }
                         </div>
-                        <div class="col-6">
+                        <div class="ms-auto">
                             <input type="hidden" id="UnitFormID" value="@Model.ID" />
                             <input type="hidden" id="ProjectID" value="@Model.ProjectID" />
                             <input type="hidden" id="UnitID" value="@Model.UnitID" />
@@ -554,7 +615,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Modal show image -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">

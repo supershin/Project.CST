@@ -63,6 +63,8 @@ namespace Project.ConstructionTracking.Web.Models
             public int? UnitFormstatusID { get; set; }
             public string? UnitFormstatus { get; set; }
             public string? PE_ActionType { get; set; }
+            public Guid? PE_ActionBy { get; set; }
+            public DateTime? PE_ActionDate { get; set; }
             public string? VenderName { get; set; }
             public int? VenderID { get; set; }
             public int? PE_StatusID { get; set; }

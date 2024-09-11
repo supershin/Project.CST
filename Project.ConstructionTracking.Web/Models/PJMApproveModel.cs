@@ -44,6 +44,7 @@
             public string? PM_Remark { get; set; }
             public string? PJM_Remark { get; set; }
             public string? PJM_Actiontype { get; set; }
+            public string? PM_Actiontype { get; set; }
             public string? PJM_ActionBy { get; set; }
             public DateTime? PJM_ActionDate { get; set; }
             public int? PJM_StatusID { get; set; }
