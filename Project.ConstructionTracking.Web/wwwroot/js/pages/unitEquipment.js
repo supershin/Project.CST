@@ -188,26 +188,23 @@ var unitEquipment = {
 
     saveUnitEquipmentSign: () => {
 
-        let isValid = true;
+        let allUnchecked = true;
         let validationMessage = '';
 
         $('div.card-link').each(function () {
-            const statusUse = $(this).find('button.status-dot').data('status-use');
-            const cntCheckListAll = parseInt($(this).find('.text1').text().split(' ')[1]);
             const cntCheckListUnit = parseInt($(this).find('.text2').text().split(' ')[1]);
             const cntCheckListNotPass = parseInt($(this).find('.text3').text().split(' ')[1]);
 
-            if (statusUse !== 'success' && !(cntCheckListAll === cntCheckListUnit && cntCheckListNotPass === 0)) {
-                isValid = false;
-                validationMessage = 'กรุณาตรวจสอบสถานะของรายการทั้งหมดก่อนบันทึกข้อมูล';
+            if (!(cntCheckListUnit === 0 && cntCheckListNotPass === 0)) {
+                allUnchecked = false; 
                 return false;
             }
         });
 
-        if (!isValid) {
+        if (allUnchecked) {
             Swal.fire({
                 title: 'ข้อผิดพลาด!',
-                text: validationMessage,
+                text: 'กรุณาตรวจงานอย่างน้อย 1 รายการ',
                 icon: 'warning',
                 confirmButtonText: 'ตกลง'
             });

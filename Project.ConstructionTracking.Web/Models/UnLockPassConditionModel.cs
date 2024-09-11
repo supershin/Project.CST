@@ -15,6 +15,7 @@ namespace Project.ConstructionTracking.Web.Models
             public string? FormName { get; set; }
             public string? VenderName { get; set; }
             public Guid? UnitFormID { get; set; }
+            public int? UnitFormStatusID { get; set; }
             public int? GroupID { get; set; }
             public string? GroupName { get; set; }
             public int? LockStatusID { get; set; }

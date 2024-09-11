@@ -91,6 +91,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                               venderName = venderN != null ? venderN.Name : "",
                               venderID = venderN != null ? venderN.ID : 0,
                               UnitFormstatus = t1.StatusID,
+                              PE_ActionBy = peAction.UpdateBy,
+                              PE_ActionDate = peAction.UpdateDate,
                               PE_ActionType = peAction != null ? peAction.ActionType : null,
                               PE_StatusID = peAction != null ? peAction.StatusID : null,
                               PM_ActionType = pmAction != null ? pmAction.ActionType : null,
@@ -139,7 +141,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 ID = result.ID,
                 Grade = result.Grade,
                 FormID = result.FormID,
-                VenderName = result.venderName == "" ? "" : result.venderName + " / " + result.CompanyName,
+                VenderName = result.venderName == "" ? "" : result.venderName,
                 VenderID = result.venderID , // Assuming VenderID is a string; otherwise, use the appropriate default value for its type
                 UnitFormstatusID = result.UnitFormstatus,
                 UnitFormstatus = result.UnitFormstatus switch
@@ -155,6 +157,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                     9 => "PJM กำลังตรวจ",
                     _ => "สถานะไม่ทราบ"
                 },
+                PE_ActionBy = result.PE_ActionBy,
+                PE_ActionDate = result.PE_ActionDate,
                 PE_ActionType = result.PE_ActionType,
                 PE_StatusID = result.PE_StatusID,
                 PM_ActionType = result.PM_ActionType,

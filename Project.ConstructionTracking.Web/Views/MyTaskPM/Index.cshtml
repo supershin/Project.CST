@@ -122,12 +122,15 @@
                             <div class="card card-link card-link-pop p-3 mb-2" onclick="this.closest('form').submit();">
                                 <div class="d-flex justify-content-between">
                                     <div class="d-flex flex-row align-items-center">
-                                        <button type="button" class="status-dot @item.StatusColor @(item.StatusColor == "bg-danger" || item.StatusColor== "bg-warning" ? "status-dot-animated" : "")">
-                                            <i class="@item.StatusIcon"></i>
-                                        </button>
+                                        @if (@item.StatusID == 2)
+                                        {
+                                            <button type="button" class="status-dot @item.StatusColor @(item.StatusColor == "bg-danger" || item.StatusColor== "bg-warning" ? "status-dot-animated" : "")">
+                                                <i class="@item.StatusIcon"></i>
+                                            </button>
+                                        }
 
                                         <div class="ms-2 c-details">
-                                            <h3 class="mb-0 text-primary">@item.UnitCode <small class="text-yellow"> @item.ProjectName</small></h3>
+                                            <h3 class="mb-0 text-primary">@item.UnitCode <small class="text-yellow"> @item.ProjectName : @item.FormName</small></h3>
                                         </div>
                                     </div>
                                     @if (@item.PassConditionIcon != "")
@@ -143,16 +146,16 @@
                                 </div>
                                 <div class="mt-3">
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><span class="text1">@item.FormName</span></li>
-                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">สร้างโดย @item.ComVendorName</span></li>
+                                        <li class="breadcrumb-item"><span class="text1">สร้างโดย</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">@item.ComVendorName</span></li>
                                     </ol>
                                     <ol class="breadcrumb">
                                         <li class="breadcrumb-item"><span class="text1">สถานะ</span></li>
-                                        <li class="breadcrumb-item" aria-current="page"><span class="text2"> @item.StatusDescription</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="badge @item.StatusColor text-white">@item.StatusDescription</span></li>
                                     </ol>
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><span class="text1">วันที่วิศวะกรขออนุมัติ</span></li>
-                                        <li class="breadcrumb-item" aria-current="page"><span class="text2"> @item.PEActionBy</span></li>
+                                        <li class="breadcrumb-item"><span class="text1">PE/SE ขออนุมัติ</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2"> @item.PEActionBy @item.PEActionDate</span></li>
                                     </ol>
                                 </div>
                             </div>
@@ -263,7 +266,7 @@
             container.empty(); // Clear existing results
 
             // Base URL for the form action
-            var baseUrl = '@Url.Action("index", "FormGroup")';
+            var baseUrl = '@Url.Action("index", "PMApprove")';
 
             $.each(data, function (index, item) {
                 // Construct the full action URL dynamically
@@ -275,9 +278,11 @@
                                             <div class="card card-link card-link-pop p-3 mb-2" onclick="this.closest('form').submit();">
                                                 <div class="d-flex justify-content-between">
                                                     <div class="d-flex flex-row align-items-center">
-                                                        <button type="button" class="status-dot ${item.StatusColor} ${(item.StatusColor == "bg-danger" || item.StatusColor == "bg-warning") ? "status-dot-animated" : ""}">
-                                                            <i class="${item.StatusIcon}"></i>
-                                                        </button>
+                                                        ${(item.StatusID == 2) ? `
+                                                            <button type="button" class="status-dot ${item.StatusColor} ${(item.StatusColor == "bg-danger" || item.StatusColor == "bg-warning") ? "status-dot-animated" : ""}">
+                                                                <i class="${item.StatusIcon}"></i>
+                                                            </button>
+                                                        ` : ''}
 
                                                         <div class="ms-2 c-details">
                                                             <h3 class="mb-0 text-primary">${item.UnitCode} <small class="text-yellow"> ${item.ProjectName} : ${item.FormName}</small></h3>
@@ -294,16 +299,16 @@
                                                 </div>
                                                 <div class="mt-3">
                                                     <ol class="breadcrumb">
-                                                        <li class="breadcrumb-item"><span class="text1">${item.FormName}</span></li>
-                                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">สร้างโดย ${item.ComVendorName}</span></li>
+                                                        <li class="breadcrumb-item"><span class="text1">สร้างโดย</span></li>
+                                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">${item.ComVendorName}</span></li>
                                                     </ol>
                                                     <ol class="breadcrumb">
                                                         <li class="breadcrumb-item"><span class="text1">สถานะ</span></li>
-                                                        <li class="breadcrumb-item" aria-current="page"><span class="text2"> ${item.StatusDescription}</span></li>
+                                                        <li class="breadcrumb-item" aria-current="page"><span class="badge ${item.StatusColor} text-white"> ${item.StatusDescription}</span></li>
                                                     </ol>
                                                     <ol class="breadcrumb">
-                                                        <li class="breadcrumb-item"><span class="text1">วันที่วิศวะกรขออนุมัติ</span></li>
-                                                        <li class="breadcrumb-item" aria-current="page"><span class="text2"> ${item.PEActionBy}</span></li>
+                                                        <li class="breadcrumb-item"><span class="text1">PE/SE ขออนุมัติ</span></li>
+                                                        <li class="breadcrumb-item" aria-current="page"><span class="text2"> ${item.PEActionBy} ${item.PEActionDate}</span></li>
                                                     </ol>
                                                 </div>
                                             </div>

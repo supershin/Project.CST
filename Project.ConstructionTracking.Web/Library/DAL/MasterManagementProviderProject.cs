@@ -135,12 +135,13 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.Grade = Commons.FormatExtension.NullToString(reader["Grade"]);
             Entity.FormID = Commons.FormatExtension.Nulltoint(reader["FormID"]);
             Entity.FormName = Commons.FormatExtension.NullToString(reader["FormName"]);
+            Entity.ComVendorName = Commons.FormatExtension.NullToString(reader["ComVendorName"]);
             Entity.StatusID = Commons.FormatExtension.Nulltoint(reader["StatusID"]);
             Entity.StatusDescription = Commons.FormatExtension.NullToString(reader["StatusDescription"]);
             Entity.StatusIcon = Commons.FormatExtension.NullToString(reader["StatusIcon"]);
             Entity.StatusColor = Commons.FormatExtension.NullToString(reader["StatusColor"]);
             Entity.PMActionBy = Commons.FormatExtension.NullToString(reader["PMActionBy"]);
-            Entity.PMActionDate = Commons.FormatExtension.NullToString(reader["PMActionDate"]);
+            Entity.PMActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["PMActionDate"]);
             Entity.PJMActionBy = Commons.FormatExtension.NullToString(reader["PJMActionBy"]);
             Entity.PJMActionDate = Commons.FormatExtension.NullToString(reader["PJMActionDate"]);
             Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassConditionIcon"]);
@@ -179,7 +180,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.StatusIcon = Commons.FormatExtension.NullToString(reader["StatusIcon"]);
             Entity.StatusColor = Commons.FormatExtension.NullToString(reader["StatusColor"]);
             Entity.PEActionBy = Commons.FormatExtension.NullToString(reader["PEActionBy"]);
-            Entity.PEActionDate = Commons.FormatExtension.NullToString(reader["PEActionDate"]);
+            Entity.PEActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["PEActionDate"]);
             Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassConditionIcon"]);
             Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassConditionColor"]);
             return Entity;
@@ -216,9 +217,9 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.StatusIcon = Commons.FormatExtension.NullToString(reader["StatusIcon"]);
             Entity.StatusColor = Commons.FormatExtension.NullToString(reader["StatusColor"]);
             Entity.PEActionBy = Commons.FormatExtension.NullToString(reader["PEActionBy"]);
-            Entity.PEActionDate = Commons.FormatExtension.NullToString(reader["PEActionDate"]);
+            Entity.PEActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["PEActionDate"]);
             Entity.PMActionBy = Commons.FormatExtension.NullToString(reader["PMActionBy"]);
-            Entity.PMActionDate = Commons.FormatExtension.NullToString(reader["PMActionDate"]);
+            Entity.PMActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["PMActionDate"]);
             Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassConditionIcon"]);
             Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassConditionColor"]);
             return Entity;

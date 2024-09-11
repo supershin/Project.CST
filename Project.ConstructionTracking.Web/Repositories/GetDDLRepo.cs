@@ -41,7 +41,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                   select new GetDDL
                                   {
                                       Value = t3.ID,
-                                      Text = t1.Name + " / " + t3.Name
+                                      Text = t3.Name
                                   };
 
                 return result.ToList();
@@ -84,7 +84,18 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 return ListUnitFormStatus.ToList();
 
+                case "UserName":
+                    var UserName = from us in _context.tm_User
+                                   where us.ID == Model.ValueGuid
+                                   select new GetDDL
+                                   {
+                                       Text = us.FirstName + " " + us.LastName 
+                                   };
+
+                 return UserName.ToList();
+
                 default:
+
                 return new List<GetDDL>();
             }
         }

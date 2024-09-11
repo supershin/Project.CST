@@ -15,6 +15,7 @@
         public string? Grade { get; set; } 
         public int FormID { get; set; } 
         public string? FormName { get; set; }
+        public string? ComVendorName { get; set; }
         public int StatusID { get; set; } 
         public string? StatusDescription { get; set; } 
         public string? StatusIcon { get; set; }

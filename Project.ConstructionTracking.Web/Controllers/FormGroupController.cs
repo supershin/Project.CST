@@ -41,8 +41,9 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.unitId = unitId;
             ViewBag.UnitCode = UnitFormData.UnitCode;
             ViewBag.UnitStatusName = UnitFormData.UnitStatusName;
-
+            ViewBag.UnitFormMainStatusID = UnitFormData.UnitFormStatusID;
             ViewBag.UnitFormID = UnitFormData.UnitFormID;
+            ViewBag.CompanyvenderName = UnitFormData.CompanyvenderName;
 
             var Model = new FormGroupModel { FormID = FormID , UnitID = unitId , UnitFormID = UnitFormData.UnitFormID };
             List<FormGroupModel> listFormGroup = _FormGroupService.GetFormGroupList(Model);
@@ -51,7 +52,14 @@ namespace Project.ConstructionTracking.Web.Controllers
             if (FormGroupDetail != null)
             {
                 ViewBag.FormGroupDetail = FormGroupDetail;
-                ViewBag.Signaldate = FormGroupDetail.FileDate.ToStringDateTime();
+                ViewBag.Signaldate = FormatExtension.FormatDateToDayMonthNameYearTime(FormGroupDetail.FileDate);
+                ViewBag.PEActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(FormGroupDetail.PE_ActionDate);
+
+                var Filter = new GetDDL { Act = "UserName", ValueGuid = FormGroupDetail.PE_ActionBy };
+                List<GetDDL> ListUser = _getDDLService.GetDDLList(Filter);
+                ViewBag.PEActionBy = ListUser[0].Text;
+
+
             }
 
             var ddlModel = new GetDDL { Act = "Vender", ID = UnitFormData.CompanyvenderID };
