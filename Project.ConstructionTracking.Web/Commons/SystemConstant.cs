@@ -40,6 +40,22 @@
             public const string QC = "Quality Control";
             public const string ADMIN = "Administrator";
         }
+
+        public static class Unit_Form_Status
+        {
+            public const int PE_Save = 1; 
+            public const int PE_Submit = 2; 
+            public const int PM_Save = 3; 
+            public const int PM_Approve = 4;
+            public const int PM_Reject = 5;
+            public const int PM_Sendto_PJM = 6;
+            public const int PJM_Approve = 7;
+            public const int PJM_Reject = 8;
+            public const int PJM_Save = 9;
+            public const int PE_REQ_Unlock = 10;
+            public const int PM_Approve_Unlock = 11;
+            public const int PM_Reject_Unlock = 12;
+        }
     }
 
 }
