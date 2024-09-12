@@ -214,7 +214,7 @@
 
                 if (selectedProjectId) {
                     $.ajax({
-                        url: '@Url.Action("GetUnitsByProject", "MyTaskPE")',
+                        url: '@ViewBag.baseUrl' + 'MyTaskPE/GetUnitsByProject',
                         data: { projectId: selectedProjectId },
                         success: function (data) {
                             // Add new options dynamically after fetching data
@@ -245,7 +245,7 @@
             const statusString = selectedStatuses.join(',');
 
             $.ajax({
-                url: '@Url.Action("SearchData", "MyTaskPE")',
+                url: '@ViewBag.baseUrl' + 'MyTaskPE/SearchData',
                 type: 'GET',
                 data: {
                     selectedProjectValue: project,
