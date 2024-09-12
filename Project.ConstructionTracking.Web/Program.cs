@@ -79,6 +79,8 @@ builder.Services.AddScoped<ILoginRepo, LoginRepo>();
 builder.Services.AddScoped<IChatInBoxService, ChatInBoxService>();
 builder.Services.AddScoped<IChatInBoxRepo, ChatInBoxRepo>();
 
+builder.Services.AddScoped<IGeneratePDFService, GeneratePDFService>();
+builder.Services.AddScoped<IGeneratePDFRepo, GeneratePDFRepo>();
 
 // Add the new services for SQL and data access
 builder.Services.AddScoped<MasterManagementProviderProject, SqlMasterManagementProject>();

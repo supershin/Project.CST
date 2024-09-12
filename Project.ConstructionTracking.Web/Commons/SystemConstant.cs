@@ -40,6 +40,13 @@
             public const string QC = "Quality Control";
             public const string ADMIN = "Administrator";
         }
+
+        public static class CheckList_Status
+        {
+            public const int PASS = 9;
+            public const int NOTPASS = 9;
+            public const int NOWORK= 9;
+        }
     }
 
 }
