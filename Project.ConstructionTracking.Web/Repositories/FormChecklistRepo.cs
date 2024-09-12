@@ -381,7 +381,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                     FormID = packagelist.FormID,
                     GroupID = packagelist.GroupID,
                     PackageID = packagelist.PackageID,
-                    Remark = string.IsNullOrEmpty(packagelist.Remark) ? "" : FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + packagelist.Remark ,
+                    Remark = string.IsNullOrEmpty(packagelist.Remark) ? "" : packagelist.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
                     UpdateDate = DateTime.Now,
                     UpdateBy = userID,
                     CreateDate = DateTime.Now,
@@ -395,7 +395,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                 {
                     if (existingUnitFormPackage.Remark != packagelist.Remark)
                     {
-                        existingUnitFormPackage.Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + packagelist.Remark;
+                        existingUnitFormPackage.Remark = packagelist.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
                     }
                 }
                 else
@@ -465,7 +465,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                 UnitFormID = unitFormIDUse,
                 GroupID = pcCheck.GroupID,
                 LockStatusID = 7,
-                PE_Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + pcCheck.Remark,
+                PE_Remark = pcCheck.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
                 FlagActive = true,
                 ActionDate = DateTime.Now,
                 CraeteDate = DateTime.Now,
@@ -481,7 +481,7 @@ public class FormChecklistRepo : IFormChecklistRepo
             {
                 if (passCondition.PE_Remark != pcCheck.Remark)
                 {
-                    passCondition.PE_Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + pcCheck.Remark;
+                    passCondition.PE_Remark = pcCheck.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
                 }
             }
             else

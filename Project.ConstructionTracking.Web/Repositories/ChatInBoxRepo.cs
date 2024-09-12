@@ -43,7 +43,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                   RoleName = t6Join.Name,
                                   UserName = t2Join.FirstName + " " + t2Join.LastName,
                                   TextInbox = t1.TextInbox,
-                                  Actiondate = t1.ActionDate.ToStringDateTime()
+                                  Actiondate = FormatExtension.FormatDateToDayMonthNameYearTime(t1.ActionDate)
                               };
 
             return vendorQuery.ToList();

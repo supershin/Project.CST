@@ -288,7 +288,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                             RoleID = 2,
                             ActionType = model.ActionType,
                             StatusID = model.UnitFormStatus,
-                            Remark = string.IsNullOrEmpty(model.Remark) ? "" : FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + model.Remark ,
+                            Remark = string.IsNullOrEmpty(model.Remark) ? "" : model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
                             ActionDate = DateTime.Now,
                             UpdateBy = model.UserID,
                             UpdateDate = DateTime.Now,
@@ -306,7 +306,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         {
                             if (unitFormAction.Remark != model.Remark)
                             {
-                                unitFormAction.Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + model.Remark;
+                                unitFormAction.Remark = model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
                             }
                         }
                         else
@@ -343,7 +343,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                     {
                                         if (passCondition.PM_Remark != passConditionModel.Remark)
                                         {
-                                            passCondition.PM_Remark = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now) + " : " + passConditionModel.Remark ;
+                                            passCondition.PM_Remark = passConditionModel.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
                                         }
                                     }
                                     else

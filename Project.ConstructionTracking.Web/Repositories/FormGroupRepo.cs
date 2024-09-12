@@ -155,6 +155,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                     7 => "PJM อนุมัติคำขอ",
                     8 => "PJM ไม่อนุมัติคำขอ",
                     9 => "PJM กำลังตรวจ",
+                    10 => "PE/SE ขอปลดล็อค",
+                    11 => "PM อนุมัติปลดล็อค",
+                    12 => "PM ไม่อนุมัติปลดล็อค",
                     _ => "สถานะไม่ทราบ"
                 },
                 PE_ActionBy = result.PE_ActionBy,
