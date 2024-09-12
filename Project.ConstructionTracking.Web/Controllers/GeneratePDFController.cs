@@ -105,8 +105,8 @@ namespace Project.ConstructionTracking.Web.Controllers
                 container.Page(page =>
                 {
                     page.Size(PageSizes.A4);
-                    page.MarginTop(1.5f, Unit.Centimetre);
-                    page.MarginBottom(1.5f, Unit.Centimetre);
+                    page.MarginTop(1, Unit.Centimetre);
+                    page.MarginBottom(1, Unit.Centimetre);
                     page.MarginLeft(1, Unit.Centimetre);
                     page.MarginRight(1, Unit.Centimetre);
 
@@ -120,46 +120,55 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                     page.Header().Column(column =>
                     {
-                        column.Item().Row(row =>
+                        IContainer DefaultCellStyle(IContainer container, string backgroundColor)
                         {
-                            row.RelativeItem().Column(row1 =>
+                            return container
+                                .Border(1)
+                                .BorderColor(Colors.Black)
+                                .Background(backgroundColor)
+                                .PaddingVertical(1)
+                                .PaddingHorizontal(3)
+                                .AlignCenter()
+                                .AlignMiddle();
+                        }
+
+                        column.Item().Border(1).Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
                             {
-                                row.RelativeItem(12).AlignRight().Text("เลขที่ใบตรวจ: " + "C400H007-092024-00001").FontColor("#FF0000").FontSize(18).SemiBold();
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(4);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(1);
+                                columns.RelativeColumn(3);
                             });
 
-                            row.RelativeItem().Column(row1 =>
-                            {
-                                row.RelativeItem(2).AlignRight().Text("โครงการ: ").FontSize(18).SemiBold();
-                                row.RelativeItem(4).AlignRight().Text(dataGenerate.HeaderData.ProjectName).FontSize(18).SemiBold();
-                                row.RelativeItem(6).AlignRight().Text("วันที่: " + dataGenerate.HeaderData.PMSubmitDate).FontSize(18).SemiBold();
-                            });
-                            row.RelativeItem().Column(row1 =>
-                            {
-                                row.RelativeItem(2).AlignRight().Text("แปลงที่: ").FontSize(18).SemiBold();
-                                row.RelativeItem(4).AlignRight().Text(dataGenerate.HeaderData.UnitCode).FontSize(18).SemiBold();
-                                row.RelativeItem(2).AlignRight().Text("การตรวจ​ QC: ").FontSize(18).SemiBold();
-                                row.RelativeItem(1).AlignRight().Width(30).Image(imageBox); // icon
-                                row.RelativeItem(3).AlignRight().Text("ผ่านการตรวจจาก QC แล้ว").FontSize(18).SemiBold();
-                            });
-                            row.RelativeItem().Column(row1 =>
-                            {
-                                row.RelativeItem(2).AlignRight().Text("ผู้รับเหมา: ").FontSize(18).SemiBold();
-                                row.RelativeItem(4).AlignRight().Text(dataGenerate.HeaderData.VendorName).FontSize(18).SemiBold();
-                                row.RelativeItem(2).AlignRight().Text("").FontSize(18).SemiBold();
-                                row.RelativeItem(1).AlignRight().Width(30).Image(imageBox); // icon 
-                                row.RelativeItem(3).AlignRight().Text("งวดนี้ไม่มีการตรวจ QC").FontSize(18).SemiBold();
-                            });
-                            row.RelativeItem().Column(row1 =>
-                            {
-                                row.RelativeItem(2).AlignRight().Text("วิศวกรผู้ควบคุมงาน: ").FontSize(18).SemiBold();
-                                row.RelativeItem(4).AlignRight().Text(dataGenerate.HeaderData.PEName).FontSize(18).SemiBold();
-                            });
+                            table.Cell().Row(1).Column(1).ColumnSpan(5).Element(CellStyle).AlignLeft().Text("เลขที่ใบตรวจ: " + "C400H007-092024-00001").FontColor("#FF0000");
 
-                            row.RelativeItem().Column(row1 =>
-                            {
-                                row.RelativeItem(2).AlignRight().Text(dataGenerate.HeaderData.FormName).FontSize(18).SemiBold().BackgroundColor("#32ff32");
-                                row.RelativeItem(10).AlignRight().Text(dataGenerate.HeaderData.FormDesc).FontSize(18).SemiBold();
-                            });
+                            table.Cell().Row(2).Column(1).Element(CellStyle).AlignLeft().Text("โครงการ ");
+                            table.Cell().Row(2).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.ProjectName);
+                            table.Cell().Row(2).Column(3).ColumnSpan(3).Element(CellStyle).AlignLeft().Text("วันที่ " + dataGenerate.HeaderData.PMSubmitDate);
+
+                            table.Cell().Row(3).Column(1).Element(CellStyle).AlignLeft().Text("แปลงที่ ");
+                            table.Cell().Row(3).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.UnitCode);
+                            table.Cell().Row(3).Column(3).RowSpan(3).Element(CellStyle).AlignLeft().Text("การตรวจ QC ");
+                            table.Cell().Row(3).Column(4).Element(CellStyle).Width(15).Image(imageBox);
+                            table.Cell().Row(3).Column(5).Element(CellStyle).AlignLeft().Text("ผ่านการตรวจจาก QC แล้ว");
+
+                            table.Cell().Row(4).Column(1).Element(CellStyle).AlignLeft().Text("ผู้รับเหมา ");
+                            table.Cell().Row(4).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.VendorName);
+                            table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageBox);
+                            table.Cell().Row(4).Column(5).Element(CellStyle).AlignLeft().Text("งวดนี้ไม่มีการตรวจ QC");
+
+                            table.Cell().Row(5).Column(1).Element(CellStyle).AlignLeft().Text("ผู้ควบคุมงาน ");
+                            table.Cell().Row(5).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.PEName);
+
+                            table.Cell().Row(6).Column(1).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.FormName).BackgroundColor("#32ff32");
+                            table.Cell().Row(6).Column(2).ColumnSpan(4).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.FormDesc);
+
+                            // you can extend existing styles by creating additional methods
+                            IContainer CellStyle(IContainer container) => DefaultCellStyle(container, Colors.White);
+                  
                         });
                     });
 
@@ -191,7 +200,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                     //            table.Cell().Row((uint)(group + countRow)).Column(3).Padding(2).PaddingLeft(4).Text("ผ่าน");
                     //            table.Cell().Row((uint)(group + countRow)).Column(4).Padding(2).PaddingLeft(4).Text("ไม่ผ่าน");
                     //            table.Cell().Row((uint)(group + countRow)).Column(5).Padding(2).PaddingLeft(4).Text("ไม่มีรายการนี้");
-                                
+
                     //            for(int package = 0; package < dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels.Count; package++)
                     //            {
                     //                table.Cell().Row((uint)(group + countRow + package + 1)).Column(1).RowSpan((uint)dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count).Padding(2).PaddingLeft(4).Text(dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].PackageName);
@@ -217,7 +226,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                     //                countRow += dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count;
                     //            }
                     //        }
-                            
+
                     //    });
                     //});
 
@@ -250,15 +259,15 @@ namespace Project.ConstructionTracking.Web.Controllers
                     //          }
 
                     //      }
-                                                    
+
                     //  });
 
                     page.Footer().Border(0.5f).Table(table2 =>
                     {
-                        var signVendor = new FileStream(_hosting.ContentRootPath + "/" + dataGenerate.FooterData.VendorData.VendorImageSignUrl, FileMode.Open);
-                        var signPe = new FileStream(_hosting.ContentRootPath + "/" + dataGenerate.FooterData.PEData.PEImageSignUrl, FileMode.Open);
-                        var signPm = new FileStream(_hosting.ContentRootPath + "/" + dataGenerate.FooterData.PMData.PMImageSignUrl, FileMode.Open);
-
+                        var signVendor = new FileStream(Directory.GetCurrentDirectory() + "/" + dataGenerate.FooterData.VendorData.VendorImageSignUrl, FileMode.Open);
+                        var signPe = new FileStream(Directory.GetCurrentDirectory() + "/" + dataGenerate.FooterData.PEData.PEImageSignUrl, FileMode.Open);
+                        var signPm = new FileStream(Directory.GetCurrentDirectory() + "/" + dataGenerate.FooterData.PMData.PMImageSignUrl, FileMode.Open);
+                        
                         table2.ColumnsDefinition(columns =>
                         {
                             columns.RelativeColumn(3);
