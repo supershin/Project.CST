@@ -157,6 +157,7 @@
                                         {
                                             <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
                                                 <input type="hidden" name="UnitFormID" value="@item.UnitFormID" />
+                                                <input type="hidden" name="ComFrom" value="summaryunit" />
                                                 <button type="submit" class="status-dot bg-@item.PassConditionStatus">
                                                     <i class="fa-solid fa-lock-open"></i>
                                                 </button>
@@ -166,6 +167,7 @@
                                         {
                                             <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
                                                 <input type="hidden" name="UnitFormID" value="@item.UnitFormID" />
+                                                <input type="hidden" name="ComFrom" value="summaryunit" />
                                                 <button type="submit" class="status-dot bg-@item.PassConditionStatus">
                                                     <i class="fa-solid fa-lock"></i>
                                                 </button>

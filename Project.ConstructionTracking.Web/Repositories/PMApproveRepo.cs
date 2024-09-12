@@ -339,7 +339,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 if (passCondition.StatusID != 8)
                                 {
                                     passCondition.StatusID = passConditionModel.PassConditionsvalue;
-                                    if (!string.IsNullOrEmpty(model.Remark))
+                                    if (!string.IsNullOrEmpty(passConditionModel.Remark))
                                     {
                                         if (passCondition.PM_Remark != passConditionModel.Remark)
                                         {
