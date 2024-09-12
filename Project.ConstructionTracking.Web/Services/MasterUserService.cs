@@ -207,7 +207,7 @@ namespace Project.ConstructionTracking.Web.Services
 				MobileNo = query.Mobile,
 				BUID = query.BUID,
 				RoleID = query.RoleID,
-				JobPosition = query.Name,
+				JobPosition = query.PositionName,
 				ImageSign = query.FilePath
 			};
 
