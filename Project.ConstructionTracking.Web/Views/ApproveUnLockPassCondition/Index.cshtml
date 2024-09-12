@@ -9,6 +9,7 @@
     var UnitCode = ViewBag.UnitCode;
     var FormName = ViewBag.FormName;
     var ListGroupPC = ViewBag.ListGroupPC;
+    var ComFrom = ViewBag.ComFrom;
 }
 
 
@@ -108,16 +109,29 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
-                            <input type="hidden" name="projectId" id="projectId" value="@ProjectID" />
-                            <input type="hidden" name="projectName" value="@ProjectName" />
-                            <input type="hidden" name="unitId" value="@UnitID" />
-                            <input type="hidden" name="UnitCode" value="@UnitCode" />
-                            <input type="hidden" name="UnitStatusName" value="" />
-                            <button class="status-dot bg-transparent">
-                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
-                            </button>
-                        </form>
+                        @if (ComFrom == "summaryunit")
+                        {
+                            <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
+                                <input type="hidden" name="projectId" id="projectId" value="@ProjectID" />
+                                <input type="hidden" name="projectName" value="@ProjectName" />
+                                <input type="hidden" name="unitId" value="@UnitID" />
+                                <input type="hidden" name="UnitCode" value="@UnitCode" />
+                                <input type="hidden" name="UnitStatusName" value="" />
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
+                        else if (ComFrom == "PMApprove")
+                        {
+                            <form asp-controller="PMApprove" asp-action="Index" method="post">
+                                <input type="hidden" name="unitId" value="@UnitID" />
+                                <input type="hidden" name="FormID" value="@FormID" />
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
                         <h1 class="mb-0 header-text">@UnitCode : @FormName</h1>

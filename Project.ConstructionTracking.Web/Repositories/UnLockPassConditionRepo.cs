@@ -245,16 +245,13 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public void PMRequestUnlock(UnLockPassConditionModel.UpdateUnlockPC model)
         {
-            // Check action type and perform updates accordingly
-            var passCondition = _context.tr_UnitFormPassCondition
-                .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.ID == model.PC_ID && pc.FlagActive == true);
+
+            var passCondition = _context.tr_UnitFormPassCondition.FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.ID == model.PC_ID && pc.FlagActive == true);
 
             if (passCondition != null)
             {
-                // Set StatusID based on the action type
                 passCondition.StatusID = model.Action == "Reject" ? 14 : 13;
-
-                // Update the remark and other properties
+                passCondition.LockStatusID = model.Action == "Reject" ? 7 : 8;
                 passCondition.PMUnLock_Remark = !string.IsNullOrEmpty(model.PMUnLock_Remark)
                     ? model.PMUnLock_Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now)
                     : "";
@@ -263,10 +260,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 passCondition.UpdateDate = DateTime.Now;
                 _context.tr_UnitFormPassCondition.Update(passCondition);
 
-                // Save changes to the tr_UnitFormPassCondition table
-                _context.SaveChanges(); // Save the changes to ensure they are reflected in the next query
+                _context.SaveChanges(); 
 
-                // If the action is "Approved", check if all items in this group have the same status
                 if (model.Action != "Reject")
                 {
                     bool allItemsHaveSameStatus = _context.tr_UnitFormPassCondition

@@ -180,8 +180,16 @@
                                                 {
                                                     if ((item.PC_StatusID == 7 && item.PM_Actiontype == "submit") || (item.PC_StatusID == 9 && PJM_Actiontype == "submit"))
                                                     {
-                                                        buttonClass = "bg-danger";
-                                                        iconClass = "fa-solid fa-lock";
+                                                        @if (UnitFormStatus == 2)
+                                                        {
+                                                            buttonClass = "bg-warning";
+                                                            iconClass = "fa-solid fa-lock";
+                                                        }
+                                                        else
+                                                        {
+                                                            buttonClass = "bg-danger";
+                                                            iconClass = "fa-solid fa-lock";
+                                                        }
                                                     }
                                                     else if (item.PC_StatusID == 6 && item.PM_Actiontype == "submit")
                                                     {
@@ -189,6 +197,16 @@
                                                         iconClass = "fa-solid fa-lock";
                                                     }
                                                     else if (item.PC_StatusID == 8 && PJM_Actiontype == "submit")
+                                                    {
+                                                        buttonClass = "bg-success";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                    else if (item.PC_StatusID == 12)
+                                                    {
+                                                        buttonClass = "bg-warning";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                    else if (item.PC_StatusID == 13)
                                                     {
                                                         buttonClass = "bg-success";
                                                         iconClass = "fa-solid fa-lock";
@@ -236,7 +254,7 @@
                                 <div class="align-items-right">
                                     <!-- Button to open the modal and fetch images -->
                                     <button class="status-dot bg-primary"
-                                            onclick="openModal('@item.UnitFormID', '@item.GroupID',@item.FormID)">
+                                            onclick="openModal('@item.UnitFormID', '@item.GroupID' , @item.FormID , @item.PC_ID)">
                                             <i class="fa-regular fa-image"></i>
                                     </button>
                                 </div>
@@ -268,13 +286,25 @@
                                 <input type="hidden" id="Flag-Active-@item.GroupID" value="@(item.PC_FlagActive == true ? 1 : 0)" />
                                 @if (item.PC_StatusID == 13)
                                 {
-                                    <div class="d-flex justify-content-center mt-2">
-                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
-                                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
-                                            <button type="submit" class="btn custom-btn btn-success" id="btn-toggle-card">ปลดล็อคแล้ว</button>
-                                        </form>
-                                    </div>                                    
+                                    <label class="form-label">
+                                        ความเห็นจาก PE/SE - ปลดล็อค
+                                    </label>
+                                    <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PEUnLock_Remark</textarea>
+                                    <label class="form-label">
+                                        ความเห็นจาก PM - ปลดล็อค
+                                    </label>
+                                    <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PMUnLock_Remark</textarea>                                
                                 }
+                                @if (item.PC_StatusID == 13)
+                                {
+                                    <div class="d-flex justify-content-center mt-2">
+                                        <button type="button" class="btn btn-success btn-lg rounded-pill px-4" id="btn-toggle-card" style="opacity: 1; pointer-events: none;">
+                                            <i class="fa fa-unlock-alt me-2"></i> ปลดล็อคแล้ว
+                                        </button>
+                                    </div>
+                                }
+
+
                                 @if (item.PC_FlagActive == false)
                                 {
                                     <label class="form-label">
@@ -443,6 +473,14 @@
                     </div>
                     <div class="row g-2 g-md-3" id="image-container-role-2">
                         <!-- Images for RoleID = 2 will be injected here -->
+                    </div>
+
+                    <!-- Label and Images for Unlock -->
+                    <div class="row g-2 g-md-3 mt-4">
+                        <label class="form-label" id="Unlock-label">รูปภาพขอ Unlock</label>
+                    </div>
+                    <div class="row g-2 g-md-3" id="image-container-Unlock">
+                        <!-- Images for Unlockwill be injected here -->
                     </div>
                 </div>
             </div>

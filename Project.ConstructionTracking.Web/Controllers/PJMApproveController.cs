@@ -85,5 +85,22 @@ namespace Project.ConstructionTracking.Web.Controllers
                 return BadRequest(new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        public JsonResult GetImagesUnlock(Guid UnitFormID, int PassConditionID)
+        {
+            // Prepare the model to send to the service
+            var model = new PJMApproveModel.GetImageUnlock
+            {
+                UnitFormID = UnitFormID,
+                PassConditionID = PassConditionID
+            };
+
+            // Call the service to get the images
+            var listimages = _PJMApproveService.GetImageUnlock(model);
+
+            // Return the images as JSON to be used in the modal
+            return Json(listimages);
+        }
     }
 }

@@ -124,8 +124,19 @@ namespace Project.ConstructionTracking.Web.Controllers
                     var userRole = Request.Cookies["CST.Role"];
                     ViewBag.UserRole = userRole;
 
-                    // Handle successful login (e.g., redirect to a dashboard)
-                    return RedirectToAction("Index", "Dashboard");
+                    var UserRoleID = userProfile.RoleID;
+                    if (UserRoleID == SystemConstant.UserRole.PE)
+                    {
+                        return RedirectToAction("Index", "ProjectList");
+                    }
+                    else if (UserRoleID == SystemConstant.UserRole.PM)
+                    {
+                        return RedirectToAction("Index", "MyTaskPM");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Dashboard");
+                    }
                 }
                 else
                 {
