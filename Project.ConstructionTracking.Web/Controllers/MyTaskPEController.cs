@@ -34,7 +34,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 act = "listPEtask",
                 project_id = "",
                 unit_id = "",
-                unit_status = "5,8",
+                unit_status = "5,8,10",
                 user_id = userID
 
             };

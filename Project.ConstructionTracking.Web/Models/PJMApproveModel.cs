@@ -43,6 +43,8 @@
             public string? PE_Remark { get; set; }
             public string? PM_Remark { get; set; }
             public string? PJM_Remark { get; set; }
+            public string? PEUnLock_Remark { get; set; }
+            public string? PMUnLock_Remark { get; set; }
             public string? PJM_Actiontype { get; set; }
             public string? PM_Actiontype { get; set; }
             public string? PJM_ActionBy { get; set; }
@@ -73,5 +75,18 @@
             public string? PJM_Remark { get; set; }
         }
 
+        public class GetImageUnlock
+        {
+            public int UnitFormResourceID { get; set; }
+            public int PassConditionID { get; set; }
+            public Guid? ResourceID { get; set; }
+            public Guid MasterResourceID { get; set; }
+            public string? FileName { get; set; }
+            public string? FilePath { get; set; }
+            public int RoleID { get; set; }
+            public Guid? UnitFormID { get; set; }
+            public int? GroupID { get; set; }
+            public int? PC_ID { get; set; }
+        }
     }
 }

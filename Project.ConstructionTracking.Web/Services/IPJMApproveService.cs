@@ -6,6 +6,7 @@ namespace Project.ConstructionTracking.Web.Services
     {
         List<PJMApproveModel.GetlistUnitDetail> GetListPJMApprove(PJMApproveModel.filterData filterData);
         List<PJMApproveModel.GetlistChecklistPC> GetChecklistPJMApprove(PJMApproveModel.GetlistChecklistPC filterData);
+        List<PJMApproveModel.GetImageUnlock> GetImageUnlock(PJMApproveModel.GetImageUnlock filterData);
         void SaveOrUpdateUnitFormAction(PJMApproveModel.PJMApproveIU model);
     }
 }

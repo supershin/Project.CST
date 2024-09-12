@@ -61,10 +61,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             var result = (from t1 in _context.tr_UnitForm
                           join t2 in _context.tm_FormGroup on t1.FormID equals t2.FormID into formGroups
                           from t2 in formGroups.DefaultIfEmpty()
-                          join t3 in _context.tr_UnitFormPassCondition
-                              on new { UnitFormID = (Guid?)t1.ID, GroupID = (int?)t2.ID }
-                              equals new { t3.UnitFormID, t3.GroupID }
-                              into passConditions
+                          join t3 in _context.tr_UnitFormPassCondition on new { UnitFormID = (Guid?)t1.ID, GroupID = (int?)t2.ID } equals new { t3.UnitFormID, t3.GroupID } into passConditions
                           from t3 in passConditions.DefaultIfEmpty()
                           join t4 in _context.tm_Project on t1.ProjectID equals t4.ProjectID into projects
                           from t4 in projects.DefaultIfEmpty()
@@ -99,12 +96,30 @@ namespace Project.ConstructionTracking.Web.Repositories
                               PE_Remark = t3.PE_Remark,
                               PM_Remark = t3.PM_Remark,
                               PJM_Remark = t3.PJM_Remark,
+                              PEUnLock_Remark = t3.PEUnLock_Remark,
+                              PMUnLock_Remark = t3.PMUnLock_Remark,
                               PM_Actiontype = t8PM.ActionType,
                               PJM_Actiontype = t8.ActionType,
                               PJM_ActionBy = t9.FirstName + ' ' + t9.LastName,
                               PJM_ActionDate = t8.ActionDate,
                               PJM_StatusID = t8.StatusID,   
                               PJMUnitFormRemark = t8.Remark
+                          }).ToList();
+
+            return result;
+        }
+
+        public List<PJMApproveModel.GetImageUnlock> GetImageUnlock(PJMApproveModel.GetImageUnlock model)
+        {
+            var result = (from t1Image in _context.tr_UnitFormResource
+                          join t2Image in _context.tm_Resource on t1Image.ResourceID equals t2Image.ID into resources
+                          from resource in resources.DefaultIfEmpty()
+                          where t1Image.UnitFormID == model.UnitFormID && t1Image.PassConditionID == model.PassConditionID && t1Image.RoleID == 1
+                          select new GetImageUnlock
+                          {
+                              MasterResourceID = resource.ID,
+                              FileName = resource.FileName,
+                              FilePath = resource.FilePath
                           }).ToList();
 
             return result;

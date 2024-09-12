@@ -15,30 +15,28 @@
     }
 }
 
-function openModal(UnitFormID, GroupID, FormID) {
+function openModal(UnitFormID, GroupID, FormID, PC_ID) {
     // Fetch images for RoleID = 1
     $.ajax({
         url: baseUrl + 'PMApprove/GetImages',
         type: 'GET',
         data: { UnitFormID: UnitFormID, GroupID: GroupID, FormID: FormID, RoleID: 1 },
         success: function (images) {
-            // Update the modal with the fetched images for RoleID = 1
             var containerRole1 = $('#image-container-role-1');
             containerRole1.empty(); // Clear any previous images
 
             images.forEach(function (image) {
                 var imageHtml = `
-                            <div class="col-6 position-relative">
-                                <a data-fslightbox="gallery1" href="${image.FilePath}">
-                                    <img src="${image.FilePath}" alt="..." class="img-thumbnail">
-                                </a>
-                            </div>
-                        `;
+                    <div class="col-6 position-relative">
+                        <a data-fslightbox="gallery1" href="${image.FilePath}">
+                            <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                        </a>
+                    </div>
+                `;
                 containerRole1.append(imageHtml);
             });
 
-            // Reinitialize fslightbox for the newly added images in Role 1 container
-            refreshFsLightbox(); // Call this function to reinitialize the lightbox
+            refreshFsLightbox(); // Reinitialize fslightbox for Role 1 images
         },
         error: function (error) {
             console.error('Failed to fetch images for RoleID 1:', error);
@@ -51,33 +49,59 @@ function openModal(UnitFormID, GroupID, FormID) {
         type: 'GET',
         data: { UnitFormID: UnitFormID, GroupID: GroupID, FormID: FormID, RoleID: 2 },
         success: function (images) {
-            // Update the modal with the fetched images for RoleID = 2
             var containerRole2 = $('#image-container-role-2');
             containerRole2.empty(); // Clear any previous images
 
             images.forEach(function (image) {
                 var imageHtml = `
-                            <div class="col-6 position-relative">
-                                <a data-fslightbox="gallery2" href="${image.FilePath}">
-                                    <img src="${image.FilePath}" alt="..." class="img-thumbnail">
-                                </a>
-                            </div>
-                        `;
+                    <div class="col-6 position-relative">
+                        <a data-fslightbox="gallery2" href="${image.FilePath}">
+                            <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                        </a>
+                    </div>
+                `;
                 containerRole2.append(imageHtml);
             });
 
-            // Reinitialize fslightbox for the newly added images in Role 2 container
-            refreshFsLightbox(); // Call this function to reinitialize the lightbox
+            refreshFsLightbox(); // Reinitialize fslightbox for Role 2 images
         },
         error: function (error) {
             console.error('Failed to fetch images for RoleID 2:', error);
         }
     });
 
-    // Show the modal after both AJAX calls have been made
+    // Fetch images for Unlock
+    $.ajax({
+        url: baseUrl + 'PJMApprove/GetImagesUnlock',
+        type: 'GET',
+        data: { UnitFormID: UnitFormID, PassConditionID: PC_ID },
+        success: function (images) {
+            var containerUnlock = $('#image-container-Unlock');
+            containerUnlock.empty(); // Clear any previous images
+
+            images.forEach(function (image) {
+                var imageHtml = `
+                    <div class="col-6 position-relative">
+                        <a data-fslightbox="galleryUnlock" href="${image.FilePath}">
+                            <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                        </a>
+                    </div>
+                `;
+                containerUnlock.append(imageHtml);
+            });
+
+            refreshFsLightbox(); // Reinitialize fslightbox for Unlock images
+        },
+        error: function (error) {
+            console.error('Failed to fetch images for Unlock:', error);
+        }
+    });
+
+    // Show the modal after all AJAX calls have been made
     var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
     myModal.show();
 }
+
 
 function deleteImage(resourceId) {
     Swal.fire({

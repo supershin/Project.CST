@@ -15,9 +15,9 @@ namespace Project.ConstructionTracking.Web.Controllers
             _hosting = hosting;
         }
 
-        public IActionResult Index(Guid UnitFormID, int GroupID)
+        public IActionResult Index(Guid UnitFormID, int GroupID, string ComFrom)
         {
-
+            ViewBag.ComFrom = ComFrom;
             var model = new UnLockPassConditionModel.GetDataUnlockPC { UnitFormID = UnitFormID, GroupID = GroupID };
             var resultModel = _UnLockPassConditionService.GetListUnlockPC(model);
             if (resultModel != null && resultModel.Count > 0)
