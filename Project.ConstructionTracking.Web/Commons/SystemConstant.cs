@@ -34,9 +34,9 @@
 
         public static class UserRole_Desc
         {
-            public const string PE = "Project Engineer";
-            public const string PM = "Product Manager";
-            public const string PJM = "Project Manager";
+            public const string PE = "PE/SE";
+            public const string PM = "PM";
+            public const string PJM = "PJM-Head";
             public const string QC = "Quality Control";
             public const string ADMIN = "Administrator";
         }
