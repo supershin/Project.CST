@@ -35,18 +35,18 @@ namespace Project.ConstructionTracking.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult GoToPC(Guid UnitFormID, int GroupID)
+        public IActionResult GoToPC(Guid UnitFormID, int GroupID , string ComFrom)
         {
             var RoleID = Request.Cookies["CST.Role"];
             GroupID = (GroupID == 0) ? -1 : GroupID;
 
             if (RoleID == "1")
             {
-                return RedirectToAction("Index", "UnLockPassCondition", new { UnitFormID, GroupID });
+                return RedirectToAction("Index", "UnLockPassCondition", new { UnitFormID, GroupID , ComFrom });
             }
             else
             {
-                return RedirectToAction("Index", "ApproveUnLockPassCondition", new { UnitFormID, GroupID });
+                return RedirectToAction("Index", "ApproveUnLockPassCondition", new { UnitFormID, GroupID , ComFrom });
             }
             
         }

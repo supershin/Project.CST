@@ -218,12 +218,12 @@
                                 <div class="col-12">
                                     <div class="row">
                                         <div class="col-12">
-                                            <div class="container mt-1 text-center">
+                                            <div class="container mt-1">
                                                 <label class="form-label">
                                                     PE/SE ผู้ควบคุมงาน : @PEActionBy
                                                 </label>
                                                 <label class="form-label">
-                                                    เกรดที่ PE/SE ประเมิณงวดนี้ : @Grade
+                                                    เกรดที่ PE/SE ประเมินงวดนี้ : @Grade
                                                 </label>
                                                 <label class="form-label">
                                                     วันที่ส่งงาน : @Actiondate
@@ -241,7 +241,7 @@
                                                 {
                                                     <label class="form-label text-danger">มีการผ่านแบบมีเงื่อนไข!!!</label>
                                                 }
-                                                @if (PCUnlock != 0)
+                                                @if (UnitFormStatusID == 10 || UnitFormStatusID == 11 || UnitFormStatusID == 12)
                                                 {
                                                     <div class="d-flex justify-content-center mt-2">
                                                         <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
@@ -282,8 +282,16 @@
                                                 {
                                                     if ((group.PC_StatusID == 7 && PM_Actiontype == "submit") || (group.PC_StatusID == 9 && PJM_Actiontype == "submit"))
                                                     {
-                                                        buttonClass = "bg-danger";
-                                                        iconClass = "fa-solid fa-lock";
+                                                        @if (UnitFormStatusID == 2)
+                                                        {
+                                                            buttonClass = "bg-warning";
+                                                            iconClass = "fa-solid fa-lock";
+                                                        }
+                                                        else
+                                                        {
+                                                            buttonClass = "bg-danger";
+                                                            iconClass = "fa-solid fa-lock";
+                                                        }
                                                     }
                                                     else if (group.PC_StatusID == 6 && PM_Actiontype == "submit")
                                                     {
@@ -295,14 +303,24 @@
                                                         buttonClass = "bg-success";
                                                         iconClass = "fa-solid fa-lock";
                                                     }
-                                                    else if (group.PC_StatusID == null)
+                                                    else if (group.PC_StatusID == 12)
                                                     {
                                                         buttonClass = "bg-warning";
                                                         iconClass = "fa-solid fa-lock";
                                                     }
+                                                    else if (group.PC_StatusID == 13)
+                                                    {
+                                                        buttonClass = "bg-success";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                    else if (group.PC_StatusID == 14)
+                                                    {
+                                                        buttonClass = "bg-danger";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
                                                     else
                                                     {
-                                                        buttonClass = "bg-primary";
+                                                        buttonClass = "bg-warning";
                                                         iconClass = "fa-solid fa-lock";
                                                     }
                                                 }

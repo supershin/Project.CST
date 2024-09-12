@@ -378,7 +378,7 @@
             <div class="container mt-1 mb-2">
             <div class="row">
                 <div class="mb-1">
-                @if (UnitFormstatusID == 2 || UnitFormstatusID == 3 || UnitFormstatusID == 6 || UnitFormstatusID == 9)
+                @if (UnitFormstatusID == 2 || UnitFormstatusID == 3 || UnitFormstatusID == 6 || UnitFormstatusID == 9 || UnitFormstatusID == 10)
                 {
                     <!-- In Progress Card -->
                     <div class="col-md-4">
@@ -386,12 +386,25 @@
                             <div class="card-body text-center">
                                 <br>
                                 <h3 id="progress-title" class="card-title">@UnitFormstatus</h3>
-                                <p id="progress-text" class="card-text">ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "")</p>
+                                <p id="progress-text" class="card-text">
+                                    ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "ไม่มีความคิดเห็น") <br>
+                                    ความคิดเห็น PJM : @(PJM_ActionType == "submit" ? PJM_Remark : "ไม่มีความคิดเห็น")
+                                </p>
+                                @if (UnitFormMainStatusID == 10)
+                                {
+                                    <div class="d-flex justify-content-center">
+                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                            <input type="hidden" name="ComFrom" value="FormGroup" />
+                                            <button type="submit" class="btn custom-btn btn-warning" id="btn-toggle-card">ขอปลดล็อค</button>
+                                        </form>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
                 }
-                else if (UnitFormstatusID == 4 || UnitFormstatusID == 7)
+                else if (UnitFormstatusID == 4 || UnitFormstatusID == 7 || UnitFormstatusID == 11)
                 {
                     <!-- Approved Card 1 -->
                     <div class="col-md-4">
@@ -405,11 +418,12 @@
                                     ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "ไม่มีความคิดเห็น") <br>
                                     ความคิดเห็น PJM : @(PJM_ActionType == "submit" ? PJM_Remark : "ไม่มีความคิดเห็น")
                                 </p>
-                                @if (UnitFormMainStatusID == 7)
+                                @if (UnitFormMainStatusID == 7 || UnitFormstatusID == 11)
                                 {
                                     <div class="d-flex justify-content-center">                                     
                                             <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
                                                 <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                                 <input type="hidden" name="ComFrom" value="FormGroup" />
                                                 <button type="submit" class="btn custom-btn btn-warning" id="btn-toggle-card">ขอปลดล็อค</button>
                                             </form>
                                     </div>
@@ -418,7 +432,7 @@
                         </div>
                     </div>
                 }
-                else if (UnitFormstatusID == 5 || UnitFormstatusID == 8)
+                else if (UnitFormstatusID == 5 || UnitFormstatusID == 8 || UnitFormstatusID == 12)
                 {
                     <!-- Rejected Card -->
                     <div class="col-md-4">
@@ -432,6 +446,16 @@
                                     ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "ไม่มีความคิดเห็น") <br>
                                     ความคิดเห็น PJM : @(PJM_ActionType == "submit" ? PJM_Remark : "ไม่มีความคิดเห็น")
                                 </p>
+                                @if (UnitFormMainStatusID == 7 || UnitFormstatusID == 12)
+                                {
+                                    <div class="d-flex justify-content-center">
+                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                            <input type="hidden" name="ComFrom" value="FormGroup" />
+                                            <button type="submit" class="btn custom-btn btn-warning" id="btn-toggle-card">ขอปลดล็อค</button>
+                                        </form>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -485,9 +509,18 @@
                                                 {
                                                     @if (item.StatusID == 7 && PM_ActionType == "submit" || item.StatusID == 9 && PJM_ActionType == "submit")
                                                     {
-                                                        <button type="button" class="status-dot bg-danger ms-auto">
-                                                            <span class="status-text"><i class="fa-solid fa-lock"></i></span>
-                                                        </button>
+                                                        @if(UnitFormstatusID == 2)
+                                                        {
+                                                            <button type="button" class="status-dot bg-warning ms-auto">
+                                                                <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                                            </button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="button" class="status-dot bg-danger ms-auto">
+                                                                <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                                            </button>
+                                                        }
                                                     }
                                                     else if (item.StatusID == 6 && PM_ActionType == "submit")
                                                     {
@@ -501,15 +534,27 @@
                                                             <span class="status-text"><i class="fa-solid fa-lock"></i></span>
                                                         </button>
                                                     }
-                                                    else if (item.StatusID == null)
+                                                    else if (item.StatusID == 12)
                                                     {
                                                         <button type="button" class="status-dot bg-warning ms-auto">
                                                             <span class="status-text"><i class="fa-solid fa-lock"></i></span>
                                                         </button>
                                                     }
+                                                    else if (item.StatusID == 13)
+                                                    {
+                                                        <button type="button" class="status-dot bg-success ms-auto">
+                                                            <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                                        </button>
+                                                    }
+                                                    else if (item.StatusID == 14)
+                                                    {
+                                                        <button type="button" class="status-dot bg-danger ms-auto">
+                                                            <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                                        </button>
+                                                    }
                                                     else
                                                     {
-                                                        <button type="button" class="status-dot bg-primary ms-auto">
+                                                        <button type="button" class="status-dot bg-warning ms-auto">
                                                             <span class="status-text"><i class="fa-solid fa-lock"></i></span>
                                                         </button>
                                                     }
@@ -594,7 +639,7 @@
                 }
 
             </div>
-        </div>
+        </div>  
         <div class="container mt-1 mb-2">
             <div class="row">
                 <div class="col-md-4">
@@ -604,7 +649,7 @@
                                 <div class="d-flex flex-row align-items-center">
                                     <div id="icon"> <i class="fa-solid fa-building-user"></i></div>
                                     <div class="ms-2 c-details">
-                                        <h3 class="mb-0">ประเมิณคุณภาพการทำงานในงวด</h3>
+                                        <h3 class="mb-0">ประเมินคุณภาพการทำงานในงวด</h3>
                                     </div>
                                 </div>
                             </div>
