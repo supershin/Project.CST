@@ -270,7 +270,7 @@
 
             $.each(data, function (index, item) {
                 // Construct the full action URL dynamically
-                var actionUrl = `${baseUrl}PMFormcheck?unitId=${item.UnitID}&FormID=${item.FormID}&comeFrom=PMFormcheck`;
+                var actionUrl = `${baseUrl}PMApprove?unitId=${item.UnitID}&FormID=${item.FormID}&comeFrom=PMFormcheck`;
                 var card = `
                                     <div class="col-md-4">
                                         <form action="${actionUrl}" method="post">

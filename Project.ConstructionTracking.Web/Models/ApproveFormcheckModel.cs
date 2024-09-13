@@ -22,6 +22,7 @@
         public DateTime? ActiondatePJm { get; set; }
         public int? PM_StatusID { get; set; }
         public string? PM_Remarkaction { get; set; }
+        public string? PE_Actiontype { get; set; }
         public string? PM_Actiontype { get; set; }
         public string? PM_ActionBy { get; set; }
         public int? PJM_StatusID { get; set; }
