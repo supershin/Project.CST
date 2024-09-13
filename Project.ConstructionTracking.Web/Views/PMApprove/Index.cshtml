@@ -20,6 +20,7 @@
     var CompanyName = ViewBag.CompanyName;
     var PM_Remarkaction = ViewBag.PM_Remarkaction;
     var PM_Actiontype = ViewBag.PM_Actiontype;
+    var PE_Actiontype = ViewBag.PE_Actiontype;
     var PJM_Remarkaction = ViewBag.PJM_Remarkaction;
     var PJM_Actiontype = ViewBag.PJM_Actiontype;
     var PCAll = ViewBag.PCAll;
@@ -226,7 +227,7 @@
                                                     เกรดที่ PE/SE ประเมินงวดนี้ : @Grade
                                                 </label>
                                                 <label class="form-label">
-                                                    วันที่ส่งงาน : @if (UnitFormStatusID == 2 ) {@Actiondate}
+                                                    วันที่ส่งงาน : @if (PE_Actiontype == "submit") {@Actiondate}
                                                 </label>
                                                 <label class="form-label">
                                                     การตรวจ QC : ผ่าน

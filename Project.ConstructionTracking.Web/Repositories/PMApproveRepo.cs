@@ -195,6 +195,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               Actiondate = PEUnitFormAction.ActionDate,
                               ActiondatePm = PMUnitFormAction.ActionDate,
                               ActiondatePJm = PJMUnitFormAction.ActionDate,
+                              PE_Actiontype = PEUnitFormAction.ActionType,
                               PM_StatusID = PMUnitFormAction.StatusID,
                               PM_Remarkaction = PMUnitFormAction.Remark,
                               PM_Actiontype = PMUnitFormAction.ActionType,

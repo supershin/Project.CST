@@ -48,6 +48,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.VenderName = resultModel.VenderName;
                 ViewBag.CompanyName = resultModel.CompanyName;
                 ViewBag.PM_Remarkaction = resultModel.PM_Remarkaction;
+                ViewBag.PE_Actiontype = resultModel.PE_Actiontype;
                 ViewBag.PM_Actiontype = resultModel.PM_Actiontype;
                 ViewBag.PJM_Remarkaction = resultModel.PJM_Remarkaction;
                 ViewBag.PJM_Actiontype = resultModel.PJM_Actiontype;
