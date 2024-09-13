@@ -8,6 +8,7 @@ using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using static System.Net.Mime.MediaTypeNames;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -208,7 +209,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                             for (int group = 0; group < dataGenerate.BodyCheckListData.GroupDataModels.Count; group++)
                             {
-                                table2.Cell().Row((uint)(countRow)).Column(1).ColumnSpan(2).Element(CellStyle).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].GroupName);
+                                table2.Cell().Row((uint)(countRow)).Column(1).ColumnSpan(2).Background("#6ce4ff").Element(CellStyle).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].GroupName);
                                 if(group == 0)
                                 {
                                     table2.Cell().Row((uint)(countRow)).Column(3).Element(CellStyle).Text("ผ่าน");
@@ -303,7 +304,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                         });
                     });
 
-                    page.Footer().Border(0.5f).Table(table2 =>
+                    page.Footer().Table(table2 =>
                     {
                         string pathVendor = _hosting.ContentRootPath + "/wwwroot/" + dataGenerate.FooterData.VendorData.VendorImageSignUrl;
                         var signVendor = new FileStream(pathVendor, FileMode.Open);
@@ -336,8 +337,18 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                         //QC
                         //table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image("");
-                        table2.Cell().Row(2).Column(4).AlignCenter().Text("ผู้รับเหมา");
-                        table2.Cell().Row(3).Column(4).AlignCenter().Text("(          )");
+                        table2.Cell().Row(2).Column(4).AlignCenter().Text("Quality Control (QC)");
+                        table2.Cell().Row(3).Column(4).AlignCenter().Text("(                  )");
+
+
+                        // Page number 
+                        table2.Cell().Row(4).ColumnSpan(4).AlignRight().Text(text =>
+                        {
+                            text.Span("Page ");
+                            text.CurrentPageNumber();
+                            text.Span(" of ");
+                            text.TotalPages();
+                        });
                     });
                 });
             });
