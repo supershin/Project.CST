@@ -227,7 +227,10 @@
                                                     เกรดที่ PE/SE ประเมินงวดนี้ : @Grade
                                                 </label>
                                                 <label class="form-label">
-                                                    วันที่ส่งงาน : @if (PE_Actiontype == "submit") {@Actiondate}
+                                                    วันที่ส่งงาน : @if (PE_Actiontype == "submit")
+                                                    {
+                                                        @Actiondate
+                                                    }
                                                 </label>
                                                 <label class="form-label">
                                                     การตรวจ QC : ผ่าน
@@ -407,7 +410,7 @@
                                                    group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "checked" : "")
                                                    @(
                                                     (PM_Actiontype == "submit" &&
-                                                    (UnitFormStatusID != 2 || group.PC_StatusID == 8 || group.PCFlageActive == false)) ||
+                                                    (UnitFormStatusID == null || UnitFormStatusID == 1 || UnitFormStatusID > 3 || group.PC_StatusID == 8 || group.PCFlageActive == false)) ||
                                                     (PJM_Actiontype == "submit" && group.PC_StatusID == 8 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
                                                 ? "disabled" : ""
                                                    )
@@ -424,7 +427,7 @@
                                                    value="7"
                                                    onclick="toggleRadio(this, '@Model.ID')"
                                                    @(group.PC_StatusID == 7 ? "checked" : "")
-                                            @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (UnitFormStatusID != 2 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")>
+                                            @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (UnitFormStatusID == null || UnitFormStatusID == 1 || UnitFormStatusID > 3 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")>
                                           <span class="form-check-label">ไม่ผ่าน</span>
                                         </label>
                                     </div>
@@ -436,7 +439,7 @@
                                                   rows="1"
                                                   class="form-control"
                                                   placeholder="ระบุเหตุผลเพื่อขออนุมัติ"
-                                                  @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || ( UnitFormStatusID != 2 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
+                                        @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (UnitFormStatusID == null || UnitFormStatusID == 1 || UnitFormStatusID > 3 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
                                             ? "disabled"
                                                 : "")>@group.PM_RemarkPC</textarea>
                                     </div>
