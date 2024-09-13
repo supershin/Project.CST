@@ -44,8 +44,8 @@
         public static class CheckList_Status
         {
             public const int PASS = 9;
-            public const int NOTPASS = 9;
-            public const int NOWORK= 9;
+            public const int NOTPASS = 10;
+            public const int NOWORK= 11;
         }
     }
 

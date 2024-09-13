@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Transactions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Services;
@@ -10,7 +8,6 @@ using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using QuestPDF.Previewer;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -116,7 +113,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                     page.DefaultTextStyle(TextStyle
                                .Default
                                .FontFamily("BrowalliaUPC")
-                               .FontSize(16));
+                               .FontSize(12));
 
                     page.Header().Column(column =>
                     {
@@ -172,102 +169,151 @@ namespace Project.ConstructionTracking.Web.Controllers
                         });
                     });
 
-                    //int countRow = 1;
-                    //page.Content().PaddingVertical(4).Column(col1 =>
-                    //{
-                    //    col1.Item().Row(row =>
-                    //    {
-                    //        row.RelativeItem(6).AlignRight().Text("รายการตรวจ").FontColor("#FF0000").FontSize(18).SemiBold();
-                    //        row.RelativeItem(3).AlignRight().Text("ผลการตรวจ").FontSize(18).SemiBold().BackgroundColor("#6ce4ff");
-                    //        row.RelativeItem(3).AlignRight().Text("ความคิดเห็น").FontSize(18).SemiBold().BackgroundColor("#6ce4ff");
-                    //    });
+                    int countRow = 2;
+                    page.Content().PaddingVertical(4).Column(col1 =>
+                    {
+                        IContainer DefaultCellStyle(IContainer container, string backgroundColor)
+                        {
+                            return container
+                                .Border(1)
+                                .BorderColor(Colors.Black)
+                                .Background(backgroundColor)
+                                .PaddingVertical(1)
+                                .PaddingHorizontal(3)
+                                .AlignCenter()
+                                .AlignMiddle();
+                        }
+                        //col1.Item().Row(row =>
+                        //{
+                        //    row.RelativeItem(6).AlignRight().Text("รายการตรวจ").FontColor("#FF0000").FontSize(18).SemiBold();
+                        //    row.RelativeItem(3).AlignRight().Text("ผลการตรวจ").FontSize(18).SemiBold().BackgroundColor("#6ce4ff");
+                        //    row.RelativeItem(3).AlignRight().Text("ความคิดเห็น").FontSize(18).SemiBold().BackgroundColor("#6ce4ff");
+                        //});
 
-                    //    col1.Item().Table(table =>
-                    //    {
-                    //        for(int group = 0; group < dataGenerate.BodyCheckListData.GroupDataModels.Count; group++)
-                    //        {
-                    //            table.ColumnsDefinition(columns =>
-                    //            {
-                    //                columns.RelativeColumn(3);
-                    //                columns.RelativeColumn(3);
-                    //                columns.RelativeColumn(1);
-                    //                columns.RelativeColumn(1);
-                    //                columns.RelativeColumn(1);
-                    //                columns.RelativeColumn(3);
-                    //            });
+                        col1.Item().Table(table2 =>
+                        {
+                            table2.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(3);
+                                columns.RelativeColumn(3);
+                                columns.RelativeColumn(1);
+                                columns.RelativeColumn(1);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(2);
+                            });
 
-                    //            table.Cell().Row((uint)(group + countRow)).Column(1).Padding(2).PaddingLeft(4).Text(dataGenerate.BodyCheckListData.GroupDataModels[group].GroupName);
-                    //            table.Cell().Row((uint)(group + countRow)).Column(3).Padding(2).PaddingLeft(4).Text("ผ่าน");
-                    //            table.Cell().Row((uint)(group + countRow)).Column(4).Padding(2).PaddingLeft(4).Text("ไม่ผ่าน");
-                    //            table.Cell().Row((uint)(group + countRow)).Column(5).Padding(2).PaddingLeft(4).Text("ไม่มีรายการนี้");
+                            table2.Cell().Row(1).Column(1).ColumnSpan(2).Element(CellStyle).AlignCenter().Text("รายการตรวจ");
+                            table2.Cell().Row(1).Column(3).ColumnSpan(3).Element(CellStyle).AlignCenter().Text("ผลการตรวจ");
+                            table2.Cell().Row(1).Column(6).RowSpan(2).Element(CellStyle).AlignCenter().Text("ความเห็น");
 
-                    //            for(int package = 0; package < dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels.Count; package++)
-                    //            {
-                    //                table.Cell().Row((uint)(group + countRow + package + 1)).Column(1).RowSpan((uint)dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count).Padding(2).PaddingLeft(4).Text(dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].PackageName);
+                            for (int group = 0; group < dataGenerate.BodyCheckListData.GroupDataModels.Count; group++)
+                            {
+                                table2.Cell().Row((uint)(countRow)).Column(1).ColumnSpan(2).Element(CellStyle).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].GroupName);
+                                if(group == 0)
+                                {
+                                    table2.Cell().Row((uint)(countRow)).Column(3).Element(CellStyle).Text("ผ่าน");
+                                    table2.Cell().Row((uint)(countRow)).Column(4).Element(CellStyle).Text("ไม่ผ่าน");
+                                    table2.Cell().Row((uint)(countRow)).Column(5).Element(CellStyle).Text("ไม่มีรายการนี้");
+                                }
+                                else
+                                {
+                                    table2.Cell().Row((uint)(countRow)).Column(3).Element(CellStyle).Text("");
+                                    table2.Cell().Row((uint)(countRow)).Column(4).Element(CellStyle).Text("");
+                                    table2.Cell().Row((uint)(countRow)).Column(5).Element(CellStyle).Text("");
+                                    table2.Cell().Row((uint)(countRow)).Column(6).Element(CellStyle).Text("");
+                                }
+                                
+                                for (int package = 0; package < dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels.Count; package++)
+                                {
+                                    int number = countRow;
 
-                    //                for (int check = 0; check < dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count; check++)
-                    //                {
-                    //                    table.Cell().Row((uint)(group + countRow + package + 1 + check)).Column(2).Padding(2).PaddingLeft(4).Text(dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels[check].CheckListName);
-                    //                    if(dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels[check].StatusCheckList == SystemConstant.CheckList_Status.PASS)
-                    //                    {
-                    //                        table.Cell().Row((uint)(group + countRow + package + 1 + check)).Column(3).Width(30).Image(imageCheck); // icon
-                    //                    }
-                    //                    if (dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels[check].StatusCheckList == SystemConstant.CheckList_Status.NOTPASS)
-                    //                    {
-                    //                        table.Cell().Row((uint)(group + countRow + package + 1 + check)).Column(4).Width(30).Image(imageCheck);// icon
-                    //                    }
-                    //                    if (dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels[check].StatusCheckList == SystemConstant.CheckList_Status.NOWORK)
-                    //                    {
-                    //                        table.Cell().Row((uint)(group + countRow + package + 1 + check)).Column(5).Width(30).Image(imageCheck); // icon
-                    //                    }
-                    //                    table.Cell().Row((uint)(group + countRow + package + 1 + check)).Column(6).RowSpan((uint)dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count).Padding(2).PaddingLeft(4).Text(dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].PackageRemark);
-                    //                }
+                                    if (package == 0)
+                                    {
+                                        number += 1;
+                                    }
 
-                    //                countRow += dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count;
-                    //            }
-                    //        }
+                                    table2.Cell().Row((uint)(number)).Column(1).RowSpan((uint)dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count).Element(CellStyle).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].PackageName).WrapAnywhere();
 
-                    //    });
-                    //});
+                                    for (int check = 0; check < dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count; check++)
+                                    {
+                                        table2.Cell().Row((uint)(number + check)).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels[check].CheckListName).WrapAnywhere();
+                                        {
 
-                    //page.Content()
-                    //  .PaddingBottom(20)
-                    //  .PaddingTop(20)
-                    //  .AlignCenter()
-                    //  .Grid(grid =>
-                    //  {
-                    //      grid.VerticalSpacing(15);
-                    //      grid.HorizontalSpacing(15);
-                    //      grid.AlignLeft();
-                    //      grid.Columns(12);
+                                            if (dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels[check].StatusCheckList == SystemConstant.CheckList_Status.PASS)
+                                            {
+                                                table2.Cell().Row((uint)(number + check)).Column(3).Element(CellStyle).Width(15).Image(imageCheck); // icon
+                                                table2.Cell().Row((uint)(number + check)).Column(4).Element(CellStyle).Width(15);
+                                                table2.Cell().Row((uint)(number + check)).Column(5).Element(CellStyle).Width(15);
+                                            }
+                                            else if (dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels[check].StatusCheckList == SystemConstant.CheckList_Status.NOTPASS)
+                                            {
+                                                table2.Cell().Row((uint)(number + check)).Column(3).Element(CellStyle).Width(15);
+                                                table2.Cell().Row((uint)(number + check)).Column(4).Element(CellStyle).Width(15).Image(imageCheck);// icon
+                                                table2.Cell().Row((uint)(number + check)).Column(5).Element(CellStyle).Width(15);
+                                            }
+                                            else if (dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels[check].StatusCheckList == SystemConstant.CheckList_Status.NOWORK)
+                                            {
+                                                table2.Cell().Row((uint)(number + check)).Column(3).Element(CellStyle).Width(15);
+                                                table2.Cell().Row((uint)(number + check)).Column(4).Element(CellStyle).Width(15);
+                                                table2.Cell().Row((uint)(number + check)).Column(5).Element(CellStyle).Width(15).Image(imageCheck); // icon
+                                            }
+                                        }
+                                        table2.Cell().Row((uint)(number + check)).Column(6).RowSpan((uint)dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count).Element(CellStyle).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].PackageRemark).WrapAnywhere();
+                                    }
+                                    int count = dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count;
+                                    countRow = number + count;
+                                }
+                            }
+                            
+                            IContainer CellStyle(IContainer container) => DefaultCellStyle(container, Colors.White);
+                        });
 
-                    //      for( int i = 0; i < dataGenerate.BodyImageData.GroupImages.Count ; i++)
-                    //      {
-                    //          grid.Item(12).Text(dataGenerate.BodyImageData.GroupImages[i].GroupName).FontSize(18).Bold().Underline().BackgroundColor("#6ce4ff");
+                        col1.Item().Column(col1 =>
+                        {
+                            col1.Item().PaddingVertical(5).LineHorizontal(1).LineColor(Colors.Grey.Medium);
+                        });
 
-                    //          for (int a = 0; a < dataGenerate.BodyImageData.GroupImages[i].ImageUploads.Count ; a++)
-                    //          {
-                    //              string pathImage = dataGenerate.BodyImageData.GroupImages[i].ImageUploads[a].PathImageUrl;
-                    //              //var imgPath = Directory.GetCurrentDirectory() + "/images/works" + i + ".jpg";
-                    //              var imgPath = _hosting.ContentRootPath + "/" + pathImage;
-                    //              if (System.IO.File.Exists(imgPath))
-                    //              {
-                    //                  using var img = new FileStream(imgPath, FileMode.Open);
+                        col1.Item().Grid(grid =>
+                        {
+                            grid.VerticalSpacing(15);
+                            grid.HorizontalSpacing(15);
+                            grid.AlignLeft();
+                            grid.Columns(12);
 
-                    //                  grid.Item(6).Border(0.5f).Width(250).Image(img);
-                    //              }
-                    //          }
+                            grid.Item(12).Text("รูปถ่ายงานที่เสร็จแล้ว").Bold().BackgroundColor("#6ce4ff");
 
-                    //      }
+                            for (int i = 0; i < dataGenerate.BodyImageData.GroupImages.Count; i++)
+                            {
+                                grid.Item(12).Text(dataGenerate.BodyImageData.GroupImages[i].GroupName).Bold().Underline();
 
-                    //  });
+                                for (int a = 0; a < dataGenerate.BodyImageData.GroupImages[i].ImageUploads.Count; a++)
+                                {
+                                    string pathImage = dataGenerate.BodyImageData.GroupImages[i].ImageUploads[a].PathImageUrl;
+                                    //var imgPath = Directory.GetCurrentDirectory() + "/images/works" + i + ".jpg";
+                                    var imgPath = _hosting.ContentRootPath + "/wwwroot/" + pathImage;
+                                    if (System.IO.File.Exists(imgPath))
+                                    {
+                                        using var img = new FileStream(imgPath, FileMode.Open);
+
+                                        grid.Item(6).Border(0.5f).Width(250).Image(img);
+                                    }
+                                }
+
+                            }
+                        });
+                    });
 
                     page.Footer().Border(0.5f).Table(table2 =>
                     {
-                        var signVendor = new FileStream(Directory.GetCurrentDirectory() + "/" + dataGenerate.FooterData.VendorData.VendorImageSignUrl, FileMode.Open);
-                        var signPe = new FileStream(Directory.GetCurrentDirectory() + "/" + dataGenerate.FooterData.PEData.PEImageSignUrl, FileMode.Open);
-                        var signPm = new FileStream(Directory.GetCurrentDirectory() + "/" + dataGenerate.FooterData.PMData.PMImageSignUrl, FileMode.Open);
-                        
+                        string pathVendor = _hosting.ContentRootPath + "/wwwroot/" + dataGenerate.FooterData.VendorData.VendorImageSignUrl;
+                        var signVendor = new FileStream(pathVendor, FileMode.Open);
+
+                        string pathPe = _hosting.ContentRootPath + "/" + dataGenerate.FooterData.PEData.PEImageSignUrl;
+                        var signPe = new FileStream(pathPe, FileMode.Open);
+
+                        string pathPm = _hosting.ContentRootPath + "/" + dataGenerate.FooterData.PMData.PMImageSignUrl;
+                        var signPm = new FileStream(pathPm, FileMode.Open);
+
                         table2.ColumnsDefinition(columns =>
                         {
                             columns.RelativeColumn(3);
@@ -280,16 +326,16 @@ namespace Project.ConstructionTracking.Web.Controllers
                         table2.Cell().Row(2).Column(1).AlignCenter().Text("ผู้รับเหมา");
                         table2.Cell().Row(3).Column(1).AlignCenter().Text("( " + dataGenerate.FooterData.VendorData.VendorName + " )");
 
-                        table2.Cell().Row(1).Column(2).AlignCenter().Width(60).Image(signVendor);
+                        table2.Cell().Row(1).Column(2).AlignCenter().Width(60).Image(signPe);
                         table2.Cell().Row(2).Column(2).AlignCenter().Text("วิศวกรผู้ควบคุมงาน");
                         table2.Cell().Row(3).Column(2).AlignCenter().Text("( " + dataGenerate.FooterData.PEData.PEName + " )");
 
-                        table2.Cell().Row(1).Column(3).AlignCenter().Width(60).Image(signVendor);
+                        table2.Cell().Row(1).Column(3).AlignCenter().Width(60).Image(signPm);
                         table2.Cell().Row(2).Column(3).AlignCenter().Text("Project Manager");
                         table2.Cell().Row(3).Column(3).AlignCenter().Text("( " + dataGenerate.FooterData.PMData.PMName + " )");
 
                         //QC
-                        table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image("");
+                        //table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image("");
                         table2.Cell().Row(2).Column(4).AlignCenter().Text("ผู้รับเหมา");
                         table2.Cell().Row(3).Column(4).AlignCenter().Text("(          )");
                     });

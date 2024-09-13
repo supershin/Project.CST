@@ -91,21 +91,23 @@ namespace Project.ConstructionTracking.Web.Repositories
                                               }).ToList(),
 
                              // Signatures
-                             SignPE = (from trufr in _context.tr_UnitFormResource
-                                       join tmr in _context.tm_Resource on trufr.ResourceID equals tmr.ID
-                                       where trufr.FormID == tmf.ID && trufr.FlagActive == true
-                                          && trufr.RoleID == SystemConstant.UserRole.PE
-                                       select tmr.FilePath).FirstOrDefault(),
+                             SignPE = (from trufa in _context.tr_UnitFormAction
+                                       join trur in _context.tr_UserResource on trufa.UpdateBy equals trur.UserID
+                                       join image in _context.tm_Resource on trur.ResourceID equals image.ID
+                                       where trufa.UnitFormID == truf.ID && trufa.RoleID == SystemConstant.UserRole.PE
+                                       && trufa.ActionType == "submit" && trufa.StatusID == 1
+                                       select image.FilePath).FirstOrDefault(),
 
-                             SignPM = (from trufr in _context.tr_UnitFormResource
-                                       join tmr in _context.tm_Resource on trufr.ResourceID equals tmr.ID
-                                       where trufr.FormID == tmf.ID && trufr.FlagActive == true
-                                          && trufr.RoleID == SystemConstant.UserRole.PM
-                                       select tmr.FilePath).FirstOrDefault(),
+                             SignPM = (from trufa in _context.tr_UnitFormAction
+                                       join trur in _context.tr_UserResource on trufa.UpdateBy equals trur.UserID
+                                       join image in _context.tm_Resource on trur.ResourceID equals image.ID
+                                       where trufa.UnitFormID == truf.ID && trufa.RoleID == SystemConstant.UserRole.PM
+                                       && trufa.ActionType == "submit" && trufa.StatusID == 4
+                                       select image.FilePath).FirstOrDefault(),
 
                              SignVendor = (from tr in _context.tm_Resource
                                            where tr.ID == truf.VendorResourceID && tr.FlagActive == true
-                                           select  tr.FilePath).FirstOrDefault()
+                                           select tr.FilePath).FirstOrDefault()
                          }).FirstOrDefault();
 
             return query;
