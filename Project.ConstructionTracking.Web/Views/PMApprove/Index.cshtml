@@ -226,7 +226,7 @@
                                                     เกรดที่ PE/SE ประเมินงวดนี้ : @Grade
                                                 </label>
                                                 <label class="form-label">
-                                                    วันที่ส่งงาน : @Actiondate
+                                                    วันที่ส่งงาน : @if (UnitFormStatusID == 2 ) {@Actiondate}
                                                 </label>
                                                 <label class="form-label">
                                                     การตรวจ QC : ผ่าน
@@ -423,8 +423,7 @@
                                                    value="7"
                                                    onclick="toggleRadio(this, '@Model.ID')"
                                                    @(group.PC_StatusID == 7 ? "checked" : "")
-                                                   @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (PM_Actiontype == "submit" && (UnitFormStatusID != 2) || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()? "disabled": "")
-                                            >
+                                            @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (UnitFormStatusID != 2 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")>
                                           <span class="form-check-label">ไม่ผ่าน</span>
                                         </label>
                                     </div>
@@ -436,7 +435,7 @@
                                                   rows="1"
                                                   class="form-control"
                                                   placeholder="ระบุเหตุผลเพื่อขออนุมัติ"
-                                                  @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (PM_Actiontype == "submit" && (UnitFormStatusID != 2 || group.PCFlageActive == false)) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
+                                                  @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || ( UnitFormStatusID != 2 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
                                             ? "disabled"
                                                 : "")>@group.PM_RemarkPC</textarea>
                                     </div>
@@ -521,7 +520,7 @@
                                         <input class="form-check-input" type="radio" name="radios-inline-approval"
                                                value="@(LockStatusID != null && PCALLPASS != "yes" ? 6 : 4)"
                                                 @(Model.PM_StatusID == 4 ? "checked" : Model.PM_StatusID == 6 ? "checked" : "")
-                                                @((PM_Actiontype == "submit" && UnitFormStatusID != 2) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
+                                                @(UnitFormStatusID != 2 || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
                                                onclick="toggleRadio(this, '@Model.ID')">
                                         <span class="form-check-label">
                                             @(LockStatusID != null && PCALLPASS != "yes" ? "อนุมัติผ่านแบบมีเงื่อนไข" : "อนุมัติ")
@@ -531,7 +530,7 @@
                                     <label class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="radios-inline-approval" value="5"
                                         @(Model.PM_StatusID == 5 ? "checked" : "")
-                                        @((PM_Actiontype == "submit" && UnitFormStatusID != 2) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
+                                        @(UnitFormStatusID != 2 || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
                                          onclick="toggleRadio(this, '@Model.ID')"
                                         >
                                         <span class="form-check-label">ไม่อนุมัติ</span>
@@ -542,26 +541,11 @@
                                 </div>
                                 <div class="col-12">
                                     <textarea id="mainRemark" rows="2" class="form-control" placeholder=""
-                                    @((PM_Actiontype == "submit" && UnitFormStatusID != 2) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")>@Model.PM_Remarkaction</textarea>
+                                    @(UnitFormStatusID != 2 || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")>@Model.PM_Remarkaction</textarea>
                                 </div>
                                 @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
                                 {
-                                    @if (PM_Actiontype == "submit")
-                                    {
-                                        if (UnitFormStatusID == 2)
-                                        {
-                                            <div class="col-12 p-3">
-                                                <div id="drop-zone" class="drop-zone">
-                                                    <p class="drop-zone-text">
-                                                        <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
-                                                    </p>
-                                                    <input type="file" id="file-input" class="drop-zone-input" multiple>
-                                                    <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
-                                                </div>
-                                            </div>
-                                        }
-                                    }
-                                    else
+                                    if (UnitFormStatusID == 2)
                                     {
                                         <div class="col-12 p-3">
                                             <div id="drop-zone" class="drop-zone">
@@ -615,14 +599,7 @@
                             <div class="justify-content-end">
                                 @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
                                 {
-                                    @if (PM_Actiontype == "submit"){
-                                        if (UnitFormStatusID == 2)
-                                        {
-                                            <button class="btn" onclick="saveOrSubmit('save')">บันทึกร่าง</button>
-                                            <button class="btn btn-primary" onclick="saveOrSubmit('submit')">ยืนยัน</button>
-                                        }
-                                    }
-                                    else
+                                    if (UnitFormStatusID == 2)
                                     {
                                         <button class="btn" onclick="saveOrSubmit('save')">บันทึกร่าง</button>
                                         <button class="btn btn-primary" onclick="saveOrSubmit('submit')">ยืนยัน</button>
