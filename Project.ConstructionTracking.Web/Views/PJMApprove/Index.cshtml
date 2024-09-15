@@ -551,6 +551,7 @@
                     if (_statusID === "9") {
                         if (remark.trim() === "" || document.getElementById("mainRemark").value.trim() === "") {
                             allRemarksFilled = false;
+                            scrollToElement(document.getElementById(`remark_${group_id}`));
                         }
                     }
 
@@ -572,44 +573,22 @@
 
             if (actionType === "submit") {
                 if (!allGroupsChecked) {
-                    Swal.fire({
-                        title: 'คำเตือน',
-                        text: 'กรุณาเลือกการอนุมัติหรือไม่อนุมัติในทุกงานที่ใช้งานอยู่',
-                        icon: 'warning',
-                        confirmButtonText: 'ตกลง'
-                    });
+                    showErrorAlert('คำเตือน', 'กรุณาเลือกการอนุมัติหรือไม่อนุมัติในทุกงานที่ใช้งานอยู่');
                     return;
                 }
                 if (!allRemarksFilled) {
-                    Swal.fire({
-                        title: 'คำเตือน!',
-                        text: 'กรุณาระบุเหตุผลสำหรับการไม่อนุมัติในทุกงานและหมายเหตุงวดนี้',
-                        icon: 'warning',
-                        confirmButtonText: 'ตกลง'
-                    });
+                    showErrorAlert('คำเตือน!', 'กรุณาระบุเหตุผลสำหรับการไม่อนุมัติในทุกงานและหมายเหตุงวดนี้');
                     return;
                 }
 
-                // Confirm alert before AJAX call
-                Swal.fire({
-                    title: 'ยืนยันการดำเนินการ',
-                    text: 'คุณต้องการยืนยันงวดงานนี้หรือไม่',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'ใช่',
-                    cancelButtonText: 'ยกเลิก'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Show loading screen
-                        Swal.fire({
-                            title: 'กำลังบันทึกข้อมูล...',
-                            text: 'กรุณารอสักครู่',
-                            allowOutsideClick: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
-
+                showConfirmationAlert(
+                    'ยืนยันการดำเนินการ',
+                    'คุณต้องการยืนยันงวดงานนี้หรือไม่',
+                    'warning',
+                    'ใช่',
+                    'ยกเลิก',
+                    function () {
+                        showLoadingAlert();
                         $.ajax({
                             url: '@ViewBag.baseUrl' + 'PJMApprove/SaveOrSubmit',
                             type: 'POST',
@@ -617,41 +596,24 @@
                             processData: false,
                             data: data,
                             success: function (res) {
-                                Swal.close(); // Close the loading indicator
+                                Swal.close();
                                 if (res.success) {
-                                    Swal.fire({
-                                        title: 'สำเร็จ!',
-                                        text: 'บันทึกสำเร็จ',
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            window.location.reload();
-                                        }
+                                    showSuccessAlert('สำเร็จ!', 'บันทึกสำเร็จ', () => {
+                                        window.location.reload();
                                     });
                                 } else {
-                                    Swal.fire({
-                                        title: 'ผิดพลาด!',
-                                        text: 'ผิดพลาด ' + actionType + ' ไม่สำเร็จ',
-                                        icon: 'error',
-                                        confirmButtonText: 'OK'
-                                    });
+                                    showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
                                 }
                             },
                             error: function (xhr, status, error) {
-                                Swal.close(); // Close the loading indicator
-                                Swal.fire({
-                                    title: 'ผิดพลาด!',
-                                    text: 'บันทึกข้อมูลไม่สำเร็จ',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
+                                Swal.close();
+                                showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
                             }
                         });
                     }
-                });
+                );
             } else {
-                // Directly perform the AJAX request for actions other than 'submit'
+                showLoadingAlert();
                 $.ajax({
                     url: '@ViewBag.baseUrl' + 'PJMApprove/SaveOrSubmit',
                     type: 'POST',
@@ -659,40 +621,22 @@
                     processData: false,
                     data: data,
                     success: function (res) {
-                        Swal.close(); // Close the loading indicator
+                        Swal.close();
                         if (res.success) {
-                            Swal.fire({
-                                title: 'สำเร็จ!',
-                                text: 'บันทึกสำเร็จ',
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.reload();
-                                }
+                            showSuccessAlert('สำเร็จ!', 'บันทึกสำเร็จ', () => {
+                                window.location.reload();
                             });
                         } else {
-                            Swal.fire({
-                                title: 'ผิดพลาด!',
-                                text: 'ผิดพลาด ' + actionType + ' ไม่สำเร็จ',
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
+                            showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
                         }
                     },
                     error: function (xhr, status, error) {
-                        Swal.close(); // Close the loading indicator
-                        Swal.fire({
-                            title: 'ผิดพลาด!',
-                            text: 'บันทึกข้อมูลไม่สำเร็จ',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
+                        Swal.close();
+                        showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
                     }
                 });
             }
         }
-
 
     </script>
 }

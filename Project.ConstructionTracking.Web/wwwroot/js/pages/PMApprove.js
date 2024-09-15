@@ -1,12 +1,12 @@
 ﻿function openModal(UnitFormID, Group_ID) {
     $.ajax({
-        url: baseUrl + 'PMApprove/GetImages', // Replace with your actual controller and action
+        url: baseUrl + 'PMApprove/GetImages', 
         type: 'GET',
         data: { UnitFormID: UnitFormID, GroupID: Group_ID, RoleID: 1 },
         success: function (images) {
-            // Update the modal with the fetched images
+
             var modalBody = $('#exampleModal .modal-body .row');
-            modalBody.empty(); // Clear any previous images
+            modalBody.empty(); 
 
             images.forEach(function (image) {
                 var imageHtml = `
@@ -19,10 +19,8 @@
                 modalBody.append(imageHtml);
             });
 
-            // Reinitialize fslightbox for the newly added images
-            refreshFsLightbox(); // Call this function to reinitialize the lightbox
+            refreshFsLightbox();
 
-            // Show the modal
             var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
             myModal.show();
         },
@@ -44,7 +42,6 @@ function toggleRadio(radio, itemId) {
         radio.dataset.wasChecked = "true";
     }
 
-    // Auto-check "ไม่อนุมัติหลัก" when "ไม่อนุมัติPC" is checked
     if (radio.value === "7") {
         var mainApprovalRadios = document.getElementsByName('radios-inline-approval');
         for (var j = 0; j < mainApprovalRadios.length; j++) {
@@ -54,21 +51,13 @@ function toggleRadio(radio, itemId) {
         }
     }
 
-    // Prevent checking "อนุมัติหลัก" if any "ไม่อนุมัติPC" is selected in the same item context
     if (radio.name === "radios-inline-approval" && (radio.value === "4" || radio.value === "6")) {
-        // Find any "ไม่อนุมัติPC" radios (value="7") within the same group context where PCFlageActive is true
-        var conditionalRadios = document.querySelectorAll(`input[name^="radios-inline-"][value="7"][data-pc-flag-active="true"]`);
-
+        var conditionalRadios = document.querySelectorAll(`input[name^="radios-inline-"][value="7"][data-pc-flag-active="True"]`);
         for (var k = 0; k < conditionalRadios.length; k++) {
             if (conditionalRadios[k].checked) {
-                Swal.fire({
-                    title: 'Warning!',
-                    text: 'ยังมีการไม่อนุมัติแบบมีเงื่อนไข',
-                    icon: 'warning',
-                    confirmButtonText: 'OK'
-                });
-                radio.checked = false; // Prevent checking "อนุมัติหลัก"
-                return; // Exit the function to stop further execution
+                showErrorAlert('คำเตือน!', 'ยังมีการไม่อนุมัติแบบมีเงื่อนไข');
+                radio.checked = false;
+                return; 
             }
         }
     }
@@ -135,78 +124,100 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function saveOrSubmit(actionType) {
-    var remarkElement = document.getElementById("mainRemark").value;
+    var remarkElement = document.getElementById("mainRemark");
     var listimagecnt = document.getElementById("listimagecnt").value;
     var files = document.getElementById("file-input").files;
     var mainStatus = document.querySelector('input[name="radios-inline-approval"]:checked');
 
-    // Validation checks
-    if (actionType === "submit") {
-        if (!mainStatus) {
-            Swal.fire({
-                title: 'คำเตือน!',
-                text: 'กรุณาระบุตัวเลือกอนุมัติหรือไม่อนุมัติ',
-                icon: 'warning',
-                confirmButtonText: 'ตกลง'
-            });
-            return;
+    // Initialize a flag to check if all groups have at least one choice selected
+    var allGroupsChecked = true;
+    var radioGroups = {};
+
+    // Collect radio groups by name
+    document.querySelectorAll('input[data-action="gr-pass"]').forEach(function (radio) {
+        var groupName = radio.getAttribute('name');
+        if (!radioGroups[groupName]) {
+            radioGroups[groupName] = false; // Initialize as unchecked
+        }
+        if (radio.checked) {
+            radioGroups[groupName] = true; // Mark as checked if any radio in this group is selected
+        }
+    });
+
+    // Check if all groups have at least one radio selected
+    for (var groupName in radioGroups) {
+        if (!radioGroups[groupName]) {
+            allGroupsChecked = false;
+            break;
         }
     }
-    if (actionType === "submit" && mainStatus && mainStatus.value === "5") {
-        if (remarkElement.trim() === "") {
-            Swal.fire({
-                title: 'คำเตือน!',
-                text: 'กรุณาระบุหมายเหตุ เมื่อไม่อนุมัติงวดงานนี้',
-                icon: 'warning',
-                confirmButtonText: 'ตกลง'
-            });
+
+    if (actionType === "submit") {
+        // Validate that all groups have at least one radio selected
+        if (!allGroupsChecked) {
+            showErrorAlert('คำเตือน!', 'กรุณาเลือกตัวเลือกการตรวจสอบอย่างน้อยหนึ่งรายการในแต่ละกลุ่ม');
+            return;
+        }
+
+        // Validate conditional remark for radio buttons
+        var radioGroups = document.querySelectorAll('input[data-action="gr-pass"]');
+        for (var i = 0; i < radioGroups.length; i++) {
+            var radio = radioGroups[i];
+            if (radio.value === "7" && radio.checked) {
+                var groupId = radio.getAttribute('group-id');
+                var remarkTextarea = document.getElementById(`remark_${groupId}`);
+                if (!remarkTextarea || remarkTextarea.value.trim() === "") {
+                    scrollToElement(remarkTextarea); // Scroll to the textarea
+                    showErrorAlert('คำเตือน!', 'กรุณาระบุเหตุผล เมื่อไม่ผ่านการอนุมัติแบบมีเงื่อนไข');
+                    return;
+                }
+            }
+        }
+
+        // Validate main remark
+        if (!mainStatus) {
+            showErrorAlert('คำเตือน!', 'กรุณาระบุตัวเลือกอนุมัติหรือไม่อนุมัติ');
+            return;
+        }
+
+        // Check if the remarkElement exists before accessing its value
+        if (mainStatus.value === "5" && (!remarkElement || remarkElement.value.trim() === "")) {
+            scrollToElement(remarkElement); 
+            showErrorAlert('คำเตือน!', 'กรุณาระบุหมายเหตุ เมื่อไม่อนุมัติงวดงานนี้');           
             return;
         }
     }
 
-    
-    // Confirmation step for submit action
     if (actionType === "submit") {
-        Swal.fire({
-            title: 'ยืนยันการดำเนินการ',
-            text: 'คุณต้องการยืนยันงวดงานนี้หรือไม่',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'ใช่',
-            cancelButtonText: 'ยกเลิก'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // If confirmed, proceed with the AJAX request
-                performAjaxRequest(actionType);
-            }
-        });
+        showConfirmationAlert(
+            'ยืนยันการดำเนินการ',
+            'คุณต้องการยืนยันงวดงานนี้หรือไม่',
+            'warning',
+            'ใช่',
+            'ยกเลิก',
+            () => performAjaxRequest(actionType)
+        );
     } else {
-        // For save action, directly proceed with the AJAX request
         performAjaxRequest(actionType);
     }
 }
 
+
 function performAjaxRequest(actionType) {
     var data = new FormData();
-
-    // Option 1: Getting values from hidden fields
     data.append("UnitFormID", document.getElementById("UnitFormID").value);
     data.append("ProjectID", document.getElementById("ProjectID").value);
     data.append("UnitID", document.getElementById("UnitID").value);
     data.append("UnitCode", document.getElementById("UnitCode").value);
     data.append("FormID", document.getElementById("FormID").value);
-
-    // Add ActionType (save or submit)
     data.append("ActionType", actionType);
 
-    // Add main form status and remark
     var mainStatus = document.querySelector('input[name="radios-inline-approval"]:checked');
     if (mainStatus) {
         data.append("UnitFormStatus", mainStatus.value);
     }
     data.append("Remark", document.getElementById("mainRemark").value);
 
-    // Collect images if any
     var files = document.getElementById("file-input").files;
     for (var i = 0; i < files.length; i++) {
         data.append("Images", files[i]);
@@ -238,15 +249,7 @@ function performAjaxRequest(actionType) {
         data.append("PassConditionsIUD", JSON.stringify(passConditions));
     }
 
-    // Show loading screen
-    Swal.fire({
-        title: 'กำลังบันทึกข้อมูล...',
-        text: 'กรุณารอสักครู่',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
+    showLoadingAlert();
 
     $.ajax({
         url: baseUrl + 'PMApprove/SaveOrSubmit',
@@ -255,40 +258,21 @@ function performAjaxRequest(actionType) {
         processData: false,
         data: data,
         success: function (res) {
-            Swal.close(); // Close the loading indicator
-
+            Swal.close();
             if (res.success) {
-                Swal.fire({
-                    title: 'สำเร็จ!',
-                    text: 'บันทึกข้อมูลสำเร็จ',
-                    icon: 'success',
-                    confirmButtonText: 'ตกลง'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.reload();
-                    }
+                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', () => {
+                    window.location.reload();
                 });
             } else {
-                Swal.fire({
-                    title: 'ผิดพลาด!',
-                    text: 'บันทึกข้อมูลไม่สำเร็จ',
-                    icon: 'error',
-                    confirmButtonText: 'ตกลง'
-                });
+                showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
             }
         },
         error: function (xhr, status, error) {
-            Swal.close(); // Close the loading indicator
-            Swal.fire({
-                title: 'ผิดพลาด!',
-                text: 'บันทึกข้อมูลไม่สำเร็จ',
-                icon: 'error',
-                confirmButtonText: 'ตกลง'
-            });
+            Swal.close();
+            showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
         }
     });
 }
-
 
 function deleteImage(resourceId) {
     Swal.fire({
@@ -302,7 +286,6 @@ function deleteImage(resourceId) {
         cancelButtonText: 'ยกเลิก'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Perform the deletion via an AJAX call
             $.ajax({
                 url: baseUrl + 'FormCheckList/DeleteImage',
                 type: 'POST',
@@ -310,7 +293,6 @@ function deleteImage(resourceId) {
                 success: function (response) {
                     if (response.success) {
                         Swal.fire('ลบรูปภาพสำเร็จ', '', 'success');
-                        // Remove the image from the DOM
                         $(`[onclick="deleteImage('${resourceId}')"]`).closest('.position-relative').remove();
                     } else {
                         Swal.fire('Error!', response.message, 'error');
@@ -323,3 +305,5 @@ function deleteImage(resourceId) {
         }
     });
 }
+
+

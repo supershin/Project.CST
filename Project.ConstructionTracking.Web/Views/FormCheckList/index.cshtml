@@ -134,6 +134,7 @@
     }
 
 </style>
+
 <div class="page-wrapper">
     <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@UnitFormName','@UnitCode')">
         <i id="chatIcon" class="fa-solid fa-message fa-xl"></i>
@@ -339,12 +340,12 @@
                                     }
                                     else
                                     {
-                                        <p>ไม่มีรูปภาพ</p>
+                                        <p>กรุณาอัปโหลดไฟล์รูปภาพ</p>
                                     }
                                 }
                                 else
                                 {
-                                    <p>ไม่มีรูปภาพ</p>
+                                    <p>กรุณาอัปโหลดไฟล์รูปภาพ</p>
                                 }
                             </div>
                             <div class="col-12 mb-2">
@@ -360,10 +361,10 @@
                                                     <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
                                                 </p>
                                                 <input type="file" id="file-input" class="drop-zone-input" multiple>
-                                                <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
+                                                <div id="preview-container" class="row preview-container"></div>
                                             </div>
                                         }
-                                        else if (UnitFormStatusID == 8 && PCStatusID != 8 && PJM_ActionType == "submit" || UnitFormStatusID == 9 && PJM_ActionType == "save")
+                                        else if (UnitFormStatusID == 8 && PCStatusID != 8 && PJM_ActionType == "submit")
                                         {
 
                                             <div id="drop-zone" class="drop-zone">
@@ -371,7 +372,7 @@
                                                     <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
                                                 </p>
                                                 <input type="file" id="file-input" class="drop-zone-input" multiple>
-                                                <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
+                                                <div id="preview-container" class="row preview-container"></div>
                                             </div>
                                         }
                                     }
@@ -382,7 +383,7 @@
                                                 <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
                                             </p>
                                             <input type="file" id="file-input" class="drop-zone-input" multiple>
-                                            <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
+                                            <div id="preview-container" class="row preview-container"></div>
                                         </div>
                                     }
                                 }

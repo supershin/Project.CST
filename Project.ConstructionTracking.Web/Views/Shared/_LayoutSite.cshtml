@@ -156,7 +156,62 @@
             let userRole = '@ViewBag.UserRole'
             let name = '@ViewBag.Name'
             let id = '@ViewBag.ID'
-            
+
+            function showErrorAlert(title, text) {
+                Swal.fire({
+                    title: title,
+                    text: text,
+                    icon: 'error',
+                    confirmButtonText: 'ตกลง'
+                });
+            }
+
+            function showSuccessAlert(title, text, callback) {
+                Swal.fire({
+                    title: title,
+                    text: text,
+                    icon: 'success',
+                    confirmButtonText: 'ตกลง'
+                }).then((result) => {
+                    if (result.isConfirmed && callback) {
+                        callback();
+                    }
+                });
+            }
+
+            function showLoadingAlert() {
+                Swal.fire({
+                    title: 'กำลังบันทึก...',
+                    text: 'กรุณารอสักครู่กำลังบันทึกข้อมูล',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+            }
+
+            function showConfirmationAlert(title, text, icon, confirmButtonText, cancelButtonText, onConfirm) {
+                Swal.fire({
+                    title: title,
+                    text: text,
+                    icon: icon,
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: confirmButtonText,
+                    cancelButtonText: cancelButtonText
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        onConfirm();
+                    }
+                });
+            }
+
+            function scrollToElement(element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                element.focus({ preventScroll: true });
+            }
+
         </script>
         <!-- header -->
         <header class="navbar navbar-expand-md d-print-none">
