@@ -48,5 +48,99 @@ namespace Project.ConstructionTracking.Web.Repositories
             return query;
         }
 
+        public List<QC5ChecklistModel> GetQCUnitCheckListDefects(QC5ChecklistModel filterData)
+        {
+            var result = (from t1 in _context.tr_QC_UnitCheckList_Defect
+                          join t2 in _context.tm_DefectArea on t1.DefectAreaID equals t2.ID into defectAreaGroup
+                          from t2 in defectAreaGroup.DefaultIfEmpty()
+                          join t3 in _context.tm_DefectType on t1.DefectTypeID equals t3.ID into defectTypeGroup
+                          from t3 in defectTypeGroup.DefaultIfEmpty()
+                          join t4 in _context.tm_DefectDescription on t1.DefectDescriptionID equals t4.ID into defectDescriptionGroup
+                          from t4 in defectDescriptionGroup.DefaultIfEmpty()
+                          select new QC5ChecklistModel
+                          {
+                              ID = t1.ID,
+                              QCUnitCheckListID = t1.QCUnitCheckListID,
+                              Seq = t1.Seq,
+                              DefectAreaID = t1.DefectAreaID,
+                              DefectAreaName = t2.Name,
+                              DefectTypeID = t1.DefectTypeID,
+                              DefectTypeName = t3.Name,
+                              DefectDescriptionID = t1.DefectDescriptionID,
+                              DefectDescriptionName = t4.Name,
+                              StatusID = t1.StatusID,
+                              Remark = t1.Remark,
+                              FlagActive = t1.FlagActive,
+      
+                              ListRadioChecklist = (from rc in _context.tm_Ext
+                                                    where rc.ExtTypeID == SystemConstant.Ext_Type.QC5RadioChecklist
+                                                    select new QC5RadioCheckListModel
+                                                    {
+                                                        RadioCheckValue = rc.ID, 
+                                                        RadioCheckText = rc.Name  
+                                                    }).ToList()
+                          }).ToList();
+
+            return result;
+        }
+
+        public void InsertQCUnitCheckListDefect(QC5IUDModel model)
+        {
+            var newDefect = new tr_QC_UnitCheckList_Defect
+            {
+                QCUnitCheckListID = model.QCUnitCheckListID,
+                Seq = model.Seq,
+                DefectAreaID = model.DefectAreaID,
+                DefectTypeID = model.DefectTypeID,
+                DefectDescriptionID = model.DefectDescriptionID,
+                StatusID = model.StatusID,
+                Remark = model.Remark,
+                FlagActive = true,
+                CreateDate = DateTime.Now, 
+                CreateBy = model.UserID,
+                UpdateDate = DateTime.Now,
+                UpdateBy = model.UserID,               
+            };
+
+            _context.tr_QC_UnitCheckList_Defect.Add(newDefect);
+            _context.SaveChanges();
+        }
+
+        public void UpdateQCUnitCheckListDefect(QC5IUDModel model)
+        {
+
+            var existingDefect = _context.tr_QC_UnitCheckList_Defect.FirstOrDefault(d => d.ID == model.ID);
+
+            if (existingDefect != null)
+            {
+                existingDefect.QCUnitCheckListID = model.QCUnitCheckListID;
+                existingDefect.Seq = model.Seq;
+                existingDefect.DefectAreaID = model.DefectAreaID;
+                existingDefect.DefectTypeID = model.DefectTypeID;
+                existingDefect.DefectDescriptionID = model.DefectDescriptionID;
+                existingDefect.StatusID = model.StatusID;
+                existingDefect.Remark = model.Remark;
+                existingDefect.UpdateDate = DateTime.Now; 
+                existingDefect.UpdateBy = model.UserID;
+
+                _context.SaveChanges();
+            }
+        }
+
+        public void RemoveQCUnitCheckListDefect(QC5IUDModel model)
+        {
+            var existingDefect = _context.tr_QC_UnitCheckList_Defect.FirstOrDefault(d => d.ID == model.ID);
+
+            if (existingDefect != null)
+            {
+                existingDefect.FlagActive = false;
+                existingDefect.UpdateDate = DateTime.Now;
+                existingDefect.UpdateBy = model.UserID;
+
+                _context.SaveChanges();
+            }
+        }
+
+
     }
 }
