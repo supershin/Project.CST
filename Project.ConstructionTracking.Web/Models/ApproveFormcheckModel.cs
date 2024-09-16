@@ -10,17 +10,21 @@
         public string? UnitCode { get; set; }
         public int? VendorID { get; set; }
         public string? VenderName { get; set; }
+        public string? CompanyName { get; set; }
         public Guid? VendorResourceID { get; set; }
         public string? Grade { get; set; }
         public int? FormID { get; set; }
         public int? UnitFormStatusID { get; set; }
         public string? FormName { get; set; }
+        public Guid? ActionByPE { get; set; }
         public DateTime? Actiondate { get; set; }
         public DateTime? ActiondatePm { get; set; }
         public DateTime? ActiondatePJm { get; set; }
         public int? PM_StatusID { get; set; }
         public string? PM_Remarkaction { get; set; }
+        public string? PE_Actiontype { get; set; }
         public string? PM_Actiontype { get; set; }
+        public string? PM_ActionBy { get; set; }
         public int? PJM_StatusID { get; set; }
         public string? PJM_Remarkaction { get; set; }
         public string? PJM_Actiontype { get; set; }

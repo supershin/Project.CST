@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient.Server;
 using Newtonsoft.Json;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models;
-using Project.ConstructionTracking.Web.Services; // Assuming the GetApproveFormcheckList class is in the Services namespace
+using Project.ConstructionTracking.Web.Services;
 using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
+using static Project.ConstructionTracking.Web.Models.FormGroupModel;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
@@ -11,10 +13,12 @@ namespace Project.ConstructionTracking.Web.Controllers
     {
         private readonly IPMApproveService _PMApproveService;
         private readonly IHostEnvironment _hosting;
-        public PMApproveController(IPMApproveService PMApproveService, IHostEnvironment hosting)
+        private readonly IGetDDLService _getDDLService;
+        public PMApproveController(IPMApproveService PMApproveService, IHostEnvironment hosting, IGetDDLService getDDLService)
         {
             _PMApproveService = PMApproveService;
             _hosting = hosting;
+            _getDDLService = getDDLService;
         }
 
         public IActionResult Index(Guid unitId, int formId ,string comeFrom)
@@ -27,6 +31,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             if (resultModel != null)
             {
                 // Set ViewBag properties based on the result
+                ViewBag.PCAll = resultModel.PCAllcount;
                 ViewBag.ProjectID = resultModel.ProjectID;
                 ViewBag.ProjectName = resultModel.ProjectName;
                 ViewBag.UnitID = resultModel.UnitID;
@@ -35,22 +40,32 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.FormID = resultModel.FormID;
                 ViewBag.FormName = resultModel.FormName;
                 ViewBag.UnitFormStatusID = resultModel.UnitFormStatusID;
-                ViewBag.Actiondate = resultModel.Actiondate?.ToString("dd/MM/yyyy") ?? "";
-                ViewBag.ActiondatePm = resultModel.ActiondatePm?.ToString("dd/MM/yyyy") ?? "";
-                ViewBag.ActiondatePJm = resultModel.ActiondatePJm?.ToString("dd/MM/yyyy") ?? "";
+                ViewBag.Actiondate = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.Actiondate);
+                ViewBag.ActiondatePm = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.ActiondatePm);
+                ViewBag.ActiondatePJm = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.ActiondatePJm);
                 ViewBag.Grade = resultModel.Grade;
                 ViewBag.LockStatusID = resultModel.PM_getListgroup?.Any(l => l.LockStatusID != null) == true ? "NotNull" : null;
                 ViewBag.VenderName = resultModel.VenderName;
+                ViewBag.CompanyName = resultModel.CompanyName;
                 ViewBag.PM_Remarkaction = resultModel.PM_Remarkaction;
+                ViewBag.PE_Actiontype = resultModel.PE_Actiontype;
                 ViewBag.PM_Actiontype = resultModel.PM_Actiontype;
                 ViewBag.PJM_Remarkaction = resultModel.PJM_Remarkaction;
                 ViewBag.PJM_Actiontype = resultModel.PJM_Actiontype;
+
+                var Filter = new GetDDL { Act = "UserName", ValueGuid = resultModel.ActionByPE };
+                List<GetDDL> ListUser = _getDDLService.GetDDLList(Filter);
+                ViewBag.PEActionBy = ListUser[0].Text;
+
+
             }
             var listpass = resultModel?.PM_getListgroup;
             if (listpass != null)
             {
                 int? PCAll = listpass.Count;
                 int? PCPass = listpass.Count(item => item.PC_StatusID == 8 || item.PCFlageActive == false || item.PassConditionsID == null);
+                int? PCUnlock = listpass.Count(item => item.LockStatusID == 8 && item.PCFlageActive == true);
+                ViewBag.PCUnlock = PCUnlock;
                 ViewBag.PCALLPASS = (PCAll == PCPass) ? "yes" : "no";
             }
 

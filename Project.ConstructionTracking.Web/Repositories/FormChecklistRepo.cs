@@ -33,7 +33,11 @@ public class FormChecklistRepo : IFormChecklistRepo
                       from formGroup in formGroups.DefaultIfEmpty()
                       join t6 in _context.tr_UnitForm on new { ProjectID = (Guid?)t1.ProjectID, UnitID = (Guid?)unit.UnitID, FormID = (int?)form.ID } equals new { t6.ProjectID, t6.UnitID, t6.FormID } into unitForms
                       from unitForm in unitForms.DefaultIfEmpty()
-                      where unit.UnitID == filterData.UnitID && form.ID == filterData.FormID && formGroup.ID == filterData.GroupID
+                      join t7 in _context.tm_CompanyVendor on new { unit.CompanyVendorID } equals new { CompanyVendorID = (int?)t7.ID } into CompanyVendorS
+                      from CompanyVendor in CompanyVendorS.DefaultIfEmpty()
+                      where unit.UnitID == filterData.UnitID 
+                             && form.ID == filterData.FormID
+                             && (filterData.GroupID == 0 || formGroup.ID == filterData.GroupID) // Conditional check
                       select new FormCheckListModel.Form_getUnitFormData
                       {
                           ProjectID = t1.ProjectID,
@@ -47,6 +51,8 @@ public class FormChecklistRepo : IFormChecklistRepo
                           UnitFormID = unitForm.ID,
                           UnitFormStatusID = unitForm.StatusID,
                           UnitStatusName = subT2.Name,
+                          CompanyvenderID = unit.CompanyVendorID,
+                          CompanyvenderName = CompanyVendor.Name
                       }).FirstOrDefault();
 
         return result;
@@ -129,13 +135,15 @@ public class FormChecklistRepo : IFormChecklistRepo
 
         // จัดกลุ่มข้อมูลที่ได้จาก query
         var result = query
-            .GroupBy(g => new { g.t1.GroupID, g.t1.ID, g.t1.Name, Unit_PackagesID = g.t5.ID, g.t5.Remark })
+            .GroupBy(g => new { g.t1.GroupID, g.t1.ID, g.t1.Name, Unit_PackagesID = g.t5.ID, g.t5.Remark , g.t5.UpdateDate, g.t5.UpdateBy })
             .Select(g => new FormCheckListModel.Form_getListPackages
             {
                 UnitPackagesID = g.Key.Unit_PackagesID, // กำหนดค่า UnitPackagesID
                 GroupID = g.Key.GroupID, // กำหนดค่า GroupID
                 PackagesID = g.Key.ID, // กำหนดค่า PackageID
                 PackagesName = g.Key.Name, // กำหนดชื่อ Package
+                UpDatedate = g.Key.UpdateDate,
+                UpDateby = g.Key.UpdateBy,
                 Remark = g.Key.Remark, // กำหนด Remark
 
                 // สร้าง ListCheckLists โดยการเลือกข้อมูลจากแต่ละกลุ่ม
@@ -300,11 +308,9 @@ public class FormChecklistRepo : IFormChecklistRepo
         var form = _context.tm_Form.Find(package.FormID);
         if (form != null)
         {
-            var unitForm = _context.tr_UnitForm
-                .Where(uf => uf.ID == package.UnitFormID && uf.FormID == package.FormID && uf.UnitID == package.UnitId)
-                .FirstOrDefault();
+            var unitForm = _context.tr_UnitForm.Where(uf => uf.FormID == package.FormID && uf.UnitID == package.UnitId).FirstOrDefault();
 
-            if (package.UnitFormID == Guid.Empty)
+            if (unitForm == null)
             {
                 unitForm = new tr_UnitForm
                 {
@@ -331,9 +337,7 @@ public class FormChecklistRepo : IFormChecklistRepo
 
     private void InsertOrUpdateUnitFormAction(PackageModel package, Guid unitFormIDUse, Guid? userID)
     {
-        var unitFormAction = _context.tr_UnitFormAction
-        .Where(uf => uf.ID == package.UnitFormActionID && uf.UnitFormID == package.UnitFormID)
-        .FirstOrDefault();
+        var unitFormAction = _context.tr_UnitFormAction.Where(uf => uf.RoleID == 1 && uf.UnitFormID == unitFormIDUse).FirstOrDefault();
 
         if (unitFormAction == null)
         {
@@ -367,9 +371,7 @@ public class FormChecklistRepo : IFormChecklistRepo
     {
         foreach (var packagelist in packages)
         {
-            var existingUnitFormPackage = _context.tr_UnitFormPackage
-                .Where(ufp => ufp.ID == packagelist.UnitPackageID && ufp.UnitFormID == unitFormIDUse)
-                .FirstOrDefault();
+            var existingUnitFormPackage = _context.tr_UnitFormPackage.Where(ufp => ufp.ID == packagelist.UnitPackageID && ufp.UnitFormID == unitFormIDUse).FirstOrDefault();
 
             if (existingUnitFormPackage == null)
             {
@@ -379,7 +381,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                     FormID = packagelist.FormID,
                     GroupID = packagelist.GroupID,
                     PackageID = packagelist.PackageID,
-                    Remark = string.IsNullOrEmpty(packagelist.Remark) ? "" : packagelist.Remark + " : วันที่ " + DateTime.Now.ToStringDateTime(),
+                    Remark = string.IsNullOrEmpty(packagelist.Remark) ? "" : packagelist.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
                     UpdateDate = DateTime.Now,
                     UpdateBy = userID,
                     CreateDate = DateTime.Now,
@@ -393,7 +395,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                 {
                     if (existingUnitFormPackage.Remark != packagelist.Remark)
                     {
-                        existingUnitFormPackage.Remark = packagelist.Remark + " : วันที่ " + DateTime.Now.ToStringDateTime();
+                        existingUnitFormPackage.Remark = packagelist.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
                     }
                 }
                 else
@@ -463,7 +465,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                 UnitFormID = unitFormIDUse,
                 GroupID = pcCheck.GroupID,
                 LockStatusID = 7,
-                PE_Remark = pcCheck.Remark + " : วันที่ " + DateTime.Now.ToStringDateTime(),
+                PE_Remark = pcCheck.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
                 FlagActive = true,
                 ActionDate = DateTime.Now,
                 CraeteDate = DateTime.Now,
@@ -479,7 +481,7 @@ public class FormChecklistRepo : IFormChecklistRepo
             {
                 if (passCondition.PE_Remark != pcCheck.Remark)
                 {
-                    passCondition.PE_Remark = pcCheck.Remark + " : วันที่ " + DateTime.Now.ToStringDateTime();
+                    passCondition.PE_Remark = pcCheck.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
                 }
             }
             else

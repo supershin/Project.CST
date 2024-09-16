@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient.Server;
 using Newtonsoft.Json;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Services;
 using System.Text.RegularExpressions;
@@ -37,9 +38,10 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.UnitFormID = listPJMApprove.UnitFormID;
                 ViewBag.UnitFormStatus = listPJMApprove?.UnitFormStatus?.ToString() ?? "";
                 ViewBag.FormID = listPJMApprove?.FormID;
+                ViewBag.PJM_ActionBy = listPJMApprove?.PJM_ActionBy;
                 ViewBag.FormName = listPJMApprove?.FormName;
                 ViewBag.PJM_Actiontype = listPJMApprove?.PJM_Actiontype ?? string.Empty;
-                ViewBag.PJM_ActionDate = listPJMApprove?.PJM_ActionDate?.ToString("dd/MM/yyyy") ?? string.Empty;
+                ViewBag.PJM_ActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(listPJMApprove?.PJM_ActionDate);
                 ViewBag.PJM_StatusID = listPJMApprove?.PJM_StatusID ?? (int?)null;
                 ViewBag.PJMUnitFormRemark = listPJMApprove?.PJMUnitFormRemark ?? string.Empty;
                 _FormID = listPJMApprove?.FormID;
@@ -72,6 +74,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 {
                     model.ListPCIC = JsonConvert.DeserializeObject<List<PJMIUPC>>(param);
                 }
+                model.UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
                 model.ApplicationPath = _hosting.ContentRootPath;
                 _PJMApproveService.SaveOrUpdateUnitFormAction(model);
 
@@ -81,6 +84,23 @@ namespace Project.ConstructionTracking.Web.Controllers
             {
                 return BadRequest(new { success = false, message = ex.Message });
             }
+        }
+
+        [HttpGet]
+        public JsonResult GetImagesUnlock(Guid UnitFormID, int PassConditionID)
+        {
+            // Prepare the model to send to the service
+            var model = new PJMApproveModel.GetImageUnlock
+            {
+                UnitFormID = UnitFormID,
+                PassConditionID = PassConditionID
+            };
+
+            // Call the service to get the images
+            var listimages = _PJMApproveService.GetImageUnlock(model);
+
+            // Return the images as JSON to be used in the modal
+            return Json(listimages);
         }
     }
 }

@@ -24,7 +24,7 @@ var unitEquipment = {
         unitEquipment.initSignaturePad();
 
         $("#btn-submit-form").click(() => {
-            unitEquipment.submitUnitEquipmentSign();           
+            unitEquipment.submitUnitEquipmentSign();
             return false;
         });
 
@@ -124,6 +124,16 @@ var unitEquipment = {
             cancelButtonText: 'ยกเลิก'
         }).then((result) => {
             if (result.isConfirmed) {
+                // Show loading screen
+                Swal.fire({
+                    title: 'กำลังบันทึกข้อมูล...',
+                    text: 'กรุณารอสักครู่',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading(); // Show loading indicator
+                    }
+                });
+
                 var data = {
                     ProjectID: document.getElementById('projectId').value,
                     FormID: document.getElementById('FormID').value,
@@ -141,12 +151,13 @@ var unitEquipment = {
                     dataType: 'json',
                     data: data,
                     success: function (res) {
+                        Swal.close(); // Close the loading indicator
                         if (res.success) {
                             Swal.fire({
-                                title: 'Success!',
+                                title: 'สำเร็จ!',
                                 text: 'บันทึกข้อมูลสำเร็จ',
                                 icon: 'success',
-                                confirmButtonText: 'OK'
+                                confirmButtonText: 'ตกลง'
                             }).then((result) => {
                                 if (result.isConfirmed) {
                                     window.location.reload();
@@ -154,16 +165,17 @@ var unitEquipment = {
                             });
                         } else {
                             Swal.fire({
-                                title: 'Error!',
+                                title: 'ผิดพลาด!',
                                 text: 'บันทึกข้อมูลไม่สำเร็จ',
                                 icon: 'error',
-                                confirmButtonText: 'OK'
+                                confirmButtonText: 'ตกลง'
                             });
                         }
                     },
                     error: function (xhr, status, error) {
+                        Swal.close(); // Close the loading indicator
                         Swal.fire({
-                            title: 'Error!',
+                            title: 'ผิดพลาด!',
                             text: 'บันทึกข้อมูลไม่สำเร็จ',
                             icon: 'error',
                             confirmButtonText: 'OK'
@@ -176,26 +188,23 @@ var unitEquipment = {
 
     saveUnitEquipmentSign: () => {
 
-        let isValid = true;
+        let allUnchecked = true;
         let validationMessage = '';
 
         $('div.card-link').each(function () {
-            const statusUse = $(this).find('button.status-dot').data('status-use');
-            const cntCheckListAll = parseInt($(this).find('.text1').text().split(' ')[1]);
             const cntCheckListUnit = parseInt($(this).find('.text2').text().split(' ')[1]);
             const cntCheckListNotPass = parseInt($(this).find('.text3').text().split(' ')[1]);
 
-            if (statusUse !== 'success' && !(cntCheckListAll === cntCheckListUnit && cntCheckListNotPass === 0)) {
-                isValid = false;
-                validationMessage = 'กรุณาตรวจสอบสถานะของรายการทั้งหมดก่อนบันทึกข้อมูล';
+            if (!(cntCheckListUnit === 0 && cntCheckListNotPass === 0)) {
+                allUnchecked = false; 
                 return false;
             }
         });
 
-        if (!isValid) {
+        if (allUnchecked) {
             Swal.fire({
                 title: 'ข้อผิดพลาด!',
-                text: validationMessage,
+                text: 'กรุณาตรวจงานอย่างน้อย 1 รายการ',
                 icon: 'warning',
                 confirmButtonText: 'ตกลง'
             });
@@ -216,18 +225,29 @@ var unitEquipment = {
             Sign: signData,
         };
 
+        // Show loading screen before AJAX call
+        Swal.fire({
+            title: 'กำลังบันทึกข้อมูล...',
+            text: 'กรุณารอสักครู่',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading(); // Show loading indicator
+            }
+        });
+
         $.ajax({
             url: baseUrl + 'FormGroup/UpdateSaveGrade',
             type: 'POST',
             dataType: 'json',
             data: data,
             success: function (res) {
+                Swal.close(); // Close the loading indicator
                 if (res.success) {
                     Swal.fire({
-                        title: 'Success!',
+                        title: 'สำเร็จ!',
                         text: 'บันทึกข้อมูลสำเร็จ',
                         icon: 'success',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'ตกลง'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             window.location.reload();
@@ -235,19 +255,20 @@ var unitEquipment = {
                     });
                 } else {
                     Swal.fire({
-                        title: 'Error!',
+                        title: 'ผิดพลาด!',
                         text: 'บันทึกข้อมูลไม่สำเร็จ',
                         icon: 'error',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'ตกลง'
                     });
                 }
             },
             error: function (xhr, status, error) {
+                Swal.close(); // Close the loading indicator
                 Swal.fire({
-                    title: 'Error!',
-                    text: 'An error occurred while saving the data.',
+                    title: 'ผิดพลาด!',
+                    text: 'บันทึกข้อมูลไม่สำเร็จ',
                     icon: 'error',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'ตกลง'
                 });
             }
         });
@@ -268,7 +289,7 @@ var unitEquipment = {
             StorageBase64: storage
         };
     },
-}
+};
 
 function previewImage(event) {
     var reader = new FileReader();

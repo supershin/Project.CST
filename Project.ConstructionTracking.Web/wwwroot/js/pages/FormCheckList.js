@@ -153,17 +153,18 @@ document.addEventListener("DOMContentLoaded", function () {
         toggleRemarkPC(); // Call function to toggle Remark-PC based on pc-radio state
     });
 
-    if (pcRadio.checked || PM_StatusActionType === "submit" || userRole !== "1") {
+    if (pcRadio.checked || userRole !== "1") {
         disableAllRadios();
     } else {
         enableAllRadios();
     }
 
     if (PM_StatusActionType === "submit" || userRole !== "1") {
-        if (["2", "3", "4", "6", "7", "9"].includes(UnitFormStatusIDchk) || PC_StatusID === "8" || userRole !== "1") {
+        if (["2", "3", "4", "6", "7", "9", "10", "11", "12"].includes(UnitFormStatusIDchk) || PC_StatusID === "8" || userRole !== "1") {
             document.querySelectorAll('textarea[data-package-id]').forEach(function (textarea) {
                 textarea.disabled = true;
             });
+            disableAllRadios();
             pcRadio.disabled = true;
             remarkPC.disabled = true; // Ensure Remark-PC is disabled when PM_StatusActionType is submit
         }
@@ -173,11 +174,13 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 $('#saveButton').on('click', function () {
+    // Disable the save button to prevent multiple clicks
+    $(this).prop('disabled', true);
+
     var packages = [];
     var checklists = [];
     var pcCheck = null;
-    var valid = true; 
-
+    var valid = true;
 
     var files = $('#file-input')[0].files;
     var imagpreview = parseInt($('#hd_imageListcnt').val(), 10) || 0;
@@ -189,7 +192,7 @@ $('#saveButton').on('click', function () {
             icon: 'error',
             confirmButtonText: 'ตกลง'
         });
-        valid = false; 
+        valid = false;
     }
 
     $('div.container-xl.mb-3').each(function (index) {
@@ -235,7 +238,7 @@ $('#saveButton').on('click', function () {
             icon: 'error',
             confirmButtonText: 'ตกลง'
         });
-        valid = false; 
+        valid = false;
     }
 
     var pcRadioChecked = $('#pc-radio').is(':checked');
@@ -248,7 +251,7 @@ $('#saveButton').on('click', function () {
                 icon: 'error',
                 confirmButtonText: 'ตกลง'
             });
-            valid = false; 
+            valid = false;
         } else {
             pcCheck = {
                 UnitFormID: packages[0]?.UnitFormID,
@@ -259,14 +262,15 @@ $('#saveButton').on('click', function () {
         }
     }
 
-    if (valid) {
+    if (valid)
+    {
 
         Swal.fire({
             title: 'กำลังบันทึก...',
             text: 'กรุณารอสักครู่กำลังบันทึกข้อมูล.',
             allowOutsideClick: false,
             didOpen: () => {
-                Swal.showLoading(); 
+                Swal.showLoading();
             }
         });
 
@@ -301,7 +305,7 @@ $('#saveButton').on('click', function () {
             processData: false,
             data: data,
             success: function (res) {
-                Swal.close(); 
+                Swal.close();
                 if (res.success) {
                     Swal.fire({
                         title: 'สำเร็จ!',
@@ -321,21 +325,29 @@ $('#saveButton').on('click', function () {
                         confirmButtonText: 'ตกลง'
                     });
                 }
+                $('#saveButton').prop('disabled', true); 
             },
             error: function (xhr, status, error) {
-                Swal.close(); // Close the loading indicator
+                Swal.close(); 
                 Swal.fire({
                     title: 'ผิดพลาด!',
                     text: 'บันทึกข้อมูลไม่สำเร็จ',
                     icon: 'error',
                     confirmButtonText: 'ตกลง'
                 });
+                $('#saveButton').prop('disabled', true); 
             }
         });
     }
+    else
+    {
+        $('#saveButton').prop('disabled', false); 
+    }
+
 
     return false;
 });
+
 
 function deleteImage(resourceId) {
     Swal.fire({

@@ -228,7 +228,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                 .Except(model.MappingProject) // Perform Except with the model's list
                                                 .Cast<Guid?>()          // Cast back to nullable GUIDs if needed
                                                 .ToList();
-
+                
                 if (checkListMapping != null && checkListMapping.Any())
                 {
                     foreach (var permission in checkListMapping)
@@ -336,28 +336,28 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public dynamic DetailUser(Guid userId)
         {
-            var query = (from user in _context.tm_User
-                         join pst in _context.tm_Position on user.PositionID equals pst.ID
-                         join ur in _context.tr_UserResource on user.ID equals ur.UserID into groupUr
-                         from ur in groupUr.DefaultIfEmpty()
-                         join r in _context.tm_Resource on ur.ResourceID equals r.ID into groupR
-                         from r in groupR.DefaultIfEmpty()
-                         where user.ID == userId
-                               && user.FlagActive == true
-                               && (r.FlagActive == true || r.ID == null)
-                         select new
-                         {
-                             user.ID,
-                             user.FirstName,
-                             user.LastName,
-                             user.Email,
-                             user.Mobile,
-                             user.BUID,
-                             user.RoleID,
-                             user.PositionID,
-                             pst.Name,
-                             r.FilePath
-                         }).FirstOrDefault();
+            var query = (from u in _context.tm_User
+                          join p in _context.tm_Position on u.PositionID equals p.ID
+                          join ur in _context.tr_UserResource on u.ID equals ur.UserID into groupUr
+                          from ur in groupUr.DefaultIfEmpty()
+                          join r in _context.tm_Resource on ur.ResourceID equals r.ID into groupR
+                          from r in groupR.DefaultIfEmpty()
+                          where u.ID == userId
+                                && u.FlagActive == true
+                                && (r.FlagActive == true || r.ID == Guid.Empty)
+                          select new
+                          {
+                              u.ID,
+                              u.FirstName,
+                              u.LastName,
+                              u.Email,
+                              u.Mobile,
+                              u.BUID,
+                              u.RoleID,
+                              u.PositionID,
+                              PositionName = p.Name,
+                              r.FilePath
+                          }).FirstOrDefault();
 
             return query;
         }

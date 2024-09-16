@@ -60,6 +60,10 @@
         margin: 0;
     }
 
+    #chatIcon {
+            color: #ff0303;
+    }
+
     #chatMessages {
         padding: 15px;
         height: 300px;
@@ -239,7 +243,7 @@
                             @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-controller="PMFormcheck" asp-action="Index">
+                                    <a class="nav-link" asp-controller="MyTaskPM" asp-action="Index">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
@@ -259,7 +263,7 @@
                             @if (ViewBag.UserRole == SystemConstant.UserRole.PJM.ToString())
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-controller="PJMFormcheck" asp-action="Index">
+                                    <a class="nav-link" asp-controller="MyTaskPJM" asp-action="Index">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
@@ -275,34 +279,25 @@
                                     </a>
                                 </li>
                             }
-                            @* <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
-                    <path d="M3.5 11.5l1.5 1.5l2.5 -2.5" />
-                    <path d="M3.5 17.5l1.5 1.5l2.5 -2.5" />
-                    <path d="M11 6l9 0" />
-                    <path d="M11 12l9 0" />
-                    <path d="M11 18l9 0" />
-                </svg>
-                <span class="nav-link-title">
-                    To do
-                </span>
-            </a>
-            <div class="dropdown-menu">
-                <div class="dropdown-menu-columns">
-                    <div class="dropdown-menu-column">
-                        <a class="dropdown-item" asp-controller="PMFormcheck" asp-action="Index">
-                            PM
-                        </a>
-                        <a class="dropdown-item" asp-controller="PJMFormcheck" asp-action="Index">
-                            PJM
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </li> *@
+                            @if (ViewBag.UserRole == SystemConstant.UserRole.PE.ToString())
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="MyTaskPE" asp-action="Index">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M3.5 11.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M3.5 17.5l1.5 1.5l2.5 -2.5" />
+                                            <path d="M11 6l9 0" />
+                                            <path d="M11 12l9 0" />
+                                            <path d="M11 18l9 0" />
+                                        </svg>
+                                        <span class="nav-link-title">
+                                            My Task
+                                        </span>
+                                    </a>
+                                </li>
+                            }
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-device-desktop">
@@ -466,7 +461,7 @@
                         <div class="col-12 col-lg-auto mt-3 mt-lg-0">
                             <ul class="list-inline list-inline-dots mb-0">
                                 <li class="list-inline-item">
-                                    © สงวนลิขสิทธิ์ พ.ศ. 2566 บริษัท แอสเซทไวส์ จำกัด (มหาชน) All rights reserved.
+                                    © สงวนลิขสิทธิ์ พ.ศ. 2567 บริษัท แอสเซทไวส์ จำกัด (มหาชน) All rights reserved.
                                 </li>
                                 <li class="list-inline-item">
                                 </li>

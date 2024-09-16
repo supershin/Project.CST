@@ -118,5 +118,149 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                 }
             }
         }
+
+        public override List<PEMyTaskModel> sp_get_mytask_pe(PEMyTaskModel en)
+        {
+            using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
+            {
+                SqlCommand SqlCmd = new SqlCommand("sp_get_mytask", SqlCon);
+                try
+                {
+                    SqlCon.Open();
+                    SqlTransaction Trans = SqlCon.BeginTransaction();
+                    SqlCmd.Transaction = Trans;
+                    SqlCmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = en.act;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = en.unit_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@project_id", SqlDbType.NVarChar)).Value = en.project_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = en.unit_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@user_id", SqlDbType.NVarChar)).Value = en.user_id ?? (object)DBNull.Value;
+                    switch (en.act)
+                    {
+                        case "listPEtask":
+                            return sp_get_mytask_pe_ListReader(ExecuteReader(SqlCmd));
+
+                        default:
+                            return new List<PEMyTaskModel>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Stored name : sp_get_mytask");
+                    Log.Error("SEND pram1 Act (nvarchar) : {Act}", en.act);
+                    Log.Error("SEND pram2 unit_id (nvarchar) : {Unit_id}", en.unit_id);
+                    Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", en.project_id);
+                    Log.Error("SEND pram4 unit_status (int) : {Unit_status}", en.unit_status);
+                    Log.Error("SEND pram5 user_id (int) : {user_id}", en.user_id);
+                    Log.Error(ex.ToString());
+                    Log.Error("=========== END ===========");
+
+                    return new List<PEMyTaskModel>();
+                }
+                finally
+                {
+                    SqlCmd.Dispose();
+                    SqlCon.Close();
+                    SqlCon.Dispose();
+                }
+            }
+        }
+
+        public override List<PMMyTaskModel> sp_get_mytask_pm(PMMyTaskModel en)
+        {
+            using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
+            {
+                SqlCommand SqlCmd = new SqlCommand("sp_get_mytask", SqlCon);
+                try
+                {
+                    SqlCon.Open();
+                    SqlTransaction Trans = SqlCon.BeginTransaction();
+                    SqlCmd.Transaction = Trans;
+                    SqlCmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = en.act;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = en.unit_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@project_id", SqlDbType.NVarChar)).Value = en.project_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = en.unit_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@user_id", SqlDbType.NVarChar)).Value = en.user_id ?? (object)DBNull.Value;
+                    switch (en.act)
+                    {
+                        case "listPMtask":
+                            return sp_get_mytask_pm_ListReader(ExecuteReader(SqlCmd));
+
+                        default:
+                            return new List<PMMyTaskModel>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Stored name : sp_get_mytask");
+                    Log.Error("SEND pram1 Act (nvarchar) : {Act}", en.act);
+                    Log.Error("SEND pram2 unit_id (nvarchar) : {Unit_id}", en.unit_id);
+                    Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", en.project_id);
+                    Log.Error("SEND pram4 unit_status (int) : {Unit_status}", en.unit_status);
+                    Log.Error("SEND pram5 user_id (int) : {user_id}", en.user_id);
+                    Log.Error(ex.ToString());
+                    Log.Error("=========== END ===========");
+
+                    return new List<PMMyTaskModel>();
+                }
+                finally
+                {
+                    SqlCmd.Dispose();
+                    SqlCon.Close();
+                    SqlCon.Dispose();
+                }
+            }
+        }
+
+        public override List<PJMMyTaskModel> sp_get_mytask_pjm(PJMMyTaskModel en)
+        {
+            using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
+            {
+                SqlCommand SqlCmd = new SqlCommand("sp_get_mytask", SqlCon);
+                try
+                {
+                    SqlCon.Open();
+                    SqlTransaction Trans = SqlCon.BeginTransaction();
+                    SqlCmd.Transaction = Trans;
+                    SqlCmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = en.act;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = en.unit_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@project_id", SqlDbType.NVarChar)).Value = en.project_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = en.unit_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@user_id", SqlDbType.NVarChar)).Value = en.user_id ?? (object)DBNull.Value;
+                    switch (en.act)
+                    {
+                        case "listPJMtask":
+                            return sp_get_mytask_pjm_ListReader(ExecuteReader(SqlCmd));
+
+                        default:
+                            return new List<PJMMyTaskModel>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Stored name : sp_get_mytask");
+                    Log.Error("SEND pram1 Act (nvarchar) : {Act}", en.act);
+                    Log.Error("SEND pram2 unit_id (nvarchar) : {Unit_id}", en.unit_id);
+                    Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", en.project_id);
+                    Log.Error("SEND pram4 unit_status (int) : {Unit_status}", en.unit_status);
+                    Log.Error("SEND pram5 user_id (int) : {user_id}", en.user_id);
+                    Log.Error(ex.ToString());
+                    Log.Error("=========== END ===========");
+
+                    return new List<PJMMyTaskModel>();
+                }
+                finally
+                {
+                    SqlCmd.Dispose();
+                    SqlCon.Close();
+                    SqlCon.Dispose();
+                }
+            }
+        }
     }
 }

@@ -1,7 +1,11 @@
 ﻿using Microsoft.Data.SqlClient.Server;
 using Newtonsoft.Json.Linq;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
+using System.Text.RegularExpressions;
+using System.Transactions;
+using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
 using static Project.ConstructionTracking.Web.Models.UnLockPassConditionModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
@@ -53,6 +57,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               GroupID = t1.GroupID,
                               GroupName = t7.Name,
                               LockStatusID = t1.LockStatusID,
+                              UnitFormStatusID = t2.StatusID,
                               StatusID = t1.StatusID,
                               PE_Remark = t1.PE_Remark,
                               PE_ActionDate = t2pe.ActionDate.HasValue ? t2pe.ActionDate.Value.ToString("dd/MM/yyyy") : "",
@@ -100,17 +105,34 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public void RequestUnlock(UnLockPassConditionModel.UpdateUnlockPC model)
         {
-
-
-            if (model.RoleID == 1)
+            var transactionOptions = new TransactionOptions
             {
-                PERequestUnlock(model);
-            }
-            else {
-                PMRequestUnlock(model);
-            }
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TimeSpan.FromMinutes(3)
+            };
 
-            _context.SaveChanges();
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            {
+                try
+                {
+                    if (model.RoleID == 1)
+                    {
+                        PERequestUnlock(model);
+                    }
+                    else
+                    {
+                        PMRequestUnlock(model);
+                    }
+
+                    _context.SaveChanges();
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+                }
+            }
         }
 
         public void PERequestUnlock(UnLockPassConditionModel.UpdateUnlockPC model)
@@ -119,7 +141,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             if (passCondition != null)
             {
-                passCondition.LockStatusID = 8;
+                //passCondition.LockStatusID = 8;
                 passCondition.StatusID = 12;
 
                 // Check if model.PEUnLock_Remark has a value
@@ -127,7 +149,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 {
                     if (passCondition.PEUnLock_Remark != model.PEUnLock_Remark)
                     {
-                        passCondition.PEUnLock_Remark = model.PEUnLock_Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
+                        passCondition.PEUnLock_Remark = model.PEUnLock_Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
                     }
                 }
                 else {
@@ -208,47 +230,76 @@ namespace Project.ConstructionTracking.Web.Repositories
                 }
             }
 
+            var UnitForm = _context.tr_UnitForm.FirstOrDefault(tr => tr.ID == model.UnitFormID);
+            if (UnitForm != null)
+            {
+                UnitForm.StatusID = SystemConstant.Unit_Form_Status.PE_REQ_Unlock;
+                UnitForm.UpdateBy = model.UserID;
+                UnitForm.UpdateDate = DateTime.Now;
+
+                _context.tr_UnitForm.Update(UnitForm);
+            }
 
             _context.SaveChanges();
         }
 
         public void PMRequestUnlock(UnLockPassConditionModel.UpdateUnlockPC model)
         {
+
             var passCondition = _context.tr_UnitFormPassCondition.FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.ID == model.PC_ID && pc.FlagActive == true);
 
             if (passCondition != null)
             {
-                passCondition.StatusID = model.Action == "Approved" ? 13 : 14;
-                // Check if model.PEUnLock_Remark has a value
-                if (!string.IsNullOrEmpty(model.PMUnLock_Remark))
-                {
-                    if (passCondition.PMUnLock_Remark != model.PMUnLock_Remark)
-                    {
-                        passCondition.PMUnLock_Remark = model.PMUnLock_Remark + " : วันที่ " + DateTime.Now.ToString("dd/MM/yyyy");
-                    }                 
-                }
-                else
-                {
-                    passCondition.PMUnLock_Remark = "";
-                }
+                passCondition.StatusID = model.Action == "Reject" ? 14 : 13;
+                passCondition.LockStatusID = model.Action == "Reject" ? 7 : 8;
+                passCondition.PMUnLock_Remark = !string.IsNullOrEmpty(model.PMUnLock_Remark)
+                    ? model.PMUnLock_Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now)
+                    : "";
+
                 passCondition.UpdateBy = model.UserID;
                 passCondition.UpdateDate = DateTime.Now;
                 _context.tr_UnitFormPassCondition.Update(passCondition);
+
+                _context.SaveChanges(); 
+
+                if (model.Action != "Reject")
+                {
+                    bool allItemsHaveSameStatus = _context.tr_UnitFormPassCondition
+                        .Where(t => t.UnitFormID == model.UnitFormID)
+                        .All(t => t.StatusID == 13);
+
+                    if (allItemsHaveSameStatus)
+                    {
+                        var unitForm = _context.tr_UnitForm.FirstOrDefault(tr => tr.ID == model.UnitFormID);
+                        if (unitForm != null)
+                        {
+                            unitForm.StatusID = SystemConstant.Unit_Form_Status.PM_Approve_Unlock;
+                            unitForm.UpdateBy = model.UserID;
+                            unitForm.UpdateDate = DateTime.Now;
+
+                            _context.tr_UnitForm.Update(unitForm);
+                        }
+                    }
+                }
             }
 
+            // Add action log
             var actionLog = new tr_UnitFormActionLog
             {
                 UnitFormID = model.UnitFormID,
                 GroupID = model.GroupID,
                 RoleID = model.RoleID,
-                Remark = "PM/"+ model.Action + "/Unlock/UnitFormPassCondition",
+                Remark = "PM/" + model.Action + "/Unlock/UnitFormPassCondition",
                 ActionDate = DateTime.Now,
                 CraeteDate = DateTime.Now,
                 CreateBy = model.UserID
             };
+
             _context.tr_UnitFormActionLog.Add(actionLog);
-            _context.SaveChanges();
         }
+
+
+
 
     }
 }

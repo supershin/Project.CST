@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient.Server;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Services;
 
@@ -10,11 +11,13 @@ namespace Project.ConstructionTracking.Web.Controllers
 
         private readonly IFormChecklistService _FormChecklistService;
         private readonly IHostEnvironment _hosting;
+        private readonly IGetDDLService _getDDLService;
 
-        public FormCheckListController(IFormChecklistService FormChecklistService, IHostEnvironment hosting)
+        public FormCheckListController(IFormChecklistService FormChecklistService, IHostEnvironment hosting, IGetDDLService getDDLService)
         {
             _FormChecklistService = FormChecklistService;
             _hosting = hosting;
+            _getDDLService = getDDLService;
         }
 
         public IActionResult Index(int FormID,Guid unitId,int GroupID,string GobackTo)
@@ -45,6 +48,27 @@ namespace Project.ConstructionTracking.Web.Controllers
             var filterData = new FormCheckListModel.Form_getFilterData { GroupID = GroupID , UnitFormID = UnitFormData?.UnitFormID };
             List<FormCheckListModel.Form_getListPackages> listChecklist = _FormChecklistService.GetFormCheckList(filterData);
 
+            if (listChecklist != null && listChecklist.Count > 0 && listChecklist[0].UpDatedate != null)
+            {
+                ViewBag.StatusUpdateDate = FormatExtension.FormatDateToDayMonthNameYearTime(listChecklist[0].UpDatedate);
+            }
+            else
+            {
+                ViewBag.StatusUpdateDate = string.Empty; 
+            }
+
+            if (listChecklist != null && listChecklist.Count > 0 && listChecklist[0].UpDateby != null)
+            {
+                var ddlModel = new GetDDL { Act = "UserName", ValueGuid = listChecklist[0].UpDateby };
+                List<GetDDL> ListVender = _getDDLService.GetDDLList(ddlModel);
+                ViewBag.StatusUpdateBy = ListVender[0].Text;
+            }
+            else
+            {
+                ViewBag.StatusUpdateBy = string.Empty;
+            }
+
+
             var statusFilterData = new FormCheckListModel.Form_getFilterData
             {
                 ProjectID = UnitFormData.ProjectID,
@@ -67,7 +91,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.PJM_StatusID = status.PJM_StatusID;
                 ViewBag.PJM_ActionType = status.PJM_ActionType;
                 ViewBag.StatusActionType = status.ActionType;
-                ViewBag.StatusUpdateDate = status.UpdateDate;
+                //ViewBag.StatusUpdateDate = status.UpdateDate;
             }
 
             var viewModel = new FormChecklistViewModel

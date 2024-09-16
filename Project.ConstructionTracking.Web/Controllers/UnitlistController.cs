@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Services;
 using System.Collections.Generic;
@@ -63,20 +64,20 @@ namespace Project.ConstructionTracking.Web.Controllers
         [HttpPost]
         public IActionResult GoToByRole(Guid projectId, string projectName, Guid unitId , string UnitCode , string UnitStatusName)
         {
-            var userName = Request.Cookies["CST.UserName"];
-            if (userName == "PE")
+            var RoleID = Request.Cookies["CST.Role"];
+            if (RoleID == SystemConstant.UserRole.PE.ToString())
             {
                 return RedirectToAction("Index", "SummaryUnitForm", new { unitId, projectId, projectName , UnitCode , UnitStatusName });
             }
-            else if (userName == "PM")
+            else if (RoleID == SystemConstant.UserRole.PM.ToString())
             {
                 return RedirectToAction("Index", "SummaryUnitForm", new { unitId, projectId, projectName, UnitCode, UnitStatusName });
             }
-            else if (userName == "PJM")
+            else if (RoleID == SystemConstant.UserRole.PJM.ToString())
             {
                 return RedirectToAction("Index", "SummaryUnitForm", new { unitId, projectId, projectName, UnitCode, UnitStatusName });
             }
-            else if (userName == "QC")
+            else if (RoleID == SystemConstant.UserRole.QC.ToString())
             {
                 return RedirectToAction("Index", "SummaryUnitQC", new { projectId, projectName, unitId });
             }

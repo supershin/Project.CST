@@ -154,39 +154,31 @@
                         @foreach (var unit in Model)
                         {
                             <div class="col unit-card" data-unit-code="@unit.UnitCode">
-                                <div class="card" id="card-unit">
-                                    <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
-                                    <div class="card-body text-center">
-                                        <h5 class="card-title">@unit.UnitCode</h5>
-                                        <p class="card-text">
-                                            สถานะ : @unit.UnitStatusName
-                                        </p>
-                                        @if (!string.IsNullOrEmpty(unit.FormName))
-                                        {
-                                            <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
-                                                <input type="hidden" name="projectId" value="@projectId" />
-                                                <input type="hidden" name="projectName" value="@projectName" />
-                                                <input type="hidden" name="unitId" value="@unit.UnitID" />
-                                                <input type="hidden" name="UnitCode" value="@unit.UnitCode" />
-                                                <input type="hidden" name="UnitStatusName" value="@unit.UnitStatusName" />
-                                                <button type="submit" class="btn btn-primary btn-sm">@unit.FormName</button>
-                                            </form>
-                                        }
-                                        else
-                                        {
-                                            <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
-                                                <input type="hidden" name="projectId" value="@projectId" />
-                                                <input type="hidden" name="projectName" value="@projectName" />
-                                                <input type="hidden" name="unitId" value="@unit.UnitID" />
-                                                <input type="hidden" name="UnitCode" value="@unit.UnitCode" />
-                                                <input type="hidden" name="UnitStatusName" value="@unit.UnitStatusName" />
-                                                <button type="submit" class="btn btn-secondary btn-sm">ยังไม่เริ่มตรวจ</button>
-                                            </form>                                           
-                                        }
+                                <form asp-controller="Unitlist" asp-action="GoToByRole" method="post" style="cursor: pointer;" onclick="this.submit()">
+                                    <input type="hidden" name="projectId" value="@projectId" />
+                                    <input type="hidden" name="projectName" value="@projectName" />
+                                    <input type="hidden" name="unitId" value="@unit.UnitID" />
+                                    <input type="hidden" name="UnitCode" value="@unit.UnitCode" />
+                                    <input type="hidden" name="UnitStatusName" value="@unit.UnitStatusName" />
+                                    <div class="card" id="card-unit">
+                                        <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title">@unit.UnitCode</h5>
+                                            <p class="card-text">สถานะ : @unit.UnitStatusName</p>
+                                            @if (!string.IsNullOrEmpty(unit.FormName))
+                                            {
+                                                <button type="button" class="btn btn-primary btn-sm">@unit.FormName</button>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" class="btn btn-secondary btn-sm">ยังไม่เริ่มตรวจ</button>
+                                            }
+                                        </div>
                                     </div>
-                                </div>
+                                </form>
                             </div>
                         }
+
                     </div>
                 </div>
             </div>
@@ -234,29 +226,39 @@
             var $unitList = $("#unit-list");
             $unitList.empty();
             $.each(units, function (index, unit) {
-               
+
+                var baseUrl = '@(ViewBag.baseUrl)';
+
                 var unitCard = `
-                        <div class="col unit-card" data-unit-code="${unit.UnitCode}">
-                            <div class="card" id="card-unit">
-                                <img src="` + baseUrl + `img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">${unit.UnitCode}</h5>
-                                    <p class="card-text">
-                                        สถานะ : ${unit.UnitStatusName}
-                                    </p>
-                                    ${unit.FormName ? `<form action="@Url.Action("GoToByRole", "Unitlist")" method="post">
-                                                            <input type="hidden" name="projectId" value="@projectId" />
-                                                            <input type="hidden" name="projectName" value="@projectName" />
-                                                            <input type="hidden" name="unitId" value="${unit.UnitID}" />
-                                                            <input type="hidden" name="UnitCode" value="${unit.UnitCode}" />
-                                                            <input type="hidden" name="UnitStatusName" value="${unit.UnitStatusName}" />
-                                                            <button type="submit" class="btn btn-primary btn-sm">${unit.FormName}</button>
-                                                        </form>`
-                                        : `<button type="button" class="btn btn-secondary btn-sm">ยังไม่เริ่มตรวจ</button>`
-                                    }
-                                </div>
-                            </div>
-                        </div>`;
+                                <div class="col unit-card" data-unit-code="${unit.UnitCode}">
+                                    <div class="card" id="card-unit">
+                                        <img src="${baseUrl}img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title">${unit.UnitCode}</h5>
+                                            <p class="card-text">
+                                                สถานะ : ${unit.UnitStatusName}
+                                            </p>
+                                            ${unit.FormName ? `<form action="${baseUrl}Unitlist/GoToByRole" method="post">
+                                                                    <input type="hidden" name="projectId" value="@projectId" />
+                                                                    <input type="hidden" name="projectName" value="@projectName" />
+                                                                    <input type="hidden" name="unitId" value="${unit.UnitID}" />
+                                                                    <input type="hidden" name="UnitCode" value="${unit.UnitCode}" />
+                                                                    <input type="hidden" name="UnitStatusName" value="${unit.UnitStatusName}" />
+                                                                    <button type="submit" class="btn btn-primary btn-sm">${unit.FormName}</button>
+                                                                </form>`
+                                                : `<form action="${baseUrl}Unitlist/GoToByRole" method="post">
+                                                        <input type="hidden" name="projectId" value="@projectId" />
+                                                        <input type="hidden" name="projectName" value="@projectName" />
+                                                        <input type="hidden" name="unitId" value="${unit.UnitID}" />
+                                                        <input type="hidden" name="UnitCode" value="${unit.UnitCode}" />
+                                                        <input type="hidden" name="UnitStatusName" value="${unit.UnitStatusName}" />
+                                                        <button type="submit" class="btn btn-secondary btn-sm">ยังไม่เริ่มตรวจ</button>
+                                                   </form>`
+                                            }
+                                        </div>
+                                    </div>
+                                </div>`;
+
                 $unitList.append(unitCard);
             });
         }
