@@ -2,7 +2,7 @@
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class QC5CheckController : Controller
+    public class QC5CheckController : BaseController
     {
         public IActionResult Index()
         {

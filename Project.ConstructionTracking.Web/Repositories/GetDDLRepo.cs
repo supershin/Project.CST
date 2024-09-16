@@ -94,6 +94,19 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                  return UserName.ToList();
 
+
+                case "ProjectAdmin":
+                    var ListProjectAdmint = from t1 in _context.tm_Project
+                                      where t1.FlagActive == true 
+                                      select new GetDDL
+                                      {
+                                          ValueGuid = t1.ProjectID,
+                                          Text = t1.ProjectName
+                                      };
+
+                 return ListProjectAdmint.ToList();
+
+
                 default:
 
                 return new List<GetDDL>();

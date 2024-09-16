@@ -79,7 +79,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
             else if (RoleID == SystemConstant.UserRole.QC.ToString())
             {
-                return RedirectToAction("Index", "SummaryUnitQC", new { projectId, projectName, unitId });
+                return RedirectToAction("Index", "QC5Check", new { projectId, unitId });
             }
             else
             {

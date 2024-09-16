@@ -13,6 +13,7 @@
         {
             public const int PROJECT_TYPE = 1;
             public const int UNIT_STATUS_ID = 4;
+            public const int QC5RadioChecklist = 9;
         }
 
         public static class Unit_Status
