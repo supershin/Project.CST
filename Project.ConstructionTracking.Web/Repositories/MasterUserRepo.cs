@@ -248,7 +248,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                         }
                     }
                 }
-
                 else
                 {
                     // If checkListMapping is null or empty, create new permissions
@@ -269,6 +268,34 @@ namespace Project.ConstructionTracking.Web.Repositories
                     }
 
                     _context.SaveChanges(); // Save all new permissions
+                }
+
+                List<Guid?> checkListUpdate = permissionList
+                                                .Where(p => p.HasValue) // Ensure you're working with non-nullable GUIDs if necessary
+                                                .Select(p => p.Value)   // Select non-nullable values
+                                                .Intersect(model.MappingProject) // Perform Except with the model's list
+                                                .Cast<Guid?>()          // Cast back to nullable GUIDs if needed
+                                                .ToList();
+
+                // if find data permission is false 
+                if(checkListUpdate != null && checkListUpdate.Any())
+                {
+                    foreach (var permission in checkListUpdate)
+                    {
+                        tr_ProjectPermission? updatePermission = _context.tr_ProjectPermission
+                                                                .Where(o => o.UserID == model.UserID
+                                                                && o.ProjectID == permission
+                                                                && o.FlagActive == false).FirstOrDefault();
+                        if (updatePermission != null)
+                        {
+                            updatePermission.FlagActive = true;
+                            updatePermission.UpdateBy = model.RequestUserID;
+                            updatePermission.UpdateDate = DateTime.Now;
+
+                            _context.tr_ProjectPermission.Update(updatePermission);
+                            _context.SaveChanges();
+                        }
+                    }
                 }
             }
             else
