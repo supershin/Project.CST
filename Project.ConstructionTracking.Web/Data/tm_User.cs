@@ -10,6 +10,7 @@ namespace Project.ConstructionTracking.Web.Data
     {
         public tm_User()
         {
+            tr_PE_Unit = new HashSet<tr_PE_Unit>();
             tr_ProjectPermission = new HashSet<tr_ProjectPermission>();
             tr_QC_UnitCheckList = new HashSet<tr_QC_UnitCheckList>();
         }
@@ -55,6 +56,8 @@ namespace Project.ConstructionTracking.Web.Data
         [ForeignKey("RoleID")]
         [InverseProperty("tm_User")]
         public virtual tm_Role? Role { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<tr_PE_Unit> tr_PE_Unit { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<tr_ProjectPermission> tr_ProjectPermission { get; set; }
         [InverseProperty("QCSign")]

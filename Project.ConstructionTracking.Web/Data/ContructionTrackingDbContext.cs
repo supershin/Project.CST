@@ -45,7 +45,9 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tm_Vendor> tm_Vendor { get; set; } = null!;
         public virtual DbSet<tr_CompanyVendor> tr_CompanyVendor { get; set; } = null!;
         public virtual DbSet<tr_CompanyVendorProject> tr_CompanyVendorProject { get; set; } = null!;
+        public virtual DbSet<tr_Document> tr_Document { get; set; } = null!;
         public virtual DbSet<tr_Form_QCCheckList> tr_Form_QCCheckList { get; set; } = null!;
+        public virtual DbSet<tr_PE_Unit> tr_PE_Unit { get; set; } = null!;
         public virtual DbSet<tr_ProjectModelForm> tr_ProjectModelForm { get; set; } = null!;
         public virtual DbSet<tr_ProjectPermission> tr_ProjectPermission { get; set; } = null!;
         public virtual DbSet<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; } = null!;
@@ -434,6 +436,11 @@ namespace Project.ConstructionTracking.Web.Data
                     .HasConstraintName("FK_tr_CompanyProject_tm_Project");
             });
 
+            modelBuilder.Entity<tr_Document>(entity =>
+            {
+                entity.Property(e => e.ID).ValueGeneratedNever();
+            });
+
             modelBuilder.Entity<tr_Form_QCCheckList>(entity =>
             {
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
@@ -449,6 +456,19 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tr_Form_QCCheckList)
                     .HasForeignKey(d => d.FormID)
                     .HasConstraintName("FK_tr_Form_QCCheckList_tm_Form");
+            });
+
+            modelBuilder.Entity<tr_PE_Unit>(entity =>
+            {
+                entity.HasOne(d => d.Unit)
+                    .WithMany(p => p.tr_PE_Unit)
+                    .HasForeignKey(d => d.UnitID)
+                    .HasConstraintName("FK_tr_PE_Unit_tm_Unit");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.tr_PE_Unit)
+                    .HasForeignKey(d => d.UserID)
+                    .HasConstraintName("FK_tr_PE_Unit_tm_User");
             });
 
             modelBuilder.Entity<tr_ProjectModelForm>(entity =>
