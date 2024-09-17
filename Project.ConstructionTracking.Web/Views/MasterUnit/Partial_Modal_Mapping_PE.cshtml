@@ -1,0 +1,37 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div class="modal fade" id="modal-mapping-pe" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-md" role="document">
+        <div id="modal-format" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Mapping PE/SE Unit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" id="mapping-unit-id" />
+                    <input type="hidden" id="mapping-project-id" />
+                    <div class="col-lg-12 mb-3">
+                        <label class="form-label">รายชื่อ PE/SE</label>
+                        <select class="form-control" id="mapping-select-pe">
+
+                        </select>
+                        <span id="mapping-pe-error" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </a>
+                <button href="#" class="btn btn-success ms-auto" id="mapping-pe-save">
+                    บันทึก
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
