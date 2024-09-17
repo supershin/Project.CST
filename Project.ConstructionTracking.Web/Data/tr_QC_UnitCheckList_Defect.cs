@@ -23,13 +23,14 @@ namespace Project.ConstructionTracking.Web.Data
         public int? StatusID { get; set; }
         [Unicode(false)]
         public string? Remark { get; set; }
+        public bool? IsMajorDefect { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
-        public int? CreateBy { get; set; }
+        public Guid? CreateBy { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? UpdateDate { get; set; }
-        public int? UpdateBy { get; set; }
+        public Guid? UpdateBy { get; set; }
 
         [InverseProperty("Defect")]
         public virtual ICollection<tr_QC_UnitCheckList_Resource> tr_QC_UnitCheckList_Resource { get; set; }

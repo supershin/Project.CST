@@ -42,6 +42,17 @@
             public const string ADMIN = "Administrator";
         }
 
+        public static class Unit_Form_QC
+        {
+            public const int QC1 = 12;
+            public const int QC2 = 13;
+            public const int QC3 = 14;
+            public const int QC4_1 = 15;
+            public const int QC4_2 = 16;
+            public const int QC4 = 26;
+            public const int QC5 = 17;
+        }
+
         public static class Unit_Form_Status
         {
             public const int PE_Save = 1; 

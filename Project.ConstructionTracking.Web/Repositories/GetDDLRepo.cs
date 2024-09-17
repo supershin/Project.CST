@@ -94,7 +94,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                  return UserName.ToList();
 
-
                 case "ProjectAdmin":
                     var ListProjectAdmint = from t1 in _context.tm_Project
                                       where t1.FlagActive == true 
@@ -104,8 +103,52 @@ namespace Project.ConstructionTracking.Web.Repositories
                                           Text = t1.ProjectName
                                       };
 
-                 return ListProjectAdmint.ToList();
+                return ListProjectAdmint.ToList();
 
+                case "DefectArea":
+                    var ListDefectArea = from t1 in _context.tm_DefectArea
+                                         where t1.FlagActive == true
+                                               && t1.ProjectTypeID == Model.ID
+                                               && (string.IsNullOrEmpty(Model.searchTerm) || t1.Name.Contains(Model.searchTerm))
+                                         orderby t1.Name
+                                         select new GetDDL
+                                         {
+                                             Value = t1.ID,
+                                             Text = t1.Name
+                                         };
+
+                    return ListDefectArea.ToList();
+
+                case "DefectType":
+                    var ListDefectType = from t1 in _context.tm_DefectType
+                                         join t2 in _context.tm_DefectAreaType_Mapping
+                                         on t1.ID equals t2.DefectTypeID into mappingGroup
+                                         from t2 in mappingGroup.DefaultIfEmpty() // Left join
+                                         where t1.FlagActive == 1
+                                               && t2.DefectAreaID == Model.ID
+                                               && (string.IsNullOrEmpty(Model.searchTerm) || t1.Name.Contains(Model.searchTerm))
+                                         orderby t1.Name
+                                         select new GetDDL
+                                         {
+                                             Value = t1.ID,
+                                             Text = t1.Name
+                                         };
+
+                    return ListDefectType.ToList();
+
+                case "DefectDescription":
+                    var ListDefectDescription = from t1 in _context.tm_DefectDescription
+                                                where t1.FlagActive == 1
+                                                      && t1.DefectTypeID == Model.ID
+                                                      && (string.IsNullOrEmpty(Model.searchTerm) || t1.Name.Contains(Model.searchTerm))
+                                                orderby t1.LineOrder
+                                                select new GetDDL
+                                                {
+                                                    Value = t1.ID,
+                                                    Text = t1.Name
+                                                };
+
+                    return ListDefectDescription.ToList();
 
                 default:
 

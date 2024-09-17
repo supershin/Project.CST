@@ -15,6 +15,7 @@ namespace Project.ConstructionTracking.Web.Models.QC5CheckModel
         public string? DefectDescriptionName { get; set; }
         public int? StatusID { get; set; }
         public string? Remark { get; set; }
+        public bool? IsMajorDefect { get; set; }
         public bool? FlagActive { get; set; }
         public List<QC5RadioCheckListModel>? ListRadioChecklist { get; set; }
     }
