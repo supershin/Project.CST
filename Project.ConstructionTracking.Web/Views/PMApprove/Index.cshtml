@@ -405,14 +405,14 @@
                                                    passconID="@group.PassConditionsID"
                                                    value="6"
                                                    onclick="toggleRadio(this, '@Model.ID')"
-                                                   @(group.PC_StatusID == 6 || group.PC_StatusID == 8 || group.PC_StatusID == 9 ||
-                                                   group.PC_StatusID == 10 || group.PC_StatusID == 11 || group.PC_StatusID == 12 ||
-                                                   group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "checked" : "")
+                                                   @(group.PC_StatusID == 6  || group.PC_StatusID == 8  || group.PC_StatusID == 9  ||
+                                                     group.PC_StatusID == 10 || group.PC_StatusID == 11 || group.PC_StatusID == 12 ||
+                                                     group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "checked" : "")
                                                    @(
                                                     (PM_Actiontype == "submit" &&
                                                     (UnitFormStatusID == null || UnitFormStatusID == 1 || UnitFormStatusID > 3 || group.PC_StatusID == 8 || group.PCFlageActive == false)) ||
                                                     (PJM_Actiontype == "submit" && group.PC_StatusID == 8 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
-                                                ? "disabled" : ""
+                                                     ? "disabled" : ""
                                                    )
                                             >
                                             <span class="form-check-label">ผ่านเพื่อส่ง PJM Head</span>
@@ -427,7 +427,9 @@
                                                    value="7"
                                                    onclick="toggleRadio(this, '@Model.ID')"
                                                    @(group.PC_StatusID == 7 ? "checked" : "")
-                                            @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (UnitFormStatusID == null || UnitFormStatusID == 1 || UnitFormStatusID > 3 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")>
+                                                   @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || 
+                                                    (UnitFormStatusID == null || UnitFormStatusID == 1 || UnitFormStatusID > 3 || 
+                                                     group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")>
                                           <span class="form-check-label">ไม่ผ่าน</span>
                                         </label>
                                     </div>
@@ -439,9 +441,13 @@
                                                   rows="1"
                                                   class="form-control"
                                                   placeholder="ระบุเหตุผลเพื่อขออนุมัติ"
-                                        @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (UnitFormStatusID == null || UnitFormStatusID == 1 || UnitFormStatusID > 3 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
-                                            ? "disabled"
-                                                : "")>@group.PM_RemarkPC</textarea>
+                                        @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || 
+                                                                       ( UnitFormStatusID == null || 
+                                                                         UnitFormStatusID == 1 || 
+                                                                         UnitFormStatusID > 3 || 
+                                                                         group.PCFlageActive == false) || 
+                                                                         ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
+                                                                         ? "disabled" : "")>@group.PM_RemarkPC</textarea>
                                     </div>
                                     @if (PJM_Actiontype == "submit")
                                     {

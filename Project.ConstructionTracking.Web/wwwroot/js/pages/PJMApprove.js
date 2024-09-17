@@ -102,7 +102,6 @@ function openModal(UnitFormID, GroupID, FormID, PC_ID) {
     myModal.show();
 }
 
-
 function deleteImage(resourceId) {
     Swal.fire({
         title: '',

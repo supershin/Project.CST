@@ -40,8 +40,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from t2pm in unitFormsPM.DefaultIfEmpty()
                           join t2PJm in _context.tr_UnitFormAction on new { t1.UnitFormID, RoleID = (int?)3 } equals new { t2PJm.UnitFormID, t2PJm.RoleID } into unitFormsPJM
                           from t2PJm in unitFormsPJM.DefaultIfEmpty()
-                          where t1.UnitFormID == filterData.UnitFormID
-                              && (filterData.GroupID == -1 || t1.GroupID == filterData.GroupID)
+                          where t1.UnitFormID == filterData.UnitFormID && t1.FlagActive == true && (filterData.GroupID == -1 || t1.GroupID == filterData.GroupID)
                               //&& (t1.StatusID == 8 || t1.StatusID == 12 || t1.StatusID == 13 || t1.StatusID == 14)
                           select new UnLockPassConditionModel.GetDataUnlockPC
                           {
@@ -265,7 +264,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 if (model.Action != "Reject")
                 {
                     bool allItemsHaveSameStatus = _context.tr_UnitFormPassCondition
-                        .Where(t => t.UnitFormID == model.UnitFormID)
+                        .Where(t => t.UnitFormID == model.UnitFormID && t.FlagActive == true)
                         .All(t => t.StatusID == 13);
 
                     if (allItemsHaveSameStatus)
