@@ -196,7 +196,7 @@ namespace Project.ConstructionTracking.Web.Services
 
 		public DetailUserResp DetailUser(Guid userID)
 		{
-			var query = _masterUserRepo.DetailUser(userID);
+    	    var query = _masterUserRepo.DetailUser(userID);
 
 			DetailUserResp resp = new DetailUserResp()
 			{

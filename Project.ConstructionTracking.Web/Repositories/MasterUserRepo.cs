@@ -214,112 +214,114 @@ namespace Project.ConstructionTracking.Web.Repositories
             edit.UpdateBy = model.RequestUserID;
 
             // Mapping project
-            List<Guid?> permissionList = _context.tr_ProjectPermission
+            List<tr_ProjectPermission>? permissionList = _context.tr_ProjectPermission
                                                 .Where(o => o.UserID == model.UserID)
-                                                .Select(o => o.ProjectID)
                                                 .ToList();
 
-            if(model.MappingProject != null && model.MappingProject.Count > 0)
+            // Separate active and inactive project IDs
+            List<Guid?> activeList = permissionList
+                .Where(o => o.FlagActive == true)
+                .Select(o => o.ProjectID)
+                .ToList();
+
+            List<Guid?> inActiveList = permissionList
+                .Where(o => o.FlagActive == false)
+                .Select(o => o.ProjectID)
+                .ToList();
+
+            List<Guid?> newList = null;
+
+            if (permissionList.Count > 0)
             {
-                // Ensure MappingProject is not null and handle nullable GUIDs
-                List<Guid?> checkListMapping = permissionList
-                                                .Where(p => p.HasValue) // Ensure you're working with non-nullable GUIDs if necessary
-                                                .Select(p => p.Value)   // Select non-nullable values
-                                                .Except(model.MappingProject) // Perform Except with the model's list
-                                                .Cast<Guid?>()          // Cast back to nullable GUIDs if needed
-                                                .ToList();
-                
-                if (checkListMapping != null && checkListMapping.Any())
+                if (model.MappingProject == null)
                 {
-                    foreach (var permission in checkListMapping)
-                    {
-                        tr_ProjectPermission? updatePermission = _context.tr_ProjectPermission
-                                                                .Where(o => o.UserID == model.UserID
-                                                                && o.ProjectID == permission
-                                                                && o.FlagActive == true).FirstOrDefault();
-                        if (updatePermission != null)
-                        {
-                            updatePermission.FlagActive = false;
-                            updatePermission.UpdateBy = model.RequestUserID;
-                            updatePermission.UpdateDate = DateTime.Now;
-
-                            _context.tr_ProjectPermission.Update(updatePermission);
-                            _context.SaveChanges();
-                        }
-                    }
+                    // If no projects are selected, deactivate all active projects
+                    UpdateMapping(model.UserID, activeList, false, model.RequestUserID);
                 }
                 else
                 {
-                    // If checkListMapping is null or empty, create new permissions
-                    foreach (var projectID in model.MappingProject)
+                    // Calculate new projects to be added
+                    newList = model.MappingProject.Except(activeList).Except(inActiveList).ToList();
+                    if (newList.Any())
                     {
-                        tr_ProjectPermission newPermission = new tr_ProjectPermission
-                        {
-                            UserID = model.UserID,
-                            ProjectID = projectID,
-                            FlagActive = true,
-                            CreateBy = model.RequestUserID,
-                            CraeteDate = DateTime.Now,
-                            UpdateDate = DateTime.Now,
-                            UpdateBy = model.RequestUserID
-                        };
-
-                        _context.tr_ProjectPermission.Add(newPermission);
+                        CreateMapping(model.UserID, newList, model.RequestUserID);
                     }
 
-                    _context.SaveChanges(); // Save all new permissions
-                }
-
-                List<Guid?> checkListUpdate = permissionList
-                                                .Where(p => p.HasValue) // Ensure you're working with non-nullable GUIDs if necessary
-                                                .Select(p => p.Value)   // Select non-nullable values
-                                                .Intersect(model.MappingProject) // Perform Except with the model's list
-                                                .Cast<Guid?>()          // Cast back to nullable GUIDs if needed
-                                                .ToList();
-
-                // if find data permission is false 
-                if(checkListUpdate != null && checkListUpdate.Any())
-                {
-                    foreach (var permission in checkListUpdate)
+                    // Deactivate projects that are no longer selected
+                    var projectsToDeactivate = activeList.Except(model.MappingProject).ToList();
+                    if (projectsToDeactivate.Any())
                     {
-                        tr_ProjectPermission? updatePermission = _context.tr_ProjectPermission
-                                                                .Where(o => o.UserID == model.UserID
-                                                                && o.ProjectID == permission
-                                                                && o.FlagActive == false).FirstOrDefault();
-                        if (updatePermission != null)
-                        {
-                            updatePermission.FlagActive = true;
-                            updatePermission.UpdateBy = model.RequestUserID;
-                            updatePermission.UpdateDate = DateTime.Now;
+                        UpdateMapping(model.UserID, projectsToDeactivate, false, model.RequestUserID);
+                    }
 
-                            _context.tr_ProjectPermission.Update(updatePermission);
-                            _context.SaveChanges();
-                        }
+                    // Activate inactive projects that are now selected
+                    var projectsToActivate = inActiveList.Intersect(model.MappingProject).ToList();
+                    if (projectsToActivate.Any())
+                    {
+                        UpdateMapping(model.UserID, projectsToActivate, true, model.RequestUserID);
                     }
                 }
             }
             else
             {
-                // Optionally, handle the case where model.MappingProject is null or empty
-                // For example, you might want to deactivate all permissions for the user
-                var allPermissions = _context.tr_ProjectPermission
-                                             .Where(o => o.UserID == model.UserID && o.FlagActive == true)
-                                             .ToList();
-
-                foreach (var permission in allPermissions)
+                // If there are no existing projects, create mappings for all selected projects
+                if (model.MappingProject != null && model.MappingProject.Any())
                 {
-                    permission.FlagActive = false;
-                    permission.UpdateBy = model.RequestUserID;
-                    permission.UpdateDate = DateTime.Now;
+                    CreateMapping(model.UserID, model.MappingProject, model.RequestUserID);
                 }
-
-                _context.SaveChanges();
             }
-
+            
             _context.tm_User.Update(edit);
             _context.SaveChanges();
 
             return edit;
+        }
+        private void CreateMapping(Guid userID, List<Guid?> mappingProject, Guid requestUserID)
+        {
+            if (mappingProject != null && mappingProject.Count > 0)
+            {
+                List<tr_ProjectPermission> listCreate = new List<tr_ProjectPermission>();
+
+                foreach (var create in mappingProject)
+                {
+                    tr_ProjectPermission createData = new tr_ProjectPermission();
+                    createData.UserID = userID;
+                    createData.ProjectID = create;
+                    createData.FlagActive = true;
+                    createData.CraeteDate = DateTime.Now;
+                    createData.UpdateDate = DateTime.Now;
+                    createData.CreateBy = requestUserID;
+                    createData.UpdateBy = requestUserID;
+                    listCreate.Add(createData);
+                }
+
+                _context.tr_ProjectPermission.AddRange(listCreate);
+                _context.SaveChanges();
+            }
+        }
+
+        private void UpdateMapping(Guid userID, List<Guid?> mappingProject, bool flag, Guid requestUserID)
+        {
+            if (mappingProject != null && mappingProject.Count > 0)
+            {
+                List<tr_ProjectPermission> listUpdate = new List<tr_ProjectPermission>();
+
+                foreach (var create in mappingProject)
+                {
+                    tr_ProjectPermission? updateData = _context.tr_ProjectPermission
+                                                        .Where(o => o.UserID == userID
+                                                        && o.ProjectID == create).FirstOrDefault();
+
+                    updateData.FlagActive = flag;
+                    updateData.UpdateDate = DateTime.Now;
+                    updateData.UpdateBy = requestUserID;
+
+                    listUpdate.Add(updateData);
+                }
+
+                _context.tr_ProjectPermission.UpdateRange(listUpdate);
+                _context.SaveChanges();
+            }
         }
 
         public dynamic GetBU()
@@ -371,8 +373,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from r in groupR.DefaultIfEmpty()
                           where u.ID == userId
                                 && u.FlagActive == true
-                                && (r.FlagActive == true || r.ID == Guid.Empty)
-                          select new
+                                && (ur == null || (r.FlagActive == true || r.ID == Guid.Empty))
+                         select new
                           {
                               u.ID,
                               u.FirstName,

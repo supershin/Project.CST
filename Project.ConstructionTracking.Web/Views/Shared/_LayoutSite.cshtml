@@ -357,7 +357,7 @@
                                     </div>
                                 </div>
                             </li>
-                            @if (ViewBag.UserRole == SystemConstant.UserRole.ADMIN.ToString())
+                            @if (ViewBag.UserRole == SystemConstant.UserRole.ADMIN.ToString() || ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
                              {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
