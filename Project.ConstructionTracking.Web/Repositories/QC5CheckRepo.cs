@@ -88,7 +88,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
-        public void InsertQCUnitCheckListDefect(QC5IUDModel model)
+        public void InsertQCUnitCheckListDefect(QC5IUDModel model, Guid userid)
         {
             var transactionOptions = new TransactionOptions
             {
@@ -121,9 +121,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                             CheckListDate = DateTime.Now,
                             FlagActive = true,
                             CreateDate = DateTime.Now,
-                            CreateBy = model.UserID,
+                            CreateBy = userid,
                             UpdateDate = DateTime.Now,
-                            UpdateBy = model.UserID
+                            UpdateBy = userid
                         };
 
                         _context.tr_QC_UnitCheckList.Add(UnitCheckList);
@@ -143,9 +143,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                             RoleID = SystemConstant.UserRole.QC,
                             ActionDate = DateTime.Now,
                             UpdateDate = DateTime.Now,
-                            UpdateBy = model.UserID,
+                            UpdateBy = userid,
                             CraeteDate = DateTime.Now,
-                            CreateBy = model.UserID
+                            CreateBy = userid
                         };
 
                         _context.tr_QC_UnitCheckList_Action.Add(newAction);
@@ -163,9 +163,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                         Remark = model.Remark,
                         FlagActive = true,
                         CreateDate = DateTime.Now,
-                        CreateBy = model.UserID,
+                        CreateBy = userid,
                         UpdateDate = DateTime.Now,
-                        UpdateBy = model.UserID
+                        UpdateBy = userid
                     };
 
                     _context.tr_QC_UnitCheckList_Defect.Add(newDefect);
