@@ -48,15 +48,15 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 case "Project":
                     var ListProject = from t1 in _context.tm_Project
-                                       join t2 in _context.tr_ProjectPermission
-                                       on t1.ProjectID equals t2.ProjectID into joined
-                                       from t2 in joined.DefaultIfEmpty()
-                                       where t1.FlagActive == true && t2.FlagActive == true && t2.UserID == Model.UserID
-                                       select new GetDDL
-                                       {
-                                           ValueGuid = t1.ProjectID,
-                                           Text = t1.ProjectName
-                                       };
+                                      join t2 in _context.tr_ProjectPermission
+                                        on t1.ProjectID equals t2.ProjectID into joined
+                                      from t2 in joined.DefaultIfEmpty()
+                                      where t1.FlagActive == true && t2.FlagActive == true && t2.UserID == Model.UserID
+                                      select new GetDDL
+                                      {
+                                        ValueGuid = t1.ProjectID,
+                                        Text = t1.ProjectName
+                                      };
 
                 return ListProject.ToList();
 

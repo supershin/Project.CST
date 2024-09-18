@@ -42,8 +42,7 @@
                 <div class="col-md-4 mb-3 mb-md-0">
                     <div class="input-group">
                         <select class="form-select" id="dropdown-select-project">
-                            <option value="">โครงการทั้งหมด</option>
-                            @foreach(var data in Model.ProjectList)
+                            @foreach (var data in Model.ProjectList)
                             {
                                 <option value="@data.ProjectID">@data.ProjectName</option>
                             }
@@ -64,7 +63,18 @@
                     </form>
                 </div>
                 <!-- Third column: Create button -->
-                <div class="col-md-4 d-flex justify-content-end">
+                <div class="col-md-2 d-flex">
+                    @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
+                     {
+                        <button id="unit-mapping-pe" class="btn btn-secondary">
+                            @*<i class="fa fa-plus" style="margin-right:5px"></i>*@
+                            Mapping PE
+                        </button>
+                     }
+                </div>
+                
+                <!-- Fourth  column: Create button -->
+                <div class="col-md-2 d-flex justify-content-end">
                     <button id="unit-create" class="btn btn-primary">
                         <i class="fa fa-plus" style="margin-right:5px"></i> Create
                     </button>
@@ -84,6 +94,7 @@
 <partial name="Partial_Modal_Create_U" />
 <partial name="Partial_Modal_Edit_U" />
 <partial name="Partial_Confirm_Delete_Unit" />
+<partial name="Partial_Modal_Mapping_PE"/>
 
 @section Scripts {
     <script src="~/lib/datatable/jquery.datatables.min.js"></script>
@@ -91,7 +102,16 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+            
             unit.init();
         });
+
+        function selectAll(source) {
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i] != source)
+                    checkboxes[i].checked = source.checked;
+            }
+        }
     </script>
 }

@@ -26,8 +26,8 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             QC5DetailModel QC5CheckDetail = _QC5CheckService.GetQC5CheckDetail(filterunitData);
 
-            ViewBag.ProjectId = QC5CheckDetail.ProjectID;
-            ViewBag.ProjectName = QC5CheckDetail.ProjectName;
+            ViewBag.ProjectId = QC5CheckDetail?.ProjectID;
+            ViewBag.ProjectName = QC5CheckDetail?.ProjectName;
             ViewBag.UnitId = QC5CheckDetail?.UnitID;
             ViewBag.UnitCode = QC5CheckDetail?.UnitCode;
             ViewBag.UnitStatusName = QC5CheckDetail?.UnitStatusName;
@@ -73,8 +73,9 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
-                // Call the service to insert the data
-                _QC5CheckService.InsertQCUnitCheckListDefect(model);
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+
+                _QC5CheckService.InsertQCUnitCheckListDefect(model , userid);
 
                 // Return success response
                 return Json(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });

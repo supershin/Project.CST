@@ -22,6 +22,9 @@ builder.Services.Configure<AppSettings>(
 
 builder.Services.AddControllers().AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);
 //scope
+
+builder.Services.AddScoped<IMasterCommonRepo, MasterCommonRepo>();
+
 builder.Services.AddScoped<IUnitService, UnitService>();
 builder.Services.AddScoped<IUnitRepo, UnitRepo>();
 
@@ -81,6 +84,7 @@ builder.Services.AddScoped<IChatInBoxRepo, ChatInBoxRepo>();
 
 builder.Services.AddScoped<IQC5CheckService, QC5CheckService>();
 builder.Services.AddScoped<IQC5CheckRepo, QC5CheckRepo>();
+
 
 // Add the new services for SQL and data access
 builder.Services.AddScoped<MasterManagementProviderProject, SqlMasterManagementProject>();

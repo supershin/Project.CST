@@ -25,11 +25,11 @@ namespace Project.ConstructionTracking.Web.Services
             return QCUnitCheckListDefects;
         }
 
-        public void InsertQCUnitCheckListDefect(QC5IUDModel model)
+        public void InsertQCUnitCheckListDefect(QC5IUDModel model, Guid userid)
         {
             try
             {
-                _IQC5CheckRepo.InsertQCUnitCheckListDefect(model);
+                _IQC5CheckRepo.InsertQCUnitCheckListDefect(model , userid);
             }
             catch (Exception ex)
             {

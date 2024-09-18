@@ -276,28 +276,28 @@
                 </div>
                 <div class="col">
                     <div class="row">
-                        @{
-                            var Index = 0;
-                        }
-                        @foreach (var item in Model)
-                        {
-                            <div class="col-12 col-sm-6 mt-1">
+                    @{
+                        var Index = 1; // Start from 1 instead of 0
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-12 col-sm-6 mt-1">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="d-flex justify-content-between">
                                                 <div class="d-flex flex-row align-items-center">
-                                                        <button class="status-dot bg-secondary" onclick="openModal()">
-                                                            <i class="fa-regular fa-image"></i>
-                                                        </button>
+                                                    <button class="status-dot bg-secondary" onclick="openModal()">
+                                                        <i class="fa-regular fa-image"></i>
+                                                    </button>
                                                     <div class="ms-2 c-details">
                                                         <h3 class="mb-0">
                                                             รายการที่ @Index
                                                             @if (item.IsMajorDefect == true)
                                                             {
                                                                 <i class="fa-solid fa-triangle-exclamation fa-xl" style="color: #f60404;"></i>
-                                                            }                                                                
+                                                            }
                                                         </h3>
                                                     </div>
                                                 </div>
@@ -316,10 +316,10 @@
                                             </ul>
                                         </div>
                                         <div class="col-12">
-                                             <textarea class="form-control" rows="2" disabled placeholder="ความคิดเห็น">@item.Remark</textarea>
+                                                <textarea class="form-control" rows="2" disabled placeholder="ความคิดเห็น">@item.Remark</textarea>
                                         </div>
                                         <div class="col-12 mt-2">
-                                             <label class="form-check form-check-inline">
+                                                <label class="form-check form-check-inline">
                                                 <input class="form-check-input" type="radio" name="radios-inline-1">
                                                 <span class="form-check-label">ผ่าน</span>
                                             </label>
@@ -328,12 +328,15 @@
                                                 <span class="form-check-label">ไม่ผ่าน</span>
                                             </label>
                                         </div>
-                                    </div>                               
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        }
+
+                        Index++;
+   
+                    }
+
 
 @*                         <div class="col-12 col-sm-6 mt-1">
                             <div class="card">
@@ -967,6 +970,8 @@
 
         // Create FormData object to send data to the server
         var formData = new FormData();
+        formData.append('ProjectID', '@ProjectId');
+        formData.append('UnitID', '@UnitId');
         formData.append('DefectAreaID', defectAreaId);
         formData.append('DefectTypeID', defectTypeId);
         formData.append('DefectDescriptionID', defectDescriptionId);

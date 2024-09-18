@@ -11,7 +11,7 @@
 
             return false;
         });
-
+        
         $('#btn-search').click(() => {
             if ($.fn.DataTable.isDataTable('#tbl-unit-list')) {
                 $('#tbl-unit-list').DataTable().clear().destroy();
@@ -180,7 +180,66 @@
             unit.DeleteUnit(data);
         })
 
-        unit.UnitList();
+        var defaultValueProjectID = $("#dropdown-select-project").val();
+
+        $("#unit-mapping-pe").click(() => {
+            var data = {
+                projectID: defaultValueProjectID
+            }
+
+            unit.GetPEfromProject(data, defaultValueProjectID)
+
+            return false;
+        });
+
+        $("#mapping-pe-save").click(() => {
+            let isValid = true;
+
+            // Clear previous error messages and reset styles
+            document.querySelectorAll('.form-control').forEach(input => {
+                input.style.borderColor = ''; // Reset border color
+            });
+            document.querySelectorAll('.text-danger').forEach(span => {
+                span.textContent = ''; // Clear error messages
+            });
+
+            // Validate Select Dropdown
+            const selectPe = document.getElementById('mapping-select-pe');
+            if (selectPe.value.trim() === '') {
+                isValid = false;
+                selectPe.style.borderColor = 'red';
+                document.getElementById('mapping-pe-error').textContent = 'กรุณาเลือก PE/SE';
+            }
+
+            if (isValid) {
+                // Collect selected items
+                var selectedUnits = [];
+
+                // Iterate over all checked checkboxes and get the values
+                $('.unit-checkbox:checked').each(function () {
+                    selectedUnits.push($(this).val());
+                });
+
+                debugger;
+                const unitId = selectedUnits;
+                const projectId = $('#mapping-project-id').val();
+                const selectedPe = $('#mapping-select-pe').val();
+
+                const data = {
+                    ListUnitID: unitId,
+                    ProjectID: projectId,
+                    UserID: selectedPe
+                };
+
+                unit.ActionMappingPE(data)
+
+                // Close the modal (if desired)
+                $("#modal-mapping-pe").modal('hide');
+            }
+        });
+
+
+        unit.UnitList(defaultValueProjectID);
     },
     UnitList: function (selectedProjectID) {
         tblUnit = $('#tbl-unit-list').dataTable({
@@ -223,6 +282,16 @@
             "ordering": true,
             "order": [[11, "desc"]], // Ordering by the "UpdateDate" column (index 11)
             "columns": [
+                {
+                    'data': 'UnitID',
+                    'className': "text-center",
+                    'orderable': false,
+                    'render': function (data, type, row, meta) {
+                        // Add checkbox here
+                        return '<input type="checkbox" class="unit-checkbox" value="' + data + '">';
+                    }
+                },
+                { 'data': 'UserName', "className": "text-center" },
                 { 'data': 'ProjectCode', "className": "text-center" },
                 { 'data': 'ProjectName', "className": "text-center" },
                 { 'data': 'UnitCode', "className": "text-center" },
@@ -406,4 +475,82 @@
         });
         return false;
     },
+    ActionMappingPE: function (data) {
+        $.ajax({
+            url: baseUrl + 'MasterUnit/ActionMappingPE',
+            type: 'post',
+            dataType: 'json',
+            data: data,
+            success: function (resp) {
+                if (resp.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ทำการลบข้อมูลสำเร็จ',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                // do something
+                alert(" Coding Error ")
+            },
+        });
+        return false;
+    },
+    GetPEfromProject: function (data, projectID) {
+        $.ajax({
+            url: baseUrl + 'MasterUnit/GetPEFromProject',
+            type: 'post',
+            dataType: 'json',
+            data: data,
+            success: function (resp) {
+                if (resp.success && Array.isArray(resp.data.UserModelList)) {
+                    // Clear the current options in the select
+                    $("#mapping-select-pe").empty();
+
+                    $("#mapping-select-pe").append(
+                        $('<option>', {
+                            value: "",
+                            text: "กรุณาเลือก PE/ SE"
+                        })
+                    );
+                    // Loop through the list of resp.data.UserModelList and append them to the select
+                    $.each(resp.data.UserModelList, function (index, user) {
+                        $("#mapping-select-pe").append(
+                            $('<option>', {
+                                value: user.UserID,
+                                text: user.FullName
+                            })
+                        );
+                    });
+
+                    // Reset select to the first option if applicable
+                    $("#mapping-select-pe").prop("selectedIndex", 0);
+
+                    $('#mapping-project-id').val(projectID);
+                    // Show the modal
+                    $("#modal-mapping-pe").modal('show');
+                } else {
+                    console.error('Invalid response format:', resp);
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                alert("Coding Error: " + error);
+            }
+        });
+        return false;
+    }
 }

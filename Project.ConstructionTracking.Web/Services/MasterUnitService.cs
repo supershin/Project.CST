@@ -3,12 +3,13 @@ using System.Transactions;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.MUnitModel;
 using Project.ConstructionTracking.Web.Repositories;
+using static Project.ConstructionTracking.Web.Commons.SystemConstant;
 
 namespace Project.ConstructionTracking.Web.Services
 {
 	public interface IMasterUnitService
 	{
-		MasterUnitResp GetModelUnitResp();
+		MasterUnitResp GetModelUnitResp(Guid userId, int userRole);
 
         dynamic ListMasterUnit(DTParamModel param, MasterUnitModel criteria);
         DetailUnitResp GetProjectID(Guid unitID);
@@ -16,34 +17,41 @@ namespace Project.ConstructionTracking.Web.Services
         CreateUnitResp CreateUnit(CreateUnitModel model);
 		EditUnitResp EditUnit(EditUnitModel model);
         bool DeleteUnit(Guid unitID, Guid requestUserID);
-	}
+
+        GetPeFromProjectResp GetPEFromProject(Guid projectID);
+        bool ActionMappingPE(ActionMappingPeModel model, Guid RequestUserID);
+    }
 
 	public class MasterUnitService : IMasterUnitService
 	{
 		private readonly IMasterUnitRepo _masterUnitRepo;
-		public MasterUnitService(IMasterUnitRepo masterUnitRepo)
+        private readonly IMasterCommonRepo _masterCommonRepo;
+
+        public MasterUnitService(IMasterUnitRepo masterUnitRepo,
+            IGetDDLService getDDLService,
+            IMasterCommonRepo masterCommonRepo)
 		{
 			_masterUnitRepo = masterUnitRepo;
+            _masterCommonRepo = masterCommonRepo;
 		}
 
-        public MasterUnitResp GetModelUnitResp()
+        public MasterUnitResp GetModelUnitResp(Guid userId, int userRole)
 		{
 			MasterUnitResp resp = new MasterUnitResp()
 			{
 				ProjectList = new List<Projects>(),
 				UnitTypeList = new List<UnitTypes>()
-
 			};
-			var listProject = _masterUnitRepo.GetProjectList();
 
-			foreach (var project in listProject)
+			var listProject = _masterCommonRepo.GetProjectList(userId , userRole);
+
+            foreach (var project in listProject)
 			{
 				Projects data = new Projects()
 				{
 					ProjectID = project.ProjectID,
 					ProjectName = project.ProjectName,
                     ModelList = new List<ModelTypes>(),
-                   
                 };
 
 				var listModel = _masterUnitRepo.GetModelTypeInProjectList(project.ProjectID);
@@ -217,6 +225,36 @@ namespace Project.ConstructionTracking.Web.Services
                     scope.Dispose();
                 }
             }
+        }
+
+        public GetPeFromProjectResp GetPEFromProject(Guid projectID)
+        {
+            GetPeFromProjectResp resp = new GetPeFromProjectResp()
+            {
+                UserModelList = new List<UserModel>()
+            };
+
+            var queryList = _masterUnitRepo.GetPEFromProject(projectID);
+
+            foreach (var data in queryList)
+            {
+                UserModel user = new UserModel()
+                {
+                    UserID = data.UserID,
+                    FullName = data.FirstName + " " + data.LastName
+                };
+
+                resp.UserModelList.Add(user);
+            }
+
+            return resp;
+        }
+
+        public bool ActionMappingPE(ActionMappingPeModel model, Guid requestUserID)
+        {
+            bool query = _masterUnitRepo.ActionMappingPE(model, requestUserID);
+
+            return query;
         }
     }
 }
