@@ -23,6 +23,7 @@ namespace Project.ConstructionTracking.Web.Data
         public int? StatusID { get; set; }
         [Unicode(false)]
         public string? Remark { get; set; }
+        public bool? IsMajorDefect { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }

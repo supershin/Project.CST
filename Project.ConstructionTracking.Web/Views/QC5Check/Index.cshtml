@@ -1,10 +1,26 @@
 ﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
+    var ProjectId = ViewBag.ProjectId;
+    var ProjectName = ViewBag.ProjectName;
+    var UnitId = ViewBag.UnitId;
+    var UnitCode = ViewBag.UnitCode;
+    var UnitStatusName = ViewBag.UnitStatusName;
+    var Seq = ViewBag.Seq;
+    var QC5UpdateByName = ViewBag.QC5UpdateByName;
+
 }
+
+@model List<Project.ConstructionTracking.Web.Models.QC5CheckModel.QC5ChecklistModel>
+
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<!-- Include jQuery and jQuery UI (for Autocomplete) -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
 
 <style>
     .fixed-size-btn {
@@ -138,9 +154,9 @@
                         </form>
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
-                        <h1 class="mb-0 header-text">Unit : A008</h1>
+                        <h1 class="mb-0 header-text">Unit : @UnitCode</h1>
                         <div class="text-muted">
-                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">ดิ ออเนอร์ โยธินพัฒนา (สถานะ : สัญญา)</h5>
+                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@ProjectName (สถานะ : @UnitStatusName)</h5>
                         </div>
                     </div>
                     <div class="align-items-right">
@@ -163,8 +179,8 @@
                                 <div class="card-header">
                                     <ol class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="#">QC 5</a></li>
-                                        <li class="breadcrumb-item" aria-current="page">ตรวจครั้งที่ 3</li>
-                                        <li class="breadcrumb-item" aria-current="page">ผู้ตรวจ : นายตาดี สมองไว </li>
+                                        <li class="breadcrumb-item" aria-current="page">ตรวจครั้งที่ @Seq</li>
+                                        <li class="breadcrumb-item" aria-current="page">ผู้ตรวจ : @QC5UpdateByName </li>
                                     </ol>
                                 </div>
                                 <div class="card-body">
@@ -260,7 +276,66 @@
                 </div>
                 <div class="col">
                     <div class="row">
-                        <div class="col-12 col-sm-6 mt-1">
+                        @{
+                            var Index = 0;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <div class="col-12 col-sm-6 mt-1">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex flex-row align-items-center">
+                                                        <button class="status-dot bg-secondary" onclick="openModal()">
+                                                            <i class="fa-regular fa-image"></i>
+                                                        </button>
+                                                    <div class="ms-2 c-details">
+                                                        <h3 class="mb-0">
+                                                            รายการที่ @Index
+                                                            @if (item.IsMajorDefect == true)
+                                                            {
+                                                                <i class="fa-solid fa-triangle-exclamation fa-xl" style="color: #f60404;"></i>
+                                                            }                                                                
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="align-items-right">
+                                                    <button class="status-dot bg-primary" onclick="openModalDataQC('edit', {id: 1, location: 1, category: 1, defect: 1, comment: 'Sample comment'})">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <ul>
+                                                <li>ตำแหน่ง : @item.DefectAreaName</li>
+                                                <li>หมวดงาน : @item.DefectTypeName</li>
+                                                <li>รายการแก้ไข : @item.DefectDescriptionName</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-12">
+                                             <textarea class="form-control" rows="2" disabled placeholder="ความคิดเห็น">@item.Remark</textarea>
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                             <label class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                <span class="form-check-label">ผ่าน</span>
+                                            </label>
+                                            <label class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="radios-inline-1">
+                                                <span class="form-check-label">ไม่ผ่าน</span>
+                                            </label>
+                                        </div>
+                                    </div>                               
+                                </div>
+                            </div>
+                        </div>
+                        
+                        }
+
+@*                         <div class="col-12 col-sm-6 mt-1">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="row">
@@ -402,6 +477,7 @@
                                 </div>
                             </div>                           
                         </div>
+ *@
                         <div class="col-12 mt-3 d-block d-md-none">
                             <div class="card">
                                 <div class="card-header">
@@ -500,6 +576,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="insert-new-qc5" tabindex="-1" aria-labelledby="insert-new-qc5-Label" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -517,34 +594,30 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="form-label">ตำแหน่ง</div>
-                            <select class="form-select" id="locationSelect">
-                                <option value="0">กรุณาเลือก</option>
-                                <option value="1">ห้องรับแขก</option>
-                                <option value="2">ห้องครัว</option>
-                                <option value="3">ห้องน้ำ</option>
-                                <option value="4">ห้องครัว</option>
+                            <select id="dropdown1" class="form-control">
+                                <option value="">กรุณาเลือก</option>
+                                @foreach (var item in ViewBag.ListDefectArea)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
                             </select>
+                            <input type="hidden" id="defectAreaId">
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="form-label">หมวดงาน</div>
-                            <select class="form-select" id="categorySelect">
-                                <option value="0">กรุณาเลือก</option>
-                                <option value="1">พื้นลามิเนต</option>
-                                <option value="2">ผนัง</option>
-                                <option value="3">พื้น</option>
-                                <option value="4">หน้าต่าง</option>
+                            <select id="dropdown2" class="form-control" disabled>
+                                <option value="">กรุณาเลือก</option>
                             </select>
+                            <input type="hidden" id="defectTypeId">
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="form-label">รายการ defect</div>
-                            <select class="form-select" id="defectSelect">
-                                <option value="0">กรุณาเลือก</option>
-                                <option value="1">ปูไม่เรียบ</option>
-                                <option value="2">รอยร้าวขนาดใหญ่</option>
-                                <option value="3">ฟ่า</option>
-                                <option value="-1">อื่นๆ</option>
+                            <select id="dropdown3" class="form-control" disabled>
+                                <option value="">กรุณาเลือก</option>
                             </select>
+                            <input type="hidden" id="defectDescriptionId">
                         </div>
+
                         <div class="col-12 col-sm-6" id="otherDefectDiv" style="display:none;">
                             <div class="form-label">อื่นๆ ระบุ</div>
                             <input type="text" class="form-control" id="otherDefectInput" placeholder="กรุณาระบุ">
@@ -568,6 +641,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="SignalModal" tabindex="-1" aria-labelledby="SignalModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -711,7 +785,10 @@
     var options = ["บริษัท วิชัยการช่าง จำกัด", "บริษัท วิน อินเวนชั่น จำกัด", "บริษัท ปัญญาฤทธิ์ โฮม คอนสตัคชั่น จำกัด", "บริษัท เอ็น9-ไพล์ เอ็นเตอร์ไพรซ์ จำกัด", "บริษัท พี เอส ซี เอ็ม จำกัด"];
     autocomplete(document.getElementById("myInput"), options);
 </script>
+
+
 <script>
+
     function adjustTextareaRows() {
         const textareas = document.querySelectorAll('.custom-textarea');
         textareas.forEach(textarea => {
@@ -728,138 +805,7 @@
 
     // Adjust on window resize
     window.addEventListener('resize', adjustTextareaRows);
-</script>
-<script>
 
-    function openModal() {
-        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-        myModal.show();
-    }
-
-    function openModalDataQC(action, data = null) {
-        var myModal = new bootstrap.Modal(document.getElementById('insert-new-qc5'));
-
-        // Set modal title based on action
-        var modalTitle = document.getElementById('insert-new-qc5-Label');
-        if (action === 'add') {
-            modalTitle.textContent = 'เพิ่มข้อมูลรายการ';
-            // Reset all form fields for adding new data
-            document.getElementById('locationSelect').value = '0';
-            document.getElementById('categorySelect').value = '0';
-            document.getElementById('defectSelect').value = '0';
-            document.getElementById('otherDefectInput').value = '';
-            document.getElementById('otherDefectDiv').style.display = 'none';
-            document.getElementById('commentTextarea').value = '';
-            document.getElementById('majorDefectCheckbox').checked = false;
-        } else if (action === 'edit' && data) {
-            modalTitle.textContent = 'แก้ไขข้อมูลรายการ';
-            // Populate form fields with existing data for editing
-            document.getElementById('locationSelect').value = data.location;
-            document.getElementById('categorySelect').value = data.category;
-            document.getElementById('defectSelect').value = data.defect;
-            document.getElementById('commentTextarea').value = data.comment;
-            document.getElementById('majorDefectCheckbox').checked = data.majorDefect || false;
-            // Show or hide the "other" defect input based on the defect value
-            if (data.defect == '-1') {
-                document.getElementById('otherDefectDiv').style.display = 'block';
-            } else {
-                document.getElementById('otherDefectDiv').style.display = 'none';
-            }
-        }
-
-        // Show the modal
-        myModal.show();
-    }
-
-    // Show or hide the "other" defect input based on the defect selection
-    document.getElementById('defectSelect').addEventListener('change', function () {
-        var otherDefectDiv = document.getElementById('otherDefectDiv');
-        if (this.value == '-1') {
-            otherDefectDiv.style.display = 'block';
-        } else {
-            otherDefectDiv.style.display = 'none';
-        }
-    });
-
-    //document.addEventListener('DOMContentLoaded', function () {
-    //    document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
-    //        let previous = null;
-    //        console.log('XX');
-    //        radio.addEventListener('click', function () {
-    //            if (previous === this) {
-    //                this.checked = false;
-    //                previous = null;
-    //            } else {
-    //                previous = this;
-    //            }
-    //        });
-    //    });
-    //});
-
-    document.getElementById('imageInput').addEventListener('change', function(event) {
-        const files = event.target.files;
-        const imagePreview = document.getElementById('imagePreview');
-        imagePreview.innerHTML = '';
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                const div = document.createElement('div');
-                div.classList.add('image-container');
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.alt = file.name;
-                const removeBtn = document.createElement('button');
-                removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-btn');
-                removeBtn.textContent = 'Remove';
-                removeBtn.addEventListener('click', function() {
-                    imagePreview.removeChild(div);
-                });
-
-                div.appendChild(img);
-                div.appendChild(removeBtn);
-                imagePreview.appendChild(div);
-            };
-
-            reader.readAsDataURL(file);
-        }
-    });
-
-    document.getElementById('imageInput2').addEventListener('change', function(event) {
-        const files = event.target.files;
-        const imagePreview = document.getElementById('imagePreview2');
-        imagePreview.innerHTML = '';
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                const div = document.createElement('div');
-                div.classList.add('image-container');
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.alt = file.name;
-                const removeBtn = document.createElement('button');
-                removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-btn');
-                removeBtn.textContent = 'Remove';
-                removeBtn.addEventListener('click', function() {
-                    imagePreview.removeChild(div);
-                });
-
-                div.appendChild(img);
-                div.appendChild(removeBtn);
-                imagePreview.appendChild(div);
-            };
-
-            reader.readAsDataURL(file);
-        }
-    });
-
-</script>
-<script>
     $(() => {
         // Add class 'checked' to checked radio buttons on load
         addCheckedToCheckedRadio();
@@ -889,7 +835,186 @@
             $('#collapseSection').collapse('hide');
         }
     }
-</script>
 
-<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
-<script src="~/lib/core-ui/dist/libs/fslightbox/index.js?1692870487" defer></script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize the first dropdown
+        $('#dropdown1').on('change', function () {
+            var selectedDefectAreaId = $(this).val();
+            var ddlDefectType = $('#dropdown2'); // Reference to the second dropdown
+            var searchTerm = ''; // Optional search term, empty by default
+
+            // Clear existing options in the second and third dropdowns
+            ddlDefectType.empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);
+            $('#dropdown3').empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);
+
+            if (selectedDefectAreaId) {
+                $.ajax({
+                    url: '@(ViewBag.baseUrl)' + 'QC5Check/GetDDLDefectType',
+                    data: { defectAreaId: selectedDefectAreaId, searchTerm: searchTerm },
+                    success: function (data) {
+                        $.each(data, function (index, item) {
+                            ddlDefectType.append($('<option>', { value: item.Value, text: item.Text }));
+                        });
+                        ddlDefectType.prop('disabled', false); // Enable the second dropdown after loading data
+                    },
+                    error: function () {
+                        console.log("Error fetching defect types.");
+                    }
+                });
+            }
+        });
+
+        // When the second dropdown changes
+        $('#dropdown2').on('change', function () {
+            var selectedDefectTypeId = $(this).val();
+            var ddlDefectDescription = $('#dropdown3'); // Reference to the third dropdown
+            var searchTerm = ''; // Optional search term, empty by default
+
+            // Clear existing options in the third dropdown
+            ddlDefectDescription.empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);
+
+            if (selectedDefectTypeId) {
+                $.ajax({
+                    url: '@(ViewBag.baseUrl)' + 'QC5Check/GetDDLDefectDescription',
+                    data: { defectTypeId: selectedDefectTypeId, searchTerm: searchTerm },
+                    success: function (data) {
+                        $.each(data, function (index, item) {
+                            ddlDefectDescription.append($('<option>', { value: item.Value, text: item.Text }));
+                        });
+                        ddlDefectDescription.prop('disabled', false); // Enable the third dropdown after loading data
+                    },
+                    error: function () {
+                        console.log("Error fetching defect descriptions.");
+                    }
+                });
+            }
+        });
+    });
+
+
+    function setupImagePreview(inputId, previewContainerId) {
+        document.getElementById(inputId).addEventListener('change', function (event) {
+            const files = event.target.files;
+            const imagePreview = document.getElementById(previewContainerId);
+            imagePreview.innerHTML = '';
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const div = document.createElement('div');
+                    div.classList.add('image-container');
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = file.name;
+                    const removeBtn = document.createElement('button');
+                    removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-btn');
+                    removeBtn.textContent = 'Remove';
+                    removeBtn.addEventListener('click', function () {
+                        imagePreview.removeChild(div);
+                    });
+
+                    div.appendChild(img);
+                    div.appendChild(removeBtn);
+                    imagePreview.appendChild(div);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    function openModalDataQC(action, data = null) {
+        var myModal = new bootstrap.Modal(document.getElementById('insert-new-qc5'));
+
+        var modalTitle = document.getElementById('insert-new-qc5-Label');
+        if (action === 'add') {
+            modalTitle.textContent = 'เพิ่มข้อมูลรายการ';
+            $('#autocomplete1, #autocomplete2, #autocomplete3').val('').prop('disabled', false);
+            $('#defectAreaId, #defectTypeId, #defectDescriptionId').val('');
+            $('#otherDefectInput, #commentTextarea').val('');
+            $('#otherDefectDiv').hide();
+            $('#majorDefectCheckbox').prop('checked', false);
+        } else if (action === 'edit' && data) {
+            modalTitle.textContent = 'แก้ไขข้อมูลรายการ';
+            $('#autocomplete1').val(data.location).prop('disabled', false);
+            $('#autocomplete2').val(data.category).prop('disabled', false);
+            $('#autocomplete3').val(data.defect).prop('disabled', false);
+            $('#commentTextarea').val(data.comment);
+            $('#majorDefectCheckbox').prop('checked', data.majorDefect || false);
+
+            if (data.defect == '-1') {
+                $('#otherDefectDiv').show();
+            } else {
+                $('#otherDefectDiv').hide();
+            }
+        }
+
+        myModal.show();
+    }
+
+    document.getElementById('saveButton').addEventListener('click', function () {
+        onSaveButtonClick();
+    });
+
+    function onSaveButtonClick() {
+        var defectAreaId = document.getElementById('dropdown1').value;
+        var defectTypeId = document.getElementById('dropdown2').value;
+        var defectDescriptionId = document.getElementById('dropdown3').value;
+        var comment = document.getElementById('commentTextarea').value;
+        var isMajorDefect = document.getElementById('majorDefectCheckbox').checked;
+
+        // Create FormData object to send data to the server
+        var formData = new FormData();
+        formData.append('DefectAreaID', defectAreaId);
+        formData.append('DefectTypeID', defectTypeId);
+        formData.append('DefectDescriptionID', defectDescriptionId);
+        formData.append('Remark', comment);
+        formData.append('IsMajorDefect', isMajorDefect);
+        formData.append('Seq', '@Seq');
+
+        // Validate input fields before submitting
+        if (!defectAreaId) {
+            showErrorAlert('คำเตือน!', 'กรุณาเลือกตำแหน่ง');
+            return;
+        }
+        if (!defectTypeId) {
+            showErrorAlert('คำเตือน!', 'กรุณาเลือกหมวดงาน');
+            return;
+        }
+        if (!defectDescriptionId) {
+            showErrorAlert('คำเตือน!', 'กรุณาเลือกรายการ defect');
+            return;
+        }
+
+        showLoadingAlert(); 
+
+        console.log(formData);
+
+        $.ajax({
+            url: '@(ViewBag.baseUrl)QC5Check/SaveDefectData', 
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                Swal.close(); 
+                if (response.success) {
+                    showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                        window.location.reload(); 
+                    });
+                } else {
+                    showErrorAlert('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.close(); 
+                showErrorAlert('เกิดข้อผิดพลาด!', error);
+            }
+        });
+    }
+
+
+
+</script>

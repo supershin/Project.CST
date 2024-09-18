@@ -3,10 +3,11 @@
     public class QC5DetailModel
     {
         public Guid? ProjectID { get; set; }
-        public string? ProjectsName { get; set; }
+        public string? ProjectName { get; set; }
+        public int? UnitStatusID { get; set; }
         public Guid? UnitID { get; set; }
         public string? UnitCode { get; set; }
-        public int? UnitStatusID { get; set; }
+        public int? ProjectTypeID { get; set; }
         public string? UnitStatusName { get; set; }
         public Guid? QC5UnitChecklistID { get; set; }
         public int? QCTypeID { get; set; }

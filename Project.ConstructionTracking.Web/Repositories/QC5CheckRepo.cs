@@ -34,7 +34,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                          select new QC5DetailModel
                          {
                              ProjectID = t1.ProjectID,
-                             ProjectsName = t1.ProjectName,
+                             ProjectName = t1.ProjectName,
+                             ProjectTypeID = t1.ProjectTypeID,
                              UnitID = t2.UnitID,
                              UnitCode = t2.UnitCode,
                              UnitStatusName = t3.Name,
@@ -58,6 +59,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from t3 in defectTypeGroup.DefaultIfEmpty()
                           join t4 in _context.tm_DefectDescription on t1.DefectDescriptionID equals t4.ID into defectDescriptionGroup
                           from t4 in defectDescriptionGroup.DefaultIfEmpty()
+                          where t1.QCUnitCheckListID == filterData.QCUnitCheckListID
                           select new QC5ChecklistModel
                           {
                               ID = t1.ID,
@@ -71,6 +73,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               DefectDescriptionName = t4.Name,
                               StatusID = t1.StatusID,
                               Remark = t1.Remark,
+                              IsMajorDefect = t1.IsMajorDefect,
                               FlagActive = t1.FlagActive,
       
                               ListRadioChecklist = (from rc in _context.tm_Ext
@@ -178,11 +181,11 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     if (ex.Message.Contains("tr_QC_UnitCheckList_Action"))
                     {
-                        errorMessage = "บันทึกข้อมูลลง QC_UnitCheckList_Action ไม่สำเร็จ";
+                        errorMessage = "บันทึกข้อมูลลง tr_QC_UnitCheckList_Action ไม่สำเร็จ";
                     }
                     else if (ex.Message.Contains("tr_QC_UnitCheckList_Defect"))
                     {
-                        errorMessage = "บันทึกข้อมูลลง QC_UnitCheckList_Defect ไม่สำเร็จ";
+                        errorMessage = "บันทึกข้อมูลลง tr_QC_UnitCheckList_Defect ไม่สำเร็จ";
                     }
                     else if (ex.Message.Contains("tr_QC_UnitCheckList"))
                     {
@@ -203,7 +206,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             var transactionOptions = new TransactionOptions
             {
                 IsolationLevel = IsolationLevel.ReadCommitted,
-                Timeout = TimeSpan.FromMinutes(3)
+                Timeout = TimeSpan.FromMinutes(2)
             };
 
             using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
@@ -231,7 +234,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("แก้ไขข้อมูลลง tr_QC_UnitCheckList_Defect. ไม่สำเร็จ", ex);
+                    throw new Exception("แก้ไขข้อมูลลง tr_QC_UnitCheckList_Defect ไม่สำเร็จ", ex);
                 }
             }
         }
@@ -241,7 +244,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             var transactionOptions = new TransactionOptions
             {
                 IsolationLevel = IsolationLevel.ReadCommitted,
-                Timeout = TimeSpan.FromMinutes(3)
+                Timeout = TimeSpan.FromMinutes(2)
             };
 
             using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
@@ -263,7 +266,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("แก้ไขข้อมูลลง tr_QC_UnitCheckList_Defect. ไม่สำเร็จ", ex);
+                    throw new Exception("แก้ไขข้อมูลลง tr_QC_UnitCheckList_Defect ไม่สำเร็จ", ex);
                 }
             }
         }

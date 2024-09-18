@@ -21,8 +21,8 @@ namespace Project.ConstructionTracking.Web.Services
 
         public List<QC5ChecklistModel> GetQCUnitCheckListDefects(QC5ChecklistModel filterData)
         {
-            var ListQCUnitCheckListDefects = _IQC5CheckRepo.GetQCUnitCheckListDefects(filterData);
-            return ListQCUnitCheckListDefects;
+            var QCUnitCheckListDefects = _IQC5CheckRepo.GetQCUnitCheckListDefects(filterData);
+            return QCUnitCheckListDefects;
         }
 
         public void InsertQCUnitCheckListDefect(QC5IUDModel model)
@@ -33,9 +33,10 @@ namespace Project.ConstructionTracking.Web.Services
             }
             catch (Exception ex)
             {
-                throw new Exception($"พิดพลาด : {ex.Message}", ex);
+                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
             }
         }
+
         public void UpdateQCUnitCheckListDefect(QC5IUDModel model)
         {
             try
@@ -44,9 +45,10 @@ namespace Project.ConstructionTracking.Web.Services
             }
             catch (Exception ex)
             {
-                throw new Exception($"พิดพลาด : {ex.Message}", ex);
+                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
             }
         }
+
         public void RemoveQCUnitCheckListDefect(QC5IUDModel model)
         {
             try
@@ -55,8 +57,10 @@ namespace Project.ConstructionTracking.Web.Services
             }
             catch (Exception ex)
             {
-                throw new Exception($"พิดพลาด : {ex.Message}", ex);
+                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
             }
         }
+
+
     }
 }

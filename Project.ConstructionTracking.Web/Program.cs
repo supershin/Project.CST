@@ -79,6 +79,8 @@ builder.Services.AddScoped<ILoginRepo, LoginRepo>();
 builder.Services.AddScoped<IChatInBoxService, ChatInBoxService>();
 builder.Services.AddScoped<IChatInBoxRepo, ChatInBoxRepo>();
 
+builder.Services.AddScoped<IQC5CheckService, QC5CheckService>();
+builder.Services.AddScoped<IQC5CheckRepo, QC5CheckRepo>();
 
 // Add the new services for SQL and data access
 builder.Services.AddScoped<MasterManagementProviderProject, SqlMasterManagementProject>();

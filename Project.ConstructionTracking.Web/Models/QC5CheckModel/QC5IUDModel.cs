@@ -3,6 +3,8 @@
     public class QC5IUDModel
     {
         public int? ID { get; set; }
+        public Guid? ProjectID { get; set; }
+        public Guid? UnitID { get; set; }
         public Guid? QCUnitCheckListID { get; set; }
         public Guid? ProjectID { get; set; }
         public Guid? UnitID { get; set; }
