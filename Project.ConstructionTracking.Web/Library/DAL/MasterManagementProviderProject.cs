@@ -144,8 +144,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.PMActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["PMActionDate"]);
             Entity.PJMActionBy = Commons.FormatExtension.NullToString(reader["PJMActionBy"]);
             Entity.PJMActionDate = Commons.FormatExtension.NullToString(reader["PJMActionDate"]);
-            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassConditionIcon"]);
-            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassConditionColor"]);
+            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassCondition_Icon"]);
+            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassCondition_Color"]);
             return Entity;
         }
 
@@ -181,8 +181,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.StatusColor = Commons.FormatExtension.NullToString(reader["StatusColor"]);
             Entity.PEActionBy = Commons.FormatExtension.NullToString(reader["PEActionBy"]);
             Entity.PEActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["PEActionDate"]);
-            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassConditionIcon"]);
-            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassConditionColor"]);
+            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassCondition_Icon"]);
+            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassCondition_Color"]);
             return Entity;
         }
 
@@ -220,8 +220,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.PEActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["PEActionDate"]);
             Entity.PMActionBy = Commons.FormatExtension.NullToString(reader["PMActionBy"]);
             Entity.PMActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["PMActionDate"]);
-            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassConditionIcon"]);
-            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassConditionColor"]);
+            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassCondition_Icon"]);
+            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassCondition_Color"]);
             return Entity;
         }
         #endregion

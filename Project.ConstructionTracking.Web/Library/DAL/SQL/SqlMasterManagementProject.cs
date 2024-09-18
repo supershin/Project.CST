@@ -166,7 +166,6 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                 }
             }
         }
-
         public override List<PMMyTaskModel> sp_get_mytask_pm(PMMyTaskModel en)
         {
             using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
