@@ -11,7 +11,10 @@
         public int? DefectTypeID { get; set; }
         public int? DefectDescriptionID { get; set; }
         public int? StatusID { get; set; }
+        public bool? isMajorDefect { get; set; }
         public string? Remark { get; set; }
         public Guid? UserID { get; set; }
+        public string? ApplicationPath { get; set; }
+        public List<IFormFile>? Images { get; set; }
     }
 }
