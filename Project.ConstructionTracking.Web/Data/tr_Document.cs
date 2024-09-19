@@ -12,7 +12,7 @@ namespace Project.ConstructionTracking.Web.Data
         public Guid ID { get; set; }
         public Guid? UnitFormID { get; set; }
         public Guid? QCUnitCheckListID { get; set; }
-        public Guid? ResoutrceID { get; set; }
+        public Guid? ResourceID { get; set; }
         [StringLength(50)]
         [Unicode(false)]
         public string? DocumentNo { get; set; }
