@@ -82,6 +82,9 @@ builder.Services.AddScoped<ILoginRepo, LoginRepo>();
 builder.Services.AddScoped<IChatInBoxService, ChatInBoxService>();
 builder.Services.AddScoped<IChatInBoxRepo, ChatInBoxRepo>();
 
+builder.Services.AddScoped<IGeneratePDFService, GeneratePDFService>();
+builder.Services.AddScoped<IGeneratePDFRepo, GeneratePDFRepo>();
+
 builder.Services.AddScoped<IQC5CheckService, QC5CheckService>();
 builder.Services.AddScoped<IQC5CheckRepo, QC5CheckRepo>();
 

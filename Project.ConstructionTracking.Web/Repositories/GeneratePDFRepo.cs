@@ -149,6 +149,11 @@ namespace Project.ConstructionTracking.Web.Repositories
             string formatString = HashExtension.GenerateApproveNumber(documentRunning, documentPrefix);
             return formatString;
         }
+
+        public bool SaveFileDocument()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 
