@@ -408,12 +408,7 @@
                                                    @(group.PC_StatusID == 6  || group.PC_StatusID == 8  || group.PC_StatusID == 9  ||
                                                      group.PC_StatusID == 10 || group.PC_StatusID == 11 || group.PC_StatusID == 12 ||
                                                      group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "checked" : "")
-                                                   @(
-                                                    (PM_Actiontype == "submit" &&
-                                                    (UnitFormStatusID == null || UnitFormStatusID == 1 || UnitFormStatusID > 3 || group.PC_StatusID == 8 || group.PCFlageActive == false)) ||
-                                                    (PJM_Actiontype == "submit" && group.PC_StatusID == 8 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
-                                                     ? "disabled" : ""
-                                                   )
+                                                   @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (UnitFormStatusID == null || UnitFormStatusID == 1 || UnitFormStatusID > 3 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
                                             >
                                             <span class="form-check-label">ผ่านเพื่อส่ง PJM Head</span>
                                         </label>
@@ -427,9 +422,8 @@
                                                    value="7"
                                                    onclick="toggleRadio(this, '@Model.ID')"
                                                    @(group.PC_StatusID == 7 ? "checked" : "")
-                                                   @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || 
-                                                    (UnitFormStatusID == null || UnitFormStatusID == 1 || UnitFormStatusID > 3 || 
-                                                     group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")>
+                                                   @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (UnitFormStatusID == null || UnitFormStatusID == 1 || UnitFormStatusID > 3 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
+                                             >
                                           <span class="form-check-label">ไม่ผ่าน</span>
                                         </label>
                                     </div>
@@ -530,8 +524,9 @@
                                         <input class="form-check-input" type="radio" name="radios-inline-approval"
                                                value="@(LockStatusID != null && PCALLPASS != "yes" ? 6 : 4)"
                                                 @(Model.PM_StatusID == 4 ? "checked" : Model.PM_StatusID == 6 ? "checked" : "")
-                                        @((UnitFormStatusID != 2 && UnitFormStatusID != 3) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
-                                               onclick="toggleRadio(this, '@Model.ID')">
+                                                @((UnitFormStatusID != 2 && UnitFormStatusID != 3) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "") 
+                                                onclick="toggleRadio(this, '@Model.ID')"
+                                         >
                                         <span class="form-check-label">
                                             @(LockStatusID != null && PCALLPASS != "yes" ? "อนุมัติผ่านแบบมีเงื่อนไข" : "อนุมัติ")
                                         </span>
@@ -539,10 +534,10 @@
 
                                     <label class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="radios-inline-approval" value="5"
-                                        @(Model.PM_StatusID == 5 ? "checked" : "")
-                                        @((UnitFormStatusID != 2 && UnitFormStatusID != 3) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
-                                         onclick="toggleRadio(this, '@Model.ID')"
-                                        >
+                                            @(Model.PM_StatusID == 5 ? "checked" : "")
+                                            @((UnitFormStatusID != 2 && UnitFormStatusID != 3) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
+                                             onclick="toggleRadio(this, '@Model.ID')"
+                                         >
                                         <span class="form-check-label">ไม่อนุมัติ</span>
                                     </label>
                                 </div>
@@ -577,7 +572,7 @@
                         <div>
                             @if (comeFrom == "SummaryUnitForm" || ViewBag.UserRole == SystemConstant.UserRole.PE.ToString())
                             {
-                                <a class="BackButton" href="@Url.Action("Index","GoToByRole"
+                                <a class="BackButton" href="@Url.Action("Index","SummaryUnitForm"
                                         , new{projectId =@ProjectID,
                                             projectName = @ProjectName,
                                             FormID = @FormID,

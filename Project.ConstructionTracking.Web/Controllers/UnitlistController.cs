@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project.ConstructionTracking.Web.Commons;
+using Project.ConstructionTracking.Web.Library.DAL;
 using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.StoreProcedureModel;
 using Project.ConstructionTracking.Web.Services;
 using System.Collections.Generic;
 
@@ -10,11 +12,13 @@ namespace Project.ConstructionTracking.Web.Controllers
     {
         private readonly IUnitService _unitService;
         private readonly IGetDDLService _getDDLService;
+        private readonly MasterManagementProviderProject _unitstatusProvider;
 
-        public UnitlistController(IUnitService unitService, IGetDDLService getDDLService)
+        public UnitlistController(MasterManagementProviderProject unitstatusProvider, IUnitService unitService, IGetDDLService getDDLService)
         {
             _unitService = unitService;
             _getDDLService = getDDLService;
+            _unitstatusProvider = unitstatusProvider;
         }
 
         public IActionResult Index(string projectId, string projectName)
@@ -22,43 +26,46 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.ProjectId = projectId;
             ViewBag.ProjectName = projectName;
 
-            var model = new UnitModel
+            var en = new UnitListModel
             {
-                ProjectID = Guid.TryParse(projectId, out var parsedProjectId) ? parsedProjectId : (Guid?)null,
+                act = "GetUnitlist",
+                project_id = projectId,
+                unit_id = "",
+                unit_status = "",
+
             };
+            List<UnitListModel> UnitList = _unitstatusProvider.sp_get_UnitList(en);
 
-            List<UnitModel> units = _unitService.GetUnitList("", model);
 
-            // Fetch dropdown data
+            var ddlModelUnitCode = new GetDDL { Act = "Unit", ValueGuid = Guid.TryParse(projectId, out var parsedGuid) ? parsedGuid : (Guid?)null };
+            List<GetDDL> ListUnit = _getDDLService.GetDDLList(ddlModelUnitCode);
+
+            ViewBag.DDLListUnit = ListUnit;
+
             var ddlModel = new GetDDL { Act = "Ext", ID = 4 };
             List<GetDDL> ddlList = _getDDLService.GetDDLList(ddlModel);
 
             ViewBag.DDLList = ddlList;
 
-            return View(units);
+            return View(UnitList);
         }
 
-        [HttpPost]
-        public IActionResult SearchUnits(string search, string projectId, string projectName, int? unitStatusId)
+        [HttpGet]
+        public IActionResult SearchData(Guid? selectedProjectValue, string selectedUnitValue, string selectedUnitFormStatus)
         {
-            ViewBag.ProjectId = projectId;
-            ViewBag.ProjectName = projectName;
+            var userID = Request.Cookies["CST.ID"];
 
-            var model = new UnitModel
+            var en = new UnitListModel
             {
-                ProjectID = Guid.TryParse(projectId, out var parsedProjectId) ? parsedProjectId : (Guid?)null,
-                UnitStatusID = unitStatusId
+                act = "GetUnitlist",
+                project_id = selectedProjectValue?.ToString() ?? "",
+                unit_id = selectedUnitValue ?? "",
+                unit_status = selectedUnitFormStatus ?? ""
             };
 
-            List<UnitModel> units = _unitService.GetUnitList(search, model);
+            List<UnitListModel> UnitList = _unitstatusProvider.sp_get_UnitList(en);
 
-            // Fetch dropdown data
-            var ddlModel = new GetDDL { Act = "Ext", ID = 4 };
-            List<GetDDL> ddlList = _getDDLService.GetDDLList(ddlModel);
-
-            ViewBag.DDLList = ddlList;
-
-            return View("Index", units);
+            return Json(UnitList);
         }
 
         [HttpPost]

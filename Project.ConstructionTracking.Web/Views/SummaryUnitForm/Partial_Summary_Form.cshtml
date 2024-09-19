@@ -1,4 +1,4 @@
-﻿@model List<Project.ConstructionTracking.Web.Models.SummeryUnitModel.SummeryUnitForm>
+﻿@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.SummeryUnitFormModel>
 
 @{
     var projectId = ViewBag.ProjectId;
@@ -20,27 +20,27 @@
                                     @{
                                         string bgColorClass;
 
-                                        if (item.PE == "success" && item.PM == "success" && @item.PassConditionStatus == "primary")
+                                        if (item.PEColor == "bg-success" && item.PMColor == "bg-success" && @item.PCColor == "bg-primary")
                                         {
                                             bgColorClass = "btn-primary";
                                         }
-                                        else if (item.PE == "success" && item.PM == "success" && @item.PassConditionStatus == "success")
+                                        else if (item.PEColor == "bg-success" && item.PMColor == "bg-success" && @item.PCColor == "bg-success")
                                         {
                                             bgColorClass = "btn-success";
                                         }
-                                        else if (item.PE == "success" && item.PM == "success" && @item.PassConditionStatus == "danger")
+                                        else if (item.PEColor == "bg-success" && item.PMColor == "bg-success" && @item.PCColor == "bg-danger")
                                         {
                                             bgColorClass = "btn-danger";
                                         }
-                                        else if(item.PE == "success" && item.PM == "success")
+                                        else if (item.PEColor == "bg-success" && item.PMColor == "bg-success")
                                         {
                                             bgColorClass = "btn-success";
                                         }
-                                        else if (item.PE == "danger" || item.PM == "danger")
+                                        else if (item.PEColor == "bg-sdanger" || item.PMColor == "bg-danger")
                                         {
                                             bgColorClass = "btn-danger";
                                         }
-                                        else if (item.PE == "warning" || item.PM == "warning" || item.PM == "")
+                                        else if (item.PEColor == "bg-swarning" || item.PMColor == "bg-warning" || item.PMColor == "")
                                         {
                                             bgColorClass = "btn-warning";
                                         }
@@ -73,7 +73,7 @@
                                         <input type="hidden" name="unitId" value="@item.UnitID" />
                                         <input type="hidden" name="UnitCode" value="@UnitCode" />
                                         <input type="hidden" name="UnitStatusName" value="@UnitStatusName" />
-                                        <button type="submit" class="status-dot bg-@item.PE @(item.PE == "danger" || item.PE == "warning" ? "status-dot-animated" : "")">
+                                        <button type="submit" class="status-dot @item.PEColor @(item.PEColor == "bg-danger" || item.PEColor == "bg-warning" ? "status-dot-animated" : "")">
                                             <span class="status-text">
                                                 PE
                                             </span>
@@ -131,10 +131,10 @@
                                     }
                                 </div>
                                 <div class="col">
-                                    @if (@item.PE != null)
+                                    @if (@item.PEColor != "")
                                     {
                                         <form action="@Url.Action("index", "PMApprove", new { unitId = @item.UnitID, formId = @item.FormID , comeFrom = "SummaryUnitForm" })" method="post">
-                                            <button type="submit" class="status-dot bg-@item.PM @(item.PM == "danger" || item.PM == "warning" ? "status-dot-animated" : "")">
+                                            <button type="submit" class="status-dot @item.PMColor @(item.PMColor == "bg-danger" || item.PMColor == "bg-warning" ? "status-dot-animated" : "")">
                                                 <span class="status-text">
                                                     PM
                                                 </span>
@@ -143,7 +143,7 @@
                                     }
                                     else
                                     {
-                                        <button type="button" class="status-dot bg-@item.PM @(item.PM == "danger" || item.PM == "warning" ? "status-dot-animated" : "")" onclick="showPEAlert()">
+                                        <button type="button" class="status-dot bg-@item.PMColor @(item.PMColor == "bg-danger" || item.PMColor == "bg-warning" ? "status-dot-animated" : "")" onclick="showPEAlert()">
                                             <span class="status-text">
                                                 PM
                                             </span>
@@ -151,28 +151,15 @@
                                     }
                                 </div>
                                 <div class="col">
-                                    @if (!string.IsNullOrEmpty(item.PassConditionStatus))
+                                    @if (@item.Cnt_PC > 0)
                                     {
-                                        @if (@item.LockStatusID == 8)
-                                        {
-                                            <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
-                                                <input type="hidden" name="UnitFormID" value="@item.UnitFormID" />
-                                                <input type="hidden" name="ComFrom" value="summaryunit" />
-                                                <button type="submit" class="status-dot bg-@item.PassConditionStatus">
-                                                    <i class="fa-solid fa-lock-open"></i>
-                                                </button>
-                                            </form>
-                                        }
-                                        else
-                                        {
-                                            <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
-                                                <input type="hidden" name="UnitFormID" value="@item.UnitFormID" />
-                                                <input type="hidden" name="ComFrom" value="summaryunit" />
-                                                <button type="submit" class="status-dot bg-@item.PassConditionStatus">
-                                                    <i class="fa-solid fa-lock"></i>
-                                                </button>
-                                            </form>
-                                        }
+                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                            <input type="hidden" name="UnitFormID" value="@item.UnitFormID" />
+                                            <input type="hidden" name="ComFrom" value="summaryunit" />
+                                            <button type="submit" class="status-dot @item.PCColor">
+                                                <i class="@item.PCIcon"></i>
+                                            </button>
+                                        </form>
                                     }
                                 </div>
                             </div>

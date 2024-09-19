@@ -39,6 +39,10 @@ namespace Project.ConstructionTracking.Web.Library.DAL
 
         public abstract List<PJMMyTaskModel> sp_get_mytask_pjm(PJMMyTaskModel EN);
 
+        public abstract List<UnitListModel> sp_get_UnitList(UnitListModel EN);
+
+        public abstract List<SummeryUnitFormModel> sp_get_summaryunitform(SummeryUnitFormModel EN);
+
 
         #region __ Reader __
         public static List<ProjectModel> SP_Get_Project_ListReader(IDataReader reader)
@@ -224,6 +228,77 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassCondition_Color"]);
             return Entity;
         }
+
+
+        public static List<UnitListModel> sp_get_UnitList_ListReader(IDataReader reader)
+        {
+            List<UnitListModel> list = new List<UnitListModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_UnitList_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static UnitListModel sp_get_UnitList_Reader(IDataReader reader, int index)
+        {
+            UnitListModel Entity = new UnitListModel();
+
+            Entity.index = index;
+            Entity.UnitID = Commons.FormatExtension.NullToString(reader["UnitID"]);
+            Entity.ProjectID = Commons.FormatExtension.NullToString(reader["ProjectID"]);
+            Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.UnitStatusID = Commons.FormatExtension.NullToString(reader["UnitStatusID"]);
+            Entity.UnitStatusName = Commons.FormatExtension.NullToString(reader["UnitStatusName"]);
+            Entity.FormID = Commons.FormatExtension.NullToString(reader["FormID"]);
+            Entity.FormName = Commons.FormatExtension.NullToString(reader["FormName"]);
+            return Entity;
+        }
+
+
+        public static List<SummeryUnitFormModel> sp_get_summaryunitform_ListReader(IDataReader reader)
+        {
+            List<SummeryUnitFormModel> list = new List<SummeryUnitFormModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_summaryunitform_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static SummeryUnitFormModel sp_get_summaryunitform_Reader(IDataReader reader, int index)
+        {
+            SummeryUnitFormModel Entity = new SummeryUnitFormModel();
+
+            Entity.index = index;
+            Entity.UnitID = Commons.FormatExtension.ConvertStringToGuid(reader["UnitID"]);
+            Entity.ProjectID = Commons.FormatExtension.ConvertStringToGuid(reader["ProjectID"]);
+            Entity.UnitFormID = Commons.FormatExtension.ConvertStringToGuid(reader["UnitFormID"]);
+            Entity.ProjectName = Commons.FormatExtension.NullToString(reader["ProjectName"]);
+            Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.FormID = Commons.FormatExtension.Nulltoint(reader["FormID"]);
+            Entity.FormName = Commons.FormatExtension.NullToString(reader["FormName"]);
+            Entity.StatusID = Commons.FormatExtension.Nulltoint(reader["StatusID"]);
+            Entity.PEColor = Commons.FormatExtension.NullToString(reader["PEColor"]);
+            Entity.QC1 = Commons.FormatExtension.NullToString(reader["QC1"]);
+            Entity.QC2 = Commons.FormatExtension.NullToString(reader["QC2"]);
+            Entity.QC3 = Commons.FormatExtension.NullToString(reader["QC3"]);
+            Entity.QC4_1 = Commons.FormatExtension.NullToString(reader["QC4_1"]);
+            Entity.QC4_2 = Commons.FormatExtension.NullToString(reader["QC4_2"]);
+            Entity.QC5 = Commons.FormatExtension.NullToString(reader["QC5"]);
+            Entity.PMColor = Commons.FormatExtension.NullToString(reader["PMColor"]);
+            Entity.Cnt_PC = Commons.FormatExtension.Nulltoint(reader["Cnt_PC"]);
+            Entity.PCColor = Commons.FormatExtension.NullToString(reader["PCColor"]);
+            Entity.PCIcon = Commons.FormatExtension.NullToString(reader["PCIcon"]);
+            return Entity;
+        }
+
         #endregion
     }
 }
