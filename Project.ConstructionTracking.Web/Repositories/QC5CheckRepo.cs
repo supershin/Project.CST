@@ -90,6 +90,46 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
+        public QC5DefectModel GetQC5Defact(QC5DefectModel filterData)
+        {
+            var result = (from t1 in _context.tr_QC_UnitCheckList_Defect
+                          join t2 in _context.tm_DefectArea on t1.DefectAreaID equals t2.ID into defectAreaGroup
+                          from t2 in defectAreaGroup.DefaultIfEmpty()
+                          join t3 in _context.tm_DefectType on t1.DefectTypeID equals t3.ID into defectTypeGroup
+                          from t3 in defectTypeGroup.DefaultIfEmpty()
+                          join t4 in _context.tm_DefectDescription on t1.DefectDescriptionID equals t4.ID into defectDescriptionGroup
+                          from t4 in defectDescriptionGroup.DefaultIfEmpty()
+                          where t1.ID == filterData.DefectID
+                          select new QC5DefectModel
+                          {
+                              DefectID = t1.ID,
+                              //QCUnitCheckListID = t1.QCUnitCheckListID,
+                              Seq = t1.Seq,
+                              DefectAreaID = t1.DefectAreaID,
+                              DefectAreaName = t2.Name,
+                              DefectTypeID = t1.DefectTypeID,
+                              DefectTypeName = t3.Name,
+                              DefectDescriptionID = t1.DefectDescriptionID,
+                              DefectDescriptionName = t4.Name,
+                              StatusID = t1.StatusID,
+                              Remark = t1.Remark,
+                              IsMajorDefect = t1.IsMajorDefect,
+                              FlagActive = t1.FlagActive,
+
+                              listImageNotpass = (from rs in _context.tr_QC_UnitCheckList_Resource
+                                                  join resource in _context.tm_Resource on rs.ResourceID equals resource.ID
+                                                  where rs.DefectID == filterData.DefectID
+                                                    select new QC5DefactListImageNotPass
+                                                    {
+                                                        ResourceID = rs.ResourceID,
+                                                        FileName = resource.FileName,
+                                                        FilePath = resource.FilePath
+                                                    }).ToList()
+                          }).FirstOrDefault();
+
+            return result;
+        }
+
         public void InsertQCUnitCheckListDefect(QC5IUDModel model, Guid userid)
         {
             var transactionOptions = new TransactionOptions

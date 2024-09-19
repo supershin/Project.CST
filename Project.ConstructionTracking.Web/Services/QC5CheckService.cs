@@ -25,6 +25,12 @@ namespace Project.ConstructionTracking.Web.Services
             return QCUnitCheckListDefects;
         }
 
+        public QC5DefectModel GetQC5Defact(QC5DefectModel filterData)
+        {
+            var QC5Defactdata = _IQC5CheckRepo.GetQC5Defact(filterData);
+            return QC5Defactdata;
+        }
+
         public void InsertQCUnitCheckListDefect(QC5IUDModel model, Guid userid)
         {
             try
