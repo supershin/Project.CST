@@ -25,7 +25,6 @@
     <Folder Include="Models\MUnitModel\" />
     <Folder Include="Models\MUserModel\" />
     <Folder Include="Views\User\" />
-    <Folder Include="Models\GeneratePDFModel\" />
     <Folder Include="wwwroot\img\icon\" />
     <Folder Include="Upload\temp\" />
   </ItemGroup>

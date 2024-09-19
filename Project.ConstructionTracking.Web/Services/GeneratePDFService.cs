@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.CodeAnalysis;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Repositories;
@@ -8,11 +9,13 @@ namespace Project.ConstructionTracking.Web.Services
 	public interface IGeneratePDFService
 	{
 		DataGenerateCheckListResp GetDataToGeneratePDF(DataToGenerateModel model);
-		string GenerateDocumentNO(Guid projectID);
+        DataDocumentModel GenerateDocumentNO(Guid projectID);
+        bool SaveFileDocument(DataSaveTableResource model);
     }
 	public class GeneratePDFService : IGeneratePDFService
 	{
 		private readonly IGeneratePDFRepo _generatePDFRepo;
+
         public GeneratePDFService(IGeneratePDFRepo generatePDFRepo)
 		{
 			_generatePDFRepo = generatePDFRepo;
@@ -29,6 +32,7 @@ namespace Project.ConstructionTracking.Web.Services
 			{
 				ProjectName = queryData.ProjectName,
 				UnitCode = queryData.UnitCode,
+				UnitFormID = queryData.UnitFormID,
 				VendorName = queryData.VendorName,
                 FormName = queryData.FormName,
 				FormDesc = queryData.FormDesc
@@ -131,12 +135,18 @@ namespace Project.ConstructionTracking.Web.Services
 			return resp;
         }
 
-		public string GenerateDocumentNO(Guid projectID)
-		{
-			string resp = _generatePDFRepo.GenerateDocumentNO(projectID);
+        public DataDocumentModel GenerateDocumentNO(Guid projectID)
+        {
+            DataDocumentModel resp = _generatePDFRepo.GenerateDocumentNO(projectID);
+            return resp;
+        }
 
-			return resp;
-		}
+        public bool SaveFileDocument(DataSaveTableResource model)
+        {
+
+            bool result = _generatePDFRepo.SaveFileDocument(model);
+            return result;
+        }
     }
 }
 

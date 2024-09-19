@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
+using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
@@ -10,14 +12,15 @@ namespace Project.ConstructionTracking.Web.Repositories
 	{
 	    dynamic GetDataToGeneratePDF(DataToGenerateModel model);
 
-        string GenerateDocumentNO(Guid projectID);
+        DataDocumentModel GenerateDocumentNO(Guid projectID);
 
-        bool SaveFileDocument();
+        bool SaveFileDocument(DataSaveTableResource model);
     }
 
 	public class GeneratePDFRepo : IGeneratePDFRepo
 	{
         private readonly ContructionTrackingDbContext _context;
+
         public GeneratePDFRepo(ContructionTrackingDbContext context)
 		{
 			_context = context;
@@ -39,6 +42,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                              // Header
                              ProjectName = tmp.ProjectName,
                              UnitCode = tmu.UnitCode,
+                             UnitFormID = truf.ID,
                              VendorName = tmv.Name,
                              FormName = tmf.Name,
                              FormDesc = tmf.Description,
@@ -107,7 +111,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                        join trur in _context.tr_UserResource on trufa.UpdateBy equals trur.UserID
                                        join image in _context.tm_Resource on trur.ResourceID equals image.ID
                                        where trufa.UnitFormID == truf.ID && trufa.RoleID == SystemConstant.UserRole.PM
-                                       && trufa.ActionType == "submit" && trufa.StatusID == 4
+                                       && trufa.ActionType == "submit" && (trufa.StatusID == 4 || trufa.StatusID == 6)
                                        select image.FilePath).FirstOrDefault(),
 
                              SignVendor = (from tr in _context.tm_Resource
@@ -118,42 +122,86 @@ namespace Project.ConstructionTracking.Web.Repositories
             return query;
 		}
 
-        public string GenerateDocumentNO(Guid projectID)
+        public DataDocumentModel GenerateDocumentNO(Guid projectID)
         {
-            tr_Document? document = _context.tr_Document.Where(o => o.FlagActive == true)
-                                    .OrderByDescending(o => o.UpdateDate)
-                                    .FirstOrDefault();
 
-            tm_Project? project = _context.tm_Project
-                                .Where(o => o.ProjectID == projectID && o.FlagActive == true)
-                                .FirstOrDefault();
+            DataDocumentModel dataDocumentModel = new DataDocumentModel();
+
+
+            tm_Project? project = _context.tm_Project.Where(o => o.ProjectID == projectID && o.FlagActive == true).FirstOrDefault();
 
             string documentPrefix = "";
 
             if (project != null)
             {
-                documentPrefix = "C" + project.ProjectCode;
+                documentPrefix = "C" + project.ProjectCode + DateTime.Now.ToString("yyyy") + DateTime.Now.ToString("MM");
             }
 
-            int documentRunning;
+            tr_Document? document = _context.tr_Document
+                                .Where(o => o.DocumentPrefix == documentPrefix)
+                                .OrderByDescending(o => o.UpdateDate)
+                                .FirstOrDefault();
+
+            int approveString;
 
             if (document == null)
             {
-                documentRunning = 0;
+                approveString = 0;
             }
             else
             {
-                documentRunning = Int32.Parse(document.DocuementRunning);
+                approveString = Int32.Parse(document.DocuementRunning);
             }
 
-            string formatString = HashExtension.GenerateApproveNumber(documentRunning, documentPrefix);
-            return formatString;
+            approveString += 1;
+
+
+            string documentRunning = approveString.ToString("D5");
+            string documentNo = documentPrefix + "-" + documentRunning;
+
+            dataDocumentModel.documentRunning = documentRunning;
+            dataDocumentModel.documentPrefix = documentPrefix;
+            dataDocumentModel.documentNo = documentNo;
+
+            return dataDocumentModel;  // Return the populated model
         }
 
-        public bool SaveFileDocument()
+        public bool SaveFileDocument(DataSaveTableResource model)
         {
-            throw new NotImplementedException();
+            var newResource = new tm_Resource
+            {
+                ID = Guid.NewGuid(),
+                FileName = model.FileName,
+                FilePath = model.FilePath,
+                MimeType = "file/pdf",
+                FlagActive = true,
+                CreateDate = DateTime.Now,
+                CreateBy = model.UserID,
+                UpdateDate = DateTime.Now,
+                UpdateBy = model.UserID
+            };
+            _context.tm_Resource.Add(newResource);
+
+            var newFormResource = new tr_Document
+            {
+                ID = Guid.NewGuid(),
+                UnitFormID = model.UnitFormID,
+                ResourceID = newResource.ID,
+                DocumentNo = model.documentNo,
+                DocumentPrefix = model.documentPrefix,
+                DocuementRunning = model.documentRunning,
+                FlagActive = true,
+                CreateDate = DateTime.Now,
+                CreateBy = model.UserID,
+                UpdateDate = DateTime.Now,
+                UpdateBy = model.UserID
+            };
+            _context.tr_Document.Add(newFormResource);
+
+            _context.SaveChanges();
+            return true;
         }
+
     }
 }
 

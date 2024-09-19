@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Transactions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient.Server;
 using Project.ConstructionTracking.Web.Commons;
+using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Services;
 using QuestPDF.Drawing;
@@ -38,7 +40,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                               new
                               {
                                   success = true,
-                                 
+                                  pdfPath = dataResp,
                               }
                     );
             }
@@ -66,9 +68,22 @@ namespace Project.ConstructionTracking.Web.Controllers
                 {
                     DataGenerateCheckListResp dataForGenPdf = _generatePDFService.GetDataToGeneratePDF(model);
 
-                    string genDocumentNo = _generatePDFService.GenerateDocumentNO(model.ProjectID);
+                    DataDocumentModel genDocumentNo = _generatePDFService.GenerateDocumentNO(model.ProjectID);
 
                     string pathUrl = GeneratePDF(guid, dataForGenPdf, genDocumentNo);
+
+                    var userID = Request.Cookies["CST.ID"];
+
+                    var SaveTableResourc = new DataSaveTableResource { UnitFormID = dataForGenPdf.HeaderData.UnitFormID 
+                                                                     , documentRunning = genDocumentNo.documentRunning
+                                                                     , documentPrefix = genDocumentNo.documentPrefix
+                                                                     , documentNo = genDocumentNo.documentNo
+                                                                     , FilePath = pathUrl
+                                                                     , FileName = guid.ToString()
+                                                                     , UserID = Guid.Parse(userID)
+                    };
+
+                    bool ResultSave = _generatePDFService.SaveFileDocument(SaveTableResourc);
 
                     //string path = MegreMyPdfs(guid, reportDetail.OrderNO);
 
@@ -89,7 +104,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
-        public string GeneratePDF(Guid guid, DataGenerateCheckListResp dataGenerate, string genDocumentNo)
+        public string GeneratePDF(Guid guid, DataGenerateCheckListResp dataGenerate, DataDocumentModel genDocumentNo)
         {
             QuestPDF.Settings.License = LicenseType.Community;
             var fontPath = _hosting.ContentRootPath + "/wwwroot/lib/fonts/BrowalliaUPC.ttf";
@@ -143,7 +158,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                                 columns.RelativeColumn(3);
                             });
 
-                            table.Cell().Row(1).Column(1).ColumnSpan(5).Element(CellStyle).AlignLeft().Text("เลขที่ใบตรวจ: " + genDocumentNo).FontColor("#FF0000");
+                            table.Cell().Row(1).Column(1).ColumnSpan(5).Element(CellStyle).AlignLeft().Text("เลขที่ใบตรวจ: " + genDocumentNo.documentNo).FontColor("#FF0000");
 
                             table.Cell().Row(2).Column(1).Element(CellStyle).AlignLeft().Text("โครงการ ");
                             table.Cell().Row(2).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.ProjectName);

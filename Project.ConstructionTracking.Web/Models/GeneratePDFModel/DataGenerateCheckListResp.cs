@@ -26,6 +26,8 @@ namespace Project.ConstructionTracking.Web.Models.GeneratePDFModel
 		public string FormName { get; set; }
 		public string FormDesc { get; set; }
 
+		public Guid UnitFormID { get; set; }
+
 	}
 
 	public class BodyPdfCheckListData

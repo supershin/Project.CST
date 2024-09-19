@@ -19,7 +19,7 @@ namespace Project.ConstructionTracking.Web.Data
         [StringLength(50)]
         [Unicode(false)]
         public string? DocumentPrefix { get; set; }
-        [StringLength(4)]
+        [StringLength(5)]
         [Unicode(false)]
         public string? DocuementRunning { get; set; }
         public bool? FlagActive { get; set; }
