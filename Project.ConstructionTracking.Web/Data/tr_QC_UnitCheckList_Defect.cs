@@ -17,6 +17,7 @@ namespace Project.ConstructionTracking.Web.Data
         public int ID { get; set; }
         public Guid? QCUnitCheckListID { get; set; }
         public int? Seq { get; set; }
+        public int? SeqPass { get; set; }
         public int? DefectAreaID { get; set; }
         public int? DefectTypeID { get; set; }
         public int? DefectDescriptionID { get; set; }

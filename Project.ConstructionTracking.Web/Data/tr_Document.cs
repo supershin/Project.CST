@@ -12,14 +12,14 @@ namespace Project.ConstructionTracking.Web.Data
         public Guid ID { get; set; }
         public Guid? UnitFormID { get; set; }
         public Guid? QCUnitCheckListID { get; set; }
-        public Guid? ResoutrceID { get; set; }
+        public Guid? ResourceID { get; set; }
         [StringLength(50)]
         [Unicode(false)]
         public string? DocumentNo { get; set; }
         [StringLength(50)]
         [Unicode(false)]
         public string? DocumentPrefix { get; set; }
-        [StringLength(4)]
+        [StringLength(5)]
         [Unicode(false)]
         public string? DocuementRunning { get; set; }
         public bool? FlagActive { get; set; }

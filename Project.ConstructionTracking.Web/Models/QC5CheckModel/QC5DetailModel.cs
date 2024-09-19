@@ -1,4 +1,6 @@
-﻿namespace Project.ConstructionTracking.Web.Models.QC5CheckModel
+﻿using static Project.ConstructionTracking.Web.Models.FormCheckListModel;
+
+namespace Project.ConstructionTracking.Web.Models.QC5CheckModel
 {
     public class QC5DetailModel
     {
@@ -22,5 +24,6 @@
         public string? QC5UpdateDate { get; set; }
         public string? QC5UpdateByName { get; set; }
         public string? ActionType { get; set; }
+        
     }
 }

@@ -212,6 +212,36 @@
                 element.focus({ preventScroll: true });
             }
 
+
+            function generatePDFAfterSave(formData) {
+                $.ajax({
+                    url: baseUrl + 'GeneratePDF/GeneratePDFCheckList',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        ProjectID: formData.get('ProjectID'),
+                        UnitID: formData.get('UnitID'),
+                        FormID: formData.get('FormID')
+                    }),
+                    success: function (response) {
+                        Swal.close();
+                        if (response.success) {
+                            const pdfPath = response.pdfPath; // Replace with the actual key for the PDF path
+                            window.open(baseUrl + pdfPath, '_blank');
+                            showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จและสร้าง PDF สำเร็จ', () => {
+                                window.location.reload(); // Reload the page after success
+                            });
+                        } else {
+                            showErrorAlert('ผิดพลาด!', 'ไม่สามารถสร้าง PDF ได้');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.close();
+                        showErrorAlert('ผิดพลาด!', 'ไม่สามารถสร้าง PDF ได้');
+                    }
+                });
+            }
+
         </script>
         <!-- header -->
         <header class="navbar navbar-expand-md d-print-none">

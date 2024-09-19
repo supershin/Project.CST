@@ -135,7 +135,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                     }
                     else if (UserRoleID == SystemConstant.UserRole.PJM)
                     {
-                        return RedirectToAction("Index", "MyTaskPM");
+                        return RedirectToAction("Index", "MyTaskPJM");
                     }
                     else
                     {

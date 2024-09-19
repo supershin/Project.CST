@@ -68,6 +68,14 @@
             public const int PM_Approve_Unlock = 11;
             public const int PM_Reject_Unlock = 12;
         }
+
+        public static class CheckList_Status
+        {
+            public const int PASS = 9;
+            public const int NOTPASS = 10;
+            public const int NOWORK = 11;
+        }
+
     }
 
 }

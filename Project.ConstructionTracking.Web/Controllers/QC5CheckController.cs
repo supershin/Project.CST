@@ -74,7 +74,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             try
             {
                 Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
-
+                model.ApplicationPath = _hosting.ContentRootPath;
                 _QC5CheckService.InsertQCUnitCheckListDefect(model , userid);
 
                 // Return success response

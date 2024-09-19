@@ -258,12 +258,17 @@ function performAjaxRequest(actionType) {
         processData: false,
         data: data,
         success: function (res) {
-            Swal.close();
-            if (res.success) {
-                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', () => {
-                    window.location.reload();
-                });
+            if (res.success) {                
+                if (mainStatus && mainStatus.value === "4" && actionType === "submit") {
+                    generatePDFAfterSave(data);
+                } else {
+                    Swal.close();
+                    showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', () => {
+                        window.location.reload();
+                    });
+                }
             } else {
+                Swal.close();
                 showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
             }
         },
@@ -273,6 +278,36 @@ function performAjaxRequest(actionType) {
         }
     });
 }
+
+//function generatePDFAfterSave(formData) {
+//    $.ajax({
+//        url: baseUrl + 'GeneratePDF/GeneratePDFCheckList',
+//        type: 'POST',
+//        contentType: 'application/json',
+//        data: JSON.stringify({
+//            ProjectID: formData.get('ProjectID'),
+//            UnitID: formData.get('UnitID'),
+//            FormID: formData.get('FormID')
+//        }),
+//        success: function (response) {
+//            Swal.close();
+//            if (response.success) {
+//                const pdfPath = response.pdfPath; // Replace with the actual key for the PDF path
+//                window.open(baseUrl + pdfPath, '_blank');
+//                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จและสร้าง PDF สำเร็จ', () => {
+//                    window.location.reload(); // Reload the page after success
+//                });
+//            } else {
+//                showErrorAlert('ผิดพลาด!', 'ไม่สามารถสร้าง PDF ได้');
+//            }
+//        },
+//        error: function (xhr, status, error) {
+//            Swal.close();
+//            showErrorAlert('ผิดพลาด!', 'ไม่สามารถสร้าง PDF ได้');
+//        }
+//    });
+//}
+
 
 function deleteImage(resourceId) {
     Swal.fire({
