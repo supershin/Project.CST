@@ -8,7 +8,7 @@ namespace Project.ConstructionTracking.Web.Services
 	public interface IGeneratePDFService
 	{
 		DataGenerateCheckListResp GetDataToGeneratePDF(DataToGenerateModel model);
-
+		string GenerateDocumentNO(Guid projectID);
     }
 	public class GeneratePDFService : IGeneratePDFService
 	{
@@ -130,6 +130,13 @@ namespace Project.ConstructionTracking.Web.Services
 
 			return resp;
         }
+
+		public string GenerateDocumentNO(Guid projectID)
+		{
+			string resp = _generatePDFRepo.GenerateDocumentNO(projectID);
+
+			return resp;
+		}
     }
 }
 

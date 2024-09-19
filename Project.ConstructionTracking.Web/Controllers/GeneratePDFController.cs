@@ -66,7 +66,9 @@ namespace Project.ConstructionTracking.Web.Controllers
                 {
                     DataGenerateCheckListResp dataForGenPdf = _generatePDFService.GetDataToGeneratePDF(model);
 
-                    string pathUrl = GeneratePDF(guid, dataForGenPdf);
+                    string genDocumentNo = _generatePDFService.GenerateDocumentNO(model.ProjectID);
+
+                    string pathUrl = GeneratePDF(guid, dataForGenPdf, genDocumentNo);
 
                     //string path = MegreMyPdfs(guid, reportDetail.OrderNO);
 
@@ -87,7 +89,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
-        public string GeneratePDF(Guid guid, DataGenerateCheckListResp dataGenerate)
+        public string GeneratePDF(Guid guid, DataGenerateCheckListResp dataGenerate, string genDocumentNo)
         {
             QuestPDF.Settings.License = LicenseType.Community;
             var fontPath = _hosting.ContentRootPath + "/wwwroot/lib/fonts/BrowalliaUPC.ttf";
@@ -141,7 +143,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                                 columns.RelativeColumn(3);
                             });
 
-                            table.Cell().Row(1).Column(1).ColumnSpan(5).Element(CellStyle).AlignLeft().Text("เลขที่ใบตรวจ: " + "C400H007-092024-00001").FontColor("#FF0000");
+                            table.Cell().Row(1).Column(1).ColumnSpan(5).Element(CellStyle).AlignLeft().Text("เลขที่ใบตรวจ: " + genDocumentNo).FontColor("#FF0000");
 
                             table.Cell().Row(2).Column(1).Element(CellStyle).AlignLeft().Text("โครงการ ");
                             table.Cell().Row(2).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.ProjectName);
@@ -184,12 +186,6 @@ namespace Project.ConstructionTracking.Web.Controllers
                                 .AlignCenter()
                                 .AlignMiddle();
                         }
-                        //col1.Item().Row(row =>
-                        //{
-                        //    row.RelativeItem(6).AlignRight().Text("รายการตรวจ").FontColor("#FF0000").FontSize(18).SemiBold();
-                        //    row.RelativeItem(3).AlignRight().Text("ผลการตรวจ").FontSize(18).SemiBold().BackgroundColor("#6ce4ff");
-                        //    row.RelativeItem(3).AlignRight().Text("ความคิดเห็น").FontSize(18).SemiBold().BackgroundColor("#6ce4ff");
-                        //});
 
                         col1.Item().Table(table2 =>
                         {

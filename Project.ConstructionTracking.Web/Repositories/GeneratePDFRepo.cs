@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.CodeAnalysis;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
@@ -7,8 +8,12 @@ namespace Project.ConstructionTracking.Web.Repositories
 {
 	public interface IGeneratePDFRepo
 	{
-		public dynamic GetDataToGeneratePDF(DataToGenerateModel model);
-	}
+	    dynamic GetDataToGeneratePDF(DataToGenerateModel model);
+
+        string GenerateDocumentNO(Guid projectID);
+
+        bool SaveFileDocument();
+    }
 
 	public class GeneratePDFRepo : IGeneratePDFRepo
 	{
@@ -112,6 +117,38 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return query;
 		}
+
+        public string GenerateDocumentNO(Guid projectID)
+        {
+            tr_Document? document = _context.tr_Document.Where(o => o.FlagActive == true)
+                                    .OrderByDescending(o => o.UpdateDate)
+                                    .FirstOrDefault();
+
+            tm_Project? project = _context.tm_Project
+                                .Where(o => o.ProjectID == projectID && o.FlagActive == true)
+                                .FirstOrDefault();
+
+            string documentPrefix = "";
+
+            if (project != null)
+            {
+                documentPrefix = "C" + project.ProjectCode;
+            }
+
+            int documentRunning;
+
+            if (document == null)
+            {
+                documentRunning = 0;
+            }
+            else
+            {
+                documentRunning = Int32.Parse(document.DocuementRunning);
+            }
+
+            string formatString = HashExtension.GenerateApproveNumber(documentRunning, documentPrefix);
+            return formatString;
+        }
     }
 }
 
