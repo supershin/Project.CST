@@ -69,4 +69,15 @@
     <Content Remove="wwwroot\js\master\" />
     <Content Remove="wwwroot\img\icon\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot\img\icon\box.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\img\icon\check.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\img\icon\checkbox.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
