@@ -70,13 +70,13 @@
     <Content Remove="wwwroot\img\icon\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="wwwroot\img\icon\box.png">
+    <Content Update="wwwroot\img\box.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\img\icon\check.png">
+    <Content Update="wwwroot\img\check.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\img\icon\checkbox.png">
+    <Content Update="wwwroot\img\checkbox.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
