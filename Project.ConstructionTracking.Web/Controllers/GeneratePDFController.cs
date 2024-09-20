@@ -111,9 +111,9 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             FontManager.RegisterFont(System.IO.File.OpenRead(fontPath));
 
-            var imageBox = Directory.GetCurrentDirectory() + "/wwwroot/img/icon/box.png";
-            var imageCheckBox = Directory.GetCurrentDirectory() + "/wwwroot/img/icon/checkbox.png";
-            var imageCheck = Directory.GetCurrentDirectory() + "/wwwroot/img/icon/check.png";
+            var imageBox = Directory.GetCurrentDirectory() + "/wwwroot/img/box.png";
+            var imageCheckBox = Directory.GetCurrentDirectory() + "/wwwroot/img/checkbox.png";
+            var imageCheck = Directory.GetCurrentDirectory() + "/wwwroot/img/check.png";
 
             var document = QuestPDF.Fluent.Document.Create(container =>
             {
