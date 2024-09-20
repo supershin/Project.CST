@@ -266,7 +266,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
         {
             using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
             {
-                SqlCommand SqlCmd = new SqlCommand("sp_get_unitstatus", SqlCon);
+                SqlCommand SqlCmd = new SqlCommand("sp_get_unitstatusbk", SqlCon);
                 try
                 {
                     SqlCon.Open();
@@ -289,7 +289,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("Stored name : sp_get_unitstatus");
+                    Log.Error("Stored name : sp_get_unitstatusbk");
                     Log.Error("SEND pram1 Act (nvarchar) : {Act}", en.act);
                     Log.Error("SEND pram2 unit_id (nvarchar) : {Unit_id}", en.unit_id);
                     Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", en.project_id);

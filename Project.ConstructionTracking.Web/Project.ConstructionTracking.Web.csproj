@@ -12,7 +12,6 @@
     <Folder Include="Data\" />
     <Folder Include="Upload\" />
     <Folder Include="wwwroot\lib\datatable\" />
-    <Folder Include="Views\FormOverall\" />
     <Folder Include="Views\MasterForm\" />
     <Folder Include="Views\MasterProject\" />
     <Folder Include="Models\MProjectModel\" />
@@ -67,7 +66,6 @@
     <None Remove="Upload\temp\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Remove="Views\FormOverall\PartialFormList.cshtml" />
     <Content Remove="wwwroot\js\master\" />
     <Content Remove="wwwroot\img\icon\" />
   </ItemGroup>

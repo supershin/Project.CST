@@ -52,6 +52,16 @@ var unitEquipment = {
     submitUnitEquipmentSign: () => {
         let isValid = true;
         let validationMessage = '';
+        var permissionSubmit = document.getElementById("PermissionSubmit").value;
+
+        if (permissionSubmit === 'false') {
+            showErrorAlert('คุณไม่มีสิทธิ์ยืนยัน Unit นี้', '');
+            return;
+        }
+
+        console.log(permissionSubmit)
+
+
 
         $('div.card-link').each(function () {
             const statusUse = $(this).find('button.status-dot').data('status-use');
