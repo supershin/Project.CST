@@ -1,8 +1,12 @@
 ﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
+    var ListProject = ViewBag.ListProject;
+    var ddlListUnitStatus = ViewBag.DDLList;
 }
 @model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.UnitStatusModel>
+
+
 <div class="page-wrapper">
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
@@ -27,50 +31,47 @@
                 <div class="card-body">
                     <form id="form-search" method="post">
                         <div class="row">
-                            <div class="col-3">
+                            <div class="col-6">
                                 <div class="mb-3">
                                     <label class="form-label"><h3>โครงการ</h3></label>
-                                      <select class="form-select">
-                                            <option value="1">โครงการ 1</option>
-                                            <option value="2">โครงการ 2</option>
-                                            <option value="3">โครงการ 3</option>
-                                            <option value="4">โครงการ 4</option>
-                                      </select>
+                                    <select class="form-select" name="selectedProject">
+                                        @foreach (var item in ListProject)
+                                        {
+                                            <option value="@item.ValueGuid">@item.Text</option>
+                                        }
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-3">
                                 <div class="mb-3">
-                                  <label class="form-label"><h3>สถานะขาย</h3></label>
-                                  <select class="form-select">
-                                    <option value="1">ว่าง</option>
-                                    <option value="2">จอง</option>
-                                    <option value="3">สัญญา</option>
-                                    <option value="4">โอน</option>
-                                  </select>
+                                    <label class="form-label"><h3>สถานะขาย</h3></label>
+                                    <select class="form-select" name="selectedUnitStatus">
+                                        <option value="">ทั้งหมด</option>
+                                        @foreach (var item in ddlListUnitStatus)
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-3">
                                 <div class="mb-3">
                                     <label class="form-label"><h3>สถานะก่อสร้าง</h3></label>
                                     <div class="row g-2">
                                         <div class="col">
-                                            <select class="form-select">
-                                                <option value="1">ยังไม่เริ่มสร้าง</option>
-                                                <option value="2">กำลังสร้าง</option>
-                                                <option value="3">สร้างเสร็จแล้ว</option>
+                                            <select class="form-select" name="selectedBuildStatus">
+                                                <option value="">ทั้งหมด</option>
+                                                <option value="บ้านเสร็จ">บ้านเสร็จ</option>
+                                                <option value="อยู่ระหว่างก่อสร้าง">อยู่ระหว่างก่อสร้าง</option>
+                                                <option value="บ้านเสร็จ">บ้านเสร็จ</option>
                                             </select>
                                         </div>
                                         <div class="col-auto">
                                             <button type="submit" class="btn btn-icon" aria-label="Button">
-                                                <!-- Download SVG icon from http://tabler-icons.io/i/search -->
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
-                                            </button>
-                                        </div>
-                                        <div class="col-auto">
-                                            <button class="btn btn-icon" type="button" onclick="toggleCollapse()">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-filter">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z" />
+                                                    <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+                                                    <path d="M21 21l-6 -6" />
                                                 </svg>
                                             </button>
                                         </div>
@@ -120,43 +121,63 @@
                 </div>
             </div>
         </div>
-        <div class="container mt-3">
+        <div class="container mt-3" id="PartialTable">
             <partial name="PartialTable" model="Model" />
-@*             @Html.Partial("PartialTable") *@
         </div>
     </div>
 </div>
 
-<script>
-    $(document).ready(function () {
-        $('#example').DataTable({
-            "paging": true,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-            "language": {
-                "lengthMenu": "Show _MENU_ rows per page",
-                "zeroRecords": "No matching records found",
-                "info": "Showing page _PAGE_ of _PAGES_",
-                "infoEmpty": "No records available",
-                "infoFiltered": "(filtered from _MAX_ total records)"
-            }
-        });
-    });
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            setDatatable();
 
-        function toggleCollapse() {
-            var collapseElement = document.getElementById('collapseExample');
-            var bsCollapse = new bootstrap.Collapse(collapseElement, {
-                toggle: false
+            $('#form-search').on('submit', function (event) {
+                event.preventDefault();
+                var projectId = $('#form-search select[name="selectedProject"]').val() || "";
+                var unitStatus = $('#form-search select[name="selectedUnitStatus"]').val() || "";
+                var buildStatus = $('#form-search select[name="selectedBuildStatus"]').val() || "";
+
+                $.ajax({
+                    url: baseUrl + 'UnitStatusByProject/SearchUnitStatusByProject', // Use the base URL dynamically
+                    type: 'POST',
+                    data: {
+                        projectId: projectId,
+                        unitStatus: unitStatus,
+                        buildStatus: buildStatus
+                    },
+                    success: function (response) {
+                        $('#PartialTable').html(response);
+                        setDatatable();
+                    },
+                    error: function () {
+                        console.error('Error fetching data');
+                    }
+                });
+                return false;
             });
-            if (collapseElement.classList.contains('show')) {
-                bsCollapse.hide();
-            } else {
-                bsCollapse.show();
-            }
+
+
+        });
+
+        function setDatatable() { 
+            $('#example').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "language": {
+                    "lengthMenu": "Show _MENU_ rows per page",
+                    "zeroRecords": "No matching records found",
+                    "info": "Showing page _PAGE_ of _PAGES_",
+                    "infoEmpty": "No records available",
+                    "infoFiltered": "(filtered from _MAX_ total records)"
+                }
+            });
         }
-</script>
+    </script>
+}
