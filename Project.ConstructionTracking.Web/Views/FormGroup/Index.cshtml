@@ -18,6 +18,7 @@
     var GobackTo = ViewBag.GobackTo;
     var comeFrom = ViewBag.comeFrom;
     var RoleID = ViewBag.RoleID;
+    var PermissionSubmit = ViewBag.PermissionSubmit;
     var grade = FormGroupDetail?.Grade;
     var VenderName = FormGroupDetail?.VenderName;
     var VenderValue = FormGroupDetail?.VenderID;
@@ -354,7 +355,7 @@
                         </div>
                     </div>
                     <div class="align-items-right">
-
+                        <input type="hidden" id="PermissionSubmit" value="@PermissionSubmit.ToString().ToLower()" />
                     </div>
                 </div>
             </div>

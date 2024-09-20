@@ -37,9 +37,6 @@ builder.Services.AddScoped<ITrackingRepo, TrackingRepo>();
 builder.Services.AddScoped<IProjectFormService, ProjectFormService>();
 builder.Services.AddScoped<IProjectFormRepo, ProjectFormRepo>();
 
-builder.Services.AddScoped<IFormOverallService, FormOverallService>();
-builder.Services.AddScoped<IFormOverallRepo, FormOverallRepo>();
-
 builder.Services.AddScoped<IGetDDLService, GetDDLService>();
 builder.Services.AddScoped<IGetDDLRepo, GetDDLRepo>();
 

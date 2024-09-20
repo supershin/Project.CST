@@ -1,10 +1,12 @@
 ﻿using Humanizer.Localisation;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
@@ -174,6 +176,18 @@ namespace Project.ConstructionTracking.Web.Repositories
                 FileName = fileName,
                 FileDate = fileDate
             };
+        }
+        public bool ValidateUserSubmit(Guid? UserID , Guid? ProjectID )
+        {
+            var ProjectPermission = _context.tr_ProjectPermission.Where(Pp => Pp.ProjectID == ProjectID && Pp.UserID == UserID).FirstOrDefault();
+            if (ProjectPermission != null)
+            {
+                return true;
+            }
+            else 
+            { 
+                return false; 
+            }
         }
 
         public void SubmitSaveFormGroup(FormGroupModel.FormGroupIUDModel model)

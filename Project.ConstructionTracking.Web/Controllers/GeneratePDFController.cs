@@ -270,8 +270,8 @@ namespace Project.ConstructionTracking.Web.Controllers
                                                 table2.Cell().Row((uint)(number + check)).Column(5).Element(CellStyle).Width(15).Image(imageCheck); // icon
                                             }
                                         }
-                                        table2.Cell().Row((uint)(number + check)).Column(6).RowSpan((uint)dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count).Element(CellStyle).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].PackageRemark).WrapAnywhere();
                                     }
+                                    table2.Cell().Row((uint)(number)).Column(6).RowSpan((uint)dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count).Element(CellStyle).AlignLeft();
                                     int count = dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count;
                                     countRow = number + count;
                                 }

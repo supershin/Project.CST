@@ -12,11 +12,14 @@ namespace Project.ConstructionTracking.Web.Repositories
         {
             _context = context;
         }
-        public dynamic GetProjectList()
+        public dynamic GetProjectList(Guid? userID)
         {
             try
             {
                 var query = from u in _context.tm_Project.Where(e => e.FlagActive == true)
+                            join u2 in _context.tr_ProjectPermission.Where(p => p.FlagActive == true) on u.ProjectID equals u2.ProjectID into u2Group
+                            from u2 in u2Group.DefaultIfEmpty()
+                            where u2.UserID == userID
                             select new
                             {
                                 u.ProjectID,
@@ -40,12 +43,16 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-        public dynamic SearchProjects(string term)
+        public dynamic SearchProjects(string term, Guid? userID)
         {
             try
             {
                 var query = from u in _context.tm_Project
-                            where u.FlagActive == true && u.ProjectName.Contains(term)
+                            join u2 in _context.tr_ProjectPermission.Where(p => p.FlagActive == true) on u.ProjectID equals u2.ProjectID into u2Group
+                            from u2 in u2Group.DefaultIfEmpty()
+                            where u.FlagActive == true 
+                               && u2.UserID == userID
+                               && u.ProjectName.Contains(term)
                             select new
                             {
                                 u.ProjectID,

@@ -4,8 +4,8 @@ namespace Project.ConstructionTracking.Web.Repositories
 {
     public interface IProjectRepo
     {
-        dynamic GetProjectList();
-        dynamic SearchProjects(string term);
+        dynamic GetProjectList(Guid? userID);
+        dynamic SearchProjects(string term , Guid? userID);
     }
 
 }

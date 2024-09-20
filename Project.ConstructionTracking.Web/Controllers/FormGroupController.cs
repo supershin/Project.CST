@@ -64,8 +64,13 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             var ddlModel = new GetDDL { Act = "Vender", ID = UnitFormData.CompanyvenderID };
             List<GetDDL> ListVender = _getDDLService.GetDDLList(ddlModel);
-
             ViewBag.ListVender = ListVender;
+
+            var userID = Request.Cookies["CST.ID"];
+            var userIDuse = Guid.Parse(userID);
+
+            bool ResultPermissionSubmit = _FormGroupService.ValidateUserSubmit(userIDuse , UnitFormData.ProjectID);
+            ViewBag.PermissionSubmit = ResultPermissionSubmit;
 
             return View(listFormGroup);
         }
