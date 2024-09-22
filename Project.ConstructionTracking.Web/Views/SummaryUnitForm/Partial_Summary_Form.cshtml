@@ -131,7 +131,7 @@
                                     }
                                 </div>
                                 <div class="col">
-                                    @if (@item.PEColor != "")
+                                    @if (@item.PEColor != "bg-secondary")
                                     {
                                         <form action="@Url.Action("index", "PMApprove", new { unitId = @item.UnitID, formId = @item.FormID , comeFrom = "SummaryUnitForm" })" method="post">
                                             <button type="submit" class="status-dot @item.PMColor @(item.PMColor == "bg-danger" || item.PMColor == "bg-warning" ? "status-dot-animated" : "")">

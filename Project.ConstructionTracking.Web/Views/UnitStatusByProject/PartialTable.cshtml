@@ -106,7 +106,10 @@
                 {
                     <tr>
                         <td>
-                            @item.unit_code <a asp-controller="UnitStatusByUnit" asp-action="Index"><i class="fa-solid fa-magnifying-glass"></i></a>
+                            @item.unit_code
+                            <a asp-controller="UnitStatusByUnit" asp-action="Index" asp-route-ProjectID="@item.project_id" asp-route-UnitID="@item.unit_id">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </a>
                         </td>
                         <td>@item.model_type_str</td>
                         <td>@item.unit_type_str</td>

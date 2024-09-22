@@ -42,6 +42,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
         public abstract List<UnitListModel> sp_get_UnitList(UnitListModel EN);
 
         public abstract List<SummeryUnitFormModel> sp_get_summaryunitform(SummeryUnitFormModel EN);
+        public abstract List<UnitFormStatusModel> sp_get_UnitFormStatusByUnit(UnitFormStatusModel EN);
 
 
         #region __ Reader __
@@ -75,7 +76,6 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.UpdateBy = Commons.FormatExtension.Nulltoint(reader["UpdateBy"]);
             return Entity;
         }
-
 
 
         public static List<UnitStatusModel> sp_get_unitstatus_ListReader(IDataReader reader)
@@ -116,7 +116,6 @@ namespace Project.ConstructionTracking.Web.Library.DAL
         }
 
 
-
         public static List<PEMyTaskModel> sp_get_mytask_pe_ListReader(IDataReader reader)
         {
             List<PEMyTaskModel> list = new List<PEMyTaskModel>();
@@ -154,7 +153,6 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassCondition_Color"]);
             return Entity;
         }
-
 
 
         public static List<PMMyTaskModel> sp_get_mytask_pm_ListReader(IDataReader reader)
@@ -298,6 +296,43 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.Cnt_PC = Commons.FormatExtension.Nulltoint(reader["Cnt_PC"]);
             Entity.PCColor = Commons.FormatExtension.NullToString(reader["PCColor"]);
             Entity.PCIcon = Commons.FormatExtension.NullToString(reader["PCIcon"]);
+            return Entity;
+        }
+
+
+        public static List<UnitFormStatusModel> sp_get_UnitFormStatusByUnit_ListReader(IDataReader reader)
+        {
+            List<UnitFormStatusModel> list = new List<UnitFormStatusModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_UnitFormStatusByUnit_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static UnitFormStatusModel sp_get_UnitFormStatusByUnit_Reader(IDataReader reader, int index)
+        {
+            UnitFormStatusModel Entity = new UnitFormStatusModel();
+
+            Entity.index = index;
+            Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.UnitFormID = Commons.FormatExtension.ConvertStringToGuid(reader["UnitFormID"]);
+            Entity.Form = Commons.FormatExtension.NullToString(reader["Form"]);
+            Entity.Vender = Commons.FormatExtension.NullToString(reader["Vender"]);
+            Entity.Progress = Commons.FormatExtension.NullToString(reader["Progress"]);
+            Entity.QC = Commons.FormatExtension.NullToString(reader["QC"]);
+            Entity.StartPlan = Commons.FormatExtension.NullToString(reader["StartPlan"]);
+            Entity.EndPlan = Commons.FormatExtension.NullToString(reader["EndPlan"]);
+            Entity.PESave = Commons.FormatExtension.NullToString(reader["PESave"]);
+            Entity.PMSubmit = Commons.FormatExtension.NullToString(reader["PMSubmit"]);
+            Entity.PCStatus = Commons.FormatExtension.NullToString(reader["PCStatus"]);
+            Entity.DisbursementStatus = Commons.FormatExtension.NullToString(reader["DisbursementStatus"]);
+            Entity.PCUnlock = Commons.FormatExtension.NullToString(reader["PCUnlock"]);
+            Entity.UnitFormPDF = Commons.FormatExtension.NullToString(reader["UnitFormPDF"]);
+            Entity.QCPDF = Commons.FormatExtension.NullToString(reader["QCPDF"]);
             return Entity;
         }
 

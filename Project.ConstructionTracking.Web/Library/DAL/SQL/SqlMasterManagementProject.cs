@@ -167,6 +167,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                 }
             }
         }
+
         public override List<PMMyTaskModel> sp_get_mytask_pm(PMMyTaskModel en)
         {
             using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
@@ -347,6 +348,54 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                     Log.Error("=========== END ===========");
 
                     return new List<SummeryUnitFormModel>();
+                }
+                finally
+                {
+                    SqlCmd.Dispose();
+                    SqlCon.Close();
+                    SqlCon.Dispose();
+                }
+            }
+        }
+
+        public override List<UnitFormStatusModel> sp_get_UnitFormStatusByUnit(UnitFormStatusModel en)
+        {
+            using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
+            {
+                SqlCommand SqlCmd = new SqlCommand("sp_get_unitstatus", SqlCon);
+                try
+                {
+                    SqlCon.Open();
+                    SqlTransaction Trans = SqlCon.BeginTransaction();
+                    SqlCmd.Transaction = Trans;
+                    SqlCmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = en.act ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@project_id", SqlDbType.NVarChar)).Value = en.project_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = en.unit_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = en.unit_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@build_status", SqlDbType.NVarChar)).Value = en.build_status ?? (object)DBNull.Value;
+                    switch (en.act)
+                    {
+                        case "UnitFormStatusByUnit":
+                            return sp_get_UnitFormStatusByUnit_ListReader(ExecuteReader(SqlCmd));
+
+                        default:
+                            return new List<UnitFormStatusModel>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Stored name : sp_get_unitstatus");
+                    Log.Error("SEND pram1 Act (nvarchar) : {Act}", en.act);
+                    Log.Error("SEND pram2 unit_id (nvarchar) : {Unit_id}", en.unit_id);
+                    Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", en.project_id);
+                    Log.Error("SEND pram4 unit_status (nvarchar) : {Unit_status}", en.unit_status);
+                    Log.Error("SEND pram5 build_status (nvarchar) : {build_status}", en.build_status);
+                    Log.Error(ex.ToString());
+                    Log.Error("=========== END ===========");
+
+                    return new List<UnitFormStatusModel>();
                 }
                 finally
                 {
