@@ -98,11 +98,11 @@ const detailLogin = {
                 document.getElementById('user-password-confirm-error').textContent = 'รหัสผ่านไม่ตรงกัน';
             }
 
-            // Validate Signature
-            if (!detailLogin.getSignatureData() ) {
-                isValid = false;
-                document.getElementById('user-sign-error').textContent = 'กรุณาตรวจสอบลายเซ็นต์';
-            }
+            //// Validate Signature
+            //if (!detailLogin.getSignatureData() ) {
+            //    isValid = false;
+            //    document.getElementById('user-sign-error').textContent = 'กรุณาตรวจสอบลายเซ็นต์';
+            //}
 
             if (isValid) {
                 const data = {
@@ -141,7 +141,8 @@ const detailLogin = {
                         confirmButtonText: 'OK'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            window.location.href = baseUrl + 'masteruser/index';
+                            //window.location.href = baseUrl + 'masteruser/index';
+                            window.location.reload();
                         }
                     });
                 } else {

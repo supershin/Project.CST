@@ -101,6 +101,7 @@
                     JobPosition: userPosition.value.trim(),
                     RoleID: userRole.value,
                     Password: userPassword.value.trim(),
+                    IsMapping: true,
                     MappingProject: checkedProjects
                 };
 
