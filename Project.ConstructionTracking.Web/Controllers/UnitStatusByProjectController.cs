@@ -32,7 +32,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             var en = new UnitStatusModel
             {
                 act = "GetlistUnitStatustest",
-                project_id = ListProject[0].ValueGuid.ToString(),
+                project_id = (ListProject != null && ListProject.Count > 0) ? ListProject[0].ValueGuid.ToString() : string.Empty,
                 unit_id = "",
                 unit_status = "",
                 build_status = ""

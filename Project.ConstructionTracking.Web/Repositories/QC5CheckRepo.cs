@@ -90,7 +90,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
-        public QC5DefectModel GetQC5Defact(QC5DefectModel filterData)
+        public QC5DefectModel GetQC5DefactEdit(QC5DefectModel filterData)
         {
             var result = (from t1 in _context.tr_QC_UnitCheckList_Defect
                           join t2 in _context.tm_DefectArea on t1.DefectAreaID equals t2.ID into defectAreaGroup

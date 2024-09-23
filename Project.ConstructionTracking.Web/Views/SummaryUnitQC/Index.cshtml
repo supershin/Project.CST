@@ -84,8 +84,8 @@
             <div class="row row-cards">
                 @foreach (var listQc in Model.QcSummaryLists)
                 {
-                    @if(listQc.QcTypeID != SystemConstant.QcTypeID.QC5)
-                    {
+@*                  @if(listQc.QcTypeID != SystemConstant.QcTypeID.QC5)
+                    { *@
                         <div class="col-12 col-sm-6">
                             <div class="card card-link card-link-pop">
                                 <div class="row justify-content-center">
@@ -93,6 +93,19 @@
                                         <div class="col-12 d-flex flex-row align-items-center">
                                             <div class="row">
                                                 <div class="col-3">
+                                                @if (listQc.QcTypeID == SystemConstant.QcTypeID.QC5)
+                                                {
+                                                    <form asp-controller="QC5Check" asp-action="index">
+                                                        <input type="hidden" name="ProjectID" value="@Model.ProjectID" />
+                                                        <input type="hidden" name="UnitID" value="@Model.UnitID" />
+                                                        <input type="hidden" name="Seq" value="1" />
+                                                        <button type="submit" class="btn btn-success fixed-size-btn mb-2">
+                                                            @listQc.QcTypeName
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
                                                     <form asp-controller="QCChecklist" asp-action="index">
                                                         <input type="hidden" name="ProjectID" value="@Model.ProjectID" />
                                                         <input type="hidden" name="UnitID" value="@Model.UnitID" />
@@ -104,6 +117,7 @@
                                                             @listQc.QcTypeName
                                                         </button>
                                                     </form>
+                                                }
                                                 </div>
                                                 @for (int i = 0; i < 5; i++)
                                                 {
@@ -113,6 +127,17 @@
                                                         if (data != null)
                                                         {
                                                             <div class="col">
+                                                            @if (listQc.QcTypeID == SystemConstant.QcTypeID.QC5)
+                                                            {
+                                                                <form asp-controller="QC5Check" asp-action="index">
+                                                                    <input type="hidden" name="ProjectID" value="@Model.ProjectID" />
+                                                                    <input type="hidden" name="UnitID" value="@Model.UnitID" />
+                                                                    <input type="hidden" name="Seq" value="@data.Seq" />
+                                                                    <button type="submit" class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH ? "green" : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2"></button>
+                                                                </form>
+                                                            }
+                                                            else
+                                                            {
                                                                 <form asp-controller="QCChecklist" asp-action="index">
                                                                     <input type="hidden" name="ProjectID" value="@Model.ProjectID" />
                                                                     <input type="hidden" name="UnitID" value="@Model.UnitID" />
@@ -125,6 +150,7 @@
                                                                     <input type="hidden" name="Seq" value="@data.Seq" />
                                                                     <button type="submit" class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH ? "green" : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2"></button>
                                                                 </form>
+                                                            }
                                                             </div>
                                                         }
                                                     }
@@ -146,7 +172,7 @@
                                 </div>
                             </div>
                         </div>
-                    }
+                   @*  } *@
                 }
             </div>
         </div>

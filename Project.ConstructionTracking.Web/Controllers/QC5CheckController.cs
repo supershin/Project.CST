@@ -87,6 +87,13 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
+        //[HttpPost]
+        //public IActionResult GetDefactDetail(QC5DefectModel model)
+        //{
+
+        //}
+
+
 
     }
 }

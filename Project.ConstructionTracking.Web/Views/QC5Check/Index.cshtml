@@ -303,30 +303,59 @@
                 </div>
                 <div class="col">
                     <div class="row">
-                    <div class="col-12 mt-1">
+                    <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">รายการ Defect</h3>
+                                <!-- Search Input -->
+                                    <div class="row col-12">
+                                    <div class="col-12 col-sm-6 mb-1">
+                                        <input type="text" id="searchInput" class="form-control" placeholder="ค้นหา..." onkeyup="filterCards()">
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <select id="statusFilter" class="form-select" onchange="filterCards()">
+                                            <option value="">ทั้งหมด</option>
+                                            <option value="27">ผ่าน</option>
+                                            <option value="28">ไม่ผ่าน</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <div class="list-group list-group-flush overflow-auto" style="max-height: 35rem">
                                 @{
-                                    var Index = 1; 
+                                    var Index = 1;
                                 }
                                 @foreach (var item in Model)
                                 {
-                                    <div class="list-group-item">
+                                    <div class="list-group-item card-item" data-status="@(item.StatusID)" data-defect="@item.DefectAreaName @item.DefectTypeName @item.DefectDescriptionName" data-remark="@item.Remark">
                                         <div class="row">
-                                            <div class="col-auto">
+                                            <!-- Center the button vertically using d-flex and align-items-center -->
+                                            <div class="col-auto d-flex align-items-center justify-content-center">
                                                 <button type="button" class="status-dot bg-success">
                                                     <i class="fa-solid fa-check"></i>
                                                 </button>
                                             </div>
                                             <div class="col">
-                                                <a href="#!" class="text-body d-block" style="white-space: nowrap; overflow-x: auto;" onclick="openModalDataQC('edit', {id: @Index, location: @item.DefectAreaID, category: @item.DefectTypeID, defect: @item.DefectDescriptionID, comment: '@item.Remark'})">
-                                                    @item.DefectAreaName > @item.DefectTypeName > @item.DefectDescriptionName
-                                                </a>
+                                                    <a href="#!" class="text-body d-block" style="white-space: nowrap; overflow-x: auto;"
+                                                       onclick="openModalDataQC('edit', {id: @Index, location: @item.DefectAreaID, category: @item.DefectTypeID, defect: @item.DefectDescriptionID, comment: '@item.Remark'})">
+                                                        @if (item.IsMajorDefect == true)
+                                                        {
+                                                            <i class="fa-solid fa-triangle-exclamation" style="color: #ff0000;"></i>
+                                                        }
+                                                        @item.DefectAreaName > @item.DefectTypeName > @item.DefectDescriptionName
+                                                    </a>
+
                                                 <div class="text-secondary mt-n1" style="white-space: nowrap; overflow-x: auto;">
                                                     @item.Remark
+                                                </div>
+                                                <div class="mt-2">
+                                                    <label class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="status_@item.DefectAreaID" value="27" />
+                                                        <span class="form-check-label">ผ่าน</span>
+                                                    </label>
+                                                    <label class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="status_@item.DefectAreaID" value="28" />
+                                                        <span class="form-check-label">ไม่ผ่าน</span>
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
@@ -890,7 +919,29 @@
         }
     });
 
+    function filterCards() {
+        var searchInput = document.getElementById('searchInput').value.toLowerCase();
+        var statusFilter = document.getElementById('statusFilter').value;
 
+        var cards = document.querySelectorAll('.card-item');
+
+        cards.forEach(function (card) {
+            var defectText = card.getAttribute('data-defect').toLowerCase();
+            var remarkText = card.getAttribute('data-remark').toLowerCase();
+            var cardStatus = card.getAttribute('data-status');
+
+            // Check if the card matches the search term and the selected filter
+            var matchesSearch = defectText.includes(searchInput) || remarkText.includes(searchInput);
+            var matchesFilter = !statusFilter || cardStatus === statusFilter;
+
+            // Show or hide the card based on the search and filter conditions
+            if (matchesSearch && matchesFilter) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
 
 
 </script>

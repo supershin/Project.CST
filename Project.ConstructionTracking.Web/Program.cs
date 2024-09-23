@@ -85,6 +85,8 @@ builder.Services.AddScoped<IGeneratePDFRepo, GeneratePDFRepo>();
 builder.Services.AddScoped<IQC5CheckService, QC5CheckService>();
 builder.Services.AddScoped<IQC5CheckRepo, QC5CheckRepo>();
 
+builder.Services.AddScoped<IQcSummaryService, QcSummaryService>();
+builder.Services.AddScoped<IQcSummaryRepo, QcSummaryRepo>();
 
 // Add the new services for SQL and data access
 builder.Services.AddScoped<MasterManagementProviderProject, SqlMasterManagementProject>();
