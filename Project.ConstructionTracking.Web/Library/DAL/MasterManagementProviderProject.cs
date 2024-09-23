@@ -324,10 +324,10 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.Vender = Commons.FormatExtension.NullToString(reader["Vender"]);
             Entity.Progress = Commons.FormatExtension.NullToString(reader["Progress"]);
             Entity.QC = Commons.FormatExtension.NullToString(reader["QC"]);
-            Entity.StartPlan = Commons.FormatExtension.NullToString(reader["StartPlan"]);
-            Entity.EndPlan = Commons.FormatExtension.NullToString(reader["EndPlan"]);
-            Entity.PESave = Commons.FormatExtension.NullToString(reader["PESave"]);
-            Entity.PMSubmit = Commons.FormatExtension.NullToString(reader["PMSubmit"]);
+            Entity.StartPlan = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["StartPlan"]);
+            Entity.EndPlan = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["EndPlan"]);
+            Entity.PESave = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["PESave"]);
+            Entity.PMSubmit = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["PMSubmit"]);
             Entity.PCStatus = Commons.FormatExtension.NullToString(reader["PCStatus"]);
             Entity.DisbursementStatus = Commons.FormatExtension.NullToString(reader["DisbursementStatus"]);
             Entity.PCUnlock = Commons.FormatExtension.NullToString(reader["PCUnlock"]);

@@ -25,9 +25,9 @@ namespace Project.ConstructionTracking.Web.Services
             return FormGroupDetail;
         }
 
-        public bool ValidateUserSubmit(Guid? UserID, Guid? ProjectID)
+        public bool ValidateUserSubmit(Guid? UserID, Guid? UnitID)
         {
-            bool result = _IFormGroupRepo.ValidateUserSubmit(UserID , ProjectID);
+            bool result = _IFormGroupRepo.ValidateUserSubmit(UserID , UnitID);
             return result;
         }
 

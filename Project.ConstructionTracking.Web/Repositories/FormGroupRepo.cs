@@ -177,9 +177,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                 FileDate = fileDate
             };
         }
-        public bool ValidateUserSubmit(Guid? UserID , Guid? ProjectID )
+        public bool ValidateUserSubmit(Guid? UserID , Guid? UnitID)
         {
-            var ProjectPermission = _context.tr_ProjectPermission.Where(Pp => Pp.ProjectID == ProjectID && Pp.UserID == UserID).FirstOrDefault();
+            var ProjectPermission = _context.tr_PE_Unit.Where(Pp => Pp.UnitID == UnitID && Pp.UserID == UserID).FirstOrDefault();
             if (ProjectPermission != null)
             {
                 return true;
