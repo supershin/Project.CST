@@ -84,11 +84,11 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                     SqlCmd.Transaction = Trans;
                     SqlCmd.CommandType = CommandType.StoredProcedure;
 
-                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = en.act;
-                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = en.unit_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = en.act ?? (object)DBNull.Value;
                     SqlCmd.Parameters.Add(new SqlParameter("@project_id", SqlDbType.NVarChar)).Value = en.project_id ?? (object)DBNull.Value;
-                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.Int)).Value = en.unit_status != -1 ? en.unit_status : (object)DBNull.Value;
-
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = en.unit_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = en.unit_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@build_status", SqlDbType.NVarChar)).Value = en.build_status ?? (object)DBNull.Value;
                     switch (en.act)
                     {
                         case "GetlistUnitStatustest":
@@ -104,7 +104,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                     Log.Error("SEND pram1 Act (nvarchar) : {Act}", en.act);
                     Log.Error("SEND pram2 unit_id (nvarchar) : {Unit_id}", en.unit_id);
                     Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", en.project_id);
-                    Log.Error("SEND pram4 unit_status (int) : {Unit_status}", en.unit_status);
+                    Log.Error("SEND pram4 unit_status (nvarchar) : {Unit_status}", en.unit_status);
+                    Log.Error("SEND pram5 build_status (nvarchar) : {build_status}", en.build_status);
                     Log.Error(ex.ToString());
                     Log.Error("=========== END ===========");
 
@@ -253,6 +254,148 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                     Log.Error("=========== END ===========");
 
                     return new List<PJMMyTaskModel>();
+                }
+                finally
+                {
+                    SqlCmd.Dispose();
+                    SqlCon.Close();
+                    SqlCon.Dispose();
+                }
+            }
+        }
+
+        public override List<UnitListModel> sp_get_UnitList(UnitListModel en)
+        {
+            using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
+            {
+                SqlCommand SqlCmd = new SqlCommand("sp_get_unitstatusbk", SqlCon);
+                try
+                {
+                    SqlCon.Open();
+                    SqlTransaction Trans = SqlCon.BeginTransaction();
+                    SqlCmd.Transaction = Trans;
+                    SqlCmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = en.act;
+                    SqlCmd.Parameters.Add(new SqlParameter("@project_id", SqlDbType.NVarChar)).Value = en.project_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = en.unit_id ?? (object)DBNull.Value;                    
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = en.unit_status ?? (object)DBNull.Value;
+                    switch (en.act)
+                    {
+                        case "GetUnitlist":
+                            return sp_get_UnitList_ListReader(ExecuteReader(SqlCmd));
+
+                        default:
+                            return new List<UnitListModel>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Stored name : sp_get_unitstatusbk");
+                    Log.Error("SEND pram1 Act (nvarchar) : {Act}", en.act);
+                    Log.Error("SEND pram2 unit_id (nvarchar) : {Unit_id}", en.unit_id);
+                    Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", en.project_id);
+                    Log.Error("SEND pram4 unit_status (nvarchar) : {Unit_status}", en.unit_status);
+                    Log.Error(ex.ToString());
+                    Log.Error("=========== END ===========");
+
+                    return new List<UnitListModel>();
+                }
+                finally
+                {
+                    SqlCmd.Dispose();
+                    SqlCon.Close();
+                    SqlCon.Dispose();
+                }
+            }
+        }
+
+        public override List<SummeryUnitFormModel> sp_get_summaryunitform(SummeryUnitFormModel en)
+        {
+            using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
+            {
+                SqlCommand SqlCmd = new SqlCommand("sp_get_summaryunitform", SqlCon);
+                try
+                {
+                    SqlCon.Open();
+                    SqlTransaction Trans = SqlCon.BeginTransaction();
+                    SqlCmd.Transaction = Trans;
+                    SqlCmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = en.act;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = en.unit_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@project_id", SqlDbType.NVarChar)).Value = en.project_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = en.unit_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@user_id", SqlDbType.NVarChar)).Value = en.user_id ?? (object)DBNull.Value;
+                    switch (en.act)
+                    {
+                        case "unitsummary":
+                            return sp_get_summaryunitform_ListReader(ExecuteReader(SqlCmd));
+
+                        default:
+                            return new List<SummeryUnitFormModel>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Stored name : sp_get_summaryunitform");
+                    Log.Error("SEND pram1 Act (nvarchar) : {Act}", en.act);
+                    Log.Error("SEND pram2 unit_id (nvarchar) : {Unit_id}", en.unit_id);
+                    Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", en.project_id);
+                    Log.Error("SEND pram4 unit_status (nvarchar) : {Unit_status}", en.unit_status);
+                    Log.Error("SEND pram5 user_id (nvarchar) : {user_id}", en.user_id);
+                    Log.Error(ex.ToString());
+                    Log.Error("=========== END ===========");
+
+                    return new List<SummeryUnitFormModel>();
+                }
+                finally
+                {
+                    SqlCmd.Dispose();
+                    SqlCon.Close();
+                    SqlCon.Dispose();
+                }
+            }
+        }
+
+        public override List<UnitFormStatusModel> sp_get_UnitFormStatusByUnit(UnitFormStatusModel en)
+        {
+            using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
+            {
+                SqlCommand SqlCmd = new SqlCommand("sp_get_unitstatus", SqlCon);
+                try
+                {
+                    SqlCon.Open();
+                    SqlTransaction Trans = SqlCon.BeginTransaction();
+                    SqlCmd.Transaction = Trans;
+                    SqlCmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = en.act ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@project_id", SqlDbType.NVarChar)).Value = en.project_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = en.unit_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = en.unit_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@build_status", SqlDbType.NVarChar)).Value = en.build_status ?? (object)DBNull.Value;
+                    switch (en.act)
+                    {
+                        case "UnitFormStatusByUnit":
+                            return sp_get_UnitFormStatusByUnit_ListReader(ExecuteReader(SqlCmd));
+
+                        default:
+                            return new List<UnitFormStatusModel>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Stored name : sp_get_unitstatus");
+                    Log.Error("SEND pram1 Act (nvarchar) : {Act}", en.act);
+                    Log.Error("SEND pram2 unit_id (nvarchar) : {Unit_id}", en.unit_id);
+                    Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", en.project_id);
+                    Log.Error("SEND pram4 unit_status (nvarchar) : {Unit_status}", en.unit_status);
+                    Log.Error("SEND pram5 build_status (nvarchar) : {build_status}", en.build_status);
+                    Log.Error(ex.ToString());
+                    Log.Error("=========== END ===========");
+
+                    return new List<UnitFormStatusModel>();
                 }
                 finally
                 {

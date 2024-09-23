@@ -102,7 +102,6 @@ function openModal(UnitFormID, GroupID, FormID, PC_ID) {
     myModal.show();
 }
 
-
 function deleteImage(resourceId) {
     Swal.fire({
         title: '',
@@ -136,6 +135,304 @@ function deleteImage(resourceId) {
         }
     });
 }
+
+//function saveOrSubmit(actionType) {
+//    var data = new FormData();
+//    var allGroupsChecked = true;
+//    var allPassed = true; // New flag to check if all cards are passed
+//    var allRemarksFilled = true;
+
+//    data.append("ActionType", actionType);
+//    data.append("Remark", document.getElementById("mainRemark").value.trim());
+//    data.append("UnitFormID", document.getElementById("UnitFormID").value);
+//    data.append("ProjectID", document.getElementById("ProjectID").value);
+//    data.append("UnitID", document.getElementById("UnitID").value);
+//    data.append("FormID", document.getElementById("FormID").value);
+
+//    var passConditions = [];
+
+//    $("input[data-action='gr-pass']").each(function () {
+//        let group_id = $(this).attr("group-id");
+//        let passconID = $(this).attr("passconID");
+//        let _statusID = $(this).is(":checked") ? $(this).val() : null;
+//        let remark = document.getElementById(`remark_${group_id}`).value;
+//        let FlagActive = document.getElementById(`Flag-Active-${group_id}`).value;
+
+//        FlagActive = parseInt(FlagActive);
+
+//        if (FlagActive === 1) {
+//            let existingCondition = passConditions.find(pc => pc.Group_ID === group_id);
+
+//            if (!existingCondition) {
+//                passConditions.push({
+//                    PC_ID: passconID,
+//                    Group_ID: group_id,
+//                    StatusID: _statusID,
+//                    PC_FlagActive: FlagActive,
+//                    PJM_Remark: remark ? remark.trim() : '',
+//                });
+//            } else {
+//                if (_statusID !== null) {
+//                    existingCondition.StatusID = _statusID;
+//                }
+//            }
+
+//            // Check for "ไม่อนุมัติ" or missing remark
+//            if (_statusID === "9") {
+//                if (remark.trim() === "" || document.getElementById("mainRemark").value.trim() === "") {
+//                    allRemarksFilled = false;
+//                    scrollToElement(document.getElementById(`remark_${group_id}`));
+//                }
+//            }
+
+//            // Check if all cards are approved (statusID === 8)
+//            if (_statusID !== 8) {
+//                allPassed = false; // Set to false if any card is not approved
+//            }
+
+//            alert(_statusID);
+
+//            // Ensure that all cards are checked
+//            let groupChecked = $("input[data-action='gr-pass'][group-id='" + group_id + "']:checked").length > 0;
+//            if (!groupChecked) {
+//                allGroupsChecked = false;
+//            }
+//        }
+//    });
+
+//    if (passConditions.length > 0) {
+//        data.append("PassConditionsIUD", JSON.stringify(passConditions));
+//    }
+
+//    var files = document.getElementById("file-input").files;
+//    for (var i = 0; i < files.length; i++) {
+//        data.append("Images", files[i]);
+//    }
+
+//    // The main check for the "submit" action type
+//    if (actionType === "submit") {
+//        if (!allGroupsChecked) {
+//            showErrorAlert('คำเตือน', 'กรุณาเลือกการอนุมัติหรือไม่อนุมัติในทุกงานที่ใช้งานอยู่');
+//            return;
+//        }
+//        if (!allRemarksFilled) {
+//            showErrorAlert('คำเตือน!', 'กรุณาระบุเหตุผลสำหรับการไม่อนุมัติในทุกงานและหมายเหตุงวดนี้');
+//            return;
+//        }
+
+//        showConfirmationAlert(
+//            'ยืนยันการดำเนินการ',
+//            'คุณต้องการยืนยันงวดงานนี้หรือไม่',
+//            'warning',
+//            'ใช่',
+//            'ยกเลิก',
+//            function () {
+//                showLoadingAlert();
+//                $.ajax({
+//                    url: baseUrl + 'PJMApprove/SaveOrSubmit',
+//                    type: 'POST',
+//                    contentType: false,
+//                    processData: false,
+//                    data: data,
+//                    success: function (res) {
+//                        Swal.close();
+//                        if (res.success) {
+//                            // If all cards passed and the actionType is submit, generate PDF
+//                            if (allPassed) {
+//                                generatePDFAfterSave(data);
+//                            }
+//                            else {
+//                                showSuccessAlert('สำเร็จ!', 'บันทึกสำเร็จ', () => {
+//                                    window.location.reload();
+//                                });
+//                            }
+//                        } else {
+//                            showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+//                        }
+//                    },
+//                    error: function (xhr, status, error) {
+//                        Swal.close();
+//                        showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+//                    }
+//                });
+//            }
+//        );
+//    } else {
+//        // If actionType is not "submit", proceed with a normal save
+//        showLoadingAlert();
+//        $.ajax({
+//            url: baseUrl + 'PJMApprove/SaveOrSubmit',
+//            type: 'POST',
+//            contentType: false,
+//            processData: false,
+//            data: data,
+//            success: function (res) {
+//                Swal.close();
+//                if (res.success) {
+//                    showSuccessAlert('สำเร็จ!', 'บันทึกสำเร็จ', () => {
+//                        window.location.reload();
+//                    });
+//                } else {
+//                    showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+//                }
+//            },
+//            error: function (xhr, status, error) {
+//                Swal.close();
+//                showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+//            }
+//        });
+//    }
+//}
+
+function saveOrSubmit(actionType) {
+    var data = new FormData();
+    var allGroupsChecked = true;
+    var allPassed = true; // Flag to check if all groups are passed
+    var allRemarksFilled = true;
+
+    data.append("ActionType", actionType);
+    data.append("Remark", document.getElementById("mainRemark").value.trim());
+    data.append("UnitFormID", document.getElementById("UnitFormID").value);
+    data.append("ProjectID", document.getElementById("ProjectID").value);
+    data.append("UnitID", document.getElementById("UnitID").value);
+    data.append("FormID", document.getElementById("FormID").value);
+
+    var passConditions = [];
+
+    $("input[data-action='gr-pass']").each(function () {
+        let group_id = $(this).attr("group-id");
+        let passconID = $(this).attr("passconID");
+        let _statusID = $(this).is(":checked") ? $(this).val() : null;
+        let remark = document.getElementById(`remark_${group_id}`).value;
+        let FlagActive = document.getElementById(`Flag-Active-${group_id}`).value;
+
+        FlagActive = parseInt(FlagActive);
+
+        if (FlagActive === 1) {
+            let existingCondition = passConditions.find(pc => pc.Group_ID === group_id);
+
+            if (!existingCondition) {
+                passConditions.push({
+                    PC_ID: passconID,
+                    Group_ID: group_id,
+                    StatusID: _statusID,
+                    PC_FlagActive: FlagActive,
+                    PJM_Remark: remark ? remark.trim() : '',
+                });
+            } else {
+                if (_statusID !== null) {
+                    existingCondition.StatusID = _statusID;
+                }
+            }
+
+            // Check if not approved (value = 9), and remark is missing
+            if (_statusID === "9") {
+                if (remark.trim() === "" || document.getElementById("mainRemark").value.trim() === "") {
+                    allRemarksFilled = false;
+                    scrollToElement(document.getElementById(`remark_${group_id}`));
+                }
+            }
+
+            // Ensure that all active groups are either approved (statusID === "8")
+            let groupChecked = $("input[name='radios-inline-" + group_id + "']:checked").val();
+            if (groupChecked === "8") {
+                // Passed
+            } else {
+                allPassed = false; // If any group is not approved (checked value is not 8)
+            }
+
+            //alert(allPassed)
+
+            if (!groupChecked) {
+                allGroupsChecked = false; // Ensure all groups have a selection
+            }
+        }
+    });
+
+    if (passConditions.length > 0) {
+        data.append("PassConditionsIUD", JSON.stringify(passConditions));
+    }
+
+    var files = document.getElementById("file-input").files;
+    for (var i = 0; i < files.length; i++) {
+        data.append("Images", files[i]);
+    }
+
+    // The main check for the "submit" action type
+    if (actionType === "submit") {
+        if (!allGroupsChecked) {
+            showErrorAlert('คำเตือน', 'กรุณาเลือกการอนุมัติหรือไม่อนุมัติในทุกงานที่ใช้งานอยู่');
+            return;
+        }
+        if (!allRemarksFilled) {
+            showErrorAlert('คำเตือน!', 'กรุณาระบุเหตุผลสำหรับการไม่อนุมัติในทุกงานและหมายเหตุงวดนี้');
+            return;
+        }
+
+        showConfirmationAlert(
+            'ยืนยันการดำเนินการ',
+            'คุณต้องการยืนยันงวดงานนี้หรือไม่',
+            'warning',
+            'ใช่',
+            'ยกเลิก',
+            function () {
+                showLoadingAlert();
+                $.ajax({
+                    url: baseUrl + 'PJMApprove/SaveOrSubmit',
+                    type: 'POST',
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (res) {
+                        if (res.success) {
+                            // If all cards are passed, call PDF generation
+                            if (allPassed) {
+                                generatePDFAfterSave(data);
+                            }
+                            else {
+                                showSuccessAlert('สำเร็จ!', 'บันทึกสำเร็จ', () => {
+                                    window.location.reload();
+                                });
+                            }
+                        } else {
+                            showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.close();
+                        showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                    }
+                });
+            }
+        );
+    } else {
+        // If actionType is not "submit", proceed with a normal save
+        showLoadingAlert();
+        $.ajax({
+            url: baseUrl + 'PJMApprove/SaveOrSubmit',
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (res) {
+                Swal.close();
+                if (res.success) {
+                    showSuccessAlert('สำเร็จ!', 'บันทึกสำเร็จ', () => {
+                        window.location.reload();
+                    });
+                } else {
+                    showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.close();
+                showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+            }
+        });
+    }
+}
+
+
 
 
 document.addEventListener("DOMContentLoaded", function () {

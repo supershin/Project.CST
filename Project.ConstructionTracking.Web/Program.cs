@@ -37,9 +37,6 @@ builder.Services.AddScoped<ITrackingRepo, TrackingRepo>();
 builder.Services.AddScoped<IProjectFormService, ProjectFormService>();
 builder.Services.AddScoped<IProjectFormRepo, ProjectFormRepo>();
 
-builder.Services.AddScoped<IFormOverallService, FormOverallService>();
-builder.Services.AddScoped<IFormOverallRepo, FormOverallRepo>();
-
 builder.Services.AddScoped<IGetDDLService, GetDDLService>();
 builder.Services.AddScoped<IGetDDLRepo, GetDDLRepo>();
 
@@ -82,7 +79,14 @@ builder.Services.AddScoped<ILoginRepo, LoginRepo>();
 builder.Services.AddScoped<IChatInBoxService, ChatInBoxService>();
 builder.Services.AddScoped<IChatInBoxRepo, ChatInBoxRepo>();
 
+builder.Services.AddScoped<IGeneratePDFService, GeneratePDFService>();
+builder.Services.AddScoped<IGeneratePDFRepo, GeneratePDFRepo>();
 
+builder.Services.AddScoped<IQC5CheckService, QC5CheckService>();
+builder.Services.AddScoped<IQC5CheckRepo, QC5CheckRepo>();
+
+builder.Services.AddScoped<IQcSummaryService, QcSummaryService>();
+builder.Services.AddScoped<IQcSummaryRepo, QcSummaryRepo>();
 
 // Add the new services for SQL and data access
 builder.Services.AddScoped<MasterManagementProviderProject, SqlMasterManagementProject>();

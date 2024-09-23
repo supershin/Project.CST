@@ -220,6 +220,20 @@ namespace Project.ConstructionTracking.Web.Commons
             return string.Empty;
         }
 
+        public static Guid ConvertStringToGuid(object guidObject)
+        {
+            if (guidObject == null || guidObject == DBNull.Value)
+            {
+                return Guid.Empty;
+            }
+
+            if (Guid.TryParse(guidObject.ToString(), out Guid result))
+            {
+                return result;
+            }
+
+            return Guid.Empty;
+        }
 
         public static string FormatDateToDayMonthNameYearTime(object dateObject)
         {

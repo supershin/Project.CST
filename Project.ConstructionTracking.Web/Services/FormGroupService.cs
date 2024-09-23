@@ -1,4 +1,5 @@
 ﻿using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Repositories;
 
 namespace Project.ConstructionTracking.Web.Services
@@ -22,6 +23,12 @@ namespace Project.ConstructionTracking.Web.Services
         {
             var FormGroupDetail = _IFormGroupRepo.GetFormGroupDetail(unitFormId);
             return FormGroupDetail;
+        }
+
+        public bool ValidateUserSubmit(Guid? UserID, Guid? ProjectID)
+        {
+            bool result = _IFormGroupRepo.ValidateUserSubmit(UserID , ProjectID);
+            return result;
         }
 
         public void SubmitSaveFormGroup(FormGroupModel.FormGroupIUDModel model)

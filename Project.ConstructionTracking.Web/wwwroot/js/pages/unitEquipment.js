@@ -52,6 +52,16 @@ var unitEquipment = {
     submitUnitEquipmentSign: () => {
         let isValid = true;
         let validationMessage = '';
+        var permissionSubmit = document.getElementById("PermissionSubmit").value;
+
+        if (permissionSubmit === 'false') {
+            showErrorAlert('คุณไม่มีสิทธิ์ยืนยัน Unit นี้', '');
+            return;
+        }
+
+        console.log(permissionSubmit)
+
+
 
         $('div.card-link').each(function () {
             const statusUse = $(this).find('button.status-dot').data('status-use');
@@ -67,12 +77,7 @@ var unitEquipment = {
         });
 
         if (!isValid) {
-            Swal.fire({
-                title: 'ข้อผิดพลาด!',
-                text: validationMessage,
-                icon: 'warning',
-                confirmButtonText: 'ตกลง'
-            });
+            showErrorAlert('ข้อผิดพลาด!', validationMessage);
             return;
         }
 
@@ -85,54 +90,29 @@ var unitEquipment = {
         let checkdata = !signData || !signData.MimeType || !signData.StorageBase64 ? false : true;
 
         if (!selectedRadioValue) {
-            Swal.fire({
-                title: 'กรุณาระบุเกรดงานงวดนี้',
-                text: '',
-                icon: 'warning',
-                confirmButtonText: 'ตกลง'
-            });
+            showErrorAlert('กรุณาระบุเกรดงานงวดนี้', '');
             return;
         }
 
         if (!vendorId && !oldvendorId) {
-            Swal.fire({
-                title: 'กรุณาระบุผู้รับเหมา',
-                text: '',
-                icon: 'warning',
-                confirmButtonText: 'ตกลง'
-            });
+            showErrorAlert('กรุณาระบุผู้รับเหมา', '');
             return;
         }
 
         if (checkdata == false && oldsignData == "Noimage") {
-            Swal.fire({
-                title: 'กรุณาให้ผู้รับเหมาเซ็น',
-                text: '',
-                icon: 'warning',
-                confirmButtonText: 'ตกลง'
-            });
+            showErrorAlert('กรุณาให้ผู้รับเหมาเซ็น', '');
             return;
         }
 
-        // Confirmation alert before the AJAX call
-        Swal.fire({
-            title: 'ยืนยันการดำเนินการ',
-            text: 'คุณต้องการขออนุมัติใหม่',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'ใช่',
-            cancelButtonText: 'ยกเลิก'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Show loading screen
-                Swal.fire({
-                    title: 'กำลังบันทึกข้อมูล...',
-                    text: 'กรุณารอสักครู่',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading(); // Show loading indicator
-                    }
-                });
+        // Use the reusable confirmation alert
+        showConfirmationAlert(
+            'ยืนยันการดำเนินการ',
+            'คุณต้องการขออนุมัติใหม่',
+            'warning',
+            'ใช่',
+            'ยกเลิก',
+            function () {
+                showLoadingAlert();
 
                 var data = {
                     ProjectID: document.getElementById('projectId').value,
@@ -153,61 +133,38 @@ var unitEquipment = {
                     success: function (res) {
                         Swal.close(); // Close the loading indicator
                         if (res.success) {
-                            Swal.fire({
-                                title: 'สำเร็จ!',
-                                text: 'บันทึกข้อมูลสำเร็จ',
-                                icon: 'success',
-                                confirmButtonText: 'ตกลง'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.reload();
-                                }
+                            showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                                window.location.reload();
                             });
                         } else {
-                            Swal.fire({
-                                title: 'ผิดพลาด!',
-                                text: 'บันทึกข้อมูลไม่สำเร็จ',
-                                icon: 'error',
-                                confirmButtonText: 'ตกลง'
-                            });
+                            showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
                         }
                     },
                     error: function (xhr, status, error) {
                         Swal.close(); // Close the loading indicator
-                        Swal.fire({
-                            title: 'ผิดพลาด!',
-                            text: 'บันทึกข้อมูลไม่สำเร็จ',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
+                        showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
                     }
                 });
             }
-        });
+        );
     },
 
     saveUnitEquipmentSign: () => {
 
         let allUnchecked = true;
-        let validationMessage = '';
 
         $('div.card-link').each(function () {
             const cntCheckListUnit = parseInt($(this).find('.text2').text().split(' ')[1]);
             const cntCheckListNotPass = parseInt($(this).find('.text3').text().split(' ')[1]);
 
             if (!(cntCheckListUnit === 0 && cntCheckListNotPass === 0)) {
-                allUnchecked = false; 
+                allUnchecked = false;
                 return false;
             }
         });
 
         if (allUnchecked) {
-            Swal.fire({
-                title: 'ข้อผิดพลาด!',
-                text: 'กรุณาตรวจงานอย่างน้อย 1 รายการ',
-                icon: 'warning',
-                confirmButtonText: 'ตกลง'
-            });
+            showErrorAlert('ข้อผิดพลาด!', 'กรุณาตรวจงานอย่างน้อย 1 รายการ');
             return;
         }
 
@@ -225,15 +182,7 @@ var unitEquipment = {
             Sign: signData,
         };
 
-        // Show loading screen before AJAX call
-        Swal.fire({
-            title: 'กำลังบันทึกข้อมูล...',
-            text: 'กรุณารอสักครู่',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading(); // Show loading indicator
-            }
-        });
+        showLoadingAlert();
 
         $.ajax({
             url: baseUrl + 'FormGroup/UpdateSaveGrade',
@@ -241,35 +190,18 @@ var unitEquipment = {
             dataType: 'json',
             data: data,
             success: function (res) {
-                Swal.close(); // Close the loading indicator
+                Swal.close();
                 if (res.success) {
-                    Swal.fire({
-                        title: 'สำเร็จ!',
-                        text: 'บันทึกข้อมูลสำเร็จ',
-                        icon: 'success',
-                        confirmButtonText: 'ตกลง'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.reload();
-                        }
+                    showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                        window.location.reload();
                     });
                 } else {
-                    Swal.fire({
-                        title: 'ผิดพลาด!',
-                        text: 'บันทึกข้อมูลไม่สำเร็จ',
-                        icon: 'error',
-                        confirmButtonText: 'ตกลง'
-                    });
+                    showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
                 }
             },
             error: function (xhr, status, error) {
-                Swal.close(); // Close the loading indicator
-                Swal.fire({
-                    title: 'ผิดพลาด!',
-                    text: 'บันทึกข้อมูลไม่สำเร็จ',
-                    icon: 'error',
-                    confirmButtonText: 'ตกลง'
-                });
+                Swal.close(); 
+                showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
             }
         });
     },

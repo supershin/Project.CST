@@ -14,23 +14,28 @@ namespace Project.ConstructionTracking.Web.Controllers
            
         public IActionResult Index()
         {
-            var projects = _ProjectService.GetProjectList();
+            var userID = Request.Cookies["CST.ID"];
+            var userIDuse = Guid.Parse(userID);
+            var projects = _ProjectService.GetProjectList(userIDuse);
             return View(projects);
         }
 
         [HttpPost]
         public IActionResult Search(string Search_Project)
         {
-            var projects = string.IsNullOrWhiteSpace(Search_Project) ?
-                _ProjectService.GetProjectList() :
-                _ProjectService.SearchProjects(Search_Project);
+            var userID = Request.Cookies["CST.ID"];
+            var userIDuse = Guid.Parse(userID);
+            var projects = string.IsNullOrWhiteSpace(Search_Project) ? _ProjectService.GetProjectList(userIDuse) 
+                                                                     : _ProjectService.SearchProjects(Search_Project, userIDuse);
             return View("Index", projects);
         }
 
         [HttpGet]
         public JsonResult SearchProjects(string term)
-        { 
-            var projects = _ProjectService.SearchProjects(term);
+        {
+            var userID = Request.Cookies["CST.ID"];
+            var userIDuse = Guid.Parse(userID);
+            var projects = _ProjectService.SearchProjects(term , userIDuse);
             return Json(projects);
         }
 

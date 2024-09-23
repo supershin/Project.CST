@@ -3,43 +3,69 @@ using Microsoft.CodeAnalysis;
 using Project.ConstructionTracking.Web.Library.DAL;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.StoreProcedureModel;
+using Project.ConstructionTracking.Web.Services;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
     public class UnitStatusByProjectController : BaseController
     {
         private readonly MasterManagementProviderProject _unitstatusProvider;
+        private readonly IGetDDLService _getDDLService;
 
-        public UnitStatusByProjectController(MasterManagementProviderProject unitstatusProvider)
+        public UnitStatusByProjectController(MasterManagementProviderProject unitstatusProvider, IGetDDLService getDDLService)
         {
             _unitstatusProvider = unitstatusProvider;
+            _getDDLService = getDDLService;
         }
         public IActionResult Index()
         {
+
+            var userID = Request.Cookies["CST.ID"];
+            var ddlModel = new GetDDL { Act = "Project", UserID = Guid.Parse(userID) };
+            List<GetDDL> ListProject = _getDDLService.GetDDLList(ddlModel);
+            ViewBag.ListProject = ListProject;
+
+            var ddlStatus = new GetDDL { Act = "Ext", ID = 4 };
+            List<GetDDL> ddlList = _getDDLService.GetDDLList(ddlStatus);
+            ViewBag.DDLList = ddlList;
+
             var en = new UnitStatusModel
             {
                 act = "GetlistUnitStatustest",
-                project_id = "",
+                project_id = (ListProject != null && ListProject.Count > 0) ? ListProject[0].ValueGuid.ToString() : string.Empty,
                 unit_id = "",
-                unit_status = -1
+                unit_status = "",
+                build_status = ""
 
             };
             List<UnitStatusModel> unitstatuslists = _unitstatusProvider.sp_get_unitstatus(en);
 
-            var en2 = new PEMyTaskModel
-            {
-                act = "listPEtask",
-                project_id = "",
-                unit_id = "",
-                unit_status = "",
-                user_id = "D0E92B67-4FF7-4284-892F-25A4BB3722FA"
-
-            };
-            List<PEMyTaskModel> unitstatuslists3 = _unitstatusProvider.sp_get_mytask_pe(en2);
-
-            //ViewBag.PEMyTaskModel = unitstatuslists3;
-
             return View(unitstatuslists);
         }
+
+        [HttpPost]
+        public IActionResult SearchUnitStatusByProject(string projectId, string unitStatus, string buildStatus)
+        {
+            // If any of the parameters are null or empty, handle them accordingly
+            projectId = string.IsNullOrEmpty(projectId) ? "" : projectId;
+            unitStatus = string.IsNullOrEmpty(unitStatus) ? "" : unitStatus;
+            buildStatus = string.IsNullOrEmpty(buildStatus) ? "" : buildStatus;
+
+            var en = new UnitStatusModel
+            {
+                act = "GetlistUnitStatustest",
+                project_id = projectId,
+                unit_status = unitStatus,
+                build_status = buildStatus
+            };
+
+            // Call the provider to get the filtered data
+            List<UnitStatusModel> unitstatuslists = _unitstatusProvider.sp_get_unitstatus(en);
+
+            // Return the partial view with the updated model
+            return PartialView("PartialTable", unitstatuslists);
+        }
+
+
     }
 }

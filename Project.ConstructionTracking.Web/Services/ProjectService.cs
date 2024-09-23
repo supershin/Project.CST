@@ -11,15 +11,15 @@ namespace Project.ConstructionTracking.Web.Services
             _ProjectRepo = ProjectRepo;
         }
 
-        public dynamic GetProjectList()
+        public dynamic GetProjectList(Guid? userID)
         {
-            var Projectlist = _ProjectRepo.GetProjectList();
+            var Projectlist = _ProjectRepo.GetProjectList(userID);
             return Projectlist;
         }
 
-        public dynamic SearchProjects(string term)
+        public dynamic SearchProjects(string term, Guid? userID)
         {
-            var projects = _ProjectRepo.SearchProjects(term);
+            var projects = _ProjectRepo.SearchProjects(term , userID);
             return projects;
         }
     }

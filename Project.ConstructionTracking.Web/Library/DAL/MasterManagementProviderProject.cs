@@ -39,6 +39,11 @@ namespace Project.ConstructionTracking.Web.Library.DAL
 
         public abstract List<PJMMyTaskModel> sp_get_mytask_pjm(PJMMyTaskModel EN);
 
+        public abstract List<UnitListModel> sp_get_UnitList(UnitListModel EN);
+
+        public abstract List<SummeryUnitFormModel> sp_get_summaryunitform(SummeryUnitFormModel EN);
+        public abstract List<UnitFormStatusModel> sp_get_UnitFormStatusByUnit(UnitFormStatusModel EN);
+
 
         #region __ Reader __
         public static List<ProjectModel> SP_Get_Project_ListReader(IDataReader reader)
@@ -73,7 +78,6 @@ namespace Project.ConstructionTracking.Web.Library.DAL
         }
 
 
-
         public static List<UnitStatusModel> sp_get_unitstatus_ListReader(IDataReader reader)
         {
             List<UnitStatusModel> list = new List<UnitStatusModel>();
@@ -92,23 +96,24 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             UnitStatusModel Entity = new UnitStatusModel();
 
             Entity.index = index;
-            Entity.unit_code = Commons.FormatExtension.NullToString(reader["unit_code"]);
+            Entity.unit_id = Commons.FormatExtension.NullToString(reader["UnitID"]);
+            Entity.project_id = Commons.FormatExtension.NullToString(reader["ProjectID"]);
+            Entity.unit_code = Commons.FormatExtension.NullToString(reader["UnitCode"]);
             Entity.model_type_str = Commons.FormatExtension.NullToString(reader["model_type_str"]);
             Entity.unit_type_str = Commons.FormatExtension.NullToString(reader["unit_type_str"]);
             Entity.unit_status_str = Commons.FormatExtension.NullToString(reader["unit_status_str"]);
+            Entity.date_start_plan_str = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["date_start_plan_str"]);
+            Entity.date_end_plan_str = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["date_end_plan_str"]);
+            Entity.formname_plan_str = Commons.FormatExtension.NullToString(reader["FormPlan"]);
+            Entity.formname_true_str = Commons.FormatExtension.NullToString(reader["FormActual"]);
+            Entity.process_plan_str = Commons.FormatExtension.NullToString(reader["ProgressPlan"]);
+            Entity.process_true_str = Commons.FormatExtension.NullToString(reader["ProgressActual"]);
+            Entity.allday_str = Commons.FormatExtension.NullToString(reader["AllDay"]);
+            Entity.realday_use_str = Commons.FormatExtension.NullToString(reader["AllDayActual"]);
+            Entity.delay_ahead_str = Commons.FormatExtension.NullToString(reader["DelayAhead"]);
             Entity.unit_build_status_str = Commons.FormatExtension.NullToString(reader["unit_build_status_str"]);
-            Entity.date_start_plan_str = Commons.FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(reader["date_start_plan_str"]);
-            Entity.date_end_plan_str = Commons.FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(reader["date_end_plan_str"]);
-            Entity.formname_plan_str = Commons.FormatExtension.NullToString(reader["formname_plan_str"]);
-            Entity.formname_true_str = Commons.FormatExtension.NullToString(reader["formname_true_str"]);
-            Entity.process_plan_str = Commons.FormatExtension.NullToString(reader["process_plan_str"]);
-            Entity.process_true_str = Commons.FormatExtension.NullToString(reader["process_true_str"]);
-            Entity.delay_ahead_str = Commons.FormatExtension.NullToString(reader["delay_ahead_str"]);
-            Entity.allday_str = Commons.FormatExtension.NullToString(reader["allday_str"]);
-            Entity.realday_use_str = Commons.FormatExtension.NullToString(reader["realday_use_str"]);
             return Entity;
         }
-
 
 
         public static List<PEMyTaskModel> sp_get_mytask_pe_ListReader(IDataReader reader)
@@ -144,11 +149,10 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.PMActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["PMActionDate"]);
             Entity.PJMActionBy = Commons.FormatExtension.NullToString(reader["PJMActionBy"]);
             Entity.PJMActionDate = Commons.FormatExtension.NullToString(reader["PJMActionDate"]);
-            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassConditionIcon"]);
-            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassConditionColor"]);
+            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassCondition_Icon"]);
+            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassCondition_Color"]);
             return Entity;
         }
-
 
 
         public static List<PMMyTaskModel> sp_get_mytask_pm_ListReader(IDataReader reader)
@@ -181,8 +185,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.StatusColor = Commons.FormatExtension.NullToString(reader["StatusColor"]);
             Entity.PEActionBy = Commons.FormatExtension.NullToString(reader["PEActionBy"]);
             Entity.PEActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["PEActionDate"]);
-            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassConditionIcon"]);
-            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassConditionColor"]);
+            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassCondition_Icon"]);
+            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassCondition_Color"]);
             return Entity;
         }
 
@@ -220,10 +224,118 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.PEActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["PEActionDate"]);
             Entity.PMActionBy = Commons.FormatExtension.NullToString(reader["PMActionBy"]);
             Entity.PMActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["PMActionDate"]);
-            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassConditionIcon"]);
-            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassConditionColor"]);
+            Entity.PassConditionIcon = Commons.FormatExtension.NullToString(reader["PassCondition_Icon"]);
+            Entity.PassConditionColor = Commons.FormatExtension.NullToString(reader["PassCondition_Color"]);
             return Entity;
         }
+
+
+        public static List<UnitListModel> sp_get_UnitList_ListReader(IDataReader reader)
+        {
+            List<UnitListModel> list = new List<UnitListModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_UnitList_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static UnitListModel sp_get_UnitList_Reader(IDataReader reader, int index)
+        {
+            UnitListModel Entity = new UnitListModel();
+
+            Entity.index = index;
+            Entity.UnitID = Commons.FormatExtension.NullToString(reader["UnitID"]);
+            Entity.ProjectID = Commons.FormatExtension.NullToString(reader["ProjectID"]);
+            Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.UnitStatusID = Commons.FormatExtension.NullToString(reader["UnitStatusID"]);
+            Entity.UnitStatusName = Commons.FormatExtension.NullToString(reader["UnitStatusName"]);
+            Entity.FormID = Commons.FormatExtension.NullToString(reader["FormID"]);
+            Entity.FormName = Commons.FormatExtension.NullToString(reader["FormName"]);
+            return Entity;
+        }
+
+
+        public static List<SummeryUnitFormModel> sp_get_summaryunitform_ListReader(IDataReader reader)
+        {
+            List<SummeryUnitFormModel> list = new List<SummeryUnitFormModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_summaryunitform_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static SummeryUnitFormModel sp_get_summaryunitform_Reader(IDataReader reader, int index)
+        {
+            SummeryUnitFormModel Entity = new SummeryUnitFormModel();
+
+            Entity.index = index;
+            Entity.UnitID = Commons.FormatExtension.ConvertStringToGuid(reader["UnitID"]);
+            Entity.ProjectID = Commons.FormatExtension.ConvertStringToGuid(reader["ProjectID"]);
+            Entity.UnitFormID = Commons.FormatExtension.ConvertStringToGuid(reader["UnitFormID"]);
+            Entity.ProjectName = Commons.FormatExtension.NullToString(reader["ProjectName"]);
+            Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.FormID = Commons.FormatExtension.Nulltoint(reader["FormID"]);
+            Entity.FormName = Commons.FormatExtension.NullToString(reader["FormName"]);
+            Entity.StatusID = Commons.FormatExtension.Nulltoint(reader["StatusID"]);
+            Entity.PEColor = Commons.FormatExtension.NullToString(reader["PEColor"]);
+            Entity.QC1 = Commons.FormatExtension.NullToString(reader["QC1"]);
+            Entity.QC2 = Commons.FormatExtension.NullToString(reader["QC2"]);
+            Entity.QC3 = Commons.FormatExtension.NullToString(reader["QC3"]);
+            Entity.QC4_1 = Commons.FormatExtension.NullToString(reader["QC4_1"]);
+            Entity.QC4_2 = Commons.FormatExtension.NullToString(reader["QC4_2"]);
+            Entity.QC5 = Commons.FormatExtension.NullToString(reader["QC5"]);
+            Entity.PMColor = Commons.FormatExtension.NullToString(reader["PMColor"]);
+            Entity.Cnt_PC = Commons.FormatExtension.Nulltoint(reader["Cnt_PC"]);
+            Entity.PCColor = Commons.FormatExtension.NullToString(reader["PCColor"]);
+            Entity.PCIcon = Commons.FormatExtension.NullToString(reader["PCIcon"]);
+            return Entity;
+        }
+
+
+        public static List<UnitFormStatusModel> sp_get_UnitFormStatusByUnit_ListReader(IDataReader reader)
+        {
+            List<UnitFormStatusModel> list = new List<UnitFormStatusModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_UnitFormStatusByUnit_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static UnitFormStatusModel sp_get_UnitFormStatusByUnit_Reader(IDataReader reader, int index)
+        {
+            UnitFormStatusModel Entity = new UnitFormStatusModel();
+
+            Entity.index = index;
+            Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.UnitFormID = Commons.FormatExtension.ConvertStringToGuid(reader["UnitFormID"]);
+            Entity.Form = Commons.FormatExtension.NullToString(reader["Form"]);
+            Entity.Vender = Commons.FormatExtension.NullToString(reader["Vender"]);
+            Entity.Progress = Commons.FormatExtension.NullToString(reader["Progress"]);
+            Entity.QC = Commons.FormatExtension.NullToString(reader["QC"]);
+            Entity.StartPlan = Commons.FormatExtension.NullToString(reader["StartPlan"]);
+            Entity.EndPlan = Commons.FormatExtension.NullToString(reader["EndPlan"]);
+            Entity.PESave = Commons.FormatExtension.NullToString(reader["PESave"]);
+            Entity.PMSubmit = Commons.FormatExtension.NullToString(reader["PMSubmit"]);
+            Entity.PCStatus = Commons.FormatExtension.NullToString(reader["PCStatus"]);
+            Entity.DisbursementStatus = Commons.FormatExtension.NullToString(reader["DisbursementStatus"]);
+            Entity.PCUnlock = Commons.FormatExtension.NullToString(reader["PCUnlock"]);
+            Entity.UnitFormPDF = Commons.FormatExtension.NullToString(reader["UnitFormPDF"]);
+            Entity.QCPDF = Commons.FormatExtension.NullToString(reader["QCPDF"]);
+            return Entity;
+        }
+
         #endregion
     }
 }
