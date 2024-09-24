@@ -15,6 +15,7 @@ namespace Project.ConstructionTracking.Web.Models.MUserModel
         public string? Password { get; set; }
         public string? ConfirmPassword { get; set; }
 
+        public bool IsMapping { get; set; } = false;
         public List<Guid?> MappingProject { get; set; }
 
         public string? SignUser { get; set; }

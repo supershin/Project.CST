@@ -213,64 +213,67 @@ namespace Project.ConstructionTracking.Web.Repositories
             edit.UpdateDate = DateTime.Now;
             edit.UpdateBy = model.RequestUserID;
 
-            // Mapping project
-            List<tr_ProjectPermission>? permissionList = _context.tr_ProjectPermission
-                                                .Where(o => o.UserID == model.UserID)
-                                                .ToList();
-
-            // Separate active and inactive project IDs
-            List<Guid?> activeList = permissionList
-                .Where(o => o.FlagActive == true)
-                .Select(o => o.ProjectID)
-                .ToList();
-
-            List<Guid?> inActiveList = permissionList
-                .Where(o => o.FlagActive == false)
-                .Select(o => o.ProjectID)
-                .ToList();
-
-            List<Guid?> newList = null;
-
-            if (permissionList.Count > 0)
+            if(model.IsMapping == true)
             {
-                if (model.MappingProject == null)
+                // Mapping project
+                List<tr_ProjectPermission>? permissionList = _context.tr_ProjectPermission
+                                                    .Where(o => o.UserID == model.UserID)
+                                                    .ToList();
+
+                // Separate active and inactive project IDs
+                List<Guid?> activeList = permissionList
+                    .Where(o => o.FlagActive == true)
+                    .Select(o => o.ProjectID)
+                    .ToList();
+
+                List<Guid?> inActiveList = permissionList
+                    .Where(o => o.FlagActive == false)
+                    .Select(o => o.ProjectID)
+                    .ToList();
+
+                List<Guid?> newList = null;
+
+                if (permissionList.Count > 0)
                 {
-                    // If no projects are selected, deactivate all active projects
-                    UpdateMapping(model.UserID, activeList, false, model.RequestUserID);
+                    if (model.MappingProject == null)
+                    {
+                        // If no projects are selected, deactivate all active projects
+                        UpdateMapping(model.UserID, activeList, false, model.RequestUserID);
+                    }
+                    else
+                    {
+                        // Calculate new projects to be added
+                        newList = model.MappingProject.Except(activeList).Except(inActiveList).ToList();
+                        if (newList.Any())
+                        {
+                            CreateMapping(model.UserID, newList, model.RequestUserID);
+                        }
+
+                        // Deactivate projects that are no longer selected
+                        var projectsToDeactivate = activeList.Except(model.MappingProject).ToList();
+                        if (projectsToDeactivate.Any())
+                        {
+                            UpdateMapping(model.UserID, projectsToDeactivate, false, model.RequestUserID);
+                        }
+
+                        // Activate inactive projects that are now selected
+                        var projectsToActivate = inActiveList.Intersect(model.MappingProject).ToList();
+                        if (projectsToActivate.Any())
+                        {
+                            UpdateMapping(model.UserID, projectsToActivate, true, model.RequestUserID);
+                        }
+                    }
                 }
                 else
                 {
-                    // Calculate new projects to be added
-                    newList = model.MappingProject.Except(activeList).Except(inActiveList).ToList();
-                    if (newList.Any())
+                    // If there are no existing projects, create mappings for all selected projects
+                    if (model.MappingProject != null && model.MappingProject.Any())
                     {
-                        CreateMapping(model.UserID, newList, model.RequestUserID);
-                    }
-
-                    // Deactivate projects that are no longer selected
-                    var projectsToDeactivate = activeList.Except(model.MappingProject).ToList();
-                    if (projectsToDeactivate.Any())
-                    {
-                        UpdateMapping(model.UserID, projectsToDeactivate, false, model.RequestUserID);
-                    }
-
-                    // Activate inactive projects that are now selected
-                    var projectsToActivate = inActiveList.Intersect(model.MappingProject).ToList();
-                    if (projectsToActivate.Any())
-                    {
-                        UpdateMapping(model.UserID, projectsToActivate, true, model.RequestUserID);
+                        CreateMapping(model.UserID, model.MappingProject, model.RequestUserID);
                     }
                 }
             }
-            else
-            {
-                // If there are no existing projects, create mappings for all selected projects
-                if (model.MappingProject != null && model.MappingProject.Any())
-                {
-                    CreateMapping(model.UserID, model.MappingProject, model.RequestUserID);
-                }
-            }
-            
+
             _context.tm_User.Update(edit);
             _context.SaveChanges();
 

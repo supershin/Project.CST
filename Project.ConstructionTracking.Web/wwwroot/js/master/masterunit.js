@@ -280,7 +280,7 @@
                 }
             },
             "ordering": true,
-            "order": [[11, "desc"]], // Ordering by the "UpdateDate" column (index 11)
+            "order": [[4, "asc"]],
             "columns": [
                 {
                     'data': 'UnitID',

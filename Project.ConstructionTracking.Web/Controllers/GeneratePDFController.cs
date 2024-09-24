@@ -271,7 +271,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                                             }
                                         }
                                     }
-                                    table2.Cell().Row((uint)(number)).Column(6).RowSpan((uint)dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count).Element(CellStyle).AlignLeft();
+                                    table2.Cell().Row((uint)(number)).Column(6).RowSpan((uint)dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count).Element(CellStyle).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].PackageRemark).WrapAnywhere(); ;
                                     int count = dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count;
                                     countRow = number + count;
                                 }
@@ -317,7 +317,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                     page.Footer().Table(table2 =>
                     {
-                        string pathVendor = _hosting.ContentRootPath + "/wwwroot/" + dataGenerate.FooterData.VendorData.VendorImageSignUrl;
+                        string pathVendor = Directory.GetCurrentDirectory() + "/wwwroot/" + dataGenerate.FooterData.VendorData.VendorImageSignUrl;
                         var signVendor = new FileStream(pathVendor, FileMode.Open);
 
                         string pathPe = _hosting.ContentRootPath + "/" + dataGenerate.FooterData.PEData.PEImageSignUrl;
