@@ -116,18 +116,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     pcRadio.addEventListener("click", function (e) {
         var allRadios = document.querySelectorAll(".form-check-input[type='radio']:not(#pc-radio)");
-        var allChecked = true;
+        var groups = {};
+        var validSelection = true;
 
         allRadios.forEach(function (radio) {
-            if (radio.value == "9" && !radio.checked) {
-                allChecked = false;
+            if (!groups[radio.name]) {
+                groups[radio.name] = {
+                    selected: false,
+                    invalid: false
+                };
+            }
+
+            if (radio.checked) {
+                groups[radio.name].selected = true;
+
+                if (radio.value == "10") {
+                    groups[radio.name].invalid = true;
+                }
             }
         });
 
-        if (!allChecked) {
+        for (var groupName in groups) {
+            if (!groups[groupName].selected || groups[groupName].invalid) {
+                validSelection = false;
+                break;
+            }
+        }
+
+        if (!validSelection) {
             e.preventDefault();
-            pcRadio.checked = false;
-            showErrorAlert('Warning!', 'กรุณาเลือกการตรวจให้ผ่านทุกงาน');
+            pcRadio.checked = false; 
+            showErrorAlert('Warning!', 'กรุณาเลือกผ่านหรือไม่ผ่านในทุกรายการ');
         } else {
             if (pcRadio.dataset.wasChecked) {
                 pcRadio.checked = false;

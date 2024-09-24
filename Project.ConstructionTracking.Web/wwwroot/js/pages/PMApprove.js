@@ -136,13 +136,19 @@ function saveOrSubmit(actionType) {
     // Collect radio groups by name
     document.querySelectorAll('input[data-action="gr-pass"]').forEach(function (radio) {
         var groupName = radio.getAttribute('name');
-        if (!radioGroups[groupName]) {
-            radioGroups[groupName] = false; // Initialize as unchecked
-        }
-        if (radio.checked) {
-            radioGroups[groupName] = true; // Mark as checked if any radio in this group is selected
+        var pcFlagActive = radio.getAttribute('data-pc-flag-active') === "true"; // Check if PCFlageActive is true
+
+        // If PCFlageActive is true, check for radio selection
+        if (pcFlagActive) {
+            if (!radioGroups[groupName]) {
+                radioGroups[groupName] = false; // Initialize as unchecked
+            }
+            if (radio.checked) {
+                radioGroups[groupName] = true; // Mark as checked if any radio in this group is selected
+            }
         }
     });
+
 
     // Check if all groups have at least one radio selected
     for (var groupName in radioGroups) {
@@ -155,7 +161,7 @@ function saveOrSubmit(actionType) {
     if (actionType === "submit") {
         // Validate that all groups have at least one radio selected
         if (!allGroupsChecked) {
-            showErrorAlert('คำเตือน!', 'กรุณาเลือกตัวเลือกการตรวจสอบอย่างน้อยหนึ่งรายการในแต่ละกลุ่ม');
+            showErrorAlert('คำเตือน!', 'กรุณาเลือกตัวเลือกผ่านเพื่อส่ง PJM Head หรือ ไม่ผ่าน ทุกรายการกลุ่มงาน');
             return;
         }
 
