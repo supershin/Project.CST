@@ -8,6 +8,8 @@ namespace Project.ConstructionTracking.Web.Models
 		public string Password { get; set; }
 		public string Name { get; set; }
 		public int RoleID { get; set; }
+
+		public bool IsMappingProject { get; set; } = false;
 	}
 }
 

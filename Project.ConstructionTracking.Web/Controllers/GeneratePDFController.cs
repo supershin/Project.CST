@@ -206,12 +206,12 @@ namespace Project.ConstructionTracking.Web.Controllers
                         {
                             table2.ColumnsDefinition(columns =>
                             {
-                                columns.RelativeColumn(3);
-                                columns.RelativeColumn(3);
-                                columns.RelativeColumn(1);
-                                columns.RelativeColumn(1);
                                 columns.RelativeColumn(2);
                                 columns.RelativeColumn(2);
+                                columns.RelativeColumn(1);
+                                columns.RelativeColumn(1);
+                                columns.RelativeColumn(1);
+                                columns.RelativeColumn(5);
                             });
 
                             table2.Cell().Row(1).Column(1).ColumnSpan(2).Element(CellStyle).AlignCenter().Text("รายการตรวจ");
@@ -220,12 +220,12 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                             for (int group = 0; group < dataGenerate.BodyCheckListData.GroupDataModels.Count; group++)
                             {
-                                table2.Cell().Row((uint)(countRow)).Column(1).ColumnSpan(2).Background("#6ce4ff").Element(CellStyle).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].GroupName);
+                                table2.Cell().Row((uint)(countRow)).Column(1).ColumnSpan(2).Background("#6ce4ff").Element(CellStyle).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].GroupName).WrapAnywhere();
                                 if(group == 0)
                                 {
                                     table2.Cell().Row((uint)(countRow)).Column(3).Element(CellStyle).Text("ผ่าน");
                                     table2.Cell().Row((uint)(countRow)).Column(4).Element(CellStyle).Text("ไม่ผ่าน");
-                                    table2.Cell().Row((uint)(countRow)).Column(5).Element(CellStyle).Text("ไม่มีรายการนี้");
+                                    table2.Cell().Row((uint)(countRow)).Column(5).Element(CellStyle).Text("ไม่มีรายการนี้").WrapAnywhere();
                                 }
                                 else
                                 {
@@ -271,7 +271,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                                             }
                                         }
                                     }
-                                    table2.Cell().Row((uint)(number)).Column(6).RowSpan((uint)dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count).Element(CellStyle).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].PackageRemark).WrapAnywhere(); ;
+                                    table2.Cell().Row((uint)(number)).Column(6).RowSpan((uint)dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count).Element(CellStyle).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].PackageRemark).WrapAnywhere();
                                     int count = dataGenerate.BodyCheckListData.GroupDataModels[group].PackageDataModels[package].CheckListDataModels.Count;
                                     countRow = number + count;
                                 }

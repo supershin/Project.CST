@@ -64,8 +64,8 @@
                 </div>
                 <!-- Third column: Create button -->
                 <div class="col-md-2 d-flex">
-                    @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
-                     {
+                    @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString() || ViewBag.UserRole == SystemConstant.UserRole.ADMIN.ToString())
+                        {
                         <button id="unit-mapping-pe" class="btn btn-secondary">
                             @*<i class="fa fa-plus" style="margin-right:5px"></i>*@
                             Mapping PE

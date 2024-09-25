@@ -27,16 +27,39 @@ namespace Project.ConstructionTracking.Web.Repositories
 							&& o.Password == verifyPassword
 							&& o.FlagActive == true).FirstOrDefault();
 
-			if (user == null) throw new Exception("ไม่พบข้อมูลรหัสผู้ใช้งาน");
+            LoginResp resp = new LoginResp();
 
-			LoginResp resp = new LoginResp()
+            if (user == null) throw new Exception("ไม่พบข้อมูลรหัสผู้ใช้งาน");
+			else
 			{
-				ID = user.ID,
-				Username = user.Username,
-				Password = user.Password,
-				Name = user.FirstName + " " + user.LastName,
-				RoleID = (int)user.RoleID
-			};
+                bool isPermission = _context.tr_ProjectPermission
+										.Any(o => o.UserID == user.ID && o.FlagActive == true);
+
+				if (isPermission)
+				{
+					resp = new LoginResp()
+					{
+						ID = user.ID,
+						Username = user.Username,
+						Password = user.Password,
+						Name = user.FirstName + " " + user.LastName,
+						RoleID = (int)user.RoleID,
+						IsMappingProject = true
+					};
+				}
+				else
+				{
+					resp = new LoginResp()
+					{
+						ID = user.ID,
+						Username = user.Username,
+						Password = user.Password,
+						Name = user.FirstName + " " + user.LastName,
+						RoleID = (int)user.RoleID,
+						IsMappingProject = false
+                    };
+                }
+            }
 
 			return resp;
         }
