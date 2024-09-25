@@ -6,7 +6,7 @@ namespace Project.ConstructionTracking.Web.Services
     {
         List<FormGroupModel> GetFormGroupList(FormGroupModel Model);
         FormGroupModel.FormGroupDetail GetFormGroupDetail(Guid? unitFormId);
-        bool ValidateUserSubmit(Guid? UserID, Guid? ProjectID);
+        bool ValidateUserSubmit(Guid? UserID, Guid? UnitID);
         void SubmitSaveFormGroup(FormGroupModel.FormGroupIUDModel model);
     }
 }

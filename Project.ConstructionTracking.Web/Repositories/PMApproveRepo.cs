@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient.Server;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
@@ -332,8 +333,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     {
                         foreach (var passConditionModel in model.PassConditionsIUD)
                         {
-                            var passCondition = _context.tr_UnitFormPassCondition
-                                .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.FlagActive == true);
+                            var passCondition = _context.tr_UnitFormPassCondition.FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.FlagActive == true);
 
                             if (passCondition != null)
                             {
@@ -372,21 +372,36 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-        private void UpdateUnitForm(Guid? unitformID, string? actiontype, int? StatusID ,Guid? userID)
+        private void UpdateUnitForm(Guid? unitformID, string? actiontype, int? StatusID, Guid? userID)
         {
-            var UnitForm = _context.tr_UnitForm
-                .FirstOrDefault(tr => tr.ID == unitformID);
 
-            if (UnitForm != null)  // Ensure UnitForm is found
+            var passConditions = _context.tr_UnitFormPassCondition.Where(pc => pc.UnitFormID == unitformID && pc.FlagActive == true).Select(pc => new { pc.StatusID }).ToList();
+            var totalConditions = passConditions.Count;
+            var passedConditions = passConditions.Count(pc => pc.StatusID == 8);
+
+            var unitForm = _context.tr_UnitForm.FirstOrDefault(tr => tr.ID == unitformID);
+
+            if (unitForm != null)
             {
-                UnitForm.StatusID = actiontype == "save" ? 3 : StatusID;
-                UnitForm.UpdateBy = userID;
-                UnitForm.UpdateDate = DateTime.Now;
 
-                _context.tr_UnitForm.Update(UnitForm);
+                if (StatusID == 4 && totalConditions > 0 && totalConditions == passedConditions)
+                {
+                    unitForm.StatusID = 7; 
+                }
+                else
+                {
+                    unitForm.StatusID = actiontype == "save" ? 3 : StatusID;
+                }
+
+                unitForm.UpdateBy = userID;
+                unitForm.UpdateDate = DateTime.Now;
+
+                _context.tr_UnitForm.Update(unitForm);
                 _context.SaveChanges();
             }
         }
+
+
 
         private void InsertUnitFormActionLogPassCondition(tr_UnitFormPassCondition UnitFormPassCondition ,Guid? UserID)
         {

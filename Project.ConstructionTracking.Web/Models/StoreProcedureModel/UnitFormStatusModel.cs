@@ -14,6 +14,7 @@
         public string? Form { get; set; }
         public string? Vender { get; set; }
         public string? Progress { get; set; }
+        public string? DurationDay { get; set; }
         public string? QC { get; set; }
         public string? StartPlan { get; set; }
         public string? EndPlan { get; set; }

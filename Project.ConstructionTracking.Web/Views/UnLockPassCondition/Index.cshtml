@@ -273,7 +273,7 @@
                                           class="form-control" 
                                           disabled
                                 >@item.PMUnLock_Remark</textarea>
-                                @if (item.StatusID == 8 || item.StatusID == 14)
+                                @if (item.UnitFormStatusID == 7 || item.StatusID == 14)
                                 {
                                     <button type="button" class="btn btn-primary" style="margin-top: 15px; float: right;" onclick="saveData('@item.PC_ID','@item.UnitFormID','@item.GroupID')">ขออนุมัติปลดล็อค</button>
                                 }

@@ -44,12 +44,13 @@
         }
 
         .custom-table td {
-            padding: 6px 8px;
+            padding: 4px 6px 8px 12px;
             text-align: left;
             border: 1px solid #dee2e6;
         }
 
         .custom-table th {
+            padding: 4px 6px 8px 12px;
             background-color: #f8f9fa;
             font-size: 12px;
             border: 1px solid #050505;
@@ -76,13 +77,16 @@
                             งวดที่
                         </th>
                         <th>
-                            ผู้รับ เหมา
+                            ผู้รับเหมา
                         </th>
                         <th>
                             งวด QC
                         </th>
                         <th>
-                            % Progress/payment
+                            Progress
+                        </th>
+                        <th>
+                            จำนวนวัน
                         </th>
                         <th>
                             วันที่แผนเริ่ม
@@ -94,7 +98,7 @@
                             วันที่เริ่มจริง
                         </th>
                         <th>
-                            วันที่เสร็จจริง(PMอนุมัติ)
+                            วันที่เสร็จจริง
                         </th>
                         <th>
                             ผ่านแบบมีเงื่อนไข
@@ -121,6 +125,7 @@
                             <td>@item.Vender</td>
                             <td>@item.QC</td>
                             <td>@item.Progress %</td>
+                            <td>@item.DurationDay วัน</td>
                             <td>@item.StartPlan</td>
                             <td>@item.EndPlan</td>
                             <td>@item.PESave</td>
@@ -137,7 +142,7 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(item.UnitFormPDF))
                                 {
-                                    <a href="@item.UnitFormPDF">
+                                    <a href="@item.UnitFormPDF" target="_blank">
                                         <i class="fa-solid fa-file-pdf fa-2xl"></i>
                                     </a>
                                 }
@@ -145,7 +150,7 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(item.QCPDF))
                                 {
-                                    <a href="@item.QCPDF">
+                                    <a href="@item.QCPDF" target="_blank">
                                         <i class="fa-solid fa-file-pdf fa-2xl"></i>
                                     </a>
                                 }

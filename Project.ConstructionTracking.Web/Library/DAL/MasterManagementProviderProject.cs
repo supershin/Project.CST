@@ -102,8 +102,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.model_type_str = Commons.FormatExtension.NullToString(reader["model_type_str"]);
             Entity.unit_type_str = Commons.FormatExtension.NullToString(reader["unit_type_str"]);
             Entity.unit_status_str = Commons.FormatExtension.NullToString(reader["unit_status_str"]);
-            Entity.date_start_plan_str = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["date_start_plan_str"]);
-            Entity.date_end_plan_str = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["date_end_plan_str"]);
+            Entity.date_start_plan_str = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["date_start_plan_str"]);
+            Entity.date_end_plan_str = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["date_end_plan_str"]);
             Entity.formname_plan_str = Commons.FormatExtension.NullToString(reader["FormPlan"]);
             Entity.formname_true_str = Commons.FormatExtension.NullToString(reader["FormActual"]);
             Entity.process_plan_str = Commons.FormatExtension.NullToString(reader["ProgressPlan"]);
@@ -112,6 +112,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.realday_use_str = Commons.FormatExtension.NullToString(reader["AllDayActual"]);
             Entity.delay_ahead_str = Commons.FormatExtension.NullToString(reader["DelayAhead"]);
             Entity.unit_build_status_str = Commons.FormatExtension.NullToString(reader["unit_build_status_str"]);
+            Entity.Latestwithdrawal = Commons.FormatExtension.NullToString(reader["Latestwithdrawal"]);
             return Entity;
         }
 
@@ -323,11 +324,12 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.Form = Commons.FormatExtension.NullToString(reader["Form"]);
             Entity.Vender = Commons.FormatExtension.NullToString(reader["Vender"]);
             Entity.Progress = Commons.FormatExtension.NullToString(reader["Progress"]);
+            Entity.DurationDay = Commons.FormatExtension.NullToString(reader["DurationDay"]);
             Entity.QC = Commons.FormatExtension.NullToString(reader["QC"]);
-            Entity.StartPlan = Commons.FormatExtension.NullToString(reader["StartPlan"]);
-            Entity.EndPlan = Commons.FormatExtension.NullToString(reader["EndPlan"]);
-            Entity.PESave = Commons.FormatExtension.NullToString(reader["PESave"]);
-            Entity.PMSubmit = Commons.FormatExtension.NullToString(reader["PMSubmit"]);
+            Entity.StartPlan = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["StartPlan"]);
+            Entity.EndPlan = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["EndPlan"]);
+            Entity.PESave = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["PESave"]);
+            Entity.PMSubmit = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["PMSubmit"]);
             Entity.PCStatus = Commons.FormatExtension.NullToString(reader["PCStatus"]);
             Entity.DisbursementStatus = Commons.FormatExtension.NullToString(reader["DisbursementStatus"]);
             Entity.PCUnlock = Commons.FormatExtension.NullToString(reader["PCUnlock"]);

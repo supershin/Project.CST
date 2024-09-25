@@ -69,8 +69,10 @@ namespace Project.ConstructionTracking.Web.Controllers
             var userID = Request.Cookies["CST.ID"];
             var userIDuse = Guid.Parse(userID);
 
-            bool ResultPermissionSubmit = _FormGroupService.ValidateUserSubmit(userIDuse , UnitFormData.ProjectID);
+            bool ResultPermissionSubmit = _FormGroupService.ValidateUserSubmit(userIDuse , UnitFormData.UnitID);
             ViewBag.PermissionSubmit = ResultPermissionSubmit;
+
+
 
             return View(listFormGroup);
         }

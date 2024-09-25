@@ -4,6 +4,7 @@
     var UnitCode = ViewBag.UnitCode;
 }
 @model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.UnitFormStatusModel>
+
 <div class="page-wrapper">
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
@@ -23,7 +24,7 @@
         </div>
     </div>
     <div class="page-body">
-        <div class="container mt-3">
+        <div class="container">
             <partial name="PartialTable" model="Model" />
         </div>
     </div>
@@ -35,7 +36,7 @@
             "paging": true,
             "lengthChange": true,
             "searching": true,
-            "ordering": true,
+            "ordering": false,
             "info": true,
             "autoWidth": false,
             "responsive": true,
