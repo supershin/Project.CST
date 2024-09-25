@@ -99,6 +99,9 @@
                     <th title="การเลื่อนหรือเร่งงานตามสถานะปัจจุบัน">Delay/Ahead ณ ปัจจุบัน</th>
                     <th title="จำนวนวันที่คาดว่าจะใช้ในการก่อสร้างตามแผน">จำนวนวันก่อสร้างตามแผน</th>
                     <th title="จำนวนวันที่ใช้ไปจริงในการก่อสร้าง">จำนวนวันที่ใช้จริง</th>
+                    <th>
+                        งวดที่เบิกล่าสุด
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -124,6 +127,7 @@
                         <td>@item.delay_ahead_str</td>
                         <td>@item.allday_str</td>
                         <td>@item.realday_use_str</td>
+                        <td>@item.Latestwithdrawal</td>
                     </tr>
                 }
             </tbody>

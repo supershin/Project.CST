@@ -30,6 +30,7 @@
     });
 }
 
+
 function toggleRadio(radio, itemId) {
     if (radio.checked && radio.dataset.wasChecked) {
         radio.checked = false;
@@ -123,49 +124,46 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+
+function validateGroups() {
+    var allGroupsChecked = true;  
+    $("input[data-action='gr-pass']").each(function () {
+        let group_id = $(this).attr("group-id"); 
+        let pcFlagActive = $(this).attr('data-pc-flag-active');  
+        //debugger
+        if (pcFlagActive === "True") {
+            var groupRadios = $(`input[data-action='gr-pass'][group-id='${group_id}']`);
+            //debugger
+            var anyRadioChecked = false;
+            groupRadios.each(function () {
+                if ($(this).is(":checked")) {
+                    anyRadioChecked = true; 
+                }
+            });
+
+            if (!anyRadioChecked) {
+                allGroupsChecked = false; 
+                return false; 
+            }
+        }
+    });
+
+    return allGroupsChecked;
+}
+
+
 function saveOrSubmit(actionType) {
     var remarkElement = document.getElementById("mainRemark");
     var listimagecnt = document.getElementById("listimagecnt").value;
     var files = document.getElementById("file-input").files;
     var mainStatus = document.querySelector('input[name="radios-inline-approval"]:checked');
 
-    // Initialize a flag to check if all groups have at least one choice selected
-    var allGroupsChecked = true;
-    var radioGroups = {};
-
-    // Collect radio groups by name
-    document.querySelectorAll('input[data-action="gr-pass"]').forEach(function (radio) {
-        var groupName = radio.getAttribute('name');
-        var pcFlagActive = radio.getAttribute('data-pc-flag-active') === "true"; // Check if PCFlageActive is true
-
-        // If PCFlageActive is true, check for radio selection
-        if (pcFlagActive) {
-            if (!radioGroups[groupName]) {
-                radioGroups[groupName] = false; // Initialize as unchecked
-            }
-            if (radio.checked) {
-                radioGroups[groupName] = true; // Mark as checked if any radio in this group is selected
-            }
-        }
-    });
-
-
-    // Check if all groups have at least one radio selected
-    for (var groupName in radioGroups) {
-        if (!radioGroups[groupName]) {
-            allGroupsChecked = false;
-            break;
-        }
-    }
-
     if (actionType === "submit") {
-        // Validate that all groups have at least one radio selected
-        if (!allGroupsChecked) {
+        if (!validateGroups()) {
             showErrorAlert('คำเตือน!', 'กรุณาเลือกตัวเลือกผ่านเพื่อส่ง PJM Head หรือ ไม่ผ่าน ทุกรายการกลุ่มงาน');
             return;
         }
 
-        // Validate conditional remark for radio buttons
         var radioGroups = document.querySelectorAll('input[data-action="gr-pass"]');
         for (var i = 0; i < radioGroups.length; i++) {
             var radio = radioGroups[i];
@@ -173,23 +171,21 @@ function saveOrSubmit(actionType) {
                 var groupId = radio.getAttribute('group-id');
                 var remarkTextarea = document.getElementById(`remark_${groupId}`);
                 if (!remarkTextarea || remarkTextarea.value.trim() === "") {
-                    scrollToElement(remarkTextarea); // Scroll to the textarea
+                    scrollToElement(remarkTextarea);
                     showErrorAlert('คำเตือน!', 'กรุณาระบุเหตุผล เมื่อไม่ผ่านการอนุมัติแบบมีเงื่อนไข');
                     return;
                 }
             }
         }
 
-        // Validate main remark
         if (!mainStatus) {
             showErrorAlert('คำเตือน!', 'กรุณาระบุตัวเลือกอนุมัติหรือไม่อนุมัติ');
             return;
         }
 
-        // Check if the remarkElement exists before accessing its value
         if (mainStatus.value === "5" && (!remarkElement || remarkElement.value.trim() === "")) {
-            scrollToElement(remarkElement); 
-            showErrorAlert('คำเตือน!', 'กรุณาระบุหมายเหตุ เมื่อไม่อนุมัติงวดงานนี้');           
+            scrollToElement(remarkElement);
+            showErrorAlert('คำเตือน!', 'กรุณาระบุหมายเหตุ เมื่อไม่อนุมัติงวดงานนี้');
             return;
         }
     }
@@ -284,35 +280,6 @@ function performAjaxRequest(actionType) {
         }
     });
 }
-
-//function generatePDFAfterSave(formData) {
-//    $.ajax({
-//        url: baseUrl + 'GeneratePDF/GeneratePDFCheckList',
-//        type: 'POST',
-//        contentType: 'application/json',
-//        data: JSON.stringify({
-//            ProjectID: formData.get('ProjectID'),
-//            UnitID: formData.get('UnitID'),
-//            FormID: formData.get('FormID')
-//        }),
-//        success: function (response) {
-//            Swal.close();
-//            if (response.success) {
-//                const pdfPath = response.pdfPath; // Replace with the actual key for the PDF path
-//                window.open(baseUrl + pdfPath, '_blank');
-//                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จและสร้าง PDF สำเร็จ', () => {
-//                    window.location.reload(); // Reload the page after success
-//                });
-//            } else {
-//                showErrorAlert('ผิดพลาด!', 'ไม่สามารถสร้าง PDF ได้');
-//            }
-//        },
-//        error: function (xhr, status, error) {
-//            Swal.close();
-//            showErrorAlert('ผิดพลาด!', 'ไม่สามารถสร้าง PDF ได้');
-//        }
-//    });
-//}
 
 
 function deleteImage(resourceId) {

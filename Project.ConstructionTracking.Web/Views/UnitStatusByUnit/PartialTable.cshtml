@@ -86,6 +86,9 @@
                             Progress
                         </th>
                         <th>
+                            จำนวนวัน
+                        </th>
+                        <th>
                             วันที่แผนเริ่ม
                         </th>
                         <th>
@@ -95,7 +98,7 @@
                             วันที่เริ่มจริง
                         </th>
                         <th>
-                            วันที่เสร็จจริง(PMอนุมัติ)
+                            วันที่เสร็จจริง
                         </th>
                         <th>
                             ผ่านแบบมีเงื่อนไข
@@ -122,6 +125,7 @@
                             <td>@item.Vender</td>
                             <td>@item.QC</td>
                             <td>@item.Progress %</td>
+                            <td>@item.DurationDay วัน</td>
                             <td>@item.StartPlan</td>
                             <td>@item.EndPlan</td>
                             <td>@item.PESave</td>
@@ -138,7 +142,7 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(item.UnitFormPDF))
                                 {
-                                    <a href="@item.UnitFormPDF">
+                                    <a href="@item.UnitFormPDF" target="_blank">
                                         <i class="fa-solid fa-file-pdf fa-2xl"></i>
                                     </a>
                                 }
@@ -146,7 +150,7 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(item.QCPDF))
                                 {
-                                    <a href="@item.QCPDF">
+                                    <a href="@item.QCPDF" target="_blank">
                                         <i class="fa-solid fa-file-pdf fa-2xl"></i>
                                     </a>
                                 }

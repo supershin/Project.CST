@@ -72,6 +72,8 @@ namespace Project.ConstructionTracking.Web.Controllers
             bool ResultPermissionSubmit = _FormGroupService.ValidateUserSubmit(userIDuse , UnitFormData.UnitID);
             ViewBag.PermissionSubmit = ResultPermissionSubmit;
 
+
+
             return View(listFormGroup);
         }
 

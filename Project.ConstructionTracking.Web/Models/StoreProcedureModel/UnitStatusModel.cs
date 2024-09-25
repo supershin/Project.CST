@@ -22,5 +22,6 @@
         public string? delay_ahead_str { get; set; }
         public string? allday_str { get; set; }
         public string? realday_use_str { get; set; }
+        public string? Latestwithdrawal { get; set; }
     }
 }

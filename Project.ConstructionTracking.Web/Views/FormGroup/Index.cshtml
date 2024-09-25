@@ -429,6 +429,16 @@
                                             </form>
                                     </div>
                                 }
+                                else if (UnitFormstatusID == 4 && PJM_ActionType == "submit")
+                                {
+                                    <div class="d-flex justify-content-center">
+                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                            <input type="hidden" name="ComFrom" value="FormGroup" />
+                                            <button type="submit" class="btn custom-btn btn-warning" id="btn-toggle-card">ขอปลดล็อค</button>
+                                        </form>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
