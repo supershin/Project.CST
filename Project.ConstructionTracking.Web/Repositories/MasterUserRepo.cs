@@ -507,7 +507,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                                         .Where(o => o.ID == userResource.ResourceID
                                         && o.FlagActive == true).FirstOrDefault();
                 resource.FlagActive = false;
-                resource.FlagActive = false;
                 resource.UpdateDate = DateTime.Now;
                 userResource.UpdateBy = requestUserID;
 

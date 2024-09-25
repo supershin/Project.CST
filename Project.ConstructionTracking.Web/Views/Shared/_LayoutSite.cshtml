@@ -458,21 +458,31 @@
                                     <div class="dropdown-menu">
                                         <div class="dropdown-menu-columns">
                                             <div class="dropdown-menu-column">
-                                                <a class="dropdown-item" asp-controller="MasterForm" asp-action="Index">
-                                                    Master Form
-                                                </a>
-                                                <a class="dropdown-item" asp-controller="MasterCompany" asp-action="Index">
-                                                    Company&Vendor Master
-                                                </a>
-                                                <a class="dropdown-item" asp-controller="MasterProject" asp-action="Index">
-                                                    Project Master
-                                                </a>
-                                                <a class="dropdown-item" asp-controller="MasterUnit" asp-action="Index">
-                                                    Unit Master
-                                                </a>
-                                                <a class="dropdown-item" asp-controller="MasterUser" asp-action="Index">
-                                                    User Master
-                                                </a>
+                                                @if (ViewBag.UserRole == SystemConstant.UserRole.ADMIN.ToString())
+                                                {
+                                                    <a class="dropdown-item" asp-controller="MasterForm" asp-action="Index">
+                                                        Master Form
+                                                    </a>
+                                                    <a class="dropdown-item" asp-controller="MasterCompany" asp-action="Index">
+                                                        Company&Vendor Master
+                                                    </a>
+                                                    <a class="dropdown-item" asp-controller="MasterProject" asp-action="Index">
+                                                        Project Master
+                                                    </a>
+                                                    <a class="dropdown-item" asp-controller="MasterUnit" asp-action="Index">
+                                                        Unit Master
+                                                    </a>
+                                                    <a class="dropdown-item" asp-controller="MasterUser" asp-action="Index">
+                                                        User Master
+                                                    </a>
+                                                }
+
+                                                @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
+                                                {
+                                                    <a class="dropdown-item" asp-controller="MasterUnit" asp-action="Index">
+                                                        Unit Master
+                                                    </a>
+                                                }
                                             </div>
                                         </div>
                                     </div>

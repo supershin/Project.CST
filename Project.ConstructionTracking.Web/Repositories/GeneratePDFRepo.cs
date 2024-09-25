@@ -93,6 +93,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                                     join tmr in _context.tm_Resource on trufr.ResourceID equals tmr.ID
                                                                     where trufr.GroupID == tmfg.ID
                                                                        && trufr.RoleID == SystemConstant.UserRole.PE
+                                                                       && trufr.UnitFormID == truf.ID
                                                                     select new
                                                                     {
                                                                         ImagePath = tmr.FilePath
@@ -104,7 +105,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                        join trur in _context.tr_UserResource on trufa.UpdateBy equals trur.UserID
                                        join image in _context.tm_Resource on trur.ResourceID equals image.ID
                                        where trufa.UnitFormID == truf.ID && trufa.RoleID == SystemConstant.UserRole.PE
-                                       && trufa.ActionType == "submit" && trufa.StatusID == 1
+                                       && trufa.ActionType == "submit" && trufa.StatusID == 1 && trur.FlagActive == true
                                        select image.FilePath).FirstOrDefault(),
 
                              SignPM = (from trufa in _context.tr_UnitFormAction
@@ -112,6 +113,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                        join image in _context.tm_Resource on trur.ResourceID equals image.ID
                                        where trufa.UnitFormID == truf.ID && trufa.RoleID == SystemConstant.UserRole.PM
                                        && trufa.ActionType == "submit" && (trufa.StatusID == 4 || trufa.StatusID == 6)
+                                       && trur.FlagActive == true
                                        select image.FilePath).FirstOrDefault(),
 
                              SignVendor = (from tr in _context.tm_Resource
@@ -134,7 +136,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             if (project != null)
             {
-                documentPrefix = "C" + project.ProjectCode + DateTime.Now.ToString("yyyy") + DateTime.Now.ToString("MM");
+                documentPrefix = "C" + project.ProjectCode + "-" +DateTime.Now.ToString("yyyy") + DateTime.Now.ToString("MM");
             }
 
             tr_Document? document = _context.tr_Document
