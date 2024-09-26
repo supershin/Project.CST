@@ -11,8 +11,8 @@
             images.forEach(function (image) {
                 var imageHtml = `
                     <div class="col-6 position-relative">
-                        <a data-fslightbox="gallery" href="${image.FilePath}">
-                            <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                        <a data-fslightbox="gallery" href="${baseUrl}${image.FilePath}">
+                            <img src="${baseUrl}${image.FilePath}" alt="..." class="img-thumbnail">
                         </a>
                     </div>
                 `;

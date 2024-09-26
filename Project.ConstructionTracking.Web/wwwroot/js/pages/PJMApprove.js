@@ -28,8 +28,8 @@ function openModal(UnitFormID, GroupID, FormID, PC_ID) {
             images.forEach(function (image) {
                 var imageHtml = `
                     <div class="col-6 position-relative">
-                        <a data-fslightbox="gallery1" href="${image.FilePath}">
-                            <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                        <a data-fslightbox="gallery1" href="${baseUrl}${image.FilePath}">
+                            <img src="${baseUrl}${image.FilePath}" alt="..." class="img-thumbnail">
                         </a>
                     </div>
                 `;
@@ -55,8 +55,8 @@ function openModal(UnitFormID, GroupID, FormID, PC_ID) {
             images.forEach(function (image) {
                 var imageHtml = `
                     <div class="col-6 position-relative">
-                        <a data-fslightbox="gallery2" href="${image.FilePath}">
-                            <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                        <a data-fslightbox="gallery2" href="${baseUrl}${image.FilePath}">
+                            <img src="${baseUrl}${image.FilePath}" alt="..." class="img-thumbnail">
                         </a>
                     </div>
                 `;
@@ -82,8 +82,8 @@ function openModal(UnitFormID, GroupID, FormID, PC_ID) {
             images.forEach(function (image) {
                 var imageHtml = `
                     <div class="col-6 position-relative">
-                        <a data-fslightbox="galleryUnlock" href="${image.FilePath}">
-                            <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                        <a data-fslightbox="galleryUnlock" href="${baseUrl}${image.FilePath}">
+                            <img src="${baseUrl}${image.FilePath}" alt="..." class="img-thumbnail">
                         </a>
                     </div>
                 `;
