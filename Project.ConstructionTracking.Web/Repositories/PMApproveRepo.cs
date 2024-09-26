@@ -1,7 +1,9 @@
 ﻿using Microsoft.Data.SqlClient.Server;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
+using System.Transactions;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
 
@@ -126,21 +128,21 @@ namespace Project.ConstructionTracking.Web.Repositories
                     StatusID_PE = item.StatusID_PE,
                     Remark_PE = item.Remark_PE,
                     ActionDate_PE = item.ActionDate_PE.HasValue
-                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PE.Value.ToString("dd/MM/yyyy"))
+                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PE.Value)
                                     : null,
                     RoleID_PM = item.RoleID_PM,
                     ActionType_PM = item.ActionType_PM,
                     StatusID_PM = item.StatusID_PM,
                     Remark_PM = item.Remark_PM,
                     ActionDate_PM = item.ActionDate_PM.HasValue
-                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PM.Value.ToString("dd/MM/yyyy"))
+                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PM.Value)
                                     : null,
                     RoleID_PJM = item.RoleID_PJM,
                     ActionType_PJM = item.ActionType_PJM,
                     StatusID_PJM = item.StatusID_PJM,
                     Remark_PJM = item.Remark_PJM,
                     ActionDate_PJM = item.ActionDate_PJM.HasValue
-                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PJM.Value.ToString("dd/MM/yyyy"))
+                                    ? FormatExtension.ToStringFrom_DD_MM_YYYY_To_DD_MM_YYYY(item.ActionDate_PJM.Value)
                                     : null,
                     PC_CNT = item.PC_Cnt,
                     PC_Color = item.AnswerColor,
@@ -159,6 +161,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from vendor in vendors.DefaultIfEmpty()
                           join t4 in _context.tm_Project on t1.ProjectID equals t4.ProjectID into projects
                           from project in projects.DefaultIfEmpty()
+                          join t4com in _context.tm_CompanyVendor on t1.CompanyVendorID equals t4com.ID into Companys
+                          from Company in Companys.DefaultIfEmpty()
                           join t5 in _context.tm_Unit on t1.UnitID equals t5.UnitID into units
                           from unit in units.DefaultIfEmpty()
                           join t8 in _context.tm_Form on t1.FormID equals t8.ID into forms
@@ -169,6 +173,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from PMUnitFormAction in PMUnitFormActions.DefaultIfEmpty()
                           join t12 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)3 } equals new { t12.UnitFormID, t12.RoleID } into PJMUnitFormActions
                           from PJMUnitFormAction in PJMUnitFormActions.DefaultIfEmpty()
+                          join t13 in _context.tm_User on new { PMUnitFormAction.UpdateBy } equals new { UpdateBy = (Guid?)t13.ID } into PMUserActions
+                          from PMUserAction in PMUserActions.DefaultIfEmpty()
                           where t1.UnitID == model.UnitID && t1.FormID == model.FormID
                           select new ApproveFormcheckModel
                           {
@@ -176,20 +182,25 @@ namespace Project.ConstructionTracking.Web.Repositories
                               ProjectID = t1.ProjectID,
                               ProjectName = project.ProjectName,
                               UnitID = t1.UnitID,
+                              UnitFormID = t1.ID,
                               UnitCode = unit.UnitCode,
                               VendorID = t1.VendorID,
                               VenderName = vendor.Name,
+                              CompanyName = Company.Name,
                               VendorResourceID = t1.VendorResourceID,
                               Grade = t1.Grade,
                               UnitFormStatusID = t1.StatusID,
                               FormID = t1.FormID,
                               FormName = form.Name,
+                              ActionByPE = PEUnitFormAction.UpdateBy,
                               Actiondate = PEUnitFormAction.ActionDate,
                               ActiondatePm = PMUnitFormAction.ActionDate,
                               ActiondatePJm = PJMUnitFormAction.ActionDate,
+                              PE_Actiontype = PEUnitFormAction.ActionType,
                               PM_StatusID = PMUnitFormAction.StatusID,
                               PM_Remarkaction = PMUnitFormAction.Remark,
                               PM_Actiontype = PMUnitFormAction.ActionType,
+                              PM_ActionBy = PMUserAction.FirstName + " " + PMUserAction.LastName,
                               PJM_StatusID = PJMUnitFormAction.StatusID,
                               PJM_Remarkaction = PJMUnitFormAction.Remark,
                               PJM_Actiontype = PJMUnitFormAction.ActionType,
@@ -228,10 +239,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                      ResourceID = res.ID,
                                                      FileName = res.FileName,
                                                      FilePath = res.FilePath
-                                                 }).ToList()
+                                                 }).ToList(),
+                              PCAllcount = _context.tr_UnitFormPassCondition.Count(x => x.UnitFormID == t1.ID)
+
+
                           }).FirstOrDefault();
 
-            return result;
+             return result;
         }
 
         public List<UnitFormResourceModel> GetImage(UnitFormResourceModel model)
@@ -256,107 +270,138 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public void SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
         {
-            var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == model.UnitFormID && a.RoleID == 2);
-
-            if (unitFormAction == null)
+            var transactionOptions = new TransactionOptions
             {
-                // Insert a new UnitFormAction record
-                unitFormAction = new tr_UnitFormAction
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TimeSpan.FromMinutes(3)
+            };
+
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            {
+                try
                 {
-                    UnitFormID = model.UnitFormID,
-                    RoleID = 2,
-                    ActionType = model.ActionType,
-                    StatusID = model.UnitFormStatus,
-                    Remark = model.Remark,
-                    ActionDate = DateTime.Now,
-                    UpdateBy = model.UserID,
-                    UpdateDate = DateTime.Now,
-                    CreateBy = model.UserID,
-                    CraeteDate = DateTime.Now
-                };
+                    var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == model.UnitFormID && a.RoleID == 2);
 
-                _context.tr_UnitFormAction.Add(unitFormAction);
-            }
-            else
-            {
-                // Update the existing UnitFormAction record
-                unitFormAction.ActionType = model.ActionType;
-                unitFormAction.StatusID = model.UnitFormStatus;
-                unitFormAction.Remark = model.Remark;
-                unitFormAction.ActionDate = DateTime.Now;
-                unitFormAction.UpdateBy = model.UserID;
-                unitFormAction.UpdateDate = DateTime.Now;
-
-                _context.tr_UnitFormAction.Update(unitFormAction);
-            }
-
-            // Save changes to UnitFormAction
-            _context.SaveChanges();
-
-            bool PC = model.PassConditionsIUD != null && model.PassConditionsIUD.Count > 0;
-
-            // UpdateUnitForm action
-            UpdateUnitForm(model.UnitFormID, model.ActionType, model.UnitFormStatus , model.UserID);
-
-            // Log the action
-            InsertUnitFormActionLog(unitFormAction, model.UserID);
-
-            // Handle PassConditions if they exist
-            if (model.PassConditionsIUD != null && model.PassConditionsIUD.Count > 0)
-            {
-                foreach (var passConditionModel in model.PassConditionsIUD)
-                {
-                    var passCondition = _context.tr_UnitFormPassCondition
-                        .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.FlagActive == true);
-
-                    if (passCondition != null)
+                    if (unitFormAction == null)
                     {
-                        if (passCondition.StatusID != 8)
+                        unitFormAction = new tr_UnitFormAction
                         {
-                            passCondition.StatusID = passConditionModel.PassConditionsvalue;
-                            passCondition.PM_Remark = passConditionModel.Remark;
-                            passCondition.UpdateBy = model.UserID;
-                            passCondition.UpdateDate = DateTime.Now;
-                            _context.tr_UnitFormPassCondition.Update(passCondition);
-                            InsertUnitFormActionLogPassCondition(passCondition , model.UserID);
+                            UnitFormID = model.UnitFormID,
+                            RoleID = 2,
+                            ActionType = model.ActionType,
+                            StatusID = model.UnitFormStatus,
+                            Remark = string.IsNullOrEmpty(model.Remark) ? "" : model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
+                            ActionDate = DateTime.Now,
+                            UpdateBy = model.UserID,
+                            UpdateDate = DateTime.Now,
+                            CreateBy = model.UserID,
+                            CraeteDate = DateTime.Now
+                        };
+
+                        _context.tr_UnitFormAction.Add(unitFormAction);
+                    }
+                    else
+                    {
+                        unitFormAction.ActionType = model.ActionType;
+                        unitFormAction.StatusID = model.UnitFormStatus;
+                        if (!string.IsNullOrEmpty(model.Remark))
+                        {
+                            if (unitFormAction.Remark != model.Remark)
+                            {
+                                unitFormAction.Remark = model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
+                            }
+                        }
+                        else
+                        {
+                            unitFormAction.Remark = "";
+                        }
+                        unitFormAction.ActionDate = DateTime.Now;
+                        unitFormAction.UpdateBy = model.UserID;
+                        unitFormAction.UpdateDate = DateTime.Now;
+
+                        _context.tr_UnitFormAction.Update(unitFormAction);
+                    }
+
+
+                    _context.SaveChanges();
+
+                    UpdateUnitForm(model.UnitFormID, model.ActionType, model.UnitFormStatus, model.UserID);
+
+                    InsertUnitFormActionLog(unitFormAction, model.UserID);
+
+                    if (model.PassConditionsIUD != null && model.PassConditionsIUD.Count > 0)
+                    {
+                        foreach (var passConditionModel in model.PassConditionsIUD)
+                        {
+                            var passCondition = _context.tr_UnitFormPassCondition.FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.FlagActive == true);
+
+                            if (passCondition != null)
+                            {
+                                if (passCondition.StatusID != 8)
+                                {
+                                    passCondition.StatusID = passConditionModel.PassConditionsvalue;
+                                    if (!string.IsNullOrEmpty(passConditionModel.Remark))
+                                    {
+                                        if (passCondition.PM_Remark != passConditionModel.Remark)
+                                        {
+                                            passCondition.PM_Remark = passConditionModel.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        passCondition.PM_Remark = "";
+                                    }
+                                    passCondition.UpdateBy = model.UserID;
+                                    passCondition.UpdateDate = DateTime.Now;
+                                    _context.tr_UnitFormPassCondition.Update(passCondition);
+                                    InsertUnitFormActionLogPassCondition(passCondition, model.UserID);
+                                }
+                            }
+                            _context.SaveChanges();
                         }
                     }
-                    // Save changes for each PassCondition
-                    _context.SaveChanges();
+
+                    InsertImagesPM(model, null, 2);
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
                 }
             }
-
-            // Save iamge 
-            InsertImagesPM(model, null, 2); // RoleID = 2 for PM
         }
 
-        private void UpdateUnitFormActionTypePE(ApproveFormcheckIUDModel model)
+        private void UpdateUnitForm(Guid? unitformID, string? actiontype, int? StatusID, Guid? userID)
         {
-            var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == model.UnitFormID && a.RoleID == 1);
-            if (unitFormAction != null)
+
+            var passConditions = _context.tr_UnitFormPassCondition.Where(pc => pc.UnitFormID == unitformID && pc.FlagActive == true).Select(pc => new { pc.StatusID }).ToList();
+            var totalConditions = passConditions.Count;
+            var passedConditions = passConditions.Count(pc => pc.StatusID == 8);
+
+            var unitForm = _context.tr_UnitForm.FirstOrDefault(tr => tr.ID == unitformID);
+
+            if (unitForm != null)
             {
-                unitFormAction.StatusID = null;
-                unitFormAction.UpdateDate = DateTime.Now;
-                _context.tr_UnitFormAction.Update(unitFormAction);
+
+                if (StatusID == 4 && totalConditions > 0 && totalConditions == passedConditions)
+                {
+                    unitForm.StatusID = 7; 
+                }
+                else
+                {
+                    unitForm.StatusID = actiontype == "save" ? 3 : StatusID;
+                }
+
+                unitForm.UpdateBy = userID;
+                unitForm.UpdateDate = DateTime.Now;
+
+                _context.tr_UnitForm.Update(unitForm);
                 _context.SaveChanges();
             }
         }
 
-        private void UpdateUnitForm(Guid? unitformID, string? actiontype, int? StatusID ,Guid? userID)
-        {
-            var UnitForm = _context.tr_UnitForm
-                .FirstOrDefault(tr => tr.ID == unitformID);
 
-            if (UnitForm != null)  // Ensure UnitForm is found
-            {
-                UnitForm.StatusID = actiontype == "save" ? 3 : StatusID;
-                UnitForm.UpdateBy = userID;
-                UnitForm.UpdateDate = DateTime.Now;
-
-                _context.tr_UnitForm.Update(UnitForm);
-                _context.SaveChanges();
-            }
-        }
 
         private void InsertUnitFormActionLogPassCondition(tr_UnitFormPassCondition UnitFormPassCondition ,Guid? UserID)
         {

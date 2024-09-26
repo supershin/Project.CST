@@ -32,7 +32,15 @@ namespace Project.ConstructionTracking.Web.Services
 
         public void SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
         {
-            _IPMApprovelistRepo.SaveOrUpdateUnitFormAction(model);
+            try
+            {
+                _IPMApprovelistRepo.SaveOrUpdateUnitFormAction(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+            }
         }
+
     }
 }

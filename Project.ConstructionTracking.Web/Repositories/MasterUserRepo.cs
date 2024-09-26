@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Net.Mime;
+using System.Collections.Generic;
+using System.Linq;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
@@ -12,9 +13,10 @@ namespace Project.ConstructionTracking.Web.Repositories
 	{
 		dynamic GetUserList(DTParamModel param, MasterUserModel criteria);
         dynamic GetBU();
+        dynamic GetProject(int buID);
         dynamic GetRole();
         dynamic GetPosition();
-
+        List<ListProjectByBUResp> GetProjectByBU(Guid userID);
         dynamic CreateUser(CreateUserModel model);
 
         dynamic EditUser(EditUserModel model);
@@ -142,6 +144,24 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 _context.tm_User.Add(create);
                 _context.SaveChanges();
+
+                if (model.MappingProject != null)
+                {
+                    foreach (var permission in model.MappingProject)
+                    {
+                        tr_ProjectPermission createPermission = new tr_ProjectPermission();
+                        createPermission.ProjectID = permission;
+                        createPermission.UserID = create.ID;
+                        createPermission.FlagActive = true;
+                        createPermission.CraeteDate = DateTime.Now;
+                        createPermission.UpdateDate = DateTime.Now;
+                        createPermission.CreateBy = model.RequestUserID;
+                        createPermission.UpdateBy = model.RequestUserID;
+
+                        _context.tr_ProjectPermission.Add(createPermission);
+                        _context.SaveChanges();
+                    }
+                }
             }
             return create;
         }
@@ -193,10 +213,118 @@ namespace Project.ConstructionTracking.Web.Repositories
             edit.UpdateDate = DateTime.Now;
             edit.UpdateBy = model.RequestUserID;
 
+            if(model.IsMapping == true)
+            {
+                // Mapping project
+                List<tr_ProjectPermission>? permissionList = _context.tr_ProjectPermission
+                                                    .Where(o => o.UserID == model.UserID)
+                                                    .ToList();
+
+                // Separate active and inactive project IDs
+                List<Guid?> activeList = permissionList
+                    .Where(o => o.FlagActive == true)
+                    .Select(o => o.ProjectID)
+                    .ToList();
+
+                List<Guid?> inActiveList = permissionList
+                    .Where(o => o.FlagActive == false)
+                    .Select(o => o.ProjectID)
+                    .ToList();
+
+                List<Guid?> newList = null;
+
+                if (permissionList.Count > 0)
+                {
+                    if (model.MappingProject == null)
+                    {
+                        // If no projects are selected, deactivate all active projects
+                        UpdateMapping(model.UserID, activeList, false, model.RequestUserID);
+                    }
+                    else
+                    {
+                        // Calculate new projects to be added
+                        newList = model.MappingProject.Except(activeList).Except(inActiveList).ToList();
+                        if (newList.Any())
+                        {
+                            CreateMapping(model.UserID, newList, model.RequestUserID);
+                        }
+
+                        // Deactivate projects that are no longer selected
+                        var projectsToDeactivate = activeList.Except(model.MappingProject).ToList();
+                        if (projectsToDeactivate.Any())
+                        {
+                            UpdateMapping(model.UserID, projectsToDeactivate, false, model.RequestUserID);
+                        }
+
+                        // Activate inactive projects that are now selected
+                        var projectsToActivate = inActiveList.Intersect(model.MappingProject).ToList();
+                        if (projectsToActivate.Any())
+                        {
+                            UpdateMapping(model.UserID, projectsToActivate, true, model.RequestUserID);
+                        }
+                    }
+                }
+                else
+                {
+                    // If there are no existing projects, create mappings for all selected projects
+                    if (model.MappingProject != null && model.MappingProject.Any())
+                    {
+                        CreateMapping(model.UserID, model.MappingProject, model.RequestUserID);
+                    }
+                }
+            }
+
             _context.tm_User.Update(edit);
             _context.SaveChanges();
 
             return edit;
+        }
+        private void CreateMapping(Guid userID, List<Guid?> mappingProject, Guid requestUserID)
+        {
+            if (mappingProject != null && mappingProject.Count > 0)
+            {
+                List<tr_ProjectPermission> listCreate = new List<tr_ProjectPermission>();
+
+                foreach (var create in mappingProject)
+                {
+                    tr_ProjectPermission createData = new tr_ProjectPermission();
+                    createData.UserID = userID;
+                    createData.ProjectID = create;
+                    createData.FlagActive = true;
+                    createData.CraeteDate = DateTime.Now;
+                    createData.UpdateDate = DateTime.Now;
+                    createData.CreateBy = requestUserID;
+                    createData.UpdateBy = requestUserID;
+                    listCreate.Add(createData);
+                }
+
+                _context.tr_ProjectPermission.AddRange(listCreate);
+                _context.SaveChanges();
+            }
+        }
+
+        private void UpdateMapping(Guid userID, List<Guid?> mappingProject, bool flag, Guid requestUserID)
+        {
+            if (mappingProject != null && mappingProject.Count > 0)
+            {
+                List<tr_ProjectPermission> listUpdate = new List<tr_ProjectPermission>();
+
+                foreach (var create in mappingProject)
+                {
+                    tr_ProjectPermission? updateData = _context.tr_ProjectPermission
+                                                        .Where(o => o.UserID == userID
+                                                        && o.ProjectID == create).FirstOrDefault();
+
+                    updateData.FlagActive = flag;
+                    updateData.UpdateDate = DateTime.Now;
+                    updateData.UpdateBy = requestUserID;
+
+                    listUpdate.Add(updateData);
+                }
+
+                _context.tr_ProjectPermission.UpdateRange(listUpdate);
+                _context.SaveChanges();
+            }
         }
 
         public dynamic GetBU()
@@ -240,28 +368,28 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public dynamic DetailUser(Guid userId)
         {
-            var query = (from user in _context.tm_User
-                         join pst in _context.tm_Position on user.PositionID equals pst.ID
-                         join ur in _context.tr_UserResource on user.ID equals ur.UserID into groupUr
-                         from ur in groupUr.DefaultIfEmpty()
-                         join r in _context.tm_Resource on ur.ResourceID equals r.ID into groupR
-                         from r in groupR.DefaultIfEmpty()
-                         where user.ID == userId
-                               && user.FlagActive == true
-                               && (r.FlagActive == true || r.ID == null)
+            var query = (from u in _context.tm_User
+                          join p in _context.tm_Position on u.PositionID equals p.ID
+                          join ur in _context.tr_UserResource on u.ID equals ur.UserID into groupUr
+                          from ur in groupUr.DefaultIfEmpty()
+                          join r in _context.tm_Resource on ur.ResourceID equals r.ID into groupR
+                          from r in groupR.DefaultIfEmpty()
+                          where u.ID == userId
+                                && u.FlagActive == true
+                                && (ur == null || (r.FlagActive == true || r.ID == Guid.Empty))
                          select new
-                         {
-                             user.ID,
-                             user.FirstName,
-                             user.LastName,
-                             user.Email,
-                             user.Mobile,
-                             user.BUID,
-                             user.RoleID,
-                             user.PositionID,
-                             pst.Name,
-                             r.FilePath
-                         }).FirstOrDefault();
+                          {
+                              u.ID,
+                              u.FirstName,
+                              u.LastName,
+                              u.Email,
+                              u.Mobile,
+                              u.BUID,
+                              u.RoleID,
+                              u.PositionID,
+                              PositionName = p.Name,
+                              r.FilePath
+                          }).FirstOrDefault();
 
             return query;
         }
@@ -379,7 +507,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                                         .Where(o => o.ID == userResource.ResourceID
                                         && o.FlagActive == true).FirstOrDefault();
                 resource.FlagActive = false;
-                resource.FlagActive = false;
                 resource.UpdateDate = DateTime.Now;
                 userResource.UpdateBy = requestUserID;
 
@@ -431,6 +558,61 @@ namespace Project.ConstructionTracking.Web.Repositories
             _context.SaveChanges();
 
             return true;
+        }
+
+        public List<ListProjectByBUResp> GetProjectByBU(Guid userID)
+        {
+            tm_User? user = _context.tm_User.Where(o => o.ID == userID && o.FlagActive == true).FirstOrDefault();
+
+            List<tm_Project> query = _context.tm_Project.Where(o => o.BUID == user.BUID && o.FlagActive == true).ToList();
+
+            List<ListProjectByBUResp> newResp = new List<ListProjectByBUResp>();
+
+            foreach ( var data in query)
+            {
+                tr_ProjectPermission? permission = _context.tr_ProjectPermission
+                                                .Where(o => o.ProjectID == data.ProjectID
+                                                && o.UserID == user.ID && o.FlagActive == true)
+                                                .FirstOrDefault();
+
+                if (permission != null)
+                {
+                    ListProjectByBUResp model = new ListProjectByBUResp()
+                    {
+                        ProjectID = (Guid)permission.ProjectID,
+                        ProjectName = data.ProjectName,
+                        IsChecked = true
+                    };
+
+                    newResp.Add(model);
+                }
+                else
+                {
+                    ListProjectByBUResp model = new ListProjectByBUResp()
+                    {
+                        ProjectID = data.ProjectID,
+                        ProjectName = data.ProjectName,
+                        IsChecked = false
+                    };
+
+                    newResp.Add(model);
+                }
+            }
+
+            return newResp;
+        }
+
+        public dynamic GetProject(int buID)
+        {
+            var query = (from mp in _context.tm_Project
+                        where mp.BUID == buID && mp.FlagActive == true
+                        select new
+                        {
+                            mp.ProjectID,
+                            mp.ProjectName
+                        }).ToList();
+
+            return query;
         }
     }
 }

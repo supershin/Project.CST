@@ -33,7 +33,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                         from subT3 in gMaxFormIds.DefaultIfEmpty()
                         join t4 in _context.tm_Form on subT3.FormID equals t4.ID into gForm
                         from subT4 in gForm.DefaultIfEmpty()
-                        //where subT4.FlagActive == true
                         where t1.ProjectID == Model.ProjectID &&
                               (string.IsNullOrEmpty(Search) || t1.UnitCode.Contains(Search)) &&
                               (!Model.UnitStatusID.HasValue || t1.UnitStatusID == Model.UnitStatusID)

@@ -1,4 +1,5 @@
 ﻿using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Repositories;
 
 namespace Project.ConstructionTracking.Web.Services
@@ -18,15 +19,29 @@ namespace Project.ConstructionTracking.Web.Services
             return ListFormGroup;
         }
 
-        public FormGroupModel.FormGroupDetail GetFormGroupDetail(Guid unitFormId)
+        public FormGroupModel.FormGroupDetail GetFormGroupDetail(Guid? unitFormId)
         {
             var FormGroupDetail = _IFormGroupRepo.GetFormGroupDetail(unitFormId);
             return FormGroupDetail;
         }
 
+        public bool ValidateUserSubmit(Guid? UserID, Guid? UnitID)
+        {
+            bool result = _IFormGroupRepo.ValidateUserSubmit(UserID , UnitID);
+            return result;
+        }
+
         public void SubmitSaveFormGroup(FormGroupModel.FormGroupIUDModel model)
         {
-            _IFormGroupRepo.SubmitSaveFormGroup(model);
+            try
+            {
+                _IFormGroupRepo.SubmitSaveFormGroup(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+            }
         }
+
     }
 }

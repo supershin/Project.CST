@@ -4,21 +4,28 @@
     var ProjectID = ViewBag.ProjectID;
     var ProjectName = ViewBag.ProjectName;
     var UnitID = ViewBag.UnitID;
+    var UnitFormID = ViewBag.UnitFormID;
     var UnitCode = ViewBag.UnitCode;
+    var FormID = ViewBag.FormID;
     var FormName = ViewBag.FormName;
     var UnitFormStatusID = ViewBag.UnitFormStatusID;
     var Actiondate = ViewBag.Actiondate;
+    var PEActionBy = ViewBag.PEActionBy;
     var comeFrom = ViewBag.comeFrom;
     var ActiondatePm = ViewBag.ActiondatePm;
     var ActiondatePJm = ViewBag.ActiondatePJm;
     var Grade = ViewBag.Grade;
     var LockStatusID = ViewBag.LockStatusID;
     var VenderName = ViewBag.VenderName;
+    var CompanyName = ViewBag.CompanyName;
     var PM_Remarkaction = ViewBag.PM_Remarkaction;
     var PM_Actiontype = ViewBag.PM_Actiontype;
+    var PE_Actiontype = ViewBag.PE_Actiontype;
     var PJM_Remarkaction = ViewBag.PJM_Remarkaction;
     var PJM_Actiontype = ViewBag.PJM_Actiontype;
+    var PCAll = ViewBag.PCAll;
     var PCALLPASS = ViewBag.PCALLPASS;
+    var PCUnlock = ViewBag.PCUnlock;
 }
 
 @model Project.ConstructionTracking.Web.Models.ApproveFormcheckModel
@@ -57,6 +64,15 @@
         padding: 6px;
         text-align: center;
         cursor: pointer;
+    }
+
+    .align-center {
+        display: flex;
+        align-items: center;
+    }
+
+    .align-center .material-icons {
+        margin-right: 8px;
     }
 
     .drop-zone-text {
@@ -104,10 +120,32 @@
         text-align: center;
         padding: 0;
     }
+
+    .BackButton {
+        width: 50px; /* Set a fixed width */
+        height: 50px; /* Set a fixed height */
+        background-color: white;
+        border-radius: 50%;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border: none;
+        display: flex; /* Align the icon */
+        align-items: center;
+        justify-content: center;
+        padding: 0; /* Remove padding for a perfect circle */
+        cursor: pointer; /* Add cursor pointer for better UX */
+    }
+
+    .form-control[readonly] {
+        background-color: #e9ecef; /* Light background for readonly input */
+        cursor: not-allowed; /* Change cursor to indicate non-editable field */
+    }
 </style>
 
 <div class="page-wrapper">
     <!-- Page header -->
+    <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@FormName','@UnitCode')">
+        <i id="chatIcon" class="fa-solid fa-message fa-xl"></i>
+    </button>
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
             <div class="card-stamp">
@@ -123,7 +161,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        @if (comeFrom == "SummaryUnitForm")
+                        @if (comeFrom == "SummaryUnitForm" || ViewBag.UserRole == SystemConstant.UserRole.PE.ToString())
                         {
                             <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
                                 <input type="hidden" name="projectId" id="projectId" value="@ProjectID" />
@@ -136,9 +174,17 @@
                                 </button>
                             </form>
                         }
+                        else if (ViewBag.UserRole == SystemConstant.UserRole.PJM.ToString())
+                        {
+                            <form action="@Url.Action("index","MyTaskPJM")" method="post">
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
                         else
                         {
-                            <form action="@Url.Action("index","PMFormcheck")" method="post">
+                            <form action="@Url.Action("index","MyTaskPM")" method="post">
                                 <button class="status-dot bg-transparent">
                                     <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
                                 </button>
@@ -146,9 +192,9 @@
                         }
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
-                        <h1 class="mb-0 header-text">@UnitCode</h1>
+                        <h3 class="mb-0 header-text">PM ตรวจงาน @FormName</h3>
                         <div class="text-muted">
-                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@ProjectName</h5>
+                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@ProjectName ( Unit : @UnitCode )</h5>
                         </div>
                     </div>
                     <div class="align-items-right">
@@ -167,28 +213,51 @@
                     <div class="col-12 col-sm-4">
                         <div class="card">
                             <div class="card-header">
-                                <div class="container mt-1">
-                                    <span class="badge bg-secondary text-white">@FormName</span> สร้างโดย @VenderName
-                                </div>
+                                <h3>ข้อมูลรายละเอียด</h3>
                             </div>
                             <div class="card-body">
                                 <div class="col-12">
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="container mt-1">
-                                                <label class="form-label align-center">
-                                                    วิศวกรผู้ควบคุมงาน  : นายสมชาย ใจดี
+                                                <label class="form-label">
+                                                    PE/SE ผู้ควบคุมงาน : @PEActionBy
                                                 </label>
-                                                <label class="form-label align-center">
-                                                    เกรดที่วิศวกรประเมิณงวดนี้ : @Grade
+                                                <label class="form-label">
+                                                    เกรดที่ PE/SE ประเมินงวดนี้ : @Grade
                                                 </label>
-                                                <label class="form-label align-center">
+                                                <label class="form-label">
+                                                    วันที่ส่งงาน : @if (PE_Actiontype == "submit")
+                                                    {
+                                                        @Actiondate
+                                                    }
+                                                </label>
+                                                <label class="form-label">
                                                     การตรวจ QC : ผ่าน
                                                 </label>
-                                                <label class="form-label align-center">
-                                                    วันที่ส่งงาน : @Actiondate
+                                                <label class="form-label">
+                                                    สร้างโดย : @CompanyName
                                                 </label>
+                                                <label class="form-label">
+                                                    ชื่อผู้รับเหมาเซ็น : @VenderName
+                                                </label>
+                                                @if (PCAll != 0)
+                                                {
+                                                    <label class="form-label text-danger">มีการผ่านแบบมีเงื่อนไข!!!</label>
+                                                }
+                                                @if (UnitFormStatusID == 10 || UnitFormStatusID == 11 || UnitFormStatusID == 12)
+                                                {
+                                                    <div class="d-flex justify-content-center mt-2">
+                                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                                            <input type="hidden" name="ComFrom" value="PMApprove" />
+                                                            <button type="submit" class="btn custom-btn btn-success" id="btn-toggle-card">ปลดล็อค</button>
+                                                        </form>
+                                                    </div>
+                                                }
+
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -199,14 +268,6 @@
             </div>
         </div>
         <div class="container-xl mb-3">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">ผลการตรวจ</a></li>
-                @if (LockStatusID != null)
-                {
-                    <li class="breadcrumb-item active text-danger" aria-current="page">มีการผ่านแบบมีเงื่อนไข!!!</li>
-                }
-            </ol>
-            <br>
             <div class="row">
                 @if (Model.PM_getListgroup != null)
                 {
@@ -226,17 +287,45 @@
                                                 {
                                                     if ((group.PC_StatusID == 7 && PM_Actiontype == "submit") || (group.PC_StatusID == 9 && PJM_Actiontype == "submit"))
                                                     {
-                                                        buttonClass = "bg-danger";
+                                                        @if (UnitFormStatusID == 2)
+                                                        {
+                                                            buttonClass = "bg-warning";
+                                                            iconClass = "fa-solid fa-lock";
+                                                        }
+                                                        else
+                                                        {
+                                                            buttonClass = "bg-danger";
+                                                            iconClass = "fa-solid fa-lock";
+                                                        }
+                                                    }
+                                                    else if (group.PC_StatusID == 6 && PM_Actiontype == "submit")
+                                                    {
+                                                        buttonClass = "bg-primary";
                                                         iconClass = "fa-solid fa-lock";
                                                     }
-                                                    else if ((group.PC_StatusID == 6 && PM_Actiontype == "submit") || (group.PC_StatusID == 8 && PJM_Actiontype == "submit"))
+                                                    else if (group.PC_StatusID == 8 && PJM_Actiontype == "submit")
                                                     {
                                                         buttonClass = "bg-success";
                                                         iconClass = "fa-solid fa-lock";
                                                     }
+                                                    else if (group.PC_StatusID == 12)
+                                                    {
+                                                        buttonClass = "bg-warning";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                    else if (group.PC_StatusID == 13)
+                                                    {
+                                                        buttonClass = "bg-success";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
+                                                    else if (group.PC_StatusID == 14)
+                                                    {
+                                                        buttonClass = "bg-danger";
+                                                        iconClass = "fa-solid fa-lock";
+                                                    }
                                                     else
                                                     {
-                                                        buttonClass = "bg-primary";
+                                                        buttonClass = "bg-warning";
                                                         iconClass = "fa-solid fa-lock";
                                                     }
                                                 }
@@ -254,7 +343,7 @@
                                                     }
                                                     else
                                                     {
-                                                        buttonClass = "bg-primary";
+                                                        buttonClass = "bg-warning";
                                                         iconClass = "fa-solid fa-lock-open";
                                                     }
                                                 }
@@ -282,7 +371,7 @@
                                 @if (group.PM_getListpackage != null)
                                 {
                                     <div class="mb-3">
-                                        <label class="form-label">ความเห็นจากวิศวกร</label>
+                                        <label class="form-label">ความเห็นจาก PE/SE</label>
                                         @* Build the content first *@
                                         @{
                                             var textareaContent = new System.Text.StringBuilder();
@@ -302,9 +391,9 @@
                                 @if (group.LockStatusID != null)
                                 {
                                     <label class="form-label">
-                                        ความเห็นจากวิศวกร
+                                        ความเห็นจาก PE/SE กรณีผ่านแบบมีเงื่อนไข
                                     </label>
-                                    <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@group.PE_RemarkPC</textarea>
+                                    <textarea rows="2" class="form-control mb-3" placeholder="ความคิดเห็น" disabled>@group.PE_RemarkPC</textarea>
                                     <input type="hidden" id="pass_ID_@group.Group_ID" value="@group.PassConditionsID" />
                                     <div class="col-12 p-1">
                                         <label class="form-label">
@@ -316,15 +405,10 @@
                                                    passconID="@group.PassConditionsID"
                                                    value="6"
                                                    onclick="toggleRadio(this, '@Model.ID')"
-                                                   @(group.PC_StatusID == 6 || group.PC_StatusID == 8 || group.PC_StatusID == 9 ||
-                                                   group.PC_StatusID == 10 || group.PC_StatusID == 11 || group.PC_StatusID == 12 ||
-                                                   group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "checked" : "")
-                                                   @(
-                                                    (PM_Actiontype == "submit" &&
-                                                    (UnitFormStatusID != 2 || group.PC_StatusID == 8 || group.PCFlageActive == false)) ||
-                                                    (PJM_Actiontype == "submit" && group.PC_StatusID == 8 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
-                                                ? "disabled" : ""
-                                                   )
+                                                   @(group.PC_StatusID == 6  || group.PC_StatusID == 8  || group.PC_StatusID == 9  ||
+                                                     group.PC_StatusID == 10 || group.PC_StatusID == 11 || group.PC_StatusID == 12 ||
+                                                     group.PC_StatusID == 13 || group.PC_StatusID == 14 ? "checked" : "")
+                                                   @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (UnitFormStatusID == null || UnitFormStatusID == 1 || UnitFormStatusID > 3 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
                                             >
                                             <span class="form-check-label">ผ่านเพื่อส่ง PJM Head</span>
                                         </label>
@@ -334,22 +418,30 @@
                                                    type="radio"
                                                    group-id="@group.Group_ID"
                                                    name="radios-inline-@Model.ID-@group.Group_ID"
+                                                   data-pc-flag-active="@group.PCFlageActive"  
                                                    value="7"
                                                    onclick="toggleRadio(this, '@Model.ID')"
                                                    @(group.PC_StatusID == 7 ? "checked" : "")
-                                                   @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (PM_Actiontype == "submit" && (UnitFormStatusID != 2) || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()? "disabled": "")
-                                            >
+                                                   @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (UnitFormStatusID == null || UnitFormStatusID == 1 || UnitFormStatusID > 3 || group.PCFlageActive == false) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
+                                             >
                                           <span class="form-check-label">ไม่ผ่าน</span>
                                         </label>
                                     </div>
                                     <div class="col-12 p-1 mb-2">
+                                        <label class="form-label">
+                                            ความเห็น PM ผ่านกรณีผ่านแบบมีเงื่อนไข
+                                        </label>
                                         <textarea id="remark_@group.Group_ID"
                                                   rows="1"
                                                   class="form-control"
                                                   placeholder="ระบุเหตุผลเพื่อขออนุมัติ"
-                                                  @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || (PM_Actiontype == "submit" && (UnitFormStatusID != 2 || group.PCFlageActive == false)) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
-                                            ? "disabled"
-                                                : "")>@group.PM_RemarkPC</textarea>
+                                        @((PJM_Actiontype == "submit" && group.PC_StatusID == 8) || 
+                                                                       ( UnitFormStatusID == null || 
+                                                                         UnitFormStatusID == 1 || 
+                                                                         UnitFormStatusID > 3 || 
+                                                                         group.PCFlageActive == false) || 
+                                                                         ViewBag.UserRole != SystemConstant.UserRole.PM.ToString()
+                                                                         ? "disabled" : "")>@group.PM_RemarkPC</textarea>
                                     </div>
                                     @if (PJM_Actiontype == "submit")
                                     {
@@ -386,7 +478,15 @@
                         </svg>
                     </div>
                     <h3 class="card-title align-center">
-                        <span class="material-icons"> account_circle </span> บันทึกผลการอนุมัติในงวดนี้
+                        <button type="button"
+                                class="status-dot bg-secondary">
+                            <i class="fa-solid fa-user"></i>
+                        </button>
+                        <div class="ms-2 c-details">
+                            <h3 class="mb-0">
+                                บันทึกผลการอนุมัติในงวดนี้
+                            </h3>
+                        </div>
                     </h3>
                 </div>
                 <div class="card-body">
@@ -419,13 +519,14 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="row">
-                                <div class="col-12">
+                                <div class="col-12 mb-2">
                                     <label class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="radios-inline-approval"
                                                value="@(LockStatusID != null && PCALLPASS != "yes" ? 6 : 4)"
                                                 @(Model.PM_StatusID == 4 ? "checked" : Model.PM_StatusID == 6 ? "checked" : "")
-                                                @((PM_Actiontype == "submit" && UnitFormStatusID != 2) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
-                                               onclick="toggleRadio(this, '@Model.ID')">
+                                                @((UnitFormStatusID != 2 && UnitFormStatusID != 3) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "") 
+                                                onclick="toggleRadio(this, '@Model.ID')"
+                                         >
                                         <span class="form-check-label">
                                             @(LockStatusID != null && PCALLPASS != "yes" ? "อนุมัติผ่านแบบมีเงื่อนไข" : "อนุมัติ")
                                         </span>
@@ -433,35 +534,23 @@
 
                                     <label class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="radios-inline-approval" value="5"
-                                        @(Model.PM_StatusID == 5 ? "checked" : "")
-                                        @((PM_Actiontype == "submit" && UnitFormStatusID != 2) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
-                                         onclick="toggleRadio(this, '@Model.ID')"
-                                        >
+                                            @(Model.PM_StatusID == 5 ? "checked" : "")
+                                            @((UnitFormStatusID != 2 && UnitFormStatusID != 3) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")
+                                             onclick="toggleRadio(this, '@Model.ID')"
+                                         >
                                         <span class="form-check-label">ไม่อนุมัติ</span>
                                     </label>
                                 </div>
+                                <div class="col-12 mb-2">
+                                    <input type="text" id="PMRemark" class="form-control" value="ทำรายการโดย : @Model.PM_ActionBy @ActiondatePm" readonly>
+                                </div>
                                 <div class="col-12">
                                     <textarea id="mainRemark" rows="2" class="form-control" placeholder=""
-                                    @((PM_Actiontype == "submit" && UnitFormStatusID != 2) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")>@Model.PM_Remarkaction</textarea>
+                                    @((UnitFormStatusID != 2 && UnitFormStatusID != 3) || ViewBag.UserRole != SystemConstant.UserRole.PM.ToString() ? "disabled" : "")>@Model.PM_Remarkaction</textarea>
                                 </div>
                                 @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
                                 {
-                                    @if (PM_Actiontype == "submit")
-                                    {
-                                        if (UnitFormStatusID == 2)
-                                        {
-                                            <div class="col-12 p-3">
-                                                <div id="drop-zone" class="drop-zone">
-                                                    <p class="drop-zone-text">
-                                                        <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
-                                                    </p>
-                                                    <input type="file" id="file-input" class="drop-zone-input" multiple>
-                                                    <div id="preview-container" class="row preview-container"></div> <!-- Added for preview -->
-                                                </div>
-                                            </div>
-                                        }
-                                    }
-                                    else
+                                    if (UnitFormStatusID == 2 || UnitFormStatusID == 3)
                                     {
                                         <div class="col-12 p-3">
                                             <div id="drop-zone" class="drop-zone">
@@ -479,11 +568,34 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <div class="row">
-                        <div class="col-6">
-                            <label class="form-label">&nbsp; แก้ไขล่าสุด @ActiondatePm</label>
+                    <div class="d-flex">
+                        <div>
+                            @if (comeFrom == "SummaryUnitForm" || ViewBag.UserRole == SystemConstant.UserRole.PE.ToString())
+                            {
+                                <a class="BackButton" href="@Url.Action("Index","SummaryUnitForm"
+                                        , new{projectId =@ProjectID,
+                                            projectName = @ProjectName,
+                                            FormID = @FormID,
+                                            UnitFormID = @UnitFormID,
+                                            unitId  = @UnitID,
+                                            UnitCode = @UnitCode})">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #77a0ed;"></i>
+                                </a>
+                            }
+                            else if (ViewBag.UserRole == SystemConstant.UserRole.PJM.ToString())
+                            {
+                                <a class="BackButton" href="@Url.Action("Index","MyTaskPJM")">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #77a0ed;"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="BackButton" href="@Url.Action("Index","MyTaskPM")">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #77a0ed;"></i>
+                                </a>
+                            }
                         </div>
-                        <div class="col-6">
+                        <div class="ms-auto">
                             <input type="hidden" id="UnitFormID" value="@Model.ID" />
                             <input type="hidden" id="ProjectID" value="@Model.ProjectID" />
                             <input type="hidden" id="UnitID" value="@Model.UnitID" />
@@ -492,17 +604,10 @@
                             <div class="justify-content-end">
                                 @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
                                 {
-                                    @if (PM_Actiontype == "submit"){
-                                        if (UnitFormStatusID == 2)
-                                        {
-                                            <button class="btn" onclick="saveOrSubmit('save')">Save</button>
-                                            <button class="btn btn-primary" onclick="saveOrSubmit('submit')">Submit</button>
-                                        }
-                                    }
-                                    else
+                                    if (UnitFormStatusID == 2 || UnitFormStatusID == 3)
                                     {
-                                        <button class="btn" onclick="saveOrSubmit('save')">Save</button>
-                                        <button class="btn btn-primary" onclick="saveOrSubmit('submit')">Submit</button>
+                                        <button class="btn" onclick="saveOrSubmit('save')">บันทึกร่าง</button>
+                                        <button class="btn btn-primary" onclick="saveOrSubmit('submit')">ยืนยัน</button>
                                     }
                                 }
                             </div>
@@ -511,7 +616,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Modal show image -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">

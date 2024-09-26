@@ -1,7 +1,10 @@
 ﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
+    var UnitCode = ViewBag.UnitCode;
 }
+@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.UnitFormStatusModel>
+
 <div class="page-wrapper">
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
@@ -21,8 +24,8 @@
         </div>
     </div>
     <div class="page-body">
-        <div class="container mt-3">
-            @Html.Partial("PartialTable")
+        <div class="container">
+            <partial name="PartialTable" model="Model" />
         </div>
     </div>
 </div>
@@ -33,7 +36,7 @@
             "paging": true,
             "lengthChange": true,
             "searching": true,
-            "ordering": true,
+            "ordering": false,
             "info": true,
             "autoWidth": false,
             "responsive": true,
@@ -47,16 +50,4 @@
             }
         });
     });
-
-        function toggleCollapse() {
-            var collapseElement = document.getElementById('collapseExample');
-            var bsCollapse = new bootstrap.Collapse(collapseElement, {
-                toggle: false
-            });
-            if (collapseElement.classList.contains('show')) {
-                bsCollapse.hide();
-            } else {
-                bsCollapse.show();
-            }
-        }
 </script>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Services;
 using System.Text.RegularExpressions;
@@ -20,39 +21,58 @@ namespace Project.ConstructionTracking.Web.Controllers
             _FormChecklistService = formChecklistService;
         }
 
-        public IActionResult Index(Guid projectId, string projectName, int FormID, Guid UnitFormID, string UnitFormName, Guid unitId , string UnitCode , string UnitStatusName)
+        public IActionResult Index(int FormID, Guid unitId , string comeFrom)
         {
-            ViewBag.ProjectId = projectId;
-            ViewBag.ProjectName = projectName;
-            ViewBag.FormID = FormID;
-            ViewBag.UnitFormName = UnitFormName;
-            ViewBag.unitId = unitId;
-            ViewBag.UnitCode = UnitCode;
-            ViewBag.UnitStatusName = UnitStatusName;
+
             ViewBag.GobackTo = "Forgroup";
 
             var userRole = Request.Cookies["CST.Role"];
             ViewBag.RoleID = userRole;
+            ViewBag.comeFrom = comeFrom;
 
             var filterunitData = new FormCheckListModel.Form_getUnitFormData { UnitID = unitId, FormID = FormID};
 
             FormCheckListModel.Form_getUnitFormData UnitFormData = _FormChecklistService.GetUnitFormData(filterunitData);
 
-            ViewBag.UnitFormID = UnitFormID;
+            ViewBag.ProjectId = UnitFormData.ProjectID;
+            ViewBag.ProjectName = UnitFormData.ProjectName;
+            ViewBag.FormID = FormID;
+            ViewBag.UnitFormName = UnitFormData.FormName;
+            ViewBag.unitId = unitId;
+            ViewBag.UnitCode = UnitFormData.UnitCode;
+            ViewBag.UnitStatusName = UnitFormData.UnitStatusName;
+            ViewBag.UnitFormMainStatusID = UnitFormData.UnitFormStatusID;
+            ViewBag.UnitFormID = UnitFormData.UnitFormID;
+            ViewBag.CompanyvenderName = UnitFormData.CompanyvenderName;
 
-            var Model = new FormGroupModel { FormID = FormID , UnitID = unitId , UnitFormID = UnitFormID };
+            var Model = new FormGroupModel { FormID = FormID , UnitID = unitId , UnitFormID = UnitFormData.UnitFormID };
             List<FormGroupModel> listFormGroup = _FormGroupService.GetFormGroupList(Model);
 
-            FormGroupModel.FormGroupDetail FormGroupDetail = _FormGroupService.GetFormGroupDetail(UnitFormID);
+            FormGroupModel.FormGroupDetail FormGroupDetail = _FormGroupService.GetFormGroupDetail(UnitFormData.UnitFormID);
             if (FormGroupDetail != null)
             {
                 ViewBag.FormGroupDetail = FormGroupDetail;
+                ViewBag.Signaldate = FormatExtension.FormatDateToDayMonthNameYearTime(FormGroupDetail.FileDate);
+                ViewBag.PEActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(FormGroupDetail.PE_ActionDate);
+
+                var Filter = new GetDDL { Act = "UserName", ValueGuid = FormGroupDetail.PE_ActionBy };
+                List<GetDDL> ListUser = _getDDLService.GetDDLList(Filter);
+                ViewBag.PEActionBy = ListUser[0].Text;
+
+
             }
 
-            var ddlModel = new GetDDL { Act = "Vender", ID = 0 };
+            var ddlModel = new GetDDL { Act = "Vender", ID = UnitFormData.CompanyvenderID };
             List<GetDDL> ListVender = _getDDLService.GetDDLList(ddlModel);
-
             ViewBag.ListVender = ListVender;
+
+            var userID = Request.Cookies["CST.ID"];
+            var userIDuse = Guid.Parse(userID);
+
+            bool ResultPermissionSubmit = _FormGroupService.ValidateUserSubmit(userIDuse , UnitFormData.UnitID);
+            ViewBag.PermissionSubmit = ResultPermissionSubmit;
+
+
 
             return View(listFormGroup);
         }

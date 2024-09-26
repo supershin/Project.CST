@@ -5,10 +5,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Platforms>AnyCPU;x86</Platforms>
+    <UserSecretsId>1407ce20-2ce8-4b42-abbe-b43269e47013</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <Folder Include="Data\" />
+    <Folder Include="Upload\" />
     <Folder Include="wwwroot\lib\datatable\" />
     <Folder Include="Views\MasterForm\" />
     <Folder Include="Views\MasterProject\" />
@@ -22,7 +24,8 @@
     <Folder Include="Models\MUnitModel\" />
     <Folder Include="Models\MUserModel\" />
     <Folder Include="Views\User\" />
-    <Folder Include="Models\QCModel\" />
+    <Folder Include="wwwroot\img\icon\" />
+    <Folder Include="Upload\temp\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,9 +45,12 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
     <PackageReference Include="MimeTypesMap" Version="1.0.8" />
+    <PackageReference Include="Serilog" Version="4.0.0" />
+    <PackageReference Include="QuestPDF" Version="2024.6.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Views\FormOverall\" />
     <None Remove="Views\MasterForm\" />
     <None Remove="Views\MasterProject\" />
     <None Remove="Models\MProjectModel\" />
@@ -56,10 +62,22 @@
     <None Remove="Models\MUnitModel\" />
     <None Remove="Models\MUserModel\" />
     <None Remove="Views\User\" />
-    <None Remove="Models\QCModel\" />
+    <None Remove="Models\GeneratePDFModel\" />
+    <None Remove="Upload\temp\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Remove="Views\FormOverall\PartialFormList.cshtml" />
     <Content Remove="wwwroot\js\master\" />
+    <Content Remove="wwwroot\img\icon\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot\img\box.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\img\check.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\img\checkbox.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

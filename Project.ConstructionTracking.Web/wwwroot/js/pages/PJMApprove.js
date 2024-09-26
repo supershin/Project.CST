@@ -15,30 +15,28 @@
     }
 }
 
-function openModal(UnitFormID, GroupID, FormID) {
+function openModal(UnitFormID, GroupID, FormID, PC_ID) {
     // Fetch images for RoleID = 1
     $.ajax({
         url: baseUrl + 'PMApprove/GetImages',
         type: 'GET',
         data: { UnitFormID: UnitFormID, GroupID: GroupID, FormID: FormID, RoleID: 1 },
         success: function (images) {
-            // Update the modal with the fetched images for RoleID = 1
             var containerRole1 = $('#image-container-role-1');
             containerRole1.empty(); // Clear any previous images
 
             images.forEach(function (image) {
                 var imageHtml = `
-                            <div class="col-6 position-relative">
-                                <a data-fslightbox="gallery1" href="${image.FilePath}">
-                                    <img src="${image.FilePath}" alt="..." class="img-thumbnail">
-                                </a>
-                            </div>
-                        `;
+                    <div class="col-6 position-relative">
+                        <a data-fslightbox="gallery1" href="${image.FilePath}">
+                            <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                        </a>
+                    </div>
+                `;
                 containerRole1.append(imageHtml);
             });
 
-            // Reinitialize fslightbox for the newly added images in Role 1 container
-            refreshFsLightbox(); // Call this function to reinitialize the lightbox
+            refreshFsLightbox(); // Reinitialize fslightbox for Role 1 images
         },
         error: function (error) {
             console.error('Failed to fetch images for RoleID 1:', error);
@@ -51,30 +49,55 @@ function openModal(UnitFormID, GroupID, FormID) {
         type: 'GET',
         data: { UnitFormID: UnitFormID, GroupID: GroupID, FormID: FormID, RoleID: 2 },
         success: function (images) {
-            // Update the modal with the fetched images for RoleID = 2
             var containerRole2 = $('#image-container-role-2');
             containerRole2.empty(); // Clear any previous images
 
             images.forEach(function (image) {
                 var imageHtml = `
-                            <div class="col-6 position-relative">
-                                <a data-fslightbox="gallery2" href="${image.FilePath}">
-                                    <img src="${image.FilePath}" alt="..." class="img-thumbnail">
-                                </a>
-                            </div>
-                        `;
+                    <div class="col-6 position-relative">
+                        <a data-fslightbox="gallery2" href="${image.FilePath}">
+                            <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                        </a>
+                    </div>
+                `;
                 containerRole2.append(imageHtml);
             });
 
-            // Reinitialize fslightbox for the newly added images in Role 2 container
-            refreshFsLightbox(); // Call this function to reinitialize the lightbox
+            refreshFsLightbox(); // Reinitialize fslightbox for Role 2 images
         },
         error: function (error) {
             console.error('Failed to fetch images for RoleID 2:', error);
         }
     });
 
-    // Show the modal after both AJAX calls have been made
+    // Fetch images for Unlock
+    $.ajax({
+        url: baseUrl + 'PJMApprove/GetImagesUnlock',
+        type: 'GET',
+        data: { UnitFormID: UnitFormID, PassConditionID: PC_ID },
+        success: function (images) {
+            var containerUnlock = $('#image-container-Unlock');
+            containerUnlock.empty(); // Clear any previous images
+
+            images.forEach(function (image) {
+                var imageHtml = `
+                    <div class="col-6 position-relative">
+                        <a data-fslightbox="galleryUnlock" href="${image.FilePath}">
+                            <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                        </a>
+                    </div>
+                `;
+                containerUnlock.append(imageHtml);
+            });
+
+            refreshFsLightbox(); // Reinitialize fslightbox for Unlock images
+        },
+        error: function (error) {
+            console.error('Failed to fetch images for Unlock:', error);
+        }
+    });
+
+    // Show the modal after all AJAX calls have been made
     var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
     myModal.show();
 }
@@ -112,6 +135,156 @@ function deleteImage(resourceId) {
         }
     });
 }
+
+function saveOrSubmit(actionType) {
+    var data = new FormData();
+    var allGroupsChecked = true;
+    var allPassed = true; // Flag to check if all groups are passed
+    var allRemarksFilled = true;
+
+    data.append("ActionType", actionType);
+    data.append("Remark", document.getElementById("mainRemark").value.trim());
+    data.append("UnitFormID", document.getElementById("UnitFormID").value);
+    data.append("ProjectID", document.getElementById("ProjectID").value);
+    data.append("UnitID", document.getElementById("UnitID").value);
+    data.append("FormID", document.getElementById("FormID").value);
+
+    var passConditions = [];
+
+    $("input[data-action='gr-pass']").each(function () {
+        let group_id = $(this).attr("group-id");
+        let passconID = $(this).attr("passconID");
+        let _statusID = $(this).is(":checked") ? $(this).val() : null;
+        let remark = document.getElementById(`remark_${group_id}`).value;
+        let FlagActive = document.getElementById(`Flag-Active-${group_id}`).value;
+
+        FlagActive = parseInt(FlagActive);
+
+        if (FlagActive === 1) {
+            let existingCondition = passConditions.find(pc => pc.Group_ID === group_id);
+
+            if (!existingCondition) {
+                passConditions.push({
+                    PC_ID: passconID,
+                    Group_ID: group_id,
+                    StatusID: _statusID,
+                    PC_FlagActive: FlagActive,
+                    PJM_Remark: remark ? remark.trim() : '',
+                });
+            } else {
+                if (_statusID !== null) {
+                    existingCondition.StatusID = _statusID;
+                }
+            }
+
+            // Check if not approved (value = 9), and remark is missing
+            if (_statusID === "9") {
+                if (remark.trim() === "" || document.getElementById("mainRemark").value.trim() === "") {
+                    allRemarksFilled = false;
+                    scrollToElement(document.getElementById(`remark_${group_id}`));
+                }
+            }
+
+            // Ensure that all active groups are either approved (statusID === "8")
+            let groupChecked = $("input[name='radios-inline-" + group_id + "']:checked").val();
+            if (groupChecked === "8") {
+                // Passed
+            } else {
+                allPassed = false; // If any group is not approved (checked value is not 8)
+            }
+
+            //alert(allPassed)
+
+            if (!groupChecked) {
+                allGroupsChecked = false; // Ensure all groups have a selection
+            }
+        }
+    });
+
+    if (passConditions.length > 0) {
+        data.append("PassConditionsIUD", JSON.stringify(passConditions));
+    }
+
+    var files = document.getElementById("file-input").files;
+    for (var i = 0; i < files.length; i++) {
+        data.append("Images", files[i]);
+    }
+
+    // The main check for the "submit" action type
+    if (actionType === "submit") {
+        if (!allGroupsChecked) {
+            showErrorAlert('คำเตือน', 'กรุณาเลือกการอนุมัติหรือไม่อนุมัติในทุกงานที่ใช้งานอยู่');
+            return;
+        }
+        if (!allRemarksFilled) {
+            showErrorAlert('คำเตือน!', 'กรุณาระบุเหตุผลสำหรับการไม่อนุมัติในทุกงานและหมายเหตุงวดนี้');
+            return;
+        }
+
+        showConfirmationAlert(
+            'ยืนยันการดำเนินการ',
+            'คุณต้องการยืนยันงวดงานนี้หรือไม่',
+            'warning',
+            'ใช่',
+            'ยกเลิก',
+            function () {
+                showLoadingAlert();
+                $.ajax({
+                    url: baseUrl + 'PJMApprove/SaveOrSubmit',
+                    type: 'POST',
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (res) {
+                        if (res.success) {
+                            // If all cards are passed, call PDF generation
+                            if (allPassed) {
+                                generatePDFAfterSave(data);
+                            }
+                            else {
+                                showSuccessAlert('สำเร็จ!', 'บันทึกสำเร็จ', () => {
+                                    window.location.reload();
+                                });
+                            }
+                        } else {
+                            showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.close();
+                        showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                    }
+                });
+            }
+        );
+    } else {
+        // If actionType is not "submit", proceed with a normal save
+        showLoadingAlert();
+        $.ajax({
+            url: baseUrl + 'PJMApprove/SaveOrSubmit',
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (res) {
+                Swal.close();
+                if (res.success) {
+                    showSuccessAlert('สำเร็จ!', 'บันทึกสำเร็จ', () => {
+                        window.location.reload();
+                    });
+                } else {
+                    showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.close();
+                showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+            }
+        });
+    }
+}
+
+
 
 
 document.addEventListener("DOMContentLoaded", function () {

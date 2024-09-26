@@ -44,6 +44,19 @@ namespace Project.ConstructionTracking.Web.Commons
 
             return Convert.ToBase64String(result);
         }
+
+        public static string GenerateApproveNumber(int count, string mainString)
+        {
+            int newCount = count + 1;
+
+            string approveString = newCount.ToString("D5");
+
+            string year = DateTime.Now.ToString("yy");
+            string month = DateTime.Now.ToString("MM");
+
+            string result = mainString + '-' + month + year + '-' + approveString;
+            return result;
+        }
     }
 }
 

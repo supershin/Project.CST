@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function addFilesToPreview(files) {
         Array.from(files).forEach(file => {
-            // Check if the file is already in the array
             if (!filesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
                 filesArray.push(file);
                 const reader = new FileReader();
@@ -61,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     removeButton.className = "remove-button";
                     removeButton.innerHTML = "&times;";
                     removeButton.addEventListener("click", function (e) {
-                        e.stopPropagation(); // Stop event from bubbling up to the dropzone
+                        e.stopPropagation(); 
                         filesArray = filesArray.filter(f => f !== file);
                         updateFileInput();
                         previewImage.remove();
@@ -77,10 +76,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateFileInput() {
-        // Clear the file input so that it can be used to add more files
+
         fileInput.value = '';
 
-        // Create a new DataTransfer object to hold the remaining files
         const dataTransfer = new DataTransfer();
         filesArray.forEach(file => dataTransfer.items.add(file));
         fileInput.files = dataTransfer.files;
@@ -97,45 +95,58 @@ document.addEventListener("DOMContentLoaded", function () {
     function disableAllRadios() {
         var allRadios = document.querySelectorAll(".form-check-input[type='radio']:not(#pc-radio)");
         allRadios.forEach(function (radio) {
-            radio.disabled = true; // Disable all other radios
+            radio.disabled = true;
         });
     }
 
     function enableAllRadios() {
         var allRadios = document.querySelectorAll(".form-check-input[type='radio']:not(#pc-radio)");
         allRadios.forEach(function (radio) {
-            radio.disabled = false; // Enable all radios
+            radio.disabled = false;
         });
     }
 
     function toggleRemarkPC() {
         if (pcRadio.checked) {
-            remarkPC.disabled = false; // Enable Remark-PC when pc-radio is checked
+            remarkPC.disabled = false;
         } else {
-            remarkPC.disabled = true; // Disable Remark-PC when pc-radio is not checked
+            remarkPC.disabled = true;
         }
     }
 
     pcRadio.addEventListener("click", function (e) {
         var allRadios = document.querySelectorAll(".form-check-input[type='radio']:not(#pc-radio)");
-        var allChecked = true;
+        var groups = {};
+        var validSelection = true;
 
-        // Check if all other radios with value="9" are checked
         allRadios.forEach(function (radio) {
-            if (radio.value == "9" && !radio.checked) {
-                allChecked = false;
+            if (!groups[radio.name]) {
+                groups[radio.name] = {
+                    selected: false,
+                    invalid: false
+                };
+            }
+
+            if (radio.checked) {
+                groups[radio.name].selected = true;
+
+                if (radio.value == "10") {
+                    groups[radio.name].invalid = true;
+                }
             }
         });
 
-        if (!allChecked) {
-            e.preventDefault(); // Prevent the pc-radio from being checked
-            pcRadio.checked = false;
-            Swal.fire({
-                title: 'Warning!',
-                text: 'กรุณาเลือกการตรวจให้ผ่านทุกงาน',
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            });
+        for (var groupName in groups) {
+            if (!groups[groupName].selected || groups[groupName].invalid) {
+                validSelection = false;
+                break;
+            }
+        }
+
+        if (!validSelection) {
+            e.preventDefault();
+            pcRadio.checked = false; 
+            showErrorAlert('Warning!', 'กรุณาเลือกผ่านหรือไม่ผ่านในทุกรายการ');
         } else {
             if (pcRadio.dataset.wasChecked) {
                 pcRadio.checked = false;
@@ -150,50 +161,46 @@ document.addEventListener("DOMContentLoaded", function () {
                 disableAllRadios();
             }
         }
-        toggleRemarkPC(); // Call function to toggle Remark-PC based on pc-radio state
+        toggleRemarkPC();
     });
 
-    if (pcRadio.checked || PM_StatusActionType === "submit" || userRole !== "1") {
+    if (pcRadio.checked || userRole !== "1") {
         disableAllRadios();
     } else {
         enableAllRadios();
     }
 
+    toggleRemarkPC();
+
     if (PM_StatusActionType === "submit" || userRole !== "1") {
-        if (["2", "3", "4", "6", "7", "9"].includes(UnitFormStatusIDchk) || PC_StatusID === "8" || userRole !== "1") {
+        if (["2", "3", "4", "6", "7", "9", "10", "11", "12"].includes(UnitFormStatusIDchk) || PC_StatusID === "8" || userRole !== "1") {
             document.querySelectorAll('textarea[data-package-id]').forEach(function (textarea) {
                 textarea.disabled = true;
             });
+            disableAllRadios();
             pcRadio.disabled = true;
-            remarkPC.disabled = true; // Ensure Remark-PC is disabled when PM_StatusActionType is submit
+            remarkPC.disabled = true;
         }
     }
-
-    toggleRemarkPC(); // Initial call to set the correct state of Remark-PC on page load
 });
 
 
 $('#saveButton').on('click', function () {
+    $(this).prop('disabled', true);
+
     var packages = [];
     var checklists = [];
     var pcCheck = null;
-    var valid = true; // Variable to track validation status
+    var valid = true;
 
-    // Check if both the file input and the preview container are empty
     var files = $('#file-input')[0].files;
     var imagpreview = parseInt($('#hd_imageListcnt').val(), 10) || 0;
 
     if (files.length === 0 && imagpreview === 0) {
-        Swal.fire({
-            title: 'Error!',
-            text: 'กรุณาอัปโหลดรูปภาพอย่างน้อยหนึ่งรูปก่อนบันทึก.',
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
-        valid = false; // Mark the validation as failed
+        showErrorAlert('คำเตือน!', 'กรุณาอัปโหลดรูปภาพอย่างน้อยหนึ่งรูปก่อนบันทึก.');
+        valid = false;
     }
 
-    // Collect data for each package
     $('div.container-xl.mb-3').each(function (index) {
         var package = {
             UserName: $(this).find('input[id="UserName"]').val(),
@@ -209,11 +216,9 @@ $('#saveButton').on('click', function () {
             Remark: $(this).find('textarea.form-control').val()
         };
 
-        // Validation to ensure the package is not empty
         if (package.UserName && package.UserRole && package.ProjectId && package.UnitId && package.FormID && package.GroupID && package.PackageID) {
             packages.push(package);
 
-            // Collect data for each checklist
             $(this).find('div.card.card-link.card-link-pop').each(function () {
                 var checklist = {
                     FormID: package.FormID,
@@ -232,28 +237,17 @@ $('#saveButton').on('click', function () {
         }
     });
 
-    // Validate that at least one package is available
     if (packages.length === 0) {
-        Swal.fire({
-            title: 'Error!',
-            text: 'กรุณากรอกข้อมูลในทุกฟิลด์ที่จำเป็นก่อนบันทึก.',
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
-        valid = false; // Mark the validation as failed
+        showErrorAlert('คำเตือน!', 'กรุณากรอกข้อมูลในทุกฟิลด์ที่จำเป็นก่อนบันทึก.');
+        valid = false;
     }
 
     var pcRadioChecked = $('#pc-radio').is(':checked');
     if (pcRadioChecked) {
         var remarkPC = $('#Remark-PC').val();
         if (!remarkPC) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'กรุณาระบุเหตุผลเพื่อขออนุมัติการผ่านแบบมีเงื่อนไข.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-            valid = false; // Mark the validation as failed
+            showErrorAlert('คำเตือน!', 'กรุณาระบุเหตุผลเพื่อขออนุมัติการผ่านแบบมีเงื่อนไข.');
+            valid = false;
         } else {
             pcCheck = {
                 UnitFormID: packages[0]?.UnitFormID,
@@ -265,6 +259,8 @@ $('#saveButton').on('click', function () {
     }
 
     if (valid) {
+        showLoadingAlert();
+
         var data = new FormData();
 
         packages.forEach((pkg, index) => {
@@ -296,78 +292,64 @@ $('#saveButton').on('click', function () {
             processData: false,
             data: data,
             success: function (res) {
+                Swal.close();
                 if (res.success) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'บันทึกข้อมูลสำเร็จ',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.reload();
-                        }
+                    showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                        window.location.reload();
                     });
                 } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'บันทึกข้อมูลไม่สำเร็จ',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
+                    showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
                 }
+                $('#saveButton').prop('disabled', true);
             },
             error: function (xhr, status, error) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'An error occurred while saving the data.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
+                Swal.close();
+                showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                $('#saveButton').prop('disabled', true);
             }
         });
+    } else {
+        $('#saveButton').prop('disabled', false);
     }
 
     return false;
 });
 
-
 function deleteImage(resourceId) {
-    Swal.fire({
-        title: '',
-        text: "ต้องการลลบรูปภาพหรือไม่?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'ลบรูปภาพ',
-        cancelButtonText: 'ยกเลิก'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Perform the deletion via an AJAX call
+    showConfirmationAlert(
+        '',
+        "ต้องการลบรูปภาพหรือไม่?",
+        'warning',
+        'ลบรูปภาพ',
+        'ยกเลิก',
+        () => {
+
+            showLoadingAlert('กำลังลบรูปภาพ...', 'กรุณารอสักครู่');
+
             $.ajax({
                 url: baseUrl + 'FormCheckList/DeleteImage',
                 type: 'POST',
                 data: { resourceId: resourceId },
                 success: function (response) {
+                    Swal.close();
                     if (response.success) {
-                        Swal.fire({
-                            title: 'ลบรูปภาพสำเร็จ',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            window.location.reload(); // Reload the page after clicking OK
+                        showSuccessAlert('ลบรูปภาพสำเร็จ', '', () => {
+                            window.location.reload(); 
                         });
                     } else {
-                        Swal.fire('Error!', response.message, 'error');
+                        showErrorAlert('Error!', response.message);
                     }
                 },
                 error: function (xhr, status, error) {
-                    Swal.fire('Error!', 'An error occurred while processing your request.', 'error');
+                    Swal.close();
+                    showErrorAlert('ผิดพลาด!', 'ลบรูปภาพไม่สำเร็จ');
                 }
             });
         }
-    });
+    );
 }
+
+
 
 
 

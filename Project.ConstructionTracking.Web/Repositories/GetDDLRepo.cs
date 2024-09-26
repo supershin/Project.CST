@@ -26,19 +26,129 @@ namespace Project.ConstructionTracking.Web.Repositories
                                        Text = ext.Name
                                    };
 
-                    return extQuery.ToList();
+                return extQuery.ToList();
 
                 case "Vender":
-                    var vendorQuery = from Vendor in _context.tm_Vendor
-                                      where Vendor.FlagActive == true
-                                      orderby Vendor.ID
+                    var result = from t1 in _context.tm_CompanyVendor
+                                 join t2 in _context.tr_CompanyVendor
+                                     on new { CompanyVendorID = (int?)t1.ID, FlagActive = (bool?)true } equals new { t2.CompanyVendorID,t2.FlagActive } into gj1
+                                 from t2 in gj1.DefaultIfEmpty()
+                                 join t3 in _context.tm_Vendor
+                                     on new { t2.VendorID, FlagActive = (bool?)true } equals new { VendorID = (int?)t3.ID, t3.FlagActive } into gj2
+                                 from t3 in gj2.DefaultIfEmpty()
+                                 where t1.ID == Model.ID && t1.FlagActive == true
+                                 orderby t2.VendorID
+                                  select new GetDDL
+                                  {
+                                      Value = t3.ID,
+                                      Text = t3.Name
+                                  };
+
+                return result.ToList();
+
+                case "Project":
+                    var ListProject = from t1 in _context.tm_Project
+                                      join t2 in _context.tr_ProjectPermission
+                                        on t1.ProjectID equals t2.ProjectID into joined
+                                      from t2 in joined.DefaultIfEmpty()
+                                      where t1.FlagActive == true && t2.FlagActive == true && t2.UserID == Model.UserID
                                       select new GetDDL
                                       {
-                                          Value = Vendor.ID,
-                                          Text = Vendor.Name
+                                        ValueGuid = t1.ProjectID,
+                                        Text = t1.ProjectName
                                       };
 
-                    return vendorQuery.ToList();
+                return ListProject.ToList();
+
+                case "Unit":
+                    var ListUnit = from tu in _context.tm_Unit
+                                   where tu.FlagActive == true && tu.ProjectID == Model.ValueGuid
+                                   orderby tu.UnitCode
+                                   select new GetDDL
+                                   {
+                                       ValueGuid = tu.UnitID,
+                                       Text = tu.UnitCode
+                                   };
+
+                return ListUnit.ToList();
+
+                case "UnitFormStatus":
+                    var ListUnitFormStatus = from tu in _context.tm_UnitFormStatus
+                                             where tu.FlagActive == true && tu.ID > 1
+                                             orderby tu.LineOrder
+                                             select new GetDDL
+                                             {
+                                                Value = tu.ID,
+                                                Text = tu.Name
+                                             };
+
+                return ListUnitFormStatus.ToList();
+
+                case "UserName":
+                    var UserName = from us in _context.tm_User
+                                   where us.ID == Model.ValueGuid
+                                   select new GetDDL
+                                   {
+                                       Text = us.FirstName + " " + us.LastName 
+                                   };
+
+                 return UserName.ToList();
+
+                case "ProjectAdmin":
+                    var ListProjectAdmint = from t1 in _context.tm_Project
+                                      where t1.FlagActive == true 
+                                      select new GetDDL
+                                      {
+                                          ValueGuid = t1.ProjectID,
+                                          Text = t1.ProjectName
+                                      };
+
+                return ListProjectAdmint.ToList();
+
+                case "DefectArea":
+                    var ListDefectArea = from t1 in _context.tm_DefectArea
+                                         where t1.FlagActive == true
+                                               && t1.ProjectTypeID == Model.ID
+                                               && (string.IsNullOrEmpty(Model.searchTerm) || t1.Name.Contains(Model.searchTerm))
+                                         orderby t1.Name
+                                         select new GetDDL
+                                         {
+                                             Value = t1.ID,
+                                             Text = t1.Name
+                                         };
+
+                    return ListDefectArea.ToList();
+
+                case "DefectType":
+                    var ListDefectType = from t1 in _context.tm_DefectType
+                                         join t2 in _context.tm_DefectAreaType_Mapping
+                                         on t1.ID equals t2.DefectTypeID into mappingGroup
+                                         from t2 in mappingGroup.DefaultIfEmpty() // Left join
+                                         where t1.FlagActive == 1
+                                               && t2.DefectAreaID == Model.ID
+                                               && (string.IsNullOrEmpty(Model.searchTerm) || t1.Name.Contains(Model.searchTerm))
+                                         orderby t1.Name
+                                         select new GetDDL
+                                         {
+                                             Value = t1.ID,
+                                             Text = t1.Name
+                                         };
+
+                    return ListDefectType.ToList();
+
+                case "DefectDescription":
+                    var ListDefectDescription = from t1 in _context.tm_DefectDescription
+                                                where t1.FlagActive == 1
+                                                      && t1.DefectTypeID == Model.ID
+                                                      && (string.IsNullOrEmpty(Model.searchTerm) || t1.Name.Contains(Model.searchTerm))
+                                                orderby t1.LineOrder
+                                                select new GetDDL
+                                                {
+                                                    Value = t1.ID,
+                                                    Text = t1.Name
+                                                };
+
+                    return ListDefectDescription.ToList();
 
                 default:
 

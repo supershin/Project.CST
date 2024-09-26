@@ -19,6 +19,9 @@ namespace Project.ConstructionTracking.Web.Repositories
         dynamic CreateUnit(CreateUnitModel model);
         dynamic EditUnit(EditUnitModel model);
         dynamic DeleteUnit(Guid unitID, Guid requestUserID);
+
+        dynamic GetPEFromProject(Guid projectID);
+        bool ActionMappingPE(ActionMappingPeModel model, Guid requestUserID);
     }
 
 	public class MasterUnitRepo : IMasterUnitRepo
@@ -85,6 +88,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                         join ext in _context.tm_Ext on u.UnitStatusID equals ext.ID
                         join v in _context.tm_Vendor on u.VendorID equals v.ID into vGroup
                         from v in vGroup.DefaultIfEmpty()
+                        join pu in _context.tr_PE_Unit on u.UnitID equals pu.UnitID into puGroup
+                        from pu in puGroup.DefaultIfEmpty()
+                        join us in _context.tm_User on pu.UserID equals us.ID into usGroup
+                        from us in usGroup.DefaultIfEmpty()
                         where u.FlagActive == true && p.FlagActive == true
                         select new
                         {
@@ -104,7 +111,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                             UnitPO = u.PONo,
                             UnitStartDate = u.StartDate,
                             UnitEndDate = u.EndDate,
-                            u.UpdateDate
+                            u.UpdateDate,
+                            us.FirstName,
+                            us.LastName
                         };
 
             if (!string.IsNullOrEmpty(criteria.strSearch))
@@ -146,7 +155,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 UnitPO = e.UnitPO,
                 UnitStartDate = e.UnitStartDate.ToStringDate(),
                 UnitEndDate = e.UnitEndDate.ToStringDate(),
-                UpdateDate = e.UpdateDate.ToStringDateTime()
+                UpdateDate = e.UpdateDate.ToStringDateTime(),
+                UserName = e.FirstName + " " + e.LastName
             }).ToList();
         }
 
@@ -179,7 +189,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             tm_Unit? edit = _context.tm_Unit.Where(o => o.UnitID == model.UnitID && o.FlagActive == true).FirstOrDefault();
             if (edit == null) throw new Exception("ไม่พบข้อมูลของยูนิต");
 
-            edit.VendorID = model.VendorID;
+            edit.CompanyVendorID = model.CompanyVendorID;
             edit.PONo = model.PONo;
             edit.StartDate = model.StartDate;
             edit.UpdateDate = DateTime.Now;
@@ -216,14 +226,13 @@ namespace Project.ConstructionTracking.Web.Repositories
         public dynamic GetProjectCompanyVendor(Guid projectID)
         {
             var query = (from cvp in _context.tr_CompanyVendorProject
-                         join cv in _context.tr_CompanyVendor on cvp.CompanyVendorID equals cv.CompanyVendorID
-                         join v in _context.tm_Vendor on cv.VendorID equals v.ID
+                         join mcv in _context.tm_CompanyVendor on cvp.CompanyVendorID equals mcv.ID
                          where cvp.ProjectID == projectID && cvp.FlagActive == true
-                         && cv.FlagActive == true && v.FlagActive == true
+                         && mcv.FlagActive == true
                          select new
                          {
-                             v.ID,
-                             v.Name
+                             mcv.ID,
+                             mcv.Name
                          }).ToList();
 
             return query;
@@ -237,7 +246,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                          {
                              u.UnitID,
                              u.ProjectID,
-                             u.VendorID,
+                             u.CompanyVendorID,
                              u.PONo,
                              u.StartDate
                          }).FirstOrDefault();
@@ -273,6 +282,57 @@ namespace Project.ConstructionTracking.Web.Repositories
             if (valid.StartDate == null || valid.PONo == null || valid.VendorID == null) flag = true;
 
             return flag;
+        }
+
+        public dynamic GetPEFromProject(Guid projectID)
+        {
+            var query = (from pp in _context.tr_ProjectPermission
+                        join us in _context.tm_User on pp.UserID equals us.ID
+                        where pp.ProjectID == projectID && pp.FlagActive == true
+                        && us.RoleID == SystemConstant.UserRole.PE
+                        select new
+                        {
+                            UserID = us.ID,
+                            FirstName = us.FirstName,
+                            LastName = us.LastName
+                        }).ToList();
+
+            return query;
+        }
+
+        public bool ActionMappingPE(ActionMappingPeModel model, Guid RequestUserID)
+        {
+            foreach (var data in model.ListUnitID)
+            {
+                tr_PE_Unit? peUnit = _context.tr_PE_Unit
+                                    .Where(o => o.UnitID == data && o.FlagActive == true)
+                                    .FirstOrDefault();
+
+                if (peUnit == null)
+                {
+                    tr_PE_Unit createMapping = new tr_PE_Unit();
+                    createMapping.UnitID = data;
+                    createMapping.UserID = model.UserID;
+                    createMapping.FlagActive = true;
+                    createMapping.CreateBy = RequestUserID;
+                    createMapping.CreateDate = DateTime.Now;
+                    createMapping.UpdateBy = RequestUserID;
+                    createMapping.UpdateDate = DateTime.Now;
+
+                    _context.tr_PE_Unit.Add(createMapping);
+                    _context.SaveChanges();
+                }
+                else if(peUnit.UserID != model.UserID)
+                {
+                    peUnit.UserID = model.UserID;
+                    peUnit.UpdateBy = RequestUserID;
+                    peUnit.UpdateDate = DateTime.Now;
+
+                    _context.tr_PE_Unit.Update(peUnit);
+                    _context.SaveChanges();
+                }
+            }
+            return true;
         }
     }
 }

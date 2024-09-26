@@ -21,9 +21,22 @@ namespace Project.ConstructionTracking.Web.Services
             var ListChecklistPJMApprove = _IPJMApproveRepo.GetChecklistPJMApprove(filterData);
             return ListChecklistPJMApprove;
         }
+        public List<PJMApproveModel.GetImageUnlock> GetImageUnlock(PJMApproveModel.GetImageUnlock filterData)
+        {
+            var ListImageUnlock = _IPJMApproveRepo.GetImageUnlock(filterData);
+            return ListImageUnlock;
+        }
         public void SaveOrUpdateUnitFormAction(PJMApproveModel.PJMApproveIU model)
         {
-            _IPJMApproveRepo.SaveOrUpdateUnitFormAction(model);
+            try
+            {
+                _IPJMApproveRepo.SaveOrUpdateUnitFormAction(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+            }
         }
+
     }
 }

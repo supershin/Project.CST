@@ -13,6 +13,7 @@
         {
             public const int PROJECT_TYPE = 1;
             public const int UNIT_STATUS_ID = 4;
+            public const int QC5RadioChecklist = 9;
         }
 
         public static class Unit_Status
@@ -34,9 +35,9 @@
 
         public static class UserRole_Desc
         {
-            public const string PE = "Project Engineer";
-            public const string PM = "Product Manager";
-            public const string PJM = "Project Manager";
+            public const string PE = "PE/SE";
+            public const string PM = "PM";
+            public const string PJM = "PJM-Head";
             public const string QC = "Quality Control";
             public const string ADMIN = "Administrator";
         }
@@ -65,7 +66,7 @@
                 public const string SUSPEND = "S";
                 public const string WORKING = "W";
             }
-            
+
         }
 
         public static class QcTypeID
@@ -78,6 +79,41 @@
             public const int QC42 = 16;
             public const int QC5 = 17;
         }
+
+        public static class Unit_Form_QC
+        {
+            public const int QC1 = 12;
+            public const int QC2 = 13;
+            public const int QC3 = 14;
+            public const int QC4_1 = 15;
+            public const int QC4_2 = 16;
+            public const int QC4 = 26;
+            public const int QC5 = 17;
+        }
+
+        public static class Unit_Form_Status
+        {
+            public const int PE_Save = 1; 
+            public const int PE_Submit = 2; 
+            public const int PM_Save = 3; 
+            public const int PM_Approve = 4;
+            public const int PM_Reject = 5;
+            public const int PM_Sendto_PJM = 6;
+            public const int PJM_Approve = 7;
+            public const int PJM_Reject = 8;
+            public const int PJM_Save = 9;
+            public const int PE_REQ_Unlock = 10;
+            public const int PM_Approve_Unlock = 11;
+            public const int PM_Reject_Unlock = 12;
+        }
+
+        public static class CheckList_Status
+        {
+            public const int PASS = 9;
+            public const int NOTPASS = 10;
+            public const int NOWORK = 11;
+        }
+
     }
 
 }

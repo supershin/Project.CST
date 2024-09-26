@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Project.ConstructionTracking.Web.Data;
+using Project.ConstructionTracking.Web.Library.DAL.SQL;
+using Project.ConstructionTracking.Web.Library.DAL;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Repositories;
 using Project.ConstructionTracking.Web.Services;
@@ -20,6 +22,9 @@ builder.Services.Configure<AppSettings>(
 
 builder.Services.AddControllers().AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);
 //scope
+
+builder.Services.AddScoped<IMasterCommonRepo, MasterCommonRepo>();
+
 builder.Services.AddScoped<IUnitService, UnitService>();
 builder.Services.AddScoped<IUnitRepo, UnitRepo>();
 
@@ -71,8 +76,20 @@ builder.Services.AddScoped<IMasterUserRepo, MasterUserRepo>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<ILoginRepo, LoginRepo>();
 
+builder.Services.AddScoped<IChatInBoxService, ChatInBoxService>();
+builder.Services.AddScoped<IChatInBoxRepo, ChatInBoxRepo>();
+
+builder.Services.AddScoped<IGeneratePDFService, GeneratePDFService>();
+builder.Services.AddScoped<IGeneratePDFRepo, GeneratePDFRepo>();
+
+builder.Services.AddScoped<IQC5CheckService, QC5CheckService>();
+builder.Services.AddScoped<IQC5CheckRepo, QC5CheckRepo>();
+
 builder.Services.AddScoped<IQcSummaryService, QcSummaryService>();
 builder.Services.AddScoped<IQcSummaryRepo, QcSummaryRepo>();
+
+// Add the new services for SQL and data access
+builder.Services.AddScoped<MasterManagementProviderProject, SqlMasterManagementProject>();
 
 var app = builder.Build();
 

@@ -6,7 +6,7 @@
     var UnitCode = ViewBag.UnitCode;
     var UnitStatusName = ViewBag.UnitStatusName;
 }
-@model List<Project.ConstructionTracking.Web.Models.SummeryUnitModel.SummeryUnitForm>
+@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.SummeryUnitFormModel>
 
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 
@@ -90,7 +90,7 @@
                         </form>
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
-                        <h3 class="mb-0 header-text">Unit : @UnitCode</h3>
+                        <h3 class="mb-0 header-text">สถานะการตรวจงาน Unit : @UnitCode</h3>
                         <div class="text-muted">
                             <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@projectName (สถานะ : @UnitStatusName)</h5>
                         </div>

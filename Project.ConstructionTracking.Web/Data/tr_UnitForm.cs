@@ -22,6 +22,7 @@ namespace Project.ConstructionTracking.Web.Data
         public Guid ID { get; set; }
         public Guid? ProjectID { get; set; }
         public Guid? UnitID { get; set; }
+        public int? CompanyVendorID { get; set; }
         public int? VendorID { get; set; }
         public Guid? VendorResourceID { get; set; }
         [StringLength(50)]
@@ -43,6 +44,9 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
 
+        [ForeignKey("CompanyVendorID")]
+        [InverseProperty("tr_UnitForm")]
+        public virtual tm_CompanyVendor? CompanyVendor { get; set; }
         [ForeignKey("FormID")]
         [InverseProperty("tr_UnitForm")]
         public virtual tm_Form? Form { get; set; }

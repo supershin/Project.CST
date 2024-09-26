@@ -16,17 +16,19 @@ namespace Project.ConstructionTracking.Web.Controllers
             _hosting = hosting;
         }
 
-        public IActionResult Index(Guid UnitFormID, int GroupID)
+        public IActionResult Index(Guid UnitFormID, int GroupID , string ComFrom)
         {
-
+            ViewBag.ComFrom = ComFrom;
             var model = new UnLockPassConditionModel.GetDataUnlockPC { UnitFormID = UnitFormID, GroupID = GroupID };
             var resultModel = _UnLockPassConditionService.GetListUnlockPC(model);
             if (resultModel != null && resultModel.Count > 0)
             {
                 ViewBag.ProjectID = resultModel[0].ProjectID.ToString() != null ? resultModel[0].ProjectID.ToString() : string.Empty;
                 ViewBag.ProjectName = resultModel[0].ProjectName != null ? resultModel[0].ProjectName : string.Empty;
+                ViewBag.UnitFormID = resultModel[0].UnitFormID != null ? resultModel[0].UnitFormID : Guid.Empty;
                 ViewBag.UnitID = resultModel[0].UnitID.ToString() != null ? resultModel[0].UnitID.ToString() : string.Empty;
                 ViewBag.UnitCode = resultModel[0].UnitCode != null ? resultModel[0].UnitCode : string.Empty;
+                ViewBag.FormID = resultModel[0].FormID != null ? resultModel[0].FormID : 0;
                 ViewBag.FormName = resultModel[0].FormName != null ? resultModel[0].FormName : string.Empty;
                 ViewBag.ListGroupPC = resultModel;
             }

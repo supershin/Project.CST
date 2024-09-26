@@ -4,9 +4,12 @@
     var ProjectID = ViewBag.ProjectID;
     var ProjectName = ViewBag.ProjectName;
     var UnitID = ViewBag.UnitID;
+    var UnitFormID = ViewBag.UnitFormID;
+    var FormID = ViewBag.FormID;
     var UnitCode = ViewBag.UnitCode;
     var FormName = ViewBag.FormName;
     var ListGroupPC = ViewBag.ListGroupPC;
+    var ComFrom = ViewBag.ComFrom;
 }
 
 
@@ -88,6 +91,9 @@
 
 <div class="page-wrapper">
     <!-- Page header -->
+    <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@FormName','@UnitCode')">
+        <i id="chatIcon" class="fa-solid fa-message fa-xl"></i>
+    </button>
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
             <div class="card-stamp">
@@ -103,16 +109,29 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
-                            <input type="hidden" name="projectId" id="projectId" value="@ProjectID" />
-                            <input type="hidden" name="projectName" value="@ProjectName" />
-                            <input type="hidden" name="unitId" value="@UnitID" />
-                            <input type="hidden" name="UnitCode" value="@UnitCode" />
-                            <input type="hidden" name="UnitStatusName" value="" />
-                            <button class="status-dot bg-transparent">
-                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
-                            </button>
-                        </form>
+                        @if (ComFrom == "summaryunit")
+                        {
+                            <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
+                                <input type="hidden" name="projectId" id="projectId" value="@ProjectID" />
+                                <input type="hidden" name="projectName" value="@ProjectName" />
+                                <input type="hidden" name="unitId" value="@UnitID" />
+                                <input type="hidden" name="UnitCode" value="@UnitCode" />
+                                <input type="hidden" name="UnitStatusName" value="" />
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
+                        else if (ComFrom == "PMApprove")
+                        {
+                            <form asp-controller="PMApprove" asp-action="Index" method="post">
+                                <input type="hidden" name="unitId" value="@UnitID" />
+                                <input type="hidden" name="FormID" value="@FormID" />
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
                         <h1 class="mb-0 header-text">@UnitCode : @FormName</h1>
@@ -158,14 +177,14 @@
                             <div class="d-flex justify-content-between">
                                 <div class="d-flex flex-row align-items-center">
                                     @{
-                                        string buttonText = "fa-solid fa-lock-open";
-                                        string statusText = "รอขอปลดล็อค";
+                                        string buttonText = item.LockStatusID == 8 ? "fa-solid fa-lock-open" : "fa-solid fa-lock";
+                                        string statusText = item.UnitFormStatusID == 7 ? "รอขอปลดล็อค" : "PJM ยังไม่อนุมัติ";
                                         string buttonColor = "secondary";
 
                                         if (item.StatusID == 12)
                                         {
                                             statusText = "รออนุมัติปลดล็อค";
-                                            buttonColor = "primary";
+                                            buttonColor = "warning";
                                         }
                                         else if (item.StatusID == 13)
                                         {
@@ -202,17 +221,17 @@
                             </div>
                             <div class="card-body">
                                 <label class="form-label">
-                                    ความเห็นจากวิศวกร
+                                    ความเห็นจาก PE
                                 </label>
-                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PE_Remark : วันที่ @item.PE_ActionDate</textarea>
+                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PE_Remark</textarea>
                                 <label class="form-label">
                                     ความเห็นจาก PM
                                 </label>
-                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PM_Remark : วันที่ @item.PM_ActionDate</textarea>
+                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PM_Remark</textarea>
                                 <label class="form-label">
                                     ความเห็นจาก PJM Head
                                 </label>
-                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PJM_Remark : วันที่ @item.PJM_ActionDate</textarea>
+                                <textarea rows="2" class="form-control" placeholder="ความคิดเห็น" disabled>@item.PJM_Remark</textarea>
                                 <br>
                                 @foreach (var listimage in item.listImageUnlock)
                                 {
@@ -265,7 +284,7 @@
                 <div class="modal-body">
                     <!-- Label and Images for RoleID = 1 -->
                     <div class="row g-2 g-md-3">
-                        <label class="form-label" id="role1-label">รูปภาพวิศวะกร</label>
+                        <label class="form-label" id="role1-label">รูปภาพ PE</label>
                     </div>
                     <div class="row g-2 g-md-3" id="image-container-role-1">
                         <!-- Images for RoleID = 1 will be injected here -->
@@ -273,7 +292,7 @@
 
                     <!-- Label and Images for RoleID = 2 -->
                     <div class="row g-2 g-md-3 mt-4">
-                        <label class="form-label" id="role2-label">รูปภาพวิศวะกรผู้คุมโครงการ</label>
+                        <label class="form-label" id="role2-label">รูปภาพ PM</label>
                     </div>
                     <div class="row g-2 g-md-3" id="image-container-role-2">
                         <!-- Images for RoleID = 2 will be injected here -->
@@ -281,7 +300,7 @@
 
                     <!-- Label and Images for RoleID = 2 -->
                     <div class="row g-2 g-md-3 mt-4">
-                        <label class="form-label" id="role2-label">รูปภาพวิศวะกรหัวหน้าโครงการ</label>
+                        <label class="form-label" id="role2-label">รูปภาพ PJM</label>
                     </div>
                     <div class="row g-2 g-md-3" id="image-container-role-3">
                         <!-- Images for RoleID = 2 will be injected here -->
@@ -376,7 +395,18 @@
         });
 
         function saveData(PC_ID, UnitFormID, groupId, Action) {
-            var remark = document.getElementById(`remark_${groupId}`).value;
+            var remark = document.getElementById(`remark_${groupId}`).value.trim(); // Trim spaces
+
+            // Validation: Check if Action is "Reject" and PMUnLock_Remark is empty
+            if (Action === 'Reject' && remark === '') {
+                Swal.fire({
+                    title: 'ข้อผิดพลาด!',
+                    text: 'กรุณาระบุเหตุผลสำหรับการไม่อนุมัติ',
+                    icon: 'warning',
+                    confirmButtonText: 'ตกลง'
+                });
+                return; // Stop execution if validation fails
+            }
 
             var formData = new FormData();
             formData.append("PC_ID", PC_ID);
@@ -388,7 +418,7 @@
             let Actionanswer = (Action === 'Approved') ? 'อนุมัติ' : 'ไม่อนุมัติ';
 
             Swal.fire({
-                title: 'Confirm Action',
+                title: 'ยืนยันการดำเนินการ',
                 text: 'ต้องการ' + Actionanswer + 'ปลดล็อคงานนี้หรือไม่',
                 icon: 'warning',
                 showCancelButton: true,
@@ -405,10 +435,10 @@
                         success: function (response) {
                             if (response.success) {
                                 Swal.fire({
-                                    title: 'Success!',
-                                    text: 'Data saved successfully!',
+                                    title: 'สำเร็จ!',
+                                    text: 'บันทึกข้อมูลสำเร็จ!',
                                     icon: 'success',
-                                    confirmButtonText: 'OK'
+                                    confirmButtonText: 'ตกลง'
                                 }).then((result) => {
                                     if (result.isConfirmed) {
                                         location.reload(); // Reload the page when "OK" is clicked
@@ -416,25 +446,26 @@
                                 });
                             } else {
                                 Swal.fire({
-                                    title: 'Error!',
-                                    text: 'Failed to save data: ' + response.message,
+                                    title: 'ผิดพลาด!',
+                                    text: 'บันทึกข้อมูลไม่สำเร็จ: ' + response.message,
                                     icon: 'error',
-                                    confirmButtonText: 'OK'
+                                    confirmButtonText: 'ตกลง'
                                 });
                             }
                         },
                         error: function (xhr, status, error) {
                             Swal.fire({
-                                title: 'Error!',
-                                text: 'An error occurred while saving data.',
+                                title: 'ผิดพลาด!',
+                                text: 'เกิดข้อผิดพลาดขณะบันทึกข้อมูล.',
                                 icon: 'error',
-                                confirmButtonText: 'OK'
+                                confirmButtonText: 'ตกลง'
                             });
                         }
                     });
                 }
             });
         }
+
 
         function openModal(UnitFormID, GroupID, FormID) {
             // Fetch images for RoleID = 1
@@ -459,7 +490,7 @@
                             containerRole1.append(imageHtml);
                         });
                     } else {
-                        labelRole1.text('รูปภาพวิศวะกร - ไม่มีรูปภาพ');
+                        labelRole1.text('รูปภาพ PE - ไม่มีรูปภาพ');
                     }
 
                     refreshFsLightbox(); // Reinitialize the lightbox
@@ -491,7 +522,7 @@
                             containerRole2.append(imageHtml);
                         });
                     } else {
-                        labelRole2.text('รูปภาพวิศวะกรผู้คุมโครงการ - ไม่มีรูปภาพ');
+                        labelRole2.text('รูปภาพ PM - ไม่มีรูปภาพ');
                     }
 
                     refreshFsLightbox(); // Reinitialize the lightbox
@@ -523,7 +554,7 @@
                             containerRole3.append(imageHtml);
                         });
                     } else {
-                        labelRole3.text('รูปภาพวิศวะกรหัวหน้าโครงการ - ไม่มีรูปภาพ');
+                        labelRole3.text('รูปภาพ PJM - ไม่มีรูปภาพ');
                     }
 
                     refreshFsLightbox(); // Reinitialize the lightbox

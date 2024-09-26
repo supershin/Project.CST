@@ -9,9 +9,16 @@
     var unitId = ViewBag.unitId;
     var UnitCode = ViewBag.UnitCode;
     var UnitStatusName = ViewBag.UnitStatusName;
+    var UnitFormMainStatusID = ViewBag.UnitFormMainStatusID;
     var FormGroupDetail = ViewBag.FormGroupDetail;
+    var PEActionBy = ViewBag.PEActionBy;
+    var PEActionDate = ViewBag.PEActionDate;
+    var Signaldate = ViewBag.Signaldate;
+    var CompanyvenderName = ViewBag.CompanyvenderName;
     var GobackTo = ViewBag.GobackTo;
+    var comeFrom = ViewBag.comeFrom;
     var RoleID = ViewBag.RoleID;
+    var PermissionSubmit = ViewBag.PermissionSubmit;
     var grade = FormGroupDetail?.Grade;
     var VenderName = FormGroupDetail?.VenderName;
     var VenderValue = FormGroupDetail?.VenderID;
@@ -101,7 +108,7 @@
         color: red
     }
 
-     .autocomplete-items {
+    .autocomplete-items {
       position: absolute;
       border: 1px solid #d4d4d4;
       border-bottom: none;
@@ -142,6 +149,18 @@
         display: none;
     }
 
+    .image-text {
+        position: absolute;
+        bottom: 5px; /* Adjust this value to control the vertical positioning */
+        right: 5px; /* Adjust this value to control the horizontal positioning */
+        color: white; /* Text color */
+        font-size: 12px; /* Font size */
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for better visibility */
+        padding: 2px 5px; /* Padding around the text */
+        border-radius: 3px; /* Rounded corners for the background */
+    }
+
+
   .custom-btn {
     width: 100px;  /* Ensures consistent width */
     height: 45px;  /* Ensures consistent height */
@@ -159,6 +178,11 @@
 
 .custom-btn .fa-signature {
     font-size: 20px; /* Adjust icon size */
+}
+
+.form-control[readonly] {
+    background-color: #e9ecef; /* Light background for readonly input */
+    cursor: not-allowed; /* Change cursor to indicate non-editable field */
 }
 
 </style>
@@ -266,11 +290,22 @@
         padding: 10px 20px;
         font-weight: bold;
     }
+
+    .custom-label {
+        background-color: red; /* Red background */
+        color: white; /* White text color */
+        font-size: 20px; /* Keep the font size */
+        padding: 5px; /* Add some padding around the text */
+        border-radius: 3px; /* Optional: add rounded corners */
+        text-align: center; /* Center the text within the label */
+    }
+
 </style>
 
-<button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@RoleID')">
-    <i class="fa-solid fa-message fa-xl" style="color: #74C0FC;"></i>
+<button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@UnitFormName','@UnitCode')">
+    <i id="chatIcon" class="fa-solid fa-message fa-xl"></i>
 </button>
+
 
 <div class="page-wrapper">
     <!-- Page header -->
@@ -288,18 +323,30 @@
             </div>
             <div class="card-body">
                 <input type="hidden" name="UnitFormID" id="UnitFormID" value="@UnitFormID" />
+                <input type="hidden" name="projectId" id="projectId" value="@projectId" />
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
-                            <input type="hidden" name="projectId" id="projectId" value="@projectId" />
-                            <input type="hidden" name="projectName" value="@projectName" />
-                            <input type="hidden" name="unitId" value="@unitId" />
-                            <input type="hidden" name="UnitCode" value="@UnitCode" />
-                            <input type="hidden" name="UnitStatusName" value="@UnitStatusName" />
-                            <button class="status-dot bg-transparent">
-                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
-                            </button>
-                        </form>
+                        @if (comeFrom == "MyTaskPE")
+                        {
+                            <form asp-controller="MyTaskPE" asp-action="Index" method="post">
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-controller="Unitlist" asp-action="GoToByRole" method="post">
+                                <input type="hidden" name="projectId" id="projectId" value="@projectId" />
+                                <input type="hidden" name="projectName" value="@projectName" />
+                                <input type="hidden" name="unitId" value="@unitId" />
+                                <input type="hidden" name="UnitCode" value="@UnitCode" />
+                                <input type="hidden" name="UnitStatusName" value="@UnitStatusName" />
+                                <button class="status-dot bg-transparent">
+                                    <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                                </button>
+                            </form>
+                        }
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
                         <h3 class="mb-0 header-text"> @UnitFormName ( Unit : @UnitCode )</h3>
@@ -308,7 +355,7 @@
                         </div>
                     </div>
                     <div class="align-items-right">
-
+                        <input type="hidden" id="PermissionSubmit" value="@PermissionSubmit.ToString().ToLower()" />
                     </div>
                 </div>
             </div>
@@ -316,27 +363,49 @@
     </div>
     <!-- Page body -->
     <div class="page-body">
+        @if (PE_ActionType == "save")
+        {
+            <label id="statusLabel" class="form-label custom-label">ยังไม่ได้ Submit</label>
+        }
+        else if (PE_ActionType == "submit")
+        {
+            @if (UnitFormstatusID == 5 || UnitFormstatusID == 8)
+            {
+                <label class="form-label custom-label">ยังไม่ได้ Submit</label>
+            }
+        }
         @if (PE_ActionType == "submit")
         {
             <div class="container mt-1 mb-2">
             <div class="row">
-                    @if (UnitFormstatusID == 2 || UnitFormstatusID == 3 || UnitFormstatusID == 6 || UnitFormstatusID == 9)
+                <div class="mb-1">
+                @if (UnitFormstatusID == 2 || UnitFormstatusID == 3 || UnitFormstatusID == 6 || UnitFormstatusID == 9 || UnitFormstatusID == 10)
                 {
                     <!-- In Progress Card -->
                     <div class="col-md-4">
                         <div id="in-progress-card" class="card">
                             <div class="card-body text-center">
-@*                                 <button class="btn" id="btn-in-progress">
-                                    <span class="status-text"><i class="fa-solid fa-file-pen"></i></span>
-                                </button> *@
                                 <br>
                                 <h3 id="progress-title" class="card-title">@UnitFormstatus</h3>
-                                    <p id="progress-text" class="card-text">ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "")</p>
+                                <p id="progress-text" class="card-text">
+                                    ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "ไม่มีความคิดเห็น") <br>
+                                    ความคิดเห็น PJM : @(PJM_ActionType == "submit" ? PJM_Remark : "ไม่มีความคิดเห็น")
+                                </p>
+                                @if (UnitFormMainStatusID == 10)
+                                {
+                                    <div class="d-flex justify-content-center">
+                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                            <input type="hidden" name="ComFrom" value="FormGroup" />
+                                            <button type="submit" class="btn custom-btn btn-warning" id="btn-toggle-card">ขอปลดล็อค</button>
+                                        </form>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
                 }
-                else if (UnitFormstatusID == 4 || UnitFormstatusID == 7)
+                else if (UnitFormstatusID == 4 || UnitFormstatusID == 7 || UnitFormstatusID == 11)
                 {
                     <!-- Approved Card 1 -->
                     <div class="col-md-4">
@@ -346,15 +415,25 @@
                                     <span class="status-text"><i class="fa-regular fa-circle-check"></i></span>
                                 </button>
                                 <h3 id="approved-title" class="card-title">@UnitFormstatus</h3>
-                                    <p id="progress-text" class="card-text">
-                                        ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "ไม่มีความคิดเห็น") <br>
-                                        ความคิดเห็น PJM : @(PJM_ActionType == "submit" ? PJM_Remark : "ไม่มีความคิดเห็น")
-                                    </p>
+                                <p id="progress-text" class="card-text">
+                                    ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "ไม่มีความคิดเห็น") <br>
+                                    ความคิดเห็น PJM : @(PJM_ActionType == "submit" ? PJM_Remark : "ไม่มีความคิดเห็น")
+                                </p>
+                                @if (UnitFormMainStatusID == 7 || UnitFormstatusID == 11)
+                                {
+                                    <div class="d-flex justify-content-center">                                     
+                                            <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                                <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                                 <input type="hidden" name="ComFrom" value="FormGroup" />
+                                                <button type="submit" class="btn custom-btn btn-warning" id="btn-toggle-card">ขอปลดล็อค</button>
+                                            </form>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
                 }
-                else if (UnitFormstatusID == 5 || UnitFormstatusID == 8)
+                else if (UnitFormstatusID == 5 || UnitFormstatusID == 8 || UnitFormstatusID == 12)
                 {
                     <!-- Rejected Card -->
                     <div class="col-md-4">
@@ -368,10 +447,21 @@
                                     ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "ไม่มีความคิดเห็น") <br>
                                     ความคิดเห็น PJM : @(PJM_ActionType == "submit" ? PJM_Remark : "ไม่มีความคิดเห็น")
                                 </p>
+                                @if (UnitFormMainStatusID == 7 || UnitFormstatusID == 12)
+                                {
+                                    <div class="d-flex justify-content-center">
+                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                            <input type="hidden" name="ComFrom" value="FormGroup" />
+                                            <button type="submit" class="btn custom-btn btn-warning" id="btn-toggle-card">ขอปลดล็อค</button>
+                                        </form>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
                 }
+                </div>
             </div>
             </div>
         }
@@ -420,19 +510,52 @@
                                                 {
                                                     @if (item.StatusID == 7 && PM_ActionType == "submit" || item.StatusID == 9 && PJM_ActionType == "submit")
                                                     {
-                                                        <button type="button" class="status-dot bg-danger ms-auto">
+                                                        @if(UnitFormstatusID == 2)
+                                                        {
+                                                            <button type="button" class="status-dot bg-warning ms-auto">
+                                                                <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                                            </button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="button" class="status-dot bg-danger ms-auto">
+                                                                <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                                            </button>
+                                                        }
+                                                    }
+                                                    else if (item.StatusID == 6 && PM_ActionType == "submit")
+                                                    {
+                                                        <button type="button" class="status-dot bg-primary ms-auto">
                                                             <span class="status-text"><i class="fa-solid fa-lock"></i></span>
                                                         </button>
                                                     }
-                                                    else if (item.StatusID == 6 && PM_ActionType == "submit" || item.StatusID == 8 && PJM_ActionType == "submit")
+                                                    else if (item.StatusID == 8 && PJM_ActionType == "submit")
                                                     {
                                                         <button type="button" class="status-dot bg-success ms-auto">
                                                             <span class="status-text"><i class="fa-solid fa-lock"></i></span>
                                                         </button>
                                                     }
+                                                    else if (item.StatusID == 12)
+                                                    {
+                                                        <button type="button" class="status-dot bg-warning ms-auto">
+                                                            <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                                        </button>
+                                                    }
+                                                    else if (item.StatusID == 13)
+                                                    {
+                                                        <button type="button" class="status-dot bg-success ms-auto">
+                                                            <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                                        </button>
+                                                    }
+                                                    else if (item.StatusID == 14)
+                                                    {
+                                                        <button type="button" class="status-dot bg-danger ms-auto">
+                                                            <span class="status-text"><i class="fa-solid fa-lock"></i></span>
+                                                        </button>
+                                                    }
                                                     else
                                                     {
-                                                        <button type="button" class="status-dot bg-primary ms-auto">
+                                                        <button type="button" class="status-dot bg-warning ms-auto">
                                                             <span class="status-text"><i class="fa-solid fa-lock"></i></span>
                                                         </button>
                                                     }
@@ -453,7 +576,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <button type="button" class="status-dot bg-primary ms-auto">
+                                                        <button type="button" class="status-dot bg-warning ms-auto">
                                                             <span class="status-text"><i class="fa-solid fa-lock-open"></i></span>
                                                         </button>
                                                     }
@@ -517,7 +640,7 @@
                 }
 
             </div>
-        </div>
+        </div>  
         <div class="container mt-1 mb-2">
             <div class="row">
                 <div class="col-md-4">
@@ -527,11 +650,11 @@
                                 <div class="d-flex flex-row align-items-center">
                                     <div id="icon"> <i class="fa-solid fa-building-user"></i></div>
                                     <div class="ms-2 c-details">
-                                        <h3 class="mb-0">ประเมิณคุณภาพการทำงานในงวด</h3>
+                                        <h3 class="mb-0">ประเมินคุณภาพการทำงานในงวด</h3>
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex justify-content-center">
+                            <div class="d-flex justify-content-center" style="padding-top: 1.5rem; background-color: #e0f0ff; border-radius: 5px; padding: 10px;">
                                 <label class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="radios-inline" value="A" onclick="toggleRadio(this)" @(grade == "A" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "") >
                                     <span class="form-check-label">A</span>
@@ -550,8 +673,12 @@
                                 </label>
                             </div>
                             <div class="mt-3">
-                                <label class="form-label">วิศวะกรผู้ควบคุมงาน</label>
-                                <input type="text" class="form-control" name="example-disabled-input" placeholder="Disabled..." value="นาย สมชาย ใจดี" disabled>
+                                <label class="form-label">PE/SE ผู้ควบคุมงาน</label>
+                                <input type="text" id="PERemark" class="form-control" value="ทำรายการโดย :@PEActionBy @PEActionDate" readonly>
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label">บริษัทผู้รับเหมา</label>
+                                <input type="text" id="PERemark" class="form-control" value="@CompanyvenderName" readonly>
                             </div>
                             <!-- Card A -->
                             @if (ViewBag.UserRole == "1")
@@ -570,7 +697,7 @@
                             <div id="cardB" class="col-sm-12 mt-1 mb-2">
                                 <div class="col-sm-12 mt-1 mb-2" style="position: relative;">
                                     <label class="form-label">ผู้รับเหมา</label>
-                                    <input type="text" class="form-control" name="example-disabled-input" placeholder="Disabled..." value="@(!string.IsNullOrEmpty(VenderName) ? VenderName : "ยังไม่ได้เลือกผู้รับเหมา")" disabled>
+                                    <input type="text" class="form-control" name="example-disabled-input" placeholder="เลือกผู้รับเหมา" value="@(!string.IsNullOrEmpty(VenderName) ? VenderName : "")" disabled>
                                     <!-- Hidden input for VenderName -->
                                     <input type="hidden" id="hiddenVenderName" name="hiddenVenderName" value="@VenderName">
                                 </div>
@@ -598,8 +725,10 @@
                                 <label class="form-label">ลายเซ็นผู้รับเหมา</label>
                                 @if (!string.IsNullOrEmpty(FilePath))
                                 {
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal1">
+
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal1" style="position: relative; display: inline-block;">
                                         <img src="~/@FilePath" alt="Gallery Image 1" class="rounded" style="width:340px;height:260px;">
+                                        <span class="image-text">ลงลายเซ็นวันที่ : @Signaldate</span>
                                     </a>
 
                                     <!-- Hidden input for FilePath -->
@@ -628,13 +757,13 @@
                                         <div class="col-12">
                                             <div class="d-flex justify-content-between">
                                                 <div>
-                                                    <button class="btn custom-btn btn-secondary" data-bs-toggle="modal" id="btn-save-form">Save</button>
+                                                    <button class="btn custom-btn btn-secondary" data-bs-toggle="modal" id="btn-save-form">บันทึกร่าง</button>
                                                 </div>
                                                 <div class="text-center">
-                                                    <button type="button" class="btn custom-btn btn-warning" id="btn-toggle-card"><i class="fa-solid fa-signature"></i></button>
+                                                    <button type="button" class="btn custom-btn btn-warning" id="btn-toggle-card">เซ็นใหม่</button>
                                                 </div>
                                                 <div>
-                                                    <button type="button" class="btn custom-btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-submit-form">Submit</button>
+                                                    <button type="button" class="btn custom-btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-submit-form">ยืนยัน</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -644,13 +773,13 @@
                                         <div class="col-12">
                                             <div class="d-flex justify-content-between">
                                                 <div>
-                                                    <button class="btn custom-btn btn-secondary" data-bs-toggle="modal" id="btn-save-form">Save</button>
+                                                    <button class="btn custom-btn btn-secondary" data-bs-toggle="modal" id="btn-save-form">บันทึกร่าง</button>
                                                 </div>
                                                 <div class="text-center">
-                                                    <button type="button" class="btn custom-btn btn-warning" id="btn-toggle-card"><i class="fa-solid fa-signature"></i></button>
+                                                    <button type="button" class="btn custom-btn btn-warning" id="btn-toggle-card">เซ็นใหม่</button>
                                                 </div>
                                                 <div>
-                                                    <button type="button" class="btn custom-btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-submit-form">Submit</button>
+                                                    <button type="button" class="btn custom-btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-submit-form">ยืนยัน</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -660,13 +789,13 @@
                                 {
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <button class="btn custom-btn btn-secondary" data-bs-toggle="modal" id="btn-save-form">Save</button>
+                                            <button class="btn custom-btn btn-secondary" data-bs-toggle="modal" id="btn-save-form">บันทึกร่าง</button>
                                         </div>
                                         <div class="text-center">
-                                            <button type="button" class="btn custom-btn btn-warning" id="btn-toggle-card"><i class="fa-solid fa-signature"></i></button>
+                                            <button type="button" class="btn custom-btn btn-warning" id="btn-toggle-card">เซ็นใหม่</button>
                                         </div>
                                         <div>
-                                            <button type="button" class="btn custom-btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-submit-form">Submit</button>
+                                            <button type="button" class="btn custom-btn btn-primary ms-auto" data-bs-toggle="modal" id="btn-submit-form">ยืนยัน</button>
                                         </div>
                                     </div>
                                 }
@@ -698,6 +827,27 @@
     <script>
 
         $(document).ready(() => {
+
+            let allChecked = true; // Assume all tasks are complete until proven otherwise
+
+            $('div.card-link').each(function () {
+                const statusUse = $(this).find('button.status-dot').data('status-use');
+                const cntCheckListAll = parseInt($(this).find('.text1').text().split(' ')[1]);
+                const cntCheckListUnit = parseInt($(this).find('.text2').text().split(' ')[1]);
+                const cntCheckListNotPass = parseInt($(this).find('.text3').text().split(' ')[1]);
+
+                if (statusUse !== 'success' && !(cntCheckListAll === cntCheckListUnit && cntCheckListNotPass === 0)) {
+                    $('#statusLabel').text("ยังตรวจงานไม่ครบ");
+                    allChecked = false;
+                    return false; // Exit the loop early if any condition fails
+                }
+            });
+
+            // Optionally, if all checks pass, you can update the text to something else
+            if (allChecked) {
+                $('#statusLabel').text("ยังไม่ได้ Submit");
+            }
+
             var cardA = $("#cardA");
             var cardB = $("#cardB");
             var cardC = $("#cardC");

@@ -1,0 +1,320 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+    var ListProject = ViewBag.ListProject;
+    var listUnitFormStatus = ViewBag.listUnitFormStatus;
+}
+
+@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.PMMyTaskModel>
+
+<style>
+    .status-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        border: none;
+        outline: none;
+        font-size: 18px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px
+    }
+
+    .c-details span {
+        font-weight: 300;
+        font-size: 13px
+    }
+
+    .text1 {
+        font-size: 14px;
+        font-weight: 600
+    }
+
+    .text2 {
+        color: #a5aec0
+    }
+
+    /* Optional: Customize the appearance of Choices.js */
+    .choices__inner {
+        border-radius: 4px; /* Adjust as needed */
+    }
+
+</style>
+
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-home-heart">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M21 12l-9 -9l-9 9h2v7a2 2 0 0 0 2 2h6" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.39 0 .754 .112 1.061 .304" />
+                        <path d="M19 21.5l2.518 -2.58a1.74 1.74 0 0 0 0 -2.413a1.627 1.627 0 0 0 -2.346 0l-.168 .172l-.168 -.172a1.627 1.627 0 0 0 -2.346 0a1.74 1.74 0 0 0 0 2.412l2.51 2.59z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="card-body">
+                <h1>
+                    รายการรออนุมัติ
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="page-body">
+        <div class="container mt-1 mb-2">
+            <div class="row mb-3">
+                <div class="col-md-4 p-1 mb-2" style="position: relative;">
+                    <label for="ddlProject" class="form-label">เลือกโครงการ</label>
+                    <select id="ddlProject" name="selectedProjectValue" class="form-control">
+                        <option value="">-- เลือกทั้งหมด --</option>
+                        @foreach (var item in ListProject)
+                        {
+                            <option value="@item.ValueGuid">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 p-1 mb-2">
+                    <label for="ddlUnit" class="form-label">เลือกยูนิต</label>
+                    <select id="ddlUnit" name="selectedUnitValue[]" class="form-control" multiple>
+                        <!-- Options will be dynamically populated -->
+                    </select>
+                </div>
+
+                <div class="col-md-4 p-1 mb-2">
+                    <div class="row g-2">
+                        <div class="col-10">
+                            <label for="ddlUnitFormStatus" class="form-label">เลือกสถานะ</label>
+                            <select id="ddlUnitFormStatus" name="selectedUnitFormStatus[]" class="form-control" multiple>
+                                @foreach (var item in listUnitFormStatus)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+
+                        </div>
+                        <div class="col-auto" style="padding-top : 1.7rem;">
+                            <button type="button" class="btn btn-icon" aria-label="Button" onclick="searchData()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+                                    <path d="M21 21l-6 -6" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mt-1 mb-2 results-container">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-4">
+                        <form action="@Url.Action("index", "PMApprove", new { unitId = item.UnitID, FormID = item.FormID , comeFrom = "PMFormcheck"})" method="post">
+                            <div class="card card-link card-link-pop p-3 mb-2" onclick="this.closest('form').submit();">
+                                <div class="d-flex justify-content-between">
+                                    <div class="d-flex flex-row align-items-center">
+                                        @if (@item.StatusID == 2)
+                                        {
+                                            <button type="button" class="status-dot @item.StatusColor @(item.StatusColor == "bg-danger" || item.StatusColor== "bg-warning" ? "status-dot-animated" : "")">
+                                                <i class="@item.StatusIcon"></i>
+                                            </button>
+                                        }
+
+                                        <div class="ms-2 c-details">
+                                            <h3 class="mb-0 text-primary">@item.UnitCode <small class="text-yellow"> @item.ProjectName : @item.FormName</small></h3>
+                                        </div>
+                                    </div>
+                                    @if (@item.PassConditionIcon != "")
+                                    {
+                                        <div class="ms-auto">
+                                            <button type="button" class="status-dot @item.PassConditionColor" ms-auto">
+                                                <span class="status-text">
+                                                    <i class="@item.PassConditionIcon"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="mt-3">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1">สร้างโดย</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">@item.ComVendorName</span></li>
+                                    </ol>
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1">สถานะ</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="badge @item.StatusColor text-white">@item.StatusDescription</span></li>
+                                    </ol>
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><span class="text1">PE/SE ขออนุมัติ</span></li>
+                                        <li class="breadcrumb-item" aria-current="page"><span class="text2"> @item.PEActionBy @item.PEActionDate</span></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include Choices.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+
+    <!-- Include Choices.js JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const unitFormStatusElement = document.getElementById('ddlUnitFormStatus');
+            const unitElement = document.getElementById('ddlUnit');
+
+            // Initialize Choices for ddlUnitFormStatus
+            const unitFormStatusChoices = new Choices(unitFormStatusElement, {
+                removeItemButton: true,
+                searchEnabled: false,
+                placeholderValue: 'เลือกสถานะ...',
+            });
+
+            // Initialize Choices for ddlUnit (multi-select)
+            const unitChoices = new Choices(unitElement, {
+                removeItemButton: true,
+                searchEnabled: false,
+                placeholderValue: 'เลือก Unit...',
+            });
+
+            // Attach the Choices instances to the DOM elements for later use
+            unitFormStatusElement.choicesInstance = unitFormStatusChoices;
+            unitElement.choicesInstance = unitChoices;
+        });
+
+        $(document).ready(function () {
+            $('#ddlProject').on('change', function () {
+                var selectedProjectId = $(this).val();
+                var ddlUnit = $('#ddlUnit')[0].choicesInstance; // Get the Choices instance for ddlUnit
+
+                // Clear existing options and selected choices in ddlUnit when a new project is selected
+                ddlUnit.clearChoices();
+                ddlUnit.clearStore();
+                ddlUnit.setChoices([{
+                    value: '',
+                    label: '-- เลือกทั้งหมด --',
+                    selected: false,
+                    disabled: false
+                }]);
+
+                if (selectedProjectId) {
+                    $.ajax({
+                        url: '@(ViewBag.baseUrl)' + 'MyTaskPM/GetUnitsByProject',
+                        data: { projectId: selectedProjectId },
+                        success: function (data) {
+                            // Add new options dynamically after fetching data
+                            $.each(data, function (index, unit) {
+                                ddlUnit.setChoices([{
+                                    value: unit.ValueGuid,
+                                    label: unit.Text
+                                }], 'value', 'label', false);
+                            });
+                        },
+                        error: function () {
+                            console.log("Error fetching data.");
+                        }
+                    });
+                }
+            });
+        });
+
+        function searchData() {
+            const project = document.getElementById('ddlProject').value;
+            const unitElement = document.getElementById('ddlUnit');
+            const unitChoices = unitElement.choicesInstance;
+            const selectedUnits = unitChoices.getValue(true); // Get selected values as an array
+            const selectedUnitsString = selectedUnits.join(','); // Convert the array to a comma-separated string
+            const element = document.getElementById('ddlUnitFormStatus');
+            const choicesInstance = element.choicesInstance;
+            const selectedStatuses = choicesInstance.getValue(true);
+            const statusString = selectedStatuses.join(',');
+
+            $.ajax({
+                url: '@(ViewBag.baseUrl)' + 'MyTaskPM/SearchData',
+                type: 'GET',
+                data: {
+                    selectedProjectValue: project,
+                    selectedUnitValue: selectedUnitsString, // Send as a comma-separated string
+                    selectedUnitFormStatus: statusString
+                },
+                success: function (data) {
+                    updateResults(data);
+                },
+                error: function () {
+                    console.log("Error fetching data.");
+                }
+            });
+        }
+
+        function updateResults(data) {
+            var container = $('.results-container .row');
+            container.empty(); // Clear existing results
+
+            // Base URL for the form action
+            var baseUrl = '@(ViewBag.baseUrl)';
+
+            $.each(data, function (index, item) {
+                // Construct the full action URL dynamically
+                var actionUrl = `${baseUrl}PMApprove?unitId=${item.UnitID}&FormID=${item.FormID}&comeFrom=PMFormcheck`;
+                var card = `
+                                    <div class="col-md-4">
+                                        <form action="${actionUrl}" method="post">
+                                            <div class="card card-link card-link-pop p-3 mb-2" onclick="this.closest('form').submit();">
+                                                <div class="d-flex justify-content-between">
+                                                    <div class="d-flex flex-row align-items-center">
+                                                        ${(item.StatusID == 2) ? `
+                                                            <button type="button" class="status-dot ${item.StatusColor} ${(item.StatusColor == "bg-danger" || item.StatusColor == "bg-warning") ? "status-dot-animated" : ""}">
+                                                                <i class="${item.StatusIcon}"></i>
+                                                            </button>
+                                                        ` : ''}
+
+                                                        <div class="ms-2 c-details">
+                                                            <h3 class="mb-0 text-primary">${item.UnitCode} <small class="text-yellow"> ${item.ProjectName} : ${item.FormName}</small></h3>
+                                                        </div>
+                                                    </div>
+                                                    ${item.PassConditionIcon ? `
+                                                    <div class="ms-auto">
+                                                        <button type="button" class="status-dot ${item.PassConditionColor}">
+                                                            <span class="status-text">
+                                                                <i class="${item.PassConditionIcon}"></i>
+                                                            </span>
+                                                        </button>
+                                                    </div>` : ''}
+                                                </div>
+                                                <div class="mt-3">
+                                                    <ol class="breadcrumb">
+                                                        <li class="breadcrumb-item"><span class="text1">สร้างโดย</span></li>
+                                                        <li class="breadcrumb-item" aria-current="page"><span class="text2">${item.ComVendorName}</span></li>
+                                                    </ol>
+                                                    <ol class="breadcrumb">
+                                                        <li class="breadcrumb-item"><span class="text1">สถานะ</span></li>
+                                                        <li class="breadcrumb-item" aria-current="page"><span class="badge ${item.StatusColor} text-white"> ${item.StatusDescription}</span></li>
+                                                    </ol>
+                                                    <ol class="breadcrumb">
+                                                        <li class="breadcrumb-item"><span class="text1">PE/SE ขออนุมัติ</span></li>
+                                                        <li class="breadcrumb-item" aria-current="page"><span class="text2"> ${item.PEActionBy} ${item.PEActionDate}</span></li>
+                                                    </ol>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>`;
+                container.append(card);
+            });
+        }
+    </script>
+}
