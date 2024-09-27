@@ -3,6 +3,7 @@
     public class QC5DefectModel
     {
         public int? DefectID { get; set; }
+        public Guid? QCUnitCheckListID { get; set; }
         public int? DefectAreaID { get; set; }
         public string? DefectAreaName { get; set; }
         public int? DefectTypeID { get; set; }

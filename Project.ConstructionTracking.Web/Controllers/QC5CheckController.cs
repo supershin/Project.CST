@@ -31,7 +31,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.UnitId = QC5CheckDetail?.UnitID;
             ViewBag.UnitCode = QC5CheckDetail?.UnitCode;
             ViewBag.UnitStatusName = QC5CheckDetail?.UnitStatusName;
-            ViewBag.Seq = QC5CheckDetail?.Seq;
+            ViewBag.Seq = Seq;
             ViewBag.QC5UpdateByName = QC5CheckDetail?.QC5UpdateByName;
 
             // Autocomplete 1
@@ -68,6 +68,16 @@ namespace Project.ConstructionTracking.Web.Controllers
             return Json(ListDefectDescription);
         }
 
+
+        [HttpGet]
+        public IActionResult GetQC5DefactEdit(int DefectID)
+        {
+            var filter = new QC5DefectModel { DefectID = DefectID };
+            QC5DefectModel defectData = _QC5CheckService.GetQC5DefactEdit(filter);
+            return Json(defectData); // Return the defect data as JSON
+        }
+
+
         [HttpPost]
         public IActionResult SaveDefectData(QC5IUDModel model)
         {
@@ -87,13 +97,25 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
-        //[HttpPost]
-        //public IActionResult GetDefactDetail(QC5DefectModel model)
-        //{
+        [HttpPost]
+        public IActionResult EditDefectData(QC5IUDModel model)
+        {
+            try
+            {
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                model.ApplicationPath = _hosting.ContentRootPath;
+                model.UserID = userid;
+                _QC5CheckService.UpdateQCUnitCheckListDefect(model);
 
-        //}
-
-
+                // Return success response
+                return Json(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
 
     }
 }

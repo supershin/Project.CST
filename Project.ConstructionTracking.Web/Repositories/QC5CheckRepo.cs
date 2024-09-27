@@ -6,6 +6,7 @@ using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using System.Text.RegularExpressions;
 using System.Transactions;
 using System.Drawing;
+using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -103,7 +104,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                           select new QC5DefectModel
                           {
                               DefectID = t1.ID,
-                              //QCUnitCheckListID = t1.QCUnitCheckListID,
+                              QCUnitCheckListID = t1.QCUnitCheckListID,
                               Seq = t1.Seq,
                               DefectAreaID = t1.DefectAreaID,
                               DefectAreaName = t2.Name,
@@ -143,7 +144,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 try
                 {
                     // Try to find the existing UnitCheckList
-                    var UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(x => x.ProjectID == model.ProjectID && x.UnitID == model.UnitID && x.Seq == model.Seq);
+                    var UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(x => x.ProjectID == model.ProjectID && x.UnitID == model.UnitID && x.Seq == model.Seq.ToInt());
 
                     Guid QCUnitCheckListID;
 
@@ -159,7 +160,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                             UnitID = model.UnitID,
                             CheckListID = null,
                             QCTypeID = SystemConstant.Unit_Form_QC.QC5,
-                            Seq = model.Seq,
+                            Seq = model.Seq.ToInt(),
                             CheckListDate = DateTime.Now,
                             FlagActive = true,
                             CreateDate = DateTime.Now,
@@ -197,7 +198,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     var newDefect = new tr_QC_UnitCheckList_Defect
                     {
                         QCUnitCheckListID = QCUnitCheckListID,
-                        Seq = model.Seq,
+                        Seq = model.Seq.ToInt(),
                         DefectAreaID = model.DefectAreaID,
                         DefectTypeID = model.DefectTypeID,
                         DefectDescriptionID = model.DefectDescriptionID,
@@ -236,7 +237,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 // Resize and save the image
                                 using (var imageStream = image.OpenReadStream())
                                 {
-                                    using (var resizedImageStream = ResizeImage(imageStream, 0.5)) // Resize to 50%
+                                    using (var resizedImageStream = ResizeImage(imageStream, 0.7)) // Resize to 50%
                                     {
                                         using (var fileStream = new FileStream(filePath, FileMode.Create))
                                         {
@@ -324,16 +325,22 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     if (existingDefect != null)
                     {
-                        existingDefect.QCUnitCheckListID = model.QCUnitCheckListID;
-                        existingDefect.Seq = model.Seq;
                         existingDefect.DefectAreaID = model.DefectAreaID;
                         existingDefect.DefectTypeID = model.DefectTypeID;
                         existingDefect.DefectDescriptionID = model.DefectDescriptionID;
-                        existingDefect.StatusID = model.StatusID;
-                        existingDefect.Remark = model.Remark;
+                        if (!string.IsNullOrEmpty(model.Remark))
+                        {
+                            if (existingDefect.Remark != model.Remark)
+                            {
+                                existingDefect.Remark = model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
+                            }
+                        }
+                        else
+                        {
+                            existingDefect.Remark = "";
+                        }
                         existingDefect.UpdateDate = DateTime.Now;
                         existingDefect.UpdateBy = model.UserID;
-
                         _context.SaveChanges();
                     }
 
