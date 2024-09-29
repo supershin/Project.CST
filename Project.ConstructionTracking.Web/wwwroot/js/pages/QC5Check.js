@@ -349,7 +349,7 @@
                                         <a data-fslightbox="gallery" href="${image.FilePath}">
                                             <img src="${image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                         </a>
-                                        <button type="button" class="remove-button" onclick="deleteImage('${image.ResourceID}')">✖</button>
+                                        <button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>
                                     </div>
                                 `);
                             });
@@ -444,7 +444,12 @@
             var defectDescriptionId = document.getElementById('dropdown3Edit').value;
             var comment = document.getElementById('commentTextareaEdit').value;
             var files = $('#file-input-edit')[0].files;
-            var isMajorDefect = document.getElementById('majorDefectCheckbox').checked;
+            var isMajorDefect = document.getElementById('majorDefectCheckboxEdit').checked;
+
+            // Get hidden input values
+            var projectId = document.getElementById('hdProject').value;
+            var unitId = document.getElementById('hdUnitId').value;
+            var seq = document.getElementById('hdSeq').value;
 
             if (!defectAreaId) {
                 showErrorAlert('คำเตือน!', 'กรุณาเลือกตำแหน่ง');
@@ -461,14 +466,14 @@
 
             var formData = new FormData();
             formData.append('ID', DefectID);
-            formData.append('ProjectID', projectIdforIUD);
-            formData.append('UnitID', '@ViewBag.UnitId');
+            formData.append('ProjectID', projectId);
+            formData.append('UnitID', unitId);
             formData.append('DefectAreaID', defectAreaId);
             formData.append('DefectTypeID', defectTypeId);
             formData.append('DefectDescriptionID', defectDescriptionId);
             formData.append('Remark', comment);
             formData.append('IsMajorDefect', isMajorDefect);
-            formData.append('Seq', '@ViewBag.Seq');
+            formData.append('Seq', seq);
 
             for (var i = 0; i < files.length; i++) {
                formData.append('Images', files[i]);
@@ -576,3 +581,73 @@
                 fileInput.files = dataTransfer.files;
             }
         });
+
+        function RemoveImage(resourceID) {
+
+            showLoadingAlert();
+
+            $.ajax({
+                url: baseUrl + 'QC5Check/RemoveImage',
+                type: 'POST',
+                data: { resourceID: resourceID },
+                success: function (response) {
+                    Swal.close(); 
+                    if (response.success) {
+                        $(`button[onclick="RemoveImage('${resourceID}')"]`).parent().remove();
+                        if ($('#imagePreview2 .position-relative').length < 5) {
+                            $('#drop-zone-edit').show();
+                        }
+                        showSuccessAlert('สำเร็จ!', 'ลบรูปภาพสำเร็จ');
+                    } else {
+                        showErrorAlert('เกิดข้อผิดพลาด!', 'ไม่สามารถลบรูปภาพได้');
+                    }
+                },
+                error: function () {
+                    Swal.close();  // Close the loading indicator if the request fails
+                    showErrorAlert('เกิดข้อผิดพลาด!', 'การลบรูปภาพล้มเหลว');
+                }
+            });
+}
+
+        document.getElementById('RemoveQC5Button').addEventListener('click', function () {
+            onRemoveQC5ButtonClick();
+        });
+
+        function onRemoveQC5ButtonClick() {
+            var DefectID = document.getElementById('QC5DefectID').value;
+            var projectId = document.getElementById('hdProject').value;
+            var unitId = document.getElementById('hdUnitId').value;
+            var seq = document.getElementById('hdSeq').value;
+
+
+            var formData = new FormData();
+            formData.append('ID', DefectID);
+            formData.append('ProjectID', projectId);
+            formData.append('UnitID', unitId);
+            formData.append('Seq', seq);
+
+            showLoadingAlert();
+
+            $.ajax({
+                url: baseUrl + 'QC5Check/RemoveDefectQC5Unit',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    Swal.close();
+                    if (response.success) {
+                        showSuccessAlert('สำเร็จ!', 'ลบข้อมูลสำเร็จ', function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        showErrorAlert('ลบข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการลบข้อมูล');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.close();
+                    showErrorAlert('เกิดข้อผิดพลาด!', error);
+                }
+            });
+        }
+

@@ -323,13 +323,23 @@
                                         <div class="row">
                                             <!-- Center the button vertically using d-flex and align-items-center -->
                                             <div class="col-auto d-flex align-items-center justify-content-center">
-                                                <button type="button" class="status-dot bg-success">
-                                                    <i class="fa-solid fa-check"></i>
-                                                </button>
+                                                @{
+                                                    string buttonClass = "bg-secondary"; // Default class
+                                                    string iconClass = "fa-solid fa-magnifying-glass"; // Default icon
+
+                                                    @if (item.StatusID == null && item.Seq == Seq)
+                                                    {
+                                                        buttonClass = "bg-secondary";
+                                                        iconClass = "fa-regular fa-pen-to-square";
+                                                    }
+
+                                                    <button type="button" class="status-dot @buttonClass">
+                                                            <i class="@iconClass"></i>
+                                                    </button>
+                                                }
                                             </div>
                                             <div class="col">
-                                                    <a href="#!" class="text-body d-block" style="white-space: nowrap; overflow-x: auto;"
-                                                       onclick="openModalEditQC('@item.ID')">
+                                                    <a href="#!" class="text-body d-block" style="white-space: nowrap; overflow-x: auto;" onclick="openModalEditQC('@item.ID')">
                                                         @if (item.IsMajorDefect == true)
                                                         {
                                                             <i class="fa-solid fa-triangle-exclamation" style="color: #ff0000;"></i>
@@ -596,8 +606,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn me-auto btn-danger" data-bs-dismiss="modal">ลบรายการนี้</button>
-                    <button type="button" class="btn btn-primary" id="EditButton" data-bs-dismiss="modal">บนทึก</button>
+                    <button type="button" class="btn me-auto btn-danger" id="RemoveQC5Button" data-bs-dismiss="modal">ลบรายการนี้</button>
+                    <button type="button" class="btn btn-primary" id="EditButton" data-bs-dismiss="modal">บันทึก</button>
                 </div>
             </div>
         </div>

@@ -117,5 +117,43 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
+
+        [HttpPost]
+        public IActionResult RemoveImage(Guid resourceId)
+        {
+            try
+            {
+                Guid UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                _QC5CheckService.RemoveImage(resourceId, UserID);
+
+                // Return success response
+                return Json(new { success = true, message = "ลบรูปภาพสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
+        
+
+        [HttpPost]
+        public IActionResult RemoveDefectQC5Unit(QC5IUDModel model)
+        {
+            try
+            {
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                model.UserID = userid;
+                _QC5CheckService.RemoveQCUnitCheckListDefect(model);
+
+                // Return success response
+                return Json(new { success = true, message = "ลบข้อมูลสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
     }
 }

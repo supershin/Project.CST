@@ -67,6 +67,17 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
+        public void RemoveImage(Guid resourceId, Guid UserID)
+        {
+            try
+            {
+                _IQC5CheckRepo.RemoveImage(resourceId , UserID);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
+            }
+        }
 
     }
 }
