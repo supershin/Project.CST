@@ -10,6 +10,7 @@ using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using QuestPDF.Previewer;
 using static System.Net.Mime.MediaTypeNames;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -111,6 +112,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             FontManager.RegisterFont(System.IO.File.OpenRead(fontPath));
 
+            var imageHeader = Directory.GetCurrentDirectory() + "/wwwroot/img/img1.png";
             var imageBox = Directory.GetCurrentDirectory() + "/wwwroot/img/box.png";
             var imageCheckBox = Directory.GetCurrentDirectory() + "/wwwroot/img/checkbox.png";
             var imageCheck = Directory.GetCurrentDirectory() + "/wwwroot/img/check.png";
@@ -147,6 +149,11 @@ namespace Project.ConstructionTracking.Web.Controllers
                                 .AlignMiddle();
                         }
 
+                        column.Item().Column(col1 =>
+                        {
+                            col1.Item().PaddingVertical(5).Width(150).Image(imageHeader);
+                        });
+
                         column.Item().Border(1).Table(table =>
                         {
                             table.ColumnsDefinition(columns =>
@@ -171,14 +178,14 @@ namespace Project.ConstructionTracking.Web.Controllers
                             table.Cell().Row(3).Column(5).Element(CellStyle).AlignLeft().Text("ผ่านการตรวจจาก QC แล้ว");
 
                             table.Cell().Row(4).Column(1).Element(CellStyle).AlignLeft().Text("ผู้รับเหมา ");
-                            table.Cell().Row(4).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.VendorName);
+                            table.Cell().Row(4).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.CompanyName);
                             table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageBox);
                             table.Cell().Row(4).Column(5).Element(CellStyle).AlignLeft().Text("งวดนี้ไม่มีการตรวจ QC");
 
                             table.Cell().Row(5).Column(1).Element(CellStyle).AlignLeft().Text("ผู้ควบคุมงาน ");
                             table.Cell().Row(5).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.PEName);
 
-                            table.Cell().Row(6).Column(1).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.FormName).BackgroundColor("#32ff32");
+                            table.Cell().Row(6).Column(1).Element(x => DefaultCellStyle(x, "#00FF00")).AlignLeft().Text(dataGenerate.HeaderData.FormName).Bold();
                             table.Cell().Row(6).Column(2).ColumnSpan(4).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.FormDesc);
 
                             // you can extend existing styles by creating additional methods
@@ -210,8 +217,8 @@ namespace Project.ConstructionTracking.Web.Controllers
                                 columns.RelativeColumn(2);
                                 columns.RelativeColumn(1);
                                 columns.RelativeColumn(1);
-                                columns.RelativeColumn(1);
-                                columns.RelativeColumn(5);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(4);
                             });
 
                             table2.Cell().Row(1).Column(1).ColumnSpan(2).Element(CellStyle).AlignCenter().Text("รายการตรวจ");
@@ -220,7 +227,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                             for (int group = 0; group < dataGenerate.BodyCheckListData.GroupDataModels.Count; group++)
                             {
-                                table2.Cell().Row((uint)(countRow)).Column(1).ColumnSpan(2).Background("#6ce4ff").Element(CellStyle).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].GroupName).WrapAnywhere();
+                                table2.Cell().Row((uint)(countRow)).Column(1).ColumnSpan(2).Element(x => DefaultCellStyle(x, Colors.Grey.Medium)).AlignLeft().Text(dataGenerate.BodyCheckListData.GroupDataModels[group].GroupName).WrapAnywhere();
                                 if(group == 0)
                                 {
                                     table2.Cell().Row((uint)(countRow)).Column(3).Element(CellStyle).Text("ผ่าน");
