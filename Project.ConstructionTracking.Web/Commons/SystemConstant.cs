@@ -114,6 +114,14 @@
             public const int NOWORK = 11;
         }
 
+        public static class UnitQCStatus
+        {
+            public const int Pass = 1;
+            public const int NotPass = 2;
+            public const int IsNotReadyInspect = 3;
+            public const int IsPassCondition = 4;
+        }
+
     }
 
 }
