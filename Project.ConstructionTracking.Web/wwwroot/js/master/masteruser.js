@@ -16,6 +16,16 @@ const user = {
             user.DeleteUser(data);
         })
 
+        $("#btn-search").click(() => {
+            if ($.fn.DataTable.isDataTable('#tbl-user-list')) {
+                $('#tbl-user-list').DataTable().clear().destroy();
+            }
+
+            user.UserList();
+
+            return false;
+        });
+
         user.UserList();
     },
     UserList: function () {
@@ -28,13 +38,11 @@ const user = {
                 type: "POST",
                 data: function (json) {
                     var datastring = $("#form-search").serialize();
-
                     json = datastring + '&' + $.param(json);
 
                     return json;
                 },
                 "dataSrc": function (res) {
-                    //app.ajaxVerifySession(res);                    
                     return res.data;
                 },
                 complete: function (res) {
