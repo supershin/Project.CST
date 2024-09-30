@@ -16,6 +16,16 @@ const user = {
             user.DeleteUser(data);
         })
 
+        $("#btn-search").click(() => {
+            if ($.fn.DataTable.isDataTable('#tbl-user-list')) {
+                $('#tbl-user-list').DataTable().clear().destroy();
+            }
+
+            user.UserList();
+
+            return false;
+        });
+
         user.UserList();
     },
     UserList: function () {

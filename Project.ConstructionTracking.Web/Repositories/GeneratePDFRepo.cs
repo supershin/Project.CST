@@ -32,6 +32,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                          join tmp in _context.tm_Project on truf.ProjectID equals tmp.ProjectID
                          join tmu in _context.tm_Unit on truf.UnitID equals tmu.UnitID
                          join tmv in _context.tm_Vendor on truf.VendorID equals tmv.ID
+                         join trcv in _context.tr_CompanyVendor on tmv.ID equals trcv.VendorID
+                         join tmcv in _context.tm_CompanyVendor on trcv.CompanyVendorID equals tmcv.ID
                          join tmf in _context.tm_Form on truf.FormID equals tmf.ID
                          where truf.ProjectID == model.ProjectID
                             && truf.UnitID == model.UnitID
@@ -44,6 +46,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                              UnitCode = tmu.UnitCode,
                              UnitFormID = truf.ID,
                              VendorName = tmv.Name,
+                             CompanyName = tmcv.Name,
                              FormName = tmf.Name,
                              FormDesc = tmf.Description,
 
@@ -134,9 +137,13 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             string documentPrefix = "";
 
+            string formatYear = DateTime.Now.ToString("yyyy");
+            int changeFormat = Int32.Parse(formatYear) + 543;
+            formatYear = changeFormat.ToString().Substring(2);
+
             if (project != null)
             {
-                documentPrefix = "C" + project.ProjectCode + "-" +DateTime.Now.ToString("yyyy") + DateTime.Now.ToString("MM");
+                documentPrefix = "C" + project.ProjectCode + formatYear + DateTime.Now.ToString("MM");
             }
 
             tr_Document? document = _context.tr_Document
@@ -158,7 +165,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             approveString += 1;
 
 
-            string documentRunning = approveString.ToString("D5");
+            string documentRunning = approveString.ToString("D3");
             string documentNo = documentPrefix + "-" + documentRunning;
 
             dataDocumentModel.documentRunning = documentRunning;

@@ -16,7 +16,7 @@ namespace Project.ConstructionTracking.Web.Models.GeneratePDFModel
 		//ยูนิต
 		public string UnitCode { get; set; }
 		//ผู้รับเหมา
-		public string VendorName { get; set; }
+		public string CompanyName { get; set; }
 		//วิศวกรผู้ควบคุมงาน
 		public string PEName { get; set; }
 		//วันที่ pm อนุมัติ
