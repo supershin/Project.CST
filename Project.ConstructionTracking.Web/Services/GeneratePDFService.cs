@@ -33,7 +33,7 @@ namespace Project.ConstructionTracking.Web.Services
 				ProjectName = queryData.ProjectName,
 				UnitCode = queryData.UnitCode,
 				UnitFormID = queryData.UnitFormID,
-				VendorName = queryData.VendorName,
+				CompanyName = queryData.CompanyName,
                 FormName = queryData.FormName,
 				FormDesc = queryData.FormDesc
             };
