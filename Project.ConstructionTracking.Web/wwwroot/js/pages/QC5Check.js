@@ -107,7 +107,8 @@
             }
 
             myModal.show();
-        }
+}
+
 
         document.getElementById('saveButton').addEventListener('click', function () {
             onSaveButtonClick();
@@ -434,9 +435,11 @@
             });
         });
 
+
         document.getElementById('EditButton').addEventListener('click', function () {
             onEditButtonClick();
         });
+
         function onEditButtonClick() {
             var DefectID = document.getElementById('QC5DefectID').value;
             var defectAreaId = document.getElementById('dropdown1Edit').value;
@@ -490,9 +493,7 @@
                 success: function (response) {
                     Swal.close(); 
                     if (response.success) {
-                        showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
-                            window.location.reload(); 
-                        });
+                        showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
                     } else {
                         showErrorAlert('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
                     }
@@ -502,7 +503,8 @@
                     showErrorAlert('เกิดข้อผิดพลาด!', error);
                 }
             });
-        }
+}
+
 
         document.addEventListener("DOMContentLoaded", function () {
             var dropZone = document.getElementById("drop-zone-edit");
@@ -649,5 +651,45 @@
                     showErrorAlert('เกิดข้อผิดพลาด!', error);
                 }
             });
-        }
+}
+
+        let signaturePad;
+
+        var unitEquipment = {
+
+            init: () => {
+                unitEquipment.initSignaturePad();
+            },
+
+            initSignaturePad: () => {
+                let canvas = $("#signature-pad canvas");
+                let parentWidth = $(canvas).parent().outerWidth();
+                let parentHeight = $(canvas).parent().outerHeight();
+                canvas.attr("width", parentWidth + 'px').attr("height", parentHeight + 'px');
+                signaturePad = new SignaturePad(canvas[0], {
+                    backgroundColor: 'rgb(255, 255, 255)'
+                });
+
+                $(document).on('click', '.clear', function () {
+                    signaturePad.clear();
+                });
+            },
+
+            getSignatureData: () => {
+                let dataURL;
+                let contentType;
+                let storage;
+                if (!signaturePad.isEmpty()) {
+                    dataURL = signaturePad.toDataURL();
+                    var parts = dataURL.split(';base64,');
+                    contentType = parts[0].split(":")[1];
+                    storage = parts[1];
+                }
+                return {
+                    MimeType: contentType,
+                    StorageBase64: storage
+                };
+            },
+        };
+
 

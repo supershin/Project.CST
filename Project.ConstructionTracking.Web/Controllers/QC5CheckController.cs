@@ -39,6 +39,14 @@ namespace Project.ConstructionTracking.Web.Controllers
             List<GetDDL> ListDefectArea = _getDDLService.GetDDLList(filterModel);
             ViewBag.ListDefectArea = ListDefectArea;
 
+
+            var PEUnit = new GetDDL { Act = "PEUnit" , GuID = unitId};
+            List<GetDDL> PEUnitID = _getDDLService.GetDDLList(PEUnit);
+            ViewBag.PEID = (PEUnitID != null && PEUnitID.Count > 0) ? PEUnitID[0].ValueGuid : Guid.Empty;
+            ViewBag.PEName = (PEUnitID != null && PEUnitID.Count > 0) ? PEUnitID[0].Text : "ยังไม่ได้ระบุ PE/SE ผู้ดูแล Unit แปลงนี้";
+
+
+
             var FilterData = new QC5ChecklistModel
             {
                 QCUnitCheckListID = QC5CheckDetail?.QC5UnitChecklistID,
@@ -148,6 +156,27 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                 // Return success response
                 return Json(new { success = true, message = "ลบข้อมูลสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
+
+
+        [HttpPost]
+        public IActionResult SaveSubmitQC5UnitCheckList(QC5SaveSubmitModel model)
+        {
+            try
+            {
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                model.ApplicationPath = _hosting.ContentRootPath;
+                model.UserID = userid;
+                _QC5CheckService.SaveSubmitQC5UnitCheckList(model);
+
+                // Return success response
+                return Json(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
             }
             catch (Exception ex)
             {

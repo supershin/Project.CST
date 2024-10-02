@@ -79,5 +79,17 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
+        public void SaveSubmitQC5UnitCheckList(QC5SaveSubmitModel model)
+        {
+            try
+            {
+                _IQC5CheckRepo.SaveSubmitQC5UnitCheckList(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
+            }
+        }
+
     }
 }

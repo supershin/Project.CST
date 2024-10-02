@@ -8,6 +8,7 @@ using System.Transactions;
 using System.Drawing;
 using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Project.ConstructionTracking.Web.Models.FormGroupModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -518,12 +519,13 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
+
         public void SaveSubmitQC5UnitCheckList(QC5SaveSubmitModel model)
         {
             var transactionOptions = new TransactionOptions
             {
                 IsolationLevel = IsolationLevel.ReadCommitted,
-                Timeout = TimeSpan.FromMinutes(2)
+                Timeout = TimeSpan.FromMinutes(3)
             };
 
             using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
@@ -618,6 +620,11 @@ namespace Project.ConstructionTracking.Web.Repositories
                             }
                         }
 
+                        if (model.Sign != null)
+                        {
+                            SaveSignature(model.Sign , model.ApplicationPath , model.QCUnitCheckListID , model.UserID);
+                        }
+
                         _context.SaveChanges();
                     }
 
@@ -628,6 +635,115 @@ namespace Project.ConstructionTracking.Web.Repositories
                     throw new Exception("แก้ไขข้อมูลลง tr_QC_UnitCheckList_Defect ไม่สำเร็จ", ex);
                 }
             }
+        }
+        private void SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID,Guid? userID)
+        {
+            var resource = new ResourcesSignatureQC5
+            {
+                MimeType = signData.MimeType,
+                ResourceStorageBase64 = signData.StorageBase64
+            };
+
+            Guid guidId = Guid.NewGuid();
+            string fileName = guidId + ".jpg";
+            var folder = DateTime.Now.ToString("yyyyMM");
+            var dirPath = Path.Combine(appPath, "wwwroot", "Upload", "document", folder, "signQC5");
+            var filePath = Path.Combine(dirPath, fileName);
+
+            resource.PhysicalPathServer = dirPath;
+            resource.ResourceStoragePath = Path.Combine("Upload", "document", folder, "signQC5", fileName).Replace("\\", "/");
+
+            ConvertByteToImage(resource);
+            InsertResource(guidId, fileName, resource.ResourceStoragePath, "image/jpeg", userID);
+            InsertOrUpdateQCUnitCheckListResource(guidId, QCUnitCheckListID, userID);
+
+        }
+        private void ConvertByteToImage(ResourcesSignatureQC5 item)
+        {
+            byte[] binaryData;
+            try
+            {
+                binaryData = Convert.FromBase64String(item.ResourceStorageBase64);
+            }
+            catch (ArgumentNullException)
+            {
+                Console.WriteLine("Base64 string is null.");
+                return;
+            }
+            catch (FormatException ex)
+            {
+                throw ex;
+            }
+            try
+            {
+                if (!Directory.Exists(item.PhysicalPathServer))
+                {
+                    Directory.CreateDirectory(item.PhysicalPathServer);
+                }
+
+                var fullPath = Path.Combine(item.PhysicalPathServer, Path.GetFileName(item.ResourceStoragePath));
+                using (var outFile = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+                {
+                    outFile.Write(binaryData, 0, binaryData.Length);
+                }
+            }
+            catch (Exception exp)
+            {
+                // Error creating stream or writing to it.
+                throw exp;
+            }
+        }
+        public void InsertResource(Guid guidId, string fileName, string filePath, string mimeType, Guid? userID)
+        {
+            var newResource = new tm_Resource
+            {
+                ID = guidId,
+                FileName = fileName,
+                FilePath = filePath,
+                MimeType = mimeType,
+                FlagActive = true,
+                CreateDate = DateTime.Now,
+                CreateBy = userID,
+                UpdateDate = DateTime.Now,
+                UpdateBy = userID,
+            };
+
+            _context.tm_Resource.Add(newResource);
+            _context.SaveChanges();
+        }
+        public bool InsertOrUpdateQCUnitCheckListResource(Guid ResourceID, Guid? QCUnitCheckListID, Guid? userID)
+        {
+
+            var QCUnitCheckListResource = _context.tr_QC_UnitCheckList_Resource.FirstOrDefault(r => r.QCUnitCheckListID == QCUnitCheckListID);
+
+            if (QCUnitCheckListResource != null)
+            {
+                QCUnitCheckListResource.ResourceID = ResourceID;
+                QCUnitCheckListResource.FlagActive = true;
+                QCUnitCheckListResource.UpdateDate = DateTime.Now;
+                QCUnitCheckListResource.UpdateBy = userID;
+
+                _context.tr_QC_UnitCheckList_Resource.Update(QCUnitCheckListResource);
+            }
+            else
+            {
+                var newResource = new tr_QC_UnitCheckList_Resource
+                {
+                    QCUnitCheckListID = QCUnitCheckListID,
+                    ResourceID = ResourceID,
+                    FlagActive = true,
+                    CreateDate = DateTime.Now,
+                    CreateBy = userID,
+                    UpdateDate = DateTime.Now,
+                    UpdateBy = userID
+                };
+
+                _context.tr_QC_UnitCheckList_Resource.Add(newResource);
+            }
+
+            _context.SaveChanges();
+
+            return true;
         }
 
     }
