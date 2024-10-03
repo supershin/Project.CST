@@ -12,5 +12,6 @@ namespace Project.ConstructionTracking.Web.Repositories
         void UpdateQCUnitCheckListDefect(QC5IUDModel model);
         void RemoveQCUnitCheckListDefect(QC5IUDModel model);
         void RemoveImage(Guid resourceId, Guid UserID);
+        void SaveSubmitQC5UnitCheckList(QC5SaveSubmitModel model);
     }
 }

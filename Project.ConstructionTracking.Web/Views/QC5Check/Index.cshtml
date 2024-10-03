@@ -8,7 +8,8 @@
     var UnitStatusName = ViewBag.UnitStatusName;
     var Seq = ViewBag.Seq;
     var QC5UpdateByName = ViewBag.QC5UpdateByName;
-
+    var PEID = ViewBag.PEID;
+    var PEName = ViewBag.PEName;
 }
 
 @model List<Project.ConstructionTracking.Web.Models.QC5CheckModel.QC5ChecklistModel>
@@ -144,6 +145,15 @@
         padding: 0;
     }
 
+    .custom-btn .fa-signature {
+      font-size: 20px; /* Adjust icon size */
+    }
+
+    .form-control[readonly] {
+        background-color: #e9ecef; /* Light background for readonly input */
+        cursor: not-allowed; /* Change cursor to indicate non-editable field */
+    }
+
 </style>
 
 <input type="hidden" id="hdProject" value="@ViewBag.ProjectId"/>
@@ -231,69 +241,12 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <label class="form-label mb-1">
-                                            <button class="btn btn-success w-100">Save</button>
-                                        </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 mt-3 d-none d-md-block">
-                            <div class="card">
-                                <div class="card-header">
-                                    <ol class="breadcrumb">
-                                        <li class="breadcrumb-item" aria-current="page">
-                                            สรุปจำนวน
-                                        </li>
-                                    </ol>
-                                </div>
-                                <div class="card-body">
-                                    <div class="col-12">
-                                        <ul>
-                                            <li>
-                                                จำนวนรายการจากครั้งที่ 1 : 2 รายการ
-                                            </li>
-                                            <li>
-                                                จำนวนรายการจากครั้งที่ 2 : 1 รายการ
-                                            </li>
-                                            <li>
-                                                จำนวนรายการจากครั้งที่ 3 : 0 รายการ
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12 text-yellow">รายการทั้งหมด  : 3 รายการ</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="text-green">ผ่าน : 0 รายการ</div>
-                                                    <div class="text-red">ไม่ผ่าน : 2 รายการ</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 mt-3">
-                                        <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#SignalModal">วิศวกรควบคุมงานลงนาม</button>
-                                    </div>
-                                    <div class="col-12 mt-3">
-                                        <div class="row">
-                                            <div class="col-4">
-                                                <button class="btn btn-success w-100">Save</button>
-                                            </div>
-                                            <div class="col-4">
-                                                <button class="btn btn-primary w-100">Submit</button>
-                                            </div>
-                                            <div class="col-4">
-                                                <button class="btn btn-secondary w-100">ดูเอกสารตรวจ</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <partial name="PartialSaveSubmitCard"/>
                         </div>
                     </div>                   
                 </div>
@@ -374,61 +327,7 @@
                         </div>
                     </div>
                     <div class="col-12 mt-3 d-block d-md-none">
-                        <div class="card">
-                            <div class="card-header">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item" aria-current="page">
-                                        สรุปจำนวน
-                                    </li>
-                                </ol>
-                            </div>
-                            <div class="card-body">
-                                <div class="col-12">
-                                    <ul>
-                                        <li>
-                                            จำนวนรายการจากครั้งที่ 1 : 2 รายการ
-                                        </li>
-                                        <li>
-                                            จำนวนรายการจากครั้งที่ 2 : 1 รายการ
-                                        </li>
-                                        <li>
-                                            จำนวนรายการจากครั้งที่ 3 : 0 รายการ
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="row">
-                                                <div class="col-12 text-yellow">รายการทั้งหมด  : 3 รายการ</div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="row">
-                                                <div class="text-green">ผ่าน : 0 รายการ</div>
-                                                <div class="text-red">ไม่ผ่าน : 2 รายการ</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 mt-3">
-                                    <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#SignalModal">วิศวกรควบคุมงานลงนาม</button>
-                                </div>
-                                <div class="col-12 mt-3">
-                                    <div class="row">
-                                        <div class="col-4">
-                                            <button class="btn btn-success w-100">Save</button>
-                                        </div>
-                                        <div class="col-4">
-                                            <button class="btn btn-primary w-100">Submit</button>
-                                        </div>
-                                        <div class="col-4">
-                                            <button class="btn btn-secondary w-100">ดูเอกสารตรวจ</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <partial name="PartialSaveSubmitCard"/>
                     </div>
                     </div>
                 </div>
@@ -513,23 +412,26 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-12">
-                            <form autocomplete="off">
-                                <div class="mb-3 position-relative">
-                                    <label for="myInput" class="form-label">เลือกผู้รับเหมา</label>
-                                    <input id="myInput" type="text" class="form-control" placeholder="Type to search...">
-                                </div>
-                            </form>
+                          <input type="text" id="PEUnit" class="form-control" value="PE/SE : @PEName" readonly>
                         </div>
                         <div class="col-12 mt-2">
-                            <div class="signature-pad">
-                                <canvas id="signatureCanvas"></canvas>
+                            <label for="signature-pad" class="form-label">ลงลายเซ็น PE/SE</label>
+                            <div id="signature-pad" class="signature-pad" style="justify-content:center;align-items:center;display:flex;">
+                                <div class="signature-pad--body" style="width:340px;height:260px; background-color: grey;">
+                                    <canvas></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="clearBtn" class="btn btn-danger mt-2">Clear</button>
-                    <button type="button" class="btn btn-primary">Save</button>
+                    <div class="d-flex justify-content-between w-100">
+                        <!-- Left-aligned button -->
+                        <button type="button" class="clear btn btn-default"><i class="fas fa-reply"></i> เคลียร์</button>
+        
+                        <!-- Right-aligned button -->
+                        <button type="button" class="btn btn-primary">บันทึก</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -620,78 +522,14 @@
 </div>
 
 @section scripts {
+<link href="~/lib/core-ui/signature-pad-master/css/signature-pad.css"/>
+<script src="~/lib/core-ui/signature-pad-master/js/signature_pad.umd.js"></script>
 <script src="~/js/pages/QC5Check.js?ver=@DateTime.Now.Ticks.ToString()"></script>
 <script>
-    function autocomplete(input, array) {
-        var currentFocus;
-        input.addEventListener("input", function () {
-            var a, b, i, val = this.value;
-            closeAllLists();
-            if (!val) { return false; }
-            currentFocus = -1;
-            a = document.createElement("div");
-            a.setAttribute("id", this.id + "autocomplete-list");
-            a.setAttribute("class", "autocomplete-items");
-            this.parentNode.appendChild(a);
-            for (i = 0; i < array.length; i++) {
-                if (array[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-                    b = document.createElement("div");
-                    b.setAttribute("class", "autocomplete-item");
-                    b.innerHTML = "<strong>" + array[i].substr(0, val.length) + "</strong>";
-                    b.innerHTML += array[i].substr(val.length);
-                    b.innerHTML += "<input type='hidden' value='" + array[i] + "'>";
-                    b.addEventListener("click", function () {
-                        input.value = this.getElementsByTagName("input")[0].value;
-                        closeAllLists();
-                    });
-                    a.appendChild(b);
-                }
-            }
-        });
-        input.addEventListener("keydown", function (e) {
-            var x = document.getElementById(this.id + "autocomplete-list");
-            if (x) x = x.getElementsByClassName("autocomplete-item");
-            if (e.keyCode == 40) {
-                currentFocus++;
-                addActive(x);
-            } else if (e.keyCode == 38) {
-                currentFocus--;
-                addActive(x);
-            } else if (e.keyCode == 13) {
-                e.preventDefault();
-                if (currentFocus > -1) {
-                    if (x) x[currentFocus].click();
-                }
-            }
-        });
-        function addActive(x) {
-            if (!x) return false;
-            removeActive(x);
-            if (currentFocus >= x.length) currentFocus = 0;
-            if (currentFocus < 0) currentFocus = (x.length - 1);
-            x[currentFocus].classList.add("autocomplete-active");
-        }
-        function removeActive(x) {
-            for (var i = 0; i < x.length; i++) {
-                x[i].classList.remove("autocomplete-active");
-            }
-        }
-        function closeAllLists(elmnt) {
-            var x = document.getElementsByClassName("autocomplete-items");
-            for (var i = 0; i < x.length; i++) {
-                if (elmnt != x[i] && elmnt != input) {
-                    x[i].parentNode.removeChild(x[i]);
-                }
-            }
-        }
-        document.addEventListener("click", function (e) {
-            closeAllLists(e.target);
-        });
-    }
 
-    var options = ["บริษัท วิชัยการช่าง จำกัด", "บริษัท วิน อินเวนชั่น จำกัด", "บริษัท ปัญญาฤทธิ์ โฮม คอนสตัคชั่น จำกัด", "บริษัท เอ็น9-ไพล์ เอ็นเตอร์ไพรซ์ จำกัด", "บริษัท พี เอส ซี เอ็ม จำกัด"];
-    autocomplete(document.getElementById("myInput"), options);
-
+    $(document).ready(function () {
+        unitEquipment.init();  // Initialize when the document is ready
+    });
 
 </script>
 }
