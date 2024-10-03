@@ -1,4 +1,6 @@
-﻿namespace Project.ConstructionTracking.Web.Models.QC5CheckModel
+﻿using static Project.ConstructionTracking.Web.Models.FormGroupModel;
+
+namespace Project.ConstructionTracking.Web.Models.QC5CheckModel
 {
     public class QC5SaveSubmitModel
     {
@@ -23,7 +25,7 @@
 
     }
 
-    public class ResourcesSignature
+    public class ResourcesSignatureQC5
     {
         public string? MimeType { get; set; }
         public string? ResourceStorageBase64 { get; set; }

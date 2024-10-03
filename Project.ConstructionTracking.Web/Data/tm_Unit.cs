@@ -25,9 +25,6 @@ namespace Project.ConstructionTracking.Web.Data
         [StringLength(50)]
         [Unicode(false)]
         public string? PONo { get; set; }
-        [StringLength(50)]
-        [Unicode(false)]
-        public string? GRNo { get; set; }
         [StringLength(20)]
         [Unicode(false)]
         public string? UnitCode { get; set; }

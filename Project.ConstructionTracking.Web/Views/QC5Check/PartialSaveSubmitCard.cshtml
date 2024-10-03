@@ -35,18 +35,21 @@
                     data-bs-target="#SignalModal"
             >วิศวกรควบคุมงานลงนาม</button>
         </div>
-        <div class="col-12 mt-3">
-            <div class="row">
-                <div class="col-4">
-                    <button class="btn btn-success w-100">Save</button>
-                </div>
-                <div class="col-4">
-                    <button class="btn btn-primary w-100">Submit</button>
-                </div>
-                <div class="col-4">
-                    <button class="btn btn-secondary w-100">ดูเอกสารตรวจ</button>
+        @if (ViewBag.QC5UnitChecklistID != null)
+        {
+            <div class="col-12 mt-3">
+                <div class="row">
+                    <div class="col-4">
+                        <button type="button" class="btn btn-success w-100" id="btn-save-QC5" onclick="saveUnitQC5()">บันทึกร่าง</button>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-primary w-100">ยืนยัน</button>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-secondary w-100">ดูเอกสารตรวจ</button>
+                    </div>
                 </div>
             </div>
-        </div>
+        }       
     </div>
 </div>

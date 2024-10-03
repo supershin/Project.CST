@@ -8,6 +8,8 @@
     var UnitStatusName = ViewBag.UnitStatusName;
     var Seq = ViewBag.Seq;
     var QC5UpdateByName = ViewBag.QC5UpdateByName;
+    var QC5UnitChecklistID = ViewBag.QC5UnitChecklistID;
+    var QC5UnitChecklistActionID = ViewBag.QC5UnitChecklistActionID;
     var PEID = ViewBag.PEID;
     var PEName = ViewBag.PEName;
 }
@@ -158,6 +160,8 @@
 
 <input type="hidden" id="hdProject" value="@ViewBag.ProjectId"/>
 <input type="hidden" id="hdUnitId" value="@ViewBag.UnitId"/>
+<input type="hidden" id="hdQC5UnitChecklistID" value="@ViewBag.QC5UnitChecklistID"/>
+<input type="hidden" id="hdQC5UnitChecklistActionID" value="@ViewBag.QC5UnitChecklistActionID" />
 <input type="hidden" id="hdSeq" value="@ViewBag.Seq"/>
 <button class="fixedButton" onclick="openModalDataQC('add')">
     <i class="fa-solid fa-plus fa-xl"></i>
@@ -219,26 +223,29 @@
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label class="form-check form-check-inline">
-                                            <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio1">
-                                            <span class="form-check-label">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
+                                            <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio3" value="1">
+                                            <span class="form-check-label">ผ่าน</span>
                                         </label>
                                         <label class="form-check form-check-inline">
-                                            <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio2">
+                                            <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio2" value="4">
                                             <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
+                                        </label>
+                                        <label class="form-check form-check-inline">
+                                            <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio1" value="3">
+                                            <span class="form-check-label">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
                                         </label>
                                     </div>
                                     <div id="collapseSection" class="collapse">
                                         <label class="form-label mb-1">
-                                            <textarea class="form-control" rows="2" placeholder="ความคิดเห็น"></textarea>
+                                            <textarea class="form-control" id="QC5Remark" rows="2" placeholder="ความคิดเห็น"></textarea>
                                         </label>
                                         <div class="form-label mt-4">
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <input class="form-control" type="file" id="imageInput" multiple>
-                                                </div>
-                                                <div class="col-12 mt-3">
-                                                    <div class="image-preview" id="imagePreview"></div>
-                                                </div>
+                                            <div id="drop-zone-save-submit" class="drop-zone form-control">
+                                                <p class="drop-zone-text">
+                                                    <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                                </p>
+                                                <input type="file" id="file-input-save-submit" class="drop-zone-input" multiple>
+                                                <div id="preview-container-save-submit" class="row preview-container"></div>
                                             </div>
                                         </div>
                                     </div>

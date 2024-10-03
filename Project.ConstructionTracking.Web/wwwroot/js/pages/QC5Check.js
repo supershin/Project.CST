@@ -13,24 +13,28 @@
 
         window.addEventListener('resize', adjustTextareaRows);
 
+        let selectedRadioQC5Status = '';
+
         $(() => {
             addCheckedToCheckedRadio();
             toggleCollapseSection();
+
+            // Handle the click event for radio buttons
             $('input[type="radio"].allow-deselect').click(function (event) {
-                if ($(this).hasClass('checked')) {
-                    this.checked = false;
-                }
+                toggleRadio(this);
                 addCheckedToCheckedRadio();
                 toggleCollapseSection();
             });
         });
 
+        // Add or remove the 'checked' class to radio buttons
         function addCheckedToCheckedRadio() {
             $('input[type="radio"].allow-deselect').each(function () {
                 $(this).toggleClass('checked', this.checked);
             });
         }
 
+        // Show or hide the collapse section based on the selected radio button
         function toggleCollapseSection() {
             if ($('input[type="radio"].allow-deselect:checked').length > 0) {
                 $('#collapseSection').collapse('show');
@@ -38,6 +42,25 @@
                 $('#collapseSection').collapse('hide');
             }
         }
+
+        // Manage the toggle behavior and selected value for radio buttons
+        function toggleRadio(radio) {
+            if (radio.checked && radio.dataset.wasChecked) {
+                // Uncheck the radio if it's clicked when already checked
+                radio.checked = false;
+                radio.dataset.wasChecked = "";
+                selectedRadioQC5Status = ''; // Unset the selected value
+            } else {
+                // Uncheck all radios in the same group and set the clicked one as checked
+                var radios = document.getElementsByName(radio.name);
+                for (var i = 0; i < radios.length; i++) {
+                    radios[i].dataset.wasChecked = "";
+                }
+                radio.dataset.wasChecked = "true";
+                selectedRadioQC5Status = radio.value; // Set the selected value (radio's value)
+            }
+        }
+
 
         document.addEventListener('DOMContentLoaded', function () {
             // Initialize the first dropdown
@@ -691,5 +714,139 @@
                 };
             },
         };
+
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var dropZone = document.getElementById("drop-zone-save-submit");
+            var fileInput = document.getElementById("file-input-save-submit");
+            var previewContainer = document.getElementById("preview-container-save-submit");
+            var filesArray = [];
+
+            dropZone.addEventListener("click", function (e) {
+                if (e.target.classList.contains("remove-button")) {
+                    return;
+                }
+                fileInput.click();
+            });
+
+            fileInput.addEventListener("change", function () {
+                if (fileInput.files.length) {
+                    addFilesToPreview(fileInput.files);
+                }
+            });
+
+            dropZone.addEventListener("dragover", function (e) {
+                e.preventDefault();
+                dropZone.classList.add("drop-zone--over");
+            });
+
+            dropZone.addEventListener("dragleave", function () {
+                dropZone.classList.remove("drop-zone--over");
+            });
+
+            dropZone.addEventListener("drop", function (e) {
+                e.preventDefault();
+                addFilesToPreview(e.dataTransfer.files);
+            });
+
+            function addFilesToPreview(files) {
+                Array.from(files).forEach(file => {
+                    if (!filesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
+                        filesArray.push(file);
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = function (event) {
+                            const img = document.createElement("img");
+                            img.src = event.target.result;
+                            const previewImage = document.createElement("div");
+                            previewImage.className = "col-4 preview-image";
+
+                            const removeButton = document.createElement("button");
+                            removeButton.className = "remove-button";
+                            removeButton.innerHTML = "&times;";
+                            removeButton.addEventListener("click", function (e) {
+                                e.stopPropagation();
+                                filesArray = filesArray.filter(f => f !== file);
+                                updateFileInput();
+                                previewImage.remove();
+                            });
+
+                            previewImage.appendChild(img);
+                            previewImage.appendChild(removeButton);
+                            previewContainer.appendChild(previewImage);
+                        };
+                    }
+                });
+                updateFileInput();
+            }
+
+            function updateFileInput() {
+
+                fileInput.value = '';
+
+                const dataTransfer = new DataTransfer();
+                filesArray.forEach(file => dataTransfer.items.add(file));
+                fileInput.files = dataTransfer.files;
+            }
+        });
+
+function saveUnitQC5() {
+    showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
+
+    var QCUnitCheckListID = document.getElementById('hdQC5UnitChecklistID').value;
+    var QCUnitCheckListActionID = document.getElementById('hdQC5UnitChecklistActionID').value;
+    var QCStatusID = selectedRadioQC5Status;  // Ensure this value is set
+    var ActionType = 'save';
+    var QCRemark = document.getElementById('QC5Remark').value;
+    var files = $('#file-input-save-submit')[0].files;
+    var signData = unitEquipment.getSignatureData();  // Accessing it from unitEquipment object
+
+    var formData = new FormData();
+    formData.append('QCUnitCheckListID', QCUnitCheckListID);
+    formData.append('QCUnitCheckListActionID', QCUnitCheckListActionID);
+    formData.append('QCStatusID', QCStatusID);  // Ensure this is the correct value
+    formData.append('ActionType', ActionType);
+    formData.append('QCRemark', QCRemark);
+
+    // Append each file to the FormData
+    for (var i = 0; i < files.length; i++) {
+        formData.append('Images', files[i]);
+    }
+
+    // Append signature data as JSON
+    if (signData) {
+        var signatureData = {
+            MimeType: signData.MimeType,
+            StorageBase64: signData.StorageBase64
+        };
+        formData.append('Sign', JSON.stringify(signatureData));  // Send the signature as a JSON string
+    }
+
+    $.ajax({
+        url: baseUrl + 'QC5Check/SaveSubmitQC5UnitCheckList',
+        type: 'POST',
+        data: formData,
+        contentType: false,  // Set contentType to false for FormData
+        processData: false,  // Set processData to false for FormData
+        success: function (res) {
+            Swal.close();
+            if (res.success) {
+                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                    window.location.reload();
+                });
+            } else {
+                showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+            }
+        },
+        error: function (xhr, status, error) {
+            Swal.close();
+            showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+        }
+    });
+}
+
+
+
 
 

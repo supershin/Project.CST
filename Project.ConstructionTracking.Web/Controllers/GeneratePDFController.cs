@@ -314,7 +314,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                                     {
                                         using var img = new FileStream(imgPath, FileMode.Open);
 
-                                        grid.Item(6).Border(0.5f).Width(250).Image(img);
+                                        grid.Item(6).Border(0.5f).Width(250).Height(250).Image(img);
                                     }
                                 }
 

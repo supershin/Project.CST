@@ -28,7 +28,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                          from t2 in unitGroup.DefaultIfEmpty()
                          join t3 in _context.tm_Ext on t2.UnitStatusID equals t3.ID into extGroup
                          from t3 in extGroup.DefaultIfEmpty()
-                         join t4 in _context.tr_QC_UnitCheckList on new { ProjectID = (Guid?)t1.ProjectID, UnitID = (Guid?)t2.UnitID , filterData.Seq } equals new { t4.ProjectID, t4.UnitID ,t4.Seq } into unitCheckListGroup
+                         join t4 in _context.tr_QC_UnitCheckList on new { ProjectID = (Guid?)t1.ProjectID, UnitID = (Guid?)t2.UnitID, filterData.Seq } equals new { t4.ProjectID, t4.UnitID, t4.Seq } into unitCheckListGroup
                          from t4 in unitCheckListGroup.DefaultIfEmpty()
                          join t5 in _context.tr_QC_UnitCheckList_Action on t4.ID equals t5.QCUnitCheckListID into actionGroup
                          from t5 in actionGroup.DefaultIfEmpty()
@@ -45,12 +45,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                              UnitCode = t2.UnitCode,
                              UnitStatusName = t3.Name,
                              QC5UnitChecklistID = t4.ID,
+                             QC5UnitChecklistActionID = t5.ID,
                              QC5UnitStatusID = t4.QCStatusID,
                              QC5UpdateDate = FormatExtension.FormatDateToDayMonthNameYearTime(t4.UpdateDate),
                              QC5UpdateByName = t6.FirstName + ' ' + t6.LastName,
                              Seq = t4.Seq,
                              ActionType = t5.ActionType
-                         }).FirstOrDefault(); 
+                         }).FirstOrDefault();
 
             return query;
         }
@@ -80,13 +81,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                               Remark = t1.Remark,
                               IsMajorDefect = t1.IsMajorDefect,
                               FlagActive = t1.FlagActive,
-      
+
                               ListRadioChecklist = (from rc in _context.tm_Ext
                                                     where rc.ExtTypeID == SystemConstant.Ext_Type.QC5RadioChecklist
                                                     select new QC5RadioCheckListModel
                                                     {
-                                                        RadioCheckValue = rc.ID, 
-                                                        RadioCheckText = rc.Name  
+                                                        RadioCheckValue = rc.ID,
+                                                        RadioCheckText = rc.Name
                                                     }).ToList()
                           }).ToList();
 
@@ -123,11 +124,11 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                   join resource in _context.tm_Resource on rs.ResourceID equals resource.ID
                                                   where rs.DefectID == filterData.DefectID && rs.FlagActive == true && resource.FlagActive == true
                                                   select new QC5DefactListImageNotPass
-                                                    {
-                                                        ResourceID = rs.ResourceID,
-                                                        FileName = resource.FileName,
-                                                        FilePath = resource.FilePath
-                                                    }).ToList()
+                                                  {
+                                                      ResourceID = rs.ResourceID,
+                                                      FileName = resource.FileName,
+                                                      FilePath = resource.FilePath
+                                                  }).ToList()
                           }).FirstOrDefault();
 
             return result;
@@ -215,9 +216,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                     };
 
                     _context.tr_QC_UnitCheckList_Defect.Add(newDefect);
-                    _context.SaveChanges(); 
+                    _context.SaveChanges();
 
-                    int newDefectID = newDefect.ID; 
+                    int newDefectID = newDefect.ID;
 
                     if (model.Images != null && model.Images.Count > 0)
                     {
@@ -232,7 +233,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         {
                             if (image.Length > 0)
                             {
-                                Guid guidId = Guid.NewGuid(); 
+                                Guid guidId = Guid.NewGuid();
                                 string fileName = guidId + ".jpg";
                                 var filePath = Path.Combine(dirPath, fileName);
 
@@ -254,8 +255,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 {
                                     ID = Guid.NewGuid(),
                                     FileName = fileName,
-                                    FilePath = relativeFilePath, 
-                                    MimeType = "image/jpeg", 
+                                    FilePath = relativeFilePath,
+                                    MimeType = "image/jpeg",
                                     FlagActive = true,
                                     CreateDate = DateTime.Now,
                                     CreateBy = userid,
@@ -478,7 +479,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-        public void RemoveImage(Guid resourceId , Guid UserID)
+        public void RemoveImage(Guid resourceId, Guid UserID)
         {
 
             TransactionOptions options = new TransactionOptions
@@ -507,7 +508,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     {
                         UnitCheckList_Resource.FlagActive = false;
                         UnitCheckList_Resource.UpdateDate = DateTime.Now;
-                        UnitCheckList_Resource.UpdateBy = UserID;                        
+                        UnitCheckList_Resource.UpdateBy = UserID;
                     }
                     _context.SaveChanges();
                     scope.Complete(); // Commit the transaction
@@ -539,7 +540,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         QC_UnitCheckList.QCStatusID = model.QCStatusID;
                         if (model.QCStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect)
                         {
-                            QC_UnitCheckList.IsNotReadyInspect = true;                         
+                            QC_UnitCheckList.IsNotReadyInspect = true;
                         }
                         else if (model.QCStatusID == SystemConstant.UnitQCStatus.IsPassCondition)
                         {
@@ -609,6 +610,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                         QCUnitCheckListID = QC_UnitCheckList.ID,
                                         DefectID = null,
                                         ResourceID = newResource.ID,
+                                        IsSign = false,
                                         FlagActive = true,
                                         CreateDate = DateTime.Now,
                                         CreateBy = model.UserID,
@@ -622,7 +624,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                         if (model.Sign != null)
                         {
-                            SaveSignature(model.Sign , model.ApplicationPath , model.QCUnitCheckListID , model.UserID);
+                            SaveSignature(model.Sign, model.ApplicationPath, model.QCUnitCheckListID, model.UserID);
                         }
 
                         _context.SaveChanges();
@@ -636,7 +638,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 }
             }
         }
-        private void SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID,Guid? userID)
+        private void SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
         {
             var resource = new ResourcesSignatureQC5
             {
@@ -719,6 +721,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             if (QCUnitCheckListResource != null)
             {
                 QCUnitCheckListResource.ResourceID = ResourceID;
+                QCUnitCheckListResource.IsSign = true;
                 QCUnitCheckListResource.FlagActive = true;
                 QCUnitCheckListResource.UpdateDate = DateTime.Now;
                 QCUnitCheckListResource.UpdateBy = userID;
@@ -731,6 +734,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 {
                     QCUnitCheckListID = QCUnitCheckListID,
                     ResourceID = ResourceID,
+                    IsSign = true,
                     FlagActive = true,
                     CreateDate = DateTime.Now,
                     CreateBy = userID,
@@ -742,139 +746,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
 
             _context.SaveChanges();
-
-            return true;
-        }
-
-
-        private void SaveSignature(SignatureQC5 signData, string? appPath, Guid? UnitFormID, string? FormGrade, int? VendorID, Guid? userID, int? RoleID, int? FormID, string? ActionType)
-        {
-            var resource = new ResourcesSignature
-            {
-                MimeType = signData.MimeType,
-                ResourceStorageBase64 = signData.StorageBase64
-            };
-
-            Guid guidId = Guid.NewGuid(); // Generate a new Guid for the file
-            string fileName = guidId + ".jpg"; // Set the file name with .jpg extension
-            var folder = DateTime.Now.ToString("yyyyMM");
-            var dirPath = Path.Combine(appPath, "wwwroot", "Upload", "document", folder, "sign"); // Ensure path is within wwwroot
-            var filePath = Path.Combine(dirPath, fileName); // Determine the full file path
-
-            resource.PhysicalPathServer = dirPath;
-            resource.ResourceStoragePath = Path.Combine("Upload", "document", folder, "sign", fileName).Replace("\\", "/"); // Store as a relative path with forward slashes
-
-            ConvertByteToImage(resource);
-            InsertResource(guidId, fileName, resource.ResourceStoragePath, "image/jpeg", userID);
-            InsertOrUpdateUnitFormResource(guidId, UnitFormID, userID, RoleID, FormID);
-            SubmitUpdateVendorUnitForm(guidId, UnitFormID, FormGrade, VendorID, userID, RoleID, ActionType);
-
-        }
-        private void ConvertByteToImage(ResourcesSignature item)
-        {
-            // Convert the Base64 UUEncoded input into binary output. 
-            byte[] binaryData;
-            try
-            {
-                binaryData = Convert.FromBase64String(item.ResourceStorageBase64);
-            }
-            catch (ArgumentNullException)
-            {
-                Console.WriteLine("Base64 string is null.");
-                return;
-            }
-            catch (FormatException ex)
-            {
-                throw ex;
-            }
-
-            // Write out the decoded data.
-            try
-            {
-                if (!Directory.Exists(item.PhysicalPathServer))
-                {
-                    Directory.CreateDirectory(item.PhysicalPathServer);
-                }
-                var fullPath = Path.Combine(item.PhysicalPathServer, Path.GetFileName(item.ResourceStoragePath));
-                using (var outFile = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
-                {
-                    outFile.Write(binaryData, 0, binaryData.Length);
-                }
-            }
-            catch (Exception exp)
-            {
-                throw exp;
-            }
-        }
-        public void InsertResource(Guid guidId, string fileName, string filePath, string mimeType, Guid? userID)
-        {
-            var newResource = new tm_Resource
-            {
-                ID = guidId,
-                FileName = fileName,
-                FilePath = filePath,
-                MimeType = mimeType,
-                FlagActive = true,
-                CreateDate = DateTime.Now,
-                CreateBy = userID,
-                UpdateDate = DateTime.Now,
-                UpdateBy = userID,
-            };
-
-            _context.tm_Resource.Add(newResource);
-            _context.SaveChanges();
-        }
-        public bool InsertOrUpdateUnitFormResource(Guid ResourceID, Guid? UnitFormID, Guid? userID, int? RoleID, int? FormID)
-        {
-
-            var existingResource = _context.tr_UnitFormResource.FirstOrDefault(r => r.UnitFormID == UnitFormID && r.FormID == FormID && r.RoleID == RoleID);
-
-            if (existingResource != null)
-            {
-                existingResource.ResourceID = ResourceID;
-                existingResource.FlagActive = true;
-                existingResource.UpdateDate = DateTime.Now;
-                existingResource.UpdateBy = userID; // Update the user ID if applicable
-
-                _context.tr_UnitFormResource.Update(existingResource);
-            }
-            else
-            {
-                // If not found, insert a new row
-                var newResource = new tr_UnitFormResource
-                {
-                    UnitFormID = UnitFormID,
-                    FormID = FormID,
-                    RoleID = RoleID,
-                    ResourceID = ResourceID,
-                    FlagActive = true,
-                    CreateDate = DateTime.Now,
-                    CreateBy = userID,
-                    UpdateDate = DateTime.Now,
-                    UpdateBy = userID
-                };
-
-                _context.tr_UnitFormResource.Add(newResource);
-            }
-
-            _context.SaveChanges();
-
-            return true;
-        }
-        public bool SubmitUpdateVendorUnitForm(Guid ResourceID, Guid? UnitFormID, string? FormGrade, int? VendorID, Guid? userID, int? RoleID, string? ActionType)
-        {
-            var CompanyvenderID = _context.tr_CompanyVendor.Where(uf => uf.VendorID == VendorID).FirstOrDefault();
-
-            var unitForm = _context.tr_UnitForm.Where(uf => uf.ID == UnitFormID).FirstOrDefault();
-
-            if (unitForm != null)
-            {
-                unitForm.VendorID = VendorID ?? unitForm.VendorID;
-                unitForm.CompanyVendorID = CompanyvenderID.CompanyVendorID != null ? CompanyvenderID.CompanyVendorID : 0;
-                unitForm.VendorResourceID = ResourceID;
-                unitForm.UpdateBy = userID;
-                unitForm.UpdateDate = DateTime.Now;
-            }
 
             return true;
         }
