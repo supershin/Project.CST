@@ -308,6 +308,7 @@ public class FormChecklistRepo : IFormChecklistRepo
         var form = _context.tm_Form.Find(package.FormID);
         if (form != null)
         {
+            var unit = _context.tm_Unit.Where(uf => uf.UnitID == package.UnitId).FirstOrDefault();
             var unitForm = _context.tr_UnitForm.Where(uf => uf.FormID == package.FormID && uf.UnitID == package.UnitId).FirstOrDefault();
 
             if (unitForm == null)
@@ -320,6 +321,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                     FormID = form.ID,
                     Progress = form.Progress,
                     Duration = form.DurationDay,
+                    PONo = unit?.PONo,
                     StatusID = 1,
                     FlagActive = true,
                     CreateDate = DateTime.Now,

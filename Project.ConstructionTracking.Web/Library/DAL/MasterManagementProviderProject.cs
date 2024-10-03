@@ -42,7 +42,11 @@ namespace Project.ConstructionTracking.Web.Library.DAL
         public abstract List<UnitListModel> sp_get_UnitList(UnitListModel EN);
 
         public abstract List<SummeryUnitFormModel> sp_get_summaryunitform(SummeryUnitFormModel EN);
+
         public abstract List<UnitFormStatusModel> sp_get_UnitFormStatusByUnit(UnitFormStatusModel EN);
+
+        public abstract List<WorkPeriodModel> sp_get_workperiod(WorkPeriodModel EN);
+
 
 
         #region __ Reader __
@@ -335,6 +339,40 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.PCUnlock = Commons.FormatExtension.NullToString(reader["PCUnlock"]);
             Entity.UnitFormPDF = Commons.FormatExtension.NullToString(reader["UnitFormPDF"]);
             Entity.QCPDF = Commons.FormatExtension.NullToString(reader["QCPDF"]);
+            return Entity;
+        }
+
+
+        public static List<WorkPeriodModel> sp_get_workperiod_ListReader(IDataReader reader)
+        {
+            List<WorkPeriodModel> list = new List<WorkPeriodModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_workperiod_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static WorkPeriodModel sp_get_workperiod_Reader(IDataReader reader, int index)
+        {
+            WorkPeriodModel Entity = new WorkPeriodModel();
+
+            Entity.index = index;
+            Entity.ProjectName = Commons.FormatExtension.NullToString(reader["ProjectName"]);
+            Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.FormName = Commons.FormatExtension.NullToString(reader["FormName"]);
+            Entity.CompanyVendorName = Commons.FormatExtension.NullToString(reader["CompanyVendorName"]);
+            Entity.PONo = Commons.FormatExtension.NullToString(reader["PONo"]);
+            Entity.ApproveDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["ApproveDate"]);
+            Entity.UnitFormPDF = Commons.FormatExtension.NullToString(reader["UnitFormPDF"]);
+            Entity.QCPDF = Commons.FormatExtension.NullToString(reader["QCPDF"]);
+            Entity.GRNo = Commons.FormatExtension.NullToString(reader["GRNo"]);
+            Entity.GRDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["GRDate"]);
+            Entity.UnitFormID = Commons.FormatExtension.ConvertStringToGuid(reader["UnitFormID"]);
+            Entity.Statusworkperiod = Commons.FormatExtension.NullToString(reader["Statusworkperiod"]);
             return Entity;
         }
 

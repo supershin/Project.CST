@@ -8,6 +8,7 @@ using System.Transactions;
 using System.Drawing;
 using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Project.ConstructionTracking.Web.Models.FormGroupModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -628,6 +629,139 @@ namespace Project.ConstructionTracking.Web.Repositories
                     throw new Exception("แก้ไขข้อมูลลง tr_QC_UnitCheckList_Defect ไม่สำเร็จ", ex);
                 }
             }
+        }
+
+
+        private void SaveSignature(SignatureQC5 signData, string? appPath, Guid? UnitFormID, string? FormGrade, int? VendorID, Guid? userID, int? RoleID, int? FormID, string? ActionType)
+        {
+            var resource = new ResourcesSignature
+            {
+                MimeType = signData.MimeType,
+                ResourceStorageBase64 = signData.StorageBase64
+            };
+
+            Guid guidId = Guid.NewGuid(); // Generate a new Guid for the file
+            string fileName = guidId + ".jpg"; // Set the file name with .jpg extension
+            var folder = DateTime.Now.ToString("yyyyMM");
+            var dirPath = Path.Combine(appPath, "wwwroot", "Upload", "document", folder, "sign"); // Ensure path is within wwwroot
+            var filePath = Path.Combine(dirPath, fileName); // Determine the full file path
+
+            resource.PhysicalPathServer = dirPath;
+            resource.ResourceStoragePath = Path.Combine("Upload", "document", folder, "sign", fileName).Replace("\\", "/"); // Store as a relative path with forward slashes
+
+            ConvertByteToImage(resource);
+            InsertResource(guidId, fileName, resource.ResourceStoragePath, "image/jpeg", userID);
+            InsertOrUpdateUnitFormResource(guidId, UnitFormID, userID, RoleID, FormID);
+            SubmitUpdateVendorUnitForm(guidId, UnitFormID, FormGrade, VendorID, userID, RoleID, ActionType);
+
+        }
+        private void ConvertByteToImage(ResourcesSignature item)
+        {
+            // Convert the Base64 UUEncoded input into binary output. 
+            byte[] binaryData;
+            try
+            {
+                binaryData = Convert.FromBase64String(item.ResourceStorageBase64);
+            }
+            catch (ArgumentNullException)
+            {
+                Console.WriteLine("Base64 string is null.");
+                return;
+            }
+            catch (FormatException ex)
+            {
+                throw ex;
+            }
+
+            // Write out the decoded data.
+            try
+            {
+                if (!Directory.Exists(item.PhysicalPathServer))
+                {
+                    Directory.CreateDirectory(item.PhysicalPathServer);
+                }
+                var fullPath = Path.Combine(item.PhysicalPathServer, Path.GetFileName(item.ResourceStoragePath));
+                using (var outFile = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+                {
+                    outFile.Write(binaryData, 0, binaryData.Length);
+                }
+            }
+            catch (Exception exp)
+            {
+                throw exp;
+            }
+        }
+        public void InsertResource(Guid guidId, string fileName, string filePath, string mimeType, Guid? userID)
+        {
+            var newResource = new tm_Resource
+            {
+                ID = guidId,
+                FileName = fileName,
+                FilePath = filePath,
+                MimeType = mimeType,
+                FlagActive = true,
+                CreateDate = DateTime.Now,
+                CreateBy = userID,
+                UpdateDate = DateTime.Now,
+                UpdateBy = userID,
+            };
+
+            _context.tm_Resource.Add(newResource);
+            _context.SaveChanges();
+        }
+        public bool InsertOrUpdateUnitFormResource(Guid ResourceID, Guid? UnitFormID, Guid? userID, int? RoleID, int? FormID)
+        {
+
+            var existingResource = _context.tr_UnitFormResource.FirstOrDefault(r => r.UnitFormID == UnitFormID && r.FormID == FormID && r.RoleID == RoleID);
+
+            if (existingResource != null)
+            {
+                existingResource.ResourceID = ResourceID;
+                existingResource.FlagActive = true;
+                existingResource.UpdateDate = DateTime.Now;
+                existingResource.UpdateBy = userID; // Update the user ID if applicable
+
+                _context.tr_UnitFormResource.Update(existingResource);
+            }
+            else
+            {
+                // If not found, insert a new row
+                var newResource = new tr_UnitFormResource
+                {
+                    UnitFormID = UnitFormID,
+                    FormID = FormID,
+                    RoleID = RoleID,
+                    ResourceID = ResourceID,
+                    FlagActive = true,
+                    CreateDate = DateTime.Now,
+                    CreateBy = userID,
+                    UpdateDate = DateTime.Now,
+                    UpdateBy = userID
+                };
+
+                _context.tr_UnitFormResource.Add(newResource);
+            }
+
+            _context.SaveChanges();
+
+            return true;
+        }
+        public bool SubmitUpdateVendorUnitForm(Guid ResourceID, Guid? UnitFormID, string? FormGrade, int? VendorID, Guid? userID, int? RoleID, string? ActionType)
+        {
+            var CompanyvenderID = _context.tr_CompanyVendor.Where(uf => uf.VendorID == VendorID).FirstOrDefault();
+
+            var unitForm = _context.tr_UnitForm.Where(uf => uf.ID == UnitFormID).FirstOrDefault();
+
+            if (unitForm != null)
+            {
+                unitForm.VendorID = VendorID ?? unitForm.VendorID;
+                unitForm.CompanyVendorID = CompanyvenderID.CompanyVendorID != null ? CompanyvenderID.CompanyVendorID : 0;
+                unitForm.VendorResourceID = ResourceID;
+                unitForm.UpdateBy = userID;
+                unitForm.UpdateDate = DateTime.Now;
+            }
+
+            return true;
         }
 
     }
