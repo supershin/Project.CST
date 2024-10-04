@@ -34,6 +34,11 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.QC5UnitChecklistID = QC5CheckDetail?.QC5UnitChecklistID;
             ViewBag.QC5UnitChecklistActionID = QC5CheckDetail?.QC5UnitChecklistActionID;
             ViewBag.UnitStatusName = QC5CheckDetail?.UnitStatusName;
+            ViewBag.QC5UnitChecklistRemark = QC5CheckDetail?.QC5UnitChecklistRemark;
+            ViewBag.PathQC5SignatureImage = QC5CheckDetail?.PathQC5SignatureImage;
+            ViewBag.QC5SignatureDate = QC5CheckDetail?.QC5SignatureDate;
+            ViewBag.QC5UnitStatusID = QC5CheckDetail?.QC5UnitStatusID;
+            ViewBag.QC5UnitChecklistRemark = QC5CheckDetail?.QC5UnitChecklistRemark;
             ViewBag.Seq = Seq;
             ViewBag.QC5UpdateByName = QC5CheckDetail?.QC5UpdateByName;
 

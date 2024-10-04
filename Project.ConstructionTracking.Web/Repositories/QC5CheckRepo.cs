@@ -9,6 +9,7 @@ using System.Drawing;
 using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Project.ConstructionTracking.Web.Models.FormGroupModel;
+using System.Reflection;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -34,6 +35,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                          from t5 in actionGroup.DefaultIfEmpty()
                          join t6 in _context.tm_User on t5.UpdateBy equals t6.ID into Users
                          from t6 in Users.DefaultIfEmpty()
+                         join t7 in _context.tr_QC_UnitCheckList_Resource on new { QCUnitCheckListID = (Guid?)t4.ID, FlagActive = (bool?)true, IsSign = (bool?)true } equals new { t7.QCUnitCheckListID, t7.FlagActive, t7.IsSign } into QC5UnitResourceGroup
+                         from t7 in QC5UnitResourceGroup.DefaultIfEmpty()
+                         join t8 in _context.tm_Resource on t7.ResourceID equals t8.ID into ResourceGroups
+                         from t8 in ResourceGroups.DefaultIfEmpty()
                          where t1.ProjectID == filterData.ProjectID
                                && t2.UnitID == filterData.UnitID
                          select new QC5DetailModel
@@ -47,6 +52,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                              QC5UnitChecklistID = t4.ID,
                              QC5UnitChecklistActionID = t5.ID,
                              QC5UnitStatusID = t4.QCStatusID,
+                             QC5UnitChecklistRemark = t5.Remark,
+                             PathQC5SignatureImage = t8.FilePath,
+                             QC5SignatureDate = FormatExtension.FormatDateToDayMonthNameYearTime(t8.UpdateDate),
                              QC5UpdateDate = FormatExtension.FormatDateToDayMonthNameYearTime(t4.UpdateDate),
                              QC5UpdateByName = t6.FirstName + ' ' + t6.LastName,
                              Seq = t4.Seq,
@@ -122,7 +130,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                               listImageNotpass = (from rs in _context.tr_QC_UnitCheckList_Resource
                                                   join resource in _context.tm_Resource on rs.ResourceID equals resource.ID
-                                                  where rs.DefectID == filterData.DefectID && rs.FlagActive == true && resource.FlagActive == true
+                                                  where rs.DefectID == filterData.DefectID && rs.FlagActive == true && resource.FlagActive == true && rs.IsSign != true
                                                   select new QC5DefactListImageNotPass
                                                   {
                                                       ResourceID = rs.ResourceID,

@@ -846,6 +846,12 @@ function saveUnitQC5() {
     });
 }
 
+function openSignatureModal() {
+    var myModal = new bootstrap.Modal(document.getElementById('signatureModal'), {
+        keyboard: false
+    });
+    myModal.show();
+}
 
 
 

@@ -1,31 +1,43 @@
-﻿<div class="card">
+﻿
+<div class="card">
     <div class="card-header">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item" aria-current="page">
-                สรุปจำนวน
-            </li>
-        </ol>
+        <div class="col-12">
+            <input type="text" id="PEUnit" class="form-control" value="ตรวจโดย : @ViewBag.QC5UpdateByName" readonly>
+        </div>
     </div>
     <div class="card-body">
         <div class="col-12">
-            <ul>
-                <li>จำนวนรายการจากครั้งที่ 1 : 2 รายการ</li>
-                <li>จำนวนรายการจากครั้งที่ 2 : 1 รายการ</li>
-                <li>จำนวนรายการจากครั้งที่ 3 : 0 รายการ</li>
-            </ul>
-        </div>
-        <div class="col-12">
-            <div class="row">
-                <div class="col-12">
-                    <div class="row">
-                        <div class="col-12 text-yellow">รายการทั้งหมด  : 3 รายการ</div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="row">
-                        <div class="text-green">ผ่าน : 0 รายการ</div>
-                        <div class="text-red">ไม่ผ่าน : 2 รายการ</div>
-                    </div>
+
+            <div class="form-group">
+                <label class="form-check form-check-inline">
+                    <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio3" value="1" 
+                    @(ViewBag.QC5UnitStatusID == 1 ? "checked" : "") 
+                    >
+                    <span class="form-check-label">ผ่าน</span>
+                </label>
+                <label class="form-check form-check-inline">
+                    <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio2" value="4" 
+                    @(ViewBag.QC5UnitStatusID == 4 ? "checked" : "")
+                    >
+                    <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
+                </label>
+                <label class="form-check form-check-inline">
+                    <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio1" value="3" 
+                     @(ViewBag.QC5UnitStatusID == 3 ? "checked" : "")
+                    >
+                    <span class="form-check-label">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
+                </label>
+            </div>
+            <label class="form-label mb-1">
+                <textarea class="form-control" id="QC5Remark" rows="2" placeholder="ความคิดเห็น">@ViewBag.QC5UnitChecklistRemark</textarea>
+            </label>
+            <div class="form-label mt-4">
+                <div id="drop-zone-save-submit" class="drop-zone form-control">
+                    <p class="drop-zone-text">
+                        <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                    </p>
+                    <input type="file" id="file-input-save-submit" class="drop-zone-input" multiple>
+                    <div id="preview-container-save-submit" class="row preview-container"></div>
                 </div>
             </div>
         </div>
@@ -35,6 +47,21 @@
                     data-bs-target="#SignalModal"
             >วิศวกรควบคุมงานลงนาม</button>
         </div>
+        @if (ViewBag.PathQC5SignatureImage != null)
+        {
+            <div id="cardsignature" class="col-sm-12 mt-1 mb-2">
+                <div class="col-12">
+                    <input type="text" id="PEUnit" class="form-control" value="PE/SE : @ViewBag.PEName" readonly>
+                </div>
+                <div style="position: relative; display: inline-block;">
+                    <!-- HTML to open the modal -->
+                    <a href="javascript:void(0);" onclick="openSignatureModal();">
+                        <img src="~/@ViewBag.PathQC5SignatureImage" alt="Gallery Image 1" class="rounded" style="width:340px;height:260px;">
+                        <span class="image-text">ลงลายเซ็นวันที่ : @ViewBag.QC5SignatureDate</span>
+                    </a>
+                </div>
+            </div>
+        }
         @if (ViewBag.QC5UnitChecklistID != null)
         {
             <div class="col-12 mt-3">
@@ -53,3 +80,5 @@
         }       
     </div>
 </div>
+
+
