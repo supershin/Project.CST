@@ -15,6 +15,9 @@
     var PathQC5SignatureImage = ViewBag.PathQC5SignatureImage;
     var QC5SignatureDate = ViewBag.QC5SignatureDate;
 
+    var ImageQC5UnitList = ViewBag.ImageQC5UnitList;
+    var ActionType = ViewBag.ActionType;
+
     var PEID = ViewBag.PEID;
     var PEName = ViewBag.PEName;
 }
@@ -232,6 +235,56 @@
     <div class="page-body">
         <div class="container mt-1 mb-3">
             <div class="row">
+                <div class="col-12 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">QC 5</a></li>
+                                <li class="breadcrumb-item" aria-current="page">ตรวจครั้งที่ @Seq</li>
+                                <li class="breadcrumb-item" aria-current="page">สถานะ : @ActionType </li>
+                            </ol>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-sm-6 mb-3">
+                                    <div class="col-12">
+                                        <ul>
+                                            <li>จำนวนรายการจากครั้งที่ 1 : 2 รายการ</li>
+                                            <li>จำนวนรายการจากครั้งที่ 2 : 1 รายการ</li>
+                                            <li>จำนวนรายการจากครั้งที่ 3 : 0 รายการ</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-12 text-yellow">รายการทั้งหมด  : 3 รายการ</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="text-green">ผ่าน : 0 รายการ</div>
+                                                    <div class="text-red">ไม่ผ่าน : 2 รายการ</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    @foreach (var image in ImageQC5UnitList)
+                                    {
+                                        <div class="position-relative d-inline-block mb-3">
+                                            <a data-fslightbox="gallery" href="~/@image.Text">
+                                                <img src="~/@image.Text" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                            </a>
+                                            <button type="button" class="remove-button" onclick="RemoveImage('@image.ValueGuid')">✖</button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-12">
                     <div class="row">
                         <div class="col-12 col-sm-7 mb-3">
@@ -320,6 +373,7 @@
             </div>
         </div>
     </div>
+
     <!-- Modal -->
 
     <div class="modal fade" id="insert-new-qc5" tabindex="-1" aria-labelledby="insert-new-qc5-Label" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">

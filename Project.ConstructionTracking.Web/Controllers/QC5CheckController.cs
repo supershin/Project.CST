@@ -4,7 +4,9 @@ using Newtonsoft.Json;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Services;
+using System;
 using System.Text.RegularExpressions;
+using static Project.ConstructionTracking.Web.Commons.SystemConstant;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
@@ -41,7 +43,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.QC5UnitChecklistRemark = QC5CheckDetail?.QC5UnitChecklistRemark;
             ViewBag.Seq = Seq;
             ViewBag.QC5UpdateByName = QC5CheckDetail?.QC5UpdateByName;
-
+            ViewBag.ActionType = QC5CheckDetail?.ActionType == "save" ? "บันทึกร่าง" : "ยืนยันแล้ว";
             // Autocomplete 1
             var filterModel = new GetDDL { Act = "DefectArea", ID = QC5CheckDetail?.ProjectTypeID, searchTerm = "" };
             List<GetDDL> ListDefectArea = _getDDLService.GetDDLList(filterModel);
@@ -52,6 +54,10 @@ namespace Project.ConstructionTracking.Web.Controllers
             List<GetDDL> PEUnitID = _getDDLService.GetDDLList(PEUnit);
             ViewBag.PEID = (PEUnitID != null && PEUnitID.Count > 0) ? PEUnitID[0].ValueGuid : Guid.Empty;
             ViewBag.PEName = (PEUnitID != null && PEUnitID.Count > 0) ? PEUnitID[0].Text : "ยังไม่ได้ระบุ PE/SE ผู้ดูแล Unit แปลงนี้";
+
+            var ddlModel = new GetDDL { Act = "ImageQC5Unit", GuID = QC5CheckDetail?.QC5UnitChecklistID };
+            List<GetDDL> ImageQC5UnitList = _getDDLService.GetDDLList(ddlModel);
+            ViewBag.ImageQC5UnitList = ImageQC5UnitList;
 
 
 
