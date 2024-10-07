@@ -7,23 +7,40 @@
     </div>
     <div class="card-body">
         <div class="col-12">
-
             <div class="form-group">
                 <label class="form-check form-check-inline">
-                    <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio3" value="1" 
-                    @(ViewBag.QC5UnitStatusID == 1 ? "checked" : "") 
+                    <input class="form-check-input allow-deselect" 
+                           type="radio" 
+                           name="radios-QC5-status" 
+                           id="radio3" 
+                           value="1" 
+                           onclick="toggleRadio(this)"
+                    @(ViewBag.QC5UnitStatusID == 1 ? "checked" : "")
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
                     >
                     <span class="form-check-label">ผ่าน</span>
                 </label>
                 <label class="form-check form-check-inline">
-                    <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio2" value="4" 
+                    <input class="form-check-input allow-deselect" 
+                           type="radio" 
+                           name="radios-QC5-status" 
+                           id="radio2" 
+                           value="4" 
+                           onclick="toggleRadio(this)"
                     @(ViewBag.QC5UnitStatusID == 4 ? "checked" : "")
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
                     >
                     <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
                 </label>
                 <label class="form-check form-check-inline">
-                    <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio1" value="3" 
+                    <input class="form-check-input allow-deselect" 
+                           type="radio" 
+                           name="radios-QC5-status" 
+                           id="radio1" 
+                           value="3" 
+                           onclick="toggleRadio(this)"
                      @(ViewBag.QC5UnitStatusID == 3 ? "checked" : "")
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
                     >
                     <span class="form-check-label">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
                 </label>
@@ -31,15 +48,18 @@
             <label class="form-label mb-1">
                 <textarea class="form-control" id="QC5Remark" rows="2" placeholder="ความคิดเห็น">@ViewBag.QC5UnitChecklistRemark</textarea>
             </label>
-            <div class="form-label mt-4">
-                <div id="drop-zone-save-submit" class="drop-zone form-control">
-                    <p class="drop-zone-text">
-                        <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
-                    </p>
-                    <input type="file" id="file-input-save-submit" class="drop-zone-input" multiple>
-                    <div id="preview-container-save-submit" class="row preview-container"></div>
-                </div>
-            </div>
+                @if (ViewBag.ActionTypeEn != "submit")
+                {
+                    <div class="form-label mt-4">
+                        <div id="drop-zone-save-submit" class="drop-zone form-control">
+                            <p class="drop-zone-text">
+                                <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                            </p>
+                            <input type="file" id="file-input-save-submit" class="drop-zone-input" multiple>
+                            <div id="preview-container-save-submit" class="row preview-container"></div>
+                        </div>
+                    </div>
+                }
         </div>
         <div class="col-12 mt-3">
             <button class="btn btn-warning w-100" 
@@ -66,17 +86,21 @@
         {
             <div class="col-12 mt-3">
                 <div class="row">
-                    <div class="col-4">
-                        <button type="button" class="btn btn-success w-100" id="btn-save-QC5" onclick="saveUnitQC5()">บันทึกร่าง</button>
-                    </div>
-                    <div class="col-4">
-                        <button class="btn btn-primary w-100">ยืนยัน</button>
-                    </div>
+                    @if (ViewBag.ActionTypeEn != "submit")
+                    {
+                        <div class="col-4">
+                            <button type="button" class="btn btn-success w-100" id="btn-save-QC5" onclick="saveUnitQC5()">บันทึกร่าง</button>
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-primary w-100" id="btn-submit-QC5" onclick="SubmitUnitQC5()">ยืนยัน</button>
+                        </div>
+                    }
                     <div class="col-4">
                         <button class="btn btn-secondary w-100">ดูเอกสารตรวจ</button>
                     </div>
                 </div>
             </div>
+            
         }       
     </div>
 </div>

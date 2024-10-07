@@ -528,7 +528,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-
         public void SaveSubmitQC5UnitCheckList(QC5SaveSubmitModel model)
         {
             var transactionOptions = new TransactionOptions
@@ -545,7 +544,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     if (QC_UnitCheckList != null)
                     {
-                        QC_UnitCheckList.QCStatusID = model.QCStatusID;
+                        QC_UnitCheckList.QCStatusID = model.QCStatusID ?? 2;
                         if (model.QCStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect)
                         {
                             QC_UnitCheckList.IsNotReadyInspect = true;
@@ -630,10 +629,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                             }
                         }
 
-                        if (model.Sign != null)
-                        {
-                            SaveSignature(model.Sign, model.ApplicationPath, model.QCUnitCheckListID, model.UserID);
-                        }
+                        //if (model.Sign != null)
+                        //{
+                        //    SaveSignature(model.Sign, model.ApplicationPath, model.QCUnitCheckListID, model.UserID);
+                        //}
 
                         _context.SaveChanges();
                     }
@@ -646,7 +645,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                 }
             }
         }
-        private void SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
+
+
+
+        public void SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
         {
             var resource = new ResourcesSignatureQC5
             {
@@ -757,6 +759,5 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return true;
         }
-
     }
 }

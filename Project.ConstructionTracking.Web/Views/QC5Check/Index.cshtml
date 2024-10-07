@@ -10,6 +10,7 @@
     var QC5UpdateByName = ViewBag.QC5UpdateByName;
     var QC5UnitChecklistID = ViewBag.QC5UnitChecklistID;
     var QC5UnitChecklistActionID = ViewBag.QC5UnitChecklistActionID;
+    var QC5UnitStatusID = ViewBag.QC5UnitStatusID;
 
     var QC5UnitChecklistRemark = ViewBag.QC5UnitChecklistRemark;
     var PathQC5SignatureImage = ViewBag.PathQC5SignatureImage;
@@ -180,7 +181,14 @@
         border-radius: 3px; /* Rounded corners for the background */
     }
 
-
+    .custom-label {
+        background-color: red; /* Red background */
+        color: white; /* White text color */
+        font-size: 20px; /* Keep the font size */
+        padding: 5px; /* Add some padding around the text */
+        border-radius: 3px; /* Optional: add rounded corners */
+        text-align: center; /* Center the text within the label */
+    }
 
 </style>
 
@@ -189,9 +197,13 @@
 <input type="hidden" id="hdQC5UnitChecklistID" value="@ViewBag.QC5UnitChecklistID"/>
 <input type="hidden" id="hdQC5UnitChecklistActionID" value="@ViewBag.QC5UnitChecklistActionID" />
 <input type="hidden" id="hdSeq" value="@ViewBag.Seq"/>
-<button class="fixedButton" onclick="openModalDataQC('add')">
-    <i class="fa-solid fa-plus fa-xl"></i>
-</button>
+
+@if (ViewBag.ActionTypeEn != "submit")
+{
+    <button class="fixedButton" onclick="openModalDataQC('add')">
+        <i class="fa-solid fa-plus fa-xl"></i>
+    </button>
+}
 
 <div class="page-wrapper">
     <!-- Page header -->
@@ -233,6 +245,7 @@
     </div>
     <!-- Page body -->
     <div class="page-body">
+        <label id="statusLabel" class="form-label custom-label">@ActionType</label>
         <div class="container mt-1 mb-3">
             <div class="row">
                 <div class="col-12 mb-3">
@@ -241,7 +254,30 @@
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="#">QC 5</a></li>
                                 <li class="breadcrumb-item" aria-current="page">ตรวจครั้งที่ @Seq</li>
-                                <li class="breadcrumb-item" aria-current="page">สถานะ : @ActionType </li>
+                                @if (@QC5UnitStatusID == SystemConstant.UnitQCStatus.Pass)
+                                {
+                                    <li class="breadcrumb-item" aria-current="page">
+                                        สถานะ : <span class="badge bg-success rounded-pill text-white">ผ่าน</span>
+                                    </li>
+                                }
+                                else if (@QC5UnitStatusID == SystemConstant.UnitQCStatus.NotPass)
+                                {
+                                    <li class="breadcrumb-item" aria-current="page">
+                                        สถานะ : <span class="badge bg-danger rounded-pill text-white">ไม่ผ่าน</span>
+                                    </li>
+                                }
+                                else if (@QC5UnitStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect)
+                                {
+                                    <li class="breadcrumb-item" aria-current="page">
+                                        สถานะ : <span class="badge bg-danger rounded-pill text-white">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
+                                    </li>
+                                }
+                                else if (@QC5UnitStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect)
+                                {
+                                    <li class="breadcrumb-item" aria-current="page">
+                                        สถานะ : <span class="badge bg-primary rounded-pill text-white">ผ่านแบบมีเงื่อนไข</span>
+                                    </li>
+                                }
                             </ol>
                         </div>
                         <div class="card-body">
@@ -277,7 +313,10 @@
                                             <a data-fslightbox="gallery" href="~/@image.Text">
                                                 <img src="~/@image.Text" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                             </a>
-                                            <button type="button" class="remove-button" onclick="RemoveImage('@image.ValueGuid')">✖</button>
+                                            @if (ViewBag.ActionTypeEn != "submit")
+                                            {
+                                                <button type="button" class="remove-button" onclick="RemoveImage('@image.ValueGuid')">✖</button>
+                                            }
                                         </div>
                                     }
                                 </div>
@@ -470,7 +509,7 @@
                         <button type="button" class="clear btn btn-default"><i class="fas fa-reply"></i> เคลียร์</button>
         
                         <!-- Right-aligned button -->
-                        <button type="button" class="btn btn-primary">บันทึก</button>
+                        <button type="button" class="btn btn-primary" onclick="saveSignature()">บันทึก</button>
                     </div>
                 </div>
             </div>
@@ -495,18 +534,21 @@
                         </div>
 
                         <!-- Dropzone for uploading images -->
-                        <div class="col-12">
-                            <div class="form-label text-danger">
-                                ถ่ายได้ไม่เกิน 5 รูปต่อรายการ
+                        @if (ViewBag.ActionTypeEn != "submit")
+                        {
+                            <div class="col-12">
+                                <div class="form-label text-danger">
+                                    ถ่ายได้ไม่เกิน 5 รูปต่อรายการ
+                                </div>
+                                <div id="drop-zone-edit" class="drop-zone form-control">
+                                    <p class="drop-zone-text">
+                                        <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                    </p>
+                                    <input type="file" id="file-input-edit" class="drop-zone-input" multiple>
+                                    <div id="preview-container-edit" class="row preview-container"></div>
+                                </div>
                             </div>
-                            <div id="drop-zone-edit" class="drop-zone form-control">
-                                <p class="drop-zone-text">
-                                    <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
-                                </p>
-                                <input type="file" id="file-input-edit" class="drop-zone-input" multiple>
-                                <div id="preview-container-edit" class="row preview-container"></div>
-                            </div>
-                        </div>
+                        }
 
                         <!-- Form Fields -->
                         <div class="col-12 col-sm-6">
@@ -551,8 +593,11 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn me-auto btn-danger" id="RemoveQC5Button" data-bs-dismiss="modal">ลบรายการนี้</button>
-                    <button type="button" class="btn btn-primary" id="EditButton" data-bs-dismiss="modal">บันทึก</button>
+                    @if (ViewBag.ActionTypeEn != "submit")
+                    {
+                        <button type="button" class="btn me-auto btn-danger" id="RemoveQC5Button" data-bs-dismiss="modal">ลบรายการนี้</button>
+                        <button type="button" class="btn btn-primary" id="EditButton" data-bs-dismiss="modal">บันทึก</button>
+                    }
                 </div>
             </div>
         </div>
@@ -587,4 +632,9 @@
     });
 
 </script>
+
+    <script type="text/javascript">
+        var actionTypeEn = '@ViewBag.ActionTypeEn';  // Pass ViewBag.ActionTypeEn to JavaScript
+    </script>
+
 }

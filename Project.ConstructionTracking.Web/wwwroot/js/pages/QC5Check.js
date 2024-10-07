@@ -11,39 +11,21 @@
 
         document.addEventListener('DOMContentLoaded', adjustTextareaRows);
 
-        window.addEventListener('resize', adjustTextareaRows);
+    window.addEventListener('resize', adjustTextareaRows);
 
-        let selectedRadioQC5Status = '';
+    let selectedRadioQC5Status = '';
 
-        $(() => {
-            addCheckedToCheckedRadio();
-            toggleCollapseSection();
-
-            // Handle the click event for radio buttons
-            $('input[type="radio"].allow-deselect').click(function (event) {
-                toggleRadio(this);
-                addCheckedToCheckedRadio();
-                toggleCollapseSection();
-            });
-        });
-
-        // Add or remove the 'checked' class to radio buttons
-        function addCheckedToCheckedRadio() {
-            $('input[type="radio"].allow-deselect').each(function () {
-                $(this).toggleClass('checked', this.checked);
-            });
-        }
-
-        // Show or hide the collapse section based on the selected radio button
-        function toggleCollapseSection() {
-            if ($('input[type="radio"].allow-deselect:checked').length > 0) {
-                $('#collapseSection').collapse('show');
-            } else {
-                $('#collapseSection').collapse('hide');
+    window.onload = function () {
+        var radios = document.getElementsByName('radios-QC5-status');
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                selectedRadioQC5Status = radios[i].value; // Set the selected value based on the pre-checked radio
+                radios[i].dataset.wasChecked = "true"; // Mark it as checked
+                break;
             }
         }
+    };
 
-        // Manage the toggle behavior and selected value for radio buttons
         function toggleRadio(radio) {
             if (radio.checked && radio.dataset.wasChecked) {
                 // Uncheck the radio if it's clicked when already checked
@@ -204,7 +186,8 @@
                     showErrorAlert('เกิดข้อผิดพลาด!', error);
                 }
             });
-        }
+}
+
 
         document.addEventListener("DOMContentLoaded", function () {
             var dropZone = document.getElementById("drop-zone");
@@ -309,19 +292,17 @@
         }
 
         function openModalEditQC(defectID) {
-
             $.ajax({
                 url: baseUrl + 'QC5Check/GetQC5DefactEdit',
                 type: 'GET',
                 data: { DefectID: defectID }, // Pass the DefectID to the controller
                 success: function (response) {
                     if (response) {
-                        // Set the value for Dropdown1Edit and trigger the change event to load Dropdown2Edit options
+
                         $('#dropdown1Edit').val(response.DefectAreaID).trigger('change');
 
-                        // Call to populate Dropdown2Edit and then set the selected value
                         $.ajax({
-                            url: baseUrl + 'QC5Check/GetDDLDefectType', // Fetch defect types based on the selected defect area
+                            url: baseUrl + 'QC5Check/GetDDLDefectType',
                             data: { defectAreaId: response.DefectAreaID },
                             success: function (data) {
                                 var ddlDefectType = $('#dropdown2Edit');
@@ -331,11 +312,11 @@
                                     ddlDefectType.append($('<option>', { value: item.Value, text: item.Text }));
                                 });
 
-                                ddlDefectType.val(response.DefectTypeID).prop('disabled', false); // Set the selected value and enable it
+                                ddlDefectType.val(response.DefectTypeID).prop('disabled', false);
 
-                                // Call to populate Dropdown3Edit and then set the selected value
+
                                 $.ajax({
-                                    url: baseUrl + 'QC5Check/GetDDLDefectDescription', // Fetch defect descriptions based on the selected defect type
+                                    url: baseUrl + 'QC5Check/GetDDLDefectDescription',
                                     data: { defectTypeId: response.DefectTypeID },
                                     success: function (data) {
                                         var ddlDefectDescription = $('#dropdown3Edit');
@@ -358,9 +339,9 @@
                         });
 
                         // Populate other fields in the modal
-                        $('#commentTextareaEdit').val(response.Remark);
+                        $('#commentTextareaEdit').val(response.Remark).prop('disabled', actionTypeEn === "submit"); // Disable remark if "submit"
                         $('#QC5DefectID').val(response.DefectID);
-                        $('#majorDefectCheckboxEdit').prop('checked', response.IsMajorDefect);
+                        $('#majorDefectCheckboxEdit').prop('checked', response.IsMajorDefect).prop('disabled', actionTypeEn === "submit"); // Disable checkbox if "submit"
 
                         // Clear existing images in the modal
                         $('#imagePreview2').empty();
@@ -368,12 +349,19 @@
                         // If there are images, populate the image list
                         if (response.listImageNotpass && response.listImageNotpass.length > 0) {
                             response.listImageNotpass.forEach(function (image) {
+                                let removeButtonHTML = ''; // Initialize empty remove button
+
+                                // Only show the RemoveImage button if actionTypeEn is not "submit"
+                                if (actionTypeEn !== "submit") {
+                                    removeButtonHTML = `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>`;
+                                }
+
                                 $('#imagePreview2').append(`
                                     <div class="position-relative d-inline-block mb-3">
                                         <a data-fslightbox="gallery" href="${image.FilePath}">
                                             <img src="${image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                         </a>
-                                        <button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>
+                                        ${removeButtonHTML}  <!-- Conditionally render remove button -->
                                     </div>
                                 `);
                             });
@@ -399,6 +387,9 @@
                 }
             });
         }
+
+
+
 
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -715,8 +706,6 @@
             },
         };
 
-
-
         document.addEventListener("DOMContentLoaded", function () {
             var dropZone = document.getElementById("drop-zone-save-submit");
             var fileInput = document.getElementById("file-input-save-submit");
@@ -791,66 +780,161 @@
             }
         });
 
-function saveUnitQC5() {
-    showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
+        function saveUnitQC5() {
+            showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
 
-    var QCUnitCheckListID = document.getElementById('hdQC5UnitChecklistID').value;
-    var QCUnitCheckListActionID = document.getElementById('hdQC5UnitChecklistActionID').value;
-    var QCStatusID = selectedRadioQC5Status;  // Ensure this value is set
-    var ActionType = 'save';
-    var QCRemark = document.getElementById('QC5Remark').value;
-    var files = $('#file-input-save-submit')[0].files;
-    var signData = unitEquipment.getSignatureData();  // Accessing it from unitEquipment object
+            var QCUnitCheckListID = document.getElementById('hdQC5UnitChecklistID').value;
+            var QCUnitCheckListActionID = document.getElementById('hdQC5UnitChecklistActionID').value;
+            var QCStatusID = selectedRadioQC5Status;  // Ensure this value is set
+            var ActionType = 'save';
+            var QCRemark = document.getElementById('QC5Remark').value;
+            var files = $('#file-input-save-submit')[0].files;
+            // var signData = unitEquipment.getSignatureData();  
 
-    var formData = new FormData();
-    formData.append('QCUnitCheckListID', QCUnitCheckListID);
-    formData.append('QCUnitCheckListActionID', QCUnitCheckListActionID);
-    formData.append('QCStatusID', QCStatusID);  // Ensure this is the correct value
-    formData.append('ActionType', ActionType);
-    formData.append('QCRemark', QCRemark);
+            var formData = new FormData();
+            formData.append('QCUnitCheckListID', QCUnitCheckListID);
+            formData.append('QCUnitCheckListActionID', QCUnitCheckListActionID);
+            formData.append('QCStatusID', QCStatusID);  // Ensure this is the correct value
+            formData.append('ActionType', ActionType);
+            formData.append('QCRemark', QCRemark);
 
-    // Append each file to the FormData
-    for (var i = 0; i < files.length; i++) {
-        formData.append('Images', files[i]);
-    }
 
-    // Append signature data as JSON
-    if (signData) {
-        var signatureData = {
-            MimeType: signData.MimeType,
-            StorageBase64: signData.StorageBase64
-        };
-        formData.append('Sign', JSON.stringify(signatureData));  // Send the signature as a JSON string
-    }
-
-    $.ajax({
-        url: baseUrl + 'QC5Check/SaveSubmitQC5UnitCheckList',
-        type: 'POST',
-        data: formData,
-        contentType: false,  // Set contentType to false for FormData
-        processData: false,  // Set processData to false for FormData
-        success: function (res) {
-            Swal.close();
-            if (res.success) {
-                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
-                    window.location.reload();
-                });
-            } else {
-                showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+            for (var i = 0; i < files.length; i++) {
+                formData.append('Images', files[i]);
             }
-        },
-        error: function (xhr, status, error) {
-            Swal.close();
-            showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
-        }
-    });
-}
 
-function openSignatureModal() {
-    var myModal = new bootstrap.Modal(document.getElementById('signatureModal'), {
-        keyboard: false
-    });
-    myModal.show();
+            //if (signData) {
+            //    var signatureData = {
+            //        MimeType: signData.MimeType,
+            //        StorageBase64: signData.StorageBase64
+            //    };
+            //    formData.append('Sign', JSON.stringify(signatureData));
+            //}
+
+            $.ajax({
+                url: baseUrl + 'QC5Check/SaveSubmitQC5UnitCheckList',
+                type: 'POST',
+                data: formData,
+                contentType: false,  
+                processData: false,
+                success: function (res) {
+                    Swal.close();
+                    if (res.success) {
+                        showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.close();
+                    showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                }
+            });
+        }
+
+        function openSignatureModal() {
+            var myModal = new bootstrap.Modal(document.getElementById('signatureModal'), {
+                keyboard: false
+            });
+            myModal.show();
+        }
+
+        function saveSignature() {
+            showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
+
+            var QCUnitCheckListID = document.getElementById('hdQC5UnitChecklistID').value;
+
+            var signData = unitEquipment.getSignatureData();  // Accessing it from unitEquipment object
+
+            var formData = new FormData();
+            formData.append('QCUnitCheckListID', QCUnitCheckListID);
+
+            // Append signature data as JSON
+            if (signData) {
+                var signatureData = {
+                    MimeType: signData.MimeType,
+                    StorageBase64: signData.StorageBase64
+                };
+                formData.append('Sign', JSON.stringify(signatureData));  // Send the signature as a JSON string
+            }
+
+            $.ajax({
+                url: baseUrl + 'QC5Check/SaveSignature',
+                type: 'POST',
+                data: formData,
+                contentType: false,  // Set contentType to false for FormData
+                processData: false,  // Set processData to false for FormData
+                success: function (res) {
+                    Swal.close();
+                    if (res.success) {
+                        showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.close();
+                    showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                }
+            });
+        }
+
+        function SubmitUnitQC5() {
+            showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
+
+            var QCUnitCheckListID = document.getElementById('hdQC5UnitChecklistID').value;
+            var QCUnitCheckListActionID = document.getElementById('hdQC5UnitChecklistActionID').value;
+            var QCStatusID = selectedRadioQC5Status;  // Ensure this value is set
+            var ActionType = 'submit';
+            var QCRemark = document.getElementById('QC5Remark').value;
+            var files = $('#file-input-save-submit')[0].files;
+            // var signData = unitEquipment.getSignatureData();  
+
+            var formData = new FormData();
+            formData.append('QCUnitCheckListID', QCUnitCheckListID);
+            formData.append('QCUnitCheckListActionID', QCUnitCheckListActionID);
+            formData.append('QCStatusID', QCStatusID);  // Ensure this is the correct value
+            formData.append('ActionType', ActionType);
+            formData.append('QCRemark', QCRemark);
+
+
+            for (var i = 0; i < files.length; i++) {
+                formData.append('Images', files[i]);
+            }
+
+            //if (signData) {
+            //    var signatureData = {
+            //        MimeType: signData.MimeType,
+            //        StorageBase64: signData.StorageBase64
+            //    };
+            //    formData.append('Sign', JSON.stringify(signatureData));
+            //}
+
+            $.ajax({
+                url: baseUrl + 'QC5Check/SaveSubmitQC5UnitCheckList',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    Swal.close();
+                    if (res.success) {
+                        showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.close();
+                    showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                }
+            });
 }
 
 

@@ -91,5 +91,17 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
+        public void SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
+        {
+            try
+            {
+                _IQC5CheckRepo.SaveSignature(signData , appPath , QCUnitCheckListID , userID);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
+            }
+        }
+
     }
 }

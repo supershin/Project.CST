@@ -44,6 +44,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.Seq = Seq;
             ViewBag.QC5UpdateByName = QC5CheckDetail?.QC5UpdateByName;
             ViewBag.ActionType = QC5CheckDetail?.ActionType == "save" ? "บันทึกร่าง" : "ยืนยันแล้ว";
+            ViewBag.ActionTypeEn = QC5CheckDetail?.ActionType;
             // Autocomplete 1
             var filterModel = new GetDDL { Act = "DefectArea", ID = QC5CheckDetail?.ProjectTypeID, searchTerm = "" };
             List<GetDDL> ListDefectArea = _getDDLService.GetDDLList(filterModel);
@@ -184,11 +185,11 @@ namespace Project.ConstructionTracking.Web.Controllers
             try
             {
                 // Deserialize the signature data if it's sent as a JSON string
-                if (Request.Form.ContainsKey("Sign"))
-                {
-                    var signJson = Request.Form["Sign"];
-                    model.Sign = JsonConvert.DeserializeObject<SignatureQC5>(signJson);
-                }
+                //if (Request.Form.ContainsKey("Sign"))
+                //{
+                //    var signJson = Request.Form["Sign"];
+                //    model.Sign = JsonConvert.DeserializeObject<SignatureQC5>(signJson);
+                //}
 
                 Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
                 model.ApplicationPath = _hosting.ContentRootPath;
@@ -196,6 +197,34 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                 // Your service logic to save the data
                 _QC5CheckService.SaveSubmitQC5UnitCheckList(model);
+
+
+                // Return success response
+                return Json(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
+
+
+        [HttpPost]
+        public IActionResult SaveSignature(QC5SaveSubmitModel model)
+        {
+            try
+            {
+                if (Request.Form.ContainsKey("Sign"))
+                {
+                    var signJson = Request.Form["Sign"];
+                    model.Sign = JsonConvert.DeserializeObject<SignatureQC5>(signJson);
+                }
+
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                string ApplicationPath = _hosting.ContentRootPath;
+
+                _QC5CheckService.SaveSignature(model.Sign , ApplicationPath, model.QCUnitCheckListID , userid);
 
 
                 // Return success response
