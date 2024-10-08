@@ -11,20 +11,20 @@
 
         document.addEventListener('DOMContentLoaded', adjustTextareaRows);
 
-    window.addEventListener('resize', adjustTextareaRows);
+        window.addEventListener('resize', adjustTextareaRows);
 
-    let selectedRadioQC5Status = '';
+        let selectedRadioQC5Status = '';
 
-    window.onload = function () {
-        var radios = document.getElementsByName('radios-QC5-status');
-        for (var i = 0; i < radios.length; i++) {
-            if (radios[i].checked) {
-                selectedRadioQC5Status = radios[i].value; // Set the selected value based on the pre-checked radio
-                radios[i].dataset.wasChecked = "true"; // Mark it as checked
-                break;
+        window.onload = function () {
+            var radios = document.getElementsByName('radios-QC5-status');
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    selectedRadioQC5Status = radios[i].value; // Set the selected value based on the pre-checked radio
+                    radios[i].dataset.wasChecked = "true"; // Mark it as checked
+                    break;
+                }
             }
-        }
-    };
+        };
 
         function toggleRadio(radio) {
             if (radio.checked && radio.dataset.wasChecked) {
@@ -387,9 +387,6 @@
                 }
             });
         }
-
-
-
 
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -936,6 +933,121 @@
                 }
             });
 }
+
+        function toggleRadioForRadioCheck(radio, id) {
+            if (radio.checked && radio.dataset.wasChecked) {
+                // Uncheck the radio if clicked while already checked
+                radio.checked = false;
+                radio.dataset.wasChecked = "";
+
+                // Send null to the radioChanged function to indicate uncheck
+                radioChanged(id, null);
+            } else {
+                // Uncheck all radios in the same group
+                var radios = document.getElementsByName(radio.name);
+                for (var i = 0; i < radios.length; i++) {
+                    radios[i].dataset.wasChecked = "";
+                }
+
+                // Mark the clicked radio as checked
+                radio.dataset.wasChecked = "true";
+
+                // Send the checked value to the radioChanged function
+                radioChanged(id, radio.value);
+            }
+        }
+
+
+        function radioChanged(id, value) {
+            $.ajax({
+                url: baseUrl + 'QC5Check/SelectedQCUnitCheckListDefectStatus',
+                type: 'POST',
+                data: {
+                    ID: id,
+                    StatusID: value
+                },
+                success: function (response) {
+                    // Show SweetAlert for success
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'อัปเดตสถานะสำเร็จ',
+                        showConfirmButton: false,
+                        timer: 1000,  // Show for 1 second
+                        toast: true  // Small popup in the corner
+                    });
+
+                    // Fetch updated list
+                    fetchUpdatedList();  // Call the function to reload the list
+                },
+                error: function (error) {
+                    // Show SweetAlert for failure
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'อัปเดตสถานะไม่สำเร็จ',
+                        showConfirmButton: true,  // Allow clicking to close
+                        toast: true  // Small popup in the corner
+                    });
+                    console.error("Error updating status", error);
+                }
+            });
+        }
+
+// Fetch the updated list via AJAX and replace the current content
+//function fetchUpdatedList() {
+//    console.log('fetchUpdatedList')
+//    $.ajax({
+//        url: baseUrl + 'QC5Check/GetQCUnitCheckListDefects',  // Adjust to match your URL
+//        type: 'GET',
+//        data: {
+//            QC5UnitChecklistID: $('#hdQC5UnitChecklistID').val(),
+//            Seq: $('#hdSeq').val()
+//        },
+//        success: function (response) {
+//            // Replace the current list content with the updated data
+//            $('.list-group').html(response);  // Replace list items
+//        },
+//        error: function (error) {
+//            console.error("Error fetching updated list:", error);
+//        }
+//    });
+//}
+
+        function fetchUpdatedList() {
+            // Step 1: Store the current checked states
+            let checkedStates = {};
+            $('.form-check-input[type="radio"]').each(function () {
+                if (this.checked) {
+                    checkedStates[$(this).attr('name')] = $(this).val();
+                }
+            });
+
+            // Step 2: Fetch the updated list
+            $.ajax({
+                url: baseUrl + 'QC5Check/GetQCUnitCheckListDefects',  // Adjust to match your URL
+                type: 'GET',
+                data: {
+                    QC5UnitChecklistID: $('#hdQC5UnitChecklistID').val(),
+                    Seq: $('#hdSeq').val()  // Send Seq value to the server
+                },
+                success: function (response) {
+                    // Replace the current list content with the updated data
+                    $('.list-group').html(response);  // Replace list items
+
+                    // Step 3: Restore the checked states
+                    for (let name in checkedStates) {
+                        $('input[name="' + name + '"][value="' + checkedStates[name] + '"]').prop('checked', true);
+                    }
+                },
+                error: function (error) {
+                    console.error("Error fetching updated list:", error);
+                }
+            });
+        }
+
+
+
 
 
 

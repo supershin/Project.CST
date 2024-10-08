@@ -344,59 +344,7 @@
                                     </div>
                                 </div>
                                 <div class="list-group list-group-flush overflow-auto" style="max-height: 39rem">
-                                    @{
-                                        var Index = 1;
-                                    }
-                                    @foreach (var item in Model)
-                                    {
-                                        <div class="list-group-item card-item" data-status="@(item.StatusID)" data-defect="@item.DefectAreaName @item.DefectTypeName @item.DefectDescriptionName" data-remark="@item.Remark">
-                                            <div class="row">
-                                                <!-- Center the button vertically using d-flex and align-items-center -->
-                                                <div class="col-auto d-flex align-items-center justify-content-center">
-                                                    @{
-                                                        string buttonClass = "bg-secondary"; // Default class
-                                                        string iconClass = "fa-solid fa-magnifying-glass"; // Default icon
-
-                                                        @if (item.StatusID == null && item.Seq == Seq)
-                                                        {
-                                                            buttonClass = "bg-secondary";
-                                                            iconClass = "fa-regular fa-pen-to-square";
-                                                        }
-
-                                                        <button type="button" class="status-dot @buttonClass">
-                                                            <i class="@iconClass"></i>
-                                                        </button>
-                                                    }
-                                                </div>
-                                                <div class="col">
-                                                    <a href="#!" class="text-body d-block" style="white-space: nowrap; overflow-x: auto;" onclick="openModalEditQC('@item.ID')">
-                                                        @if (item.IsMajorDefect == true)
-                                                        {
-                                                            <i class="fa-solid fa-triangle-exclamation" style="color: #ff0000;"></i>
-                                                        }
-                                                        @item.DefectAreaName > @item.DefectTypeName > @item.DefectDescriptionName
-                                                    </a>
-                                                    <div class="text-secondary mt-n1" style="white-space: nowrap; overflow-x: auto;">
-                                                        @item.Remark
-                                                    </div>
-                                                    @if (Seq > item.Seq)
-                                                    {
-                                                        <div class="mt-2">
-                                                            <label class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="status_@item.DefectAreaID" value="27" />
-                                                                <span class="form-check-label">ผ่าน</span>
-                                                            </label>
-                                                            <label class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="status_@item.DefectAreaID" value="28" />
-                                                                <span class="form-check-label">ไม่ผ่าน</span>
-                                                            </label>
-                                                        </div>
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
-                                        Index++;
-                                    }
+                                    <partial name="PartialDefectList" model="Model" seq="@ViewBag.Seq" />
                                 </div>
                             </div>
                         </div>

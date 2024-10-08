@@ -237,5 +237,39 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
+
+        [HttpPost]
+        public IActionResult SelectedQCUnitCheckListDefectStatus(QC5IUDModel model)
+        {
+            try
+            {
+                Guid UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                _QC5CheckService.SelectedQCUnitCheckListDefectStatus(model);
+                return Json(new { success = true, message = "อัปเดตสถานะสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
+
+        public IActionResult GetQCUnitCheckListDefects(Guid QC5UnitChecklistID, int Seq)
+        {
+            var filterData = new QC5ChecklistModel
+            {
+                QCUnitCheckListID = QC5UnitChecklistID
+            };
+
+            List<QC5ChecklistModel> listQCUnitCheckListDefects = _QC5CheckService.GetQCUnitCheckListDefects(filterData);
+
+            // Pass both the list and Seq value to the partial view
+            ViewBag.Seq = Seq;
+
+            return PartialView("PartialDefectList", listQCUnitCheckListDefects);
+        }
+
+
+
+
     }
 }

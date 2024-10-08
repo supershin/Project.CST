@@ -46,7 +46,12 @@
                 </label>
             </div>
             <label class="form-label mb-1">
-                <textarea class="form-control" id="QC5Remark" rows="2" placeholder="ความคิดเห็น">@ViewBag.QC5UnitChecklistRemark</textarea>
+                <textarea class="form-control" 
+                          id="QC5Remark" 
+                          rows="2" 
+                          placeholder="ความคิดเห็น"
+                          @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
+                >@ViewBag.QC5UnitChecklistRemark</textarea>
             </label>
                 @if (ViewBag.ActionTypeEn != "submit")
                 {
@@ -61,12 +66,15 @@
                     </div>
                 }
         </div>
-        <div class="col-12 mt-3">
-            <button class="btn btn-warning w-100" 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#SignalModal"
-            >วิศวกรควบคุมงานลงนาม</button>
-        </div>
+        @if (ViewBag.ActionTypeEn != "submit")
+        {
+            <div class="col-12 mt-3">
+                <button class="btn btn-warning w-100" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#SignalModal"
+                >วิศวกรควบคุมงานลงนาม</button>
+            </div>
+        }
         @if (ViewBag.PathQC5SignatureImage != null)
         {
             <div id="cardsignature" class="col-sm-12 mt-1 mb-2">

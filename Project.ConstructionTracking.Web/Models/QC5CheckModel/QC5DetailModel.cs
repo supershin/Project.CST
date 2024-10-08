@@ -20,6 +20,7 @@ namespace Project.ConstructionTracking.Web.Models.QC5CheckModel
         public string? QC5SignatureDate { get; set; }
         public int? Seq { get; set; }
         public Guid? UnitFormID { get; set; }
+        public Guid? UserID { get; set; }
         public string? UnitFormName { get; set; }
         public int? UnitFormStatatusID { get; set; }
         public string? UnitFormStatatusName { get; set; }

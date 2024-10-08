@@ -103,5 +103,17 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
+        public void SelectedQCUnitCheckListDefectStatus(QC5IUDModel model)
+        {
+            try
+            {
+                _IQC5CheckRepo.SelectedQCUnitCheckListDefectStatus(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
+            }
+        }
+
     }
 }
