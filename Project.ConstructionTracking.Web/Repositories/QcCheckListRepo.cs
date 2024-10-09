@@ -48,8 +48,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                     QcTypeID = query.qc.QCTypeID.GetValueOrDefault(),
                     Seq = query.qc.Seq.GetValueOrDefault(),
 
-                    IsNotReadyInspect = (bool)query.qc.IsNotReadyInspect,
-                    IsPassCondition = (bool)query.qc.IsPassCondition,
+                    //IsNotReadyInspect = (bool)query.qc.IsNotReadyInspect,
+                    //IsPassCondition = (bool)query.qc.IsPassCondition,
                     QcStatusID = query.qc.QCStatusID.GetValueOrDefault(),
                 };
             }
@@ -68,8 +68,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                         QcTypeID = query.qc.QCTypeID.GetValueOrDefault(),
                         Seq = query.qc.Seq.GetValueOrDefault(),
 
-                        IsNotReadyInspect = (bool)query.qc.IsNotReadyInspect,
-                        IsPassCondition = (bool)query.qc.IsPassCondition,
+                        //IsNotReadyInspect = (bool)query.qc.IsNotReadyInspect,
+                        //IsPassCondition = (bool)query.qc.IsPassCondition,
                         QcStatusID = query.qc.QCStatusID.GetValueOrDefault(),
                     };
                 }

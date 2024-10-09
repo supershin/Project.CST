@@ -43,7 +43,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.QC5UnitChecklistRemark = QC5CheckDetail?.QC5UnitChecklistRemark;
             ViewBag.Seq = Seq;
             ViewBag.QC5UpdateByName = QC5CheckDetail?.QC5UpdateByName;
-            ViewBag.ActionType = QC5CheckDetail?.ActionType == "save" ? "บันทึกร่าง" : "ยืนยันแล้ว";
+            ViewBag.ActionType = QC5CheckDetail?.ActionType == "save" ? "บันทึกร่าง" : QC5CheckDetail?.ActionType == "submit" ? "ยืนยันแล้ว" : "ยังไม่เริ่มตรวจ";
             ViewBag.ActionTypeEn = QC5CheckDetail?.ActionType;
             // Autocomplete 1
             var filterModel = new GetDDL { Act = "DefectArea", ID = QC5CheckDetail?.ProjectTypeID, searchTerm = "" };

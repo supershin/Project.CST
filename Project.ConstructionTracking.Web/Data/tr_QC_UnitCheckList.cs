@@ -24,11 +24,8 @@ namespace Project.ConstructionTracking.Web.Data
         public int? Seq { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CheckListDate { get; set; }
-        public bool? IsNotReadyInspect { get; set; }
-        public bool? IsPassCondition { get; set; }
         public int? QCStatusID { get; set; }
-        public Guid? QCSignID { get; set; }
-        public Guid? QCSignResourceID { get; set; }
+        public Guid? PESignResourceID { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
@@ -40,15 +37,12 @@ namespace Project.ConstructionTracking.Web.Data
         [ForeignKey("CheckListID")]
         [InverseProperty("tr_QC_UnitCheckList")]
         public virtual tm_QC_CheckList? CheckList { get; set; }
+        [ForeignKey("PESignResourceID")]
+        [InverseProperty("tr_QC_UnitCheckList")]
+        public virtual tm_Resource? PESignResource { get; set; }
         [ForeignKey("ProjectID")]
         [InverseProperty("tr_QC_UnitCheckList")]
         public virtual tm_Project? Project { get; set; }
-        [ForeignKey("QCSignID")]
-        [InverseProperty("tr_QC_UnitCheckList")]
-        public virtual tm_User? QCSign { get; set; }
-        [ForeignKey("QCSignResourceID")]
-        [InverseProperty("tr_QC_UnitCheckList")]
-        public virtual tm_Resource? QCSignResource { get; set; }
         [ForeignKey("QCStatusID")]
         [InverseProperty("tr_QC_UnitCheckList")]
         public virtual tr_RoleActionStatus? QCStatus { get; set; }
