@@ -8,6 +8,8 @@ namespace Project.ConstructionTracking.Web.Repositories
     public interface IMasterCommonRepo
     {
         dynamic GetProjectList(Guid? userId, int RoleID);
+
+        dynamic GetProjectAndUnit(Guid projectId, Guid unitId);
     }
 	public class MasterCommonRepo : IMasterCommonRepo
 	{
@@ -42,6 +44,25 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
 
             return query.ToList();
+        }
+
+        public dynamic GetProjectAndUnit(Guid projectId, Guid unitId)
+        {
+            var query = (from u in _context.tm_Unit
+                         join p in _context.tm_Project on u.ProjectID equals p.ProjectID
+                         join e in _context.tm_Ext on u.UnitStatusID equals e.ID
+                         where p.ProjectID == projectId && p.FlagActive == true
+                         && u.UnitID == unitId && u.FlagActive == true
+                         select new
+                         {
+                             p.ProjectID,
+                             p.ProjectName,
+                             u.UnitID,
+                             e.Name,
+                             u.UnitCode
+                         }).FirstOrDefault();
+
+            return query;
         }
     }
 }

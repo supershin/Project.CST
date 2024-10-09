@@ -46,6 +46,7 @@
         {
             public const int PASS = 10;
             public const int FAILED = 11;
+            public const int INPROGRESS = 15;
         }
 
         public static class ActionType
@@ -114,6 +115,12 @@
             public const int NOWORK = 11;
         }
 
+
+        public static class Qc_CheckList_Status
+        {
+            public const int PASS = 29;
+            public const int NOTPASS = 30;
+        }
     }
 
 }

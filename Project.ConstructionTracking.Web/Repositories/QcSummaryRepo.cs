@@ -13,6 +13,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 		dynamic GetQcSummaryList(Guid projectID, Guid unitID);
 
         QcStatusListSummaryResp VerifyStatusQc(Guid projectID, Guid unitID, int checkListID);
+
 	}
 
 	public class QcSummaryRepo : IQcSummaryRepo

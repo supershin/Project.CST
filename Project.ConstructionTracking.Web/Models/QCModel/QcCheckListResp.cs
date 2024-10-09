@@ -4,7 +4,7 @@ namespace Project.ConstructionTracking.Web.Models.QCModel
 	public class QcCheckListResp
 	{
         //info
-        public Guid ID { get; set; }
+        public Guid? ID { get; set; }
 		public Guid ProjectID { get; set; }
 		public Guid UnitID { get; set; }
 		public int QcCheckListID { get; set; }
@@ -12,13 +12,15 @@ namespace Project.ConstructionTracking.Web.Models.QCModel
 		public int Seq { get; set; }
 
 		// condition checklist status 
-		public bool IsNotReadyInspect { get; set; }
-		public bool IsPassCondition { get; set; }
-		public int QcStatusID { get; set; }
+		public bool? IsNotReadyInspect { get; set; }
+		public bool? IsPassCondition { get; set; }
+		public int? QcStatusID { get; set; }
 
 		// user QC
-		public Guid? UserQc { get; set; }
-		public Guid? UserQcResource { get; set; }
+		public string? UserQcResourceUrl { get; set; }
+
+		// qc action
+		public string? QcActionType { get; set; }
 	}
 }
 
