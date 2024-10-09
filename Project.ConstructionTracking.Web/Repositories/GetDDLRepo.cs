@@ -150,6 +150,20 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     return ListDefectDescription.ToList();
 
+                case "PEUnit":
+                    var PEUnit = from t1 in _context.tr_PE_Unit
+                                 join t2 in _context.tm_User on t1.UserID equals t2.ID into joined
+                                 from t2 in joined.DefaultIfEmpty()
+                                 where t1.UnitID == Model.GuID
+                                                    
+                                select new GetDDL
+                                {
+                                    ValueGuid = t1.UserID,
+                                    Text = t2.FirstName + " " + t2.LastName
+                                };
+
+                    return PEUnit.ToList();
+
                 default:
 
                 return new List<GetDDL>();

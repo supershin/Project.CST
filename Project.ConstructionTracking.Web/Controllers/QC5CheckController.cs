@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient.Server;
+using Newtonsoft.Json;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Services;
@@ -30,14 +31,24 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.ProjectName = QC5CheckDetail?.ProjectName;
             ViewBag.UnitId = QC5CheckDetail?.UnitID;
             ViewBag.UnitCode = QC5CheckDetail?.UnitCode;
+            ViewBag.QC5UnitChecklistID = QC5CheckDetail?.QC5UnitChecklistID;
+            ViewBag.QC5UnitChecklistActionID = QC5CheckDetail?.QC5UnitChecklistActionID;
             ViewBag.UnitStatusName = QC5CheckDetail?.UnitStatusName;
-            ViewBag.Seq = QC5CheckDetail?.Seq;
+            ViewBag.Seq = Seq;
             ViewBag.QC5UpdateByName = QC5CheckDetail?.QC5UpdateByName;
 
             // Autocomplete 1
             var filterModel = new GetDDL { Act = "DefectArea", ID = QC5CheckDetail?.ProjectTypeID, searchTerm = "" };
             List<GetDDL> ListDefectArea = _getDDLService.GetDDLList(filterModel);
             ViewBag.ListDefectArea = ListDefectArea;
+
+
+            var PEUnit = new GetDDL { Act = "PEUnit" , GuID = unitId};
+            List<GetDDL> PEUnitID = _getDDLService.GetDDLList(PEUnit);
+            ViewBag.PEID = (PEUnitID != null && PEUnitID.Count > 0) ? PEUnitID[0].ValueGuid : Guid.Empty;
+            ViewBag.PEName = (PEUnitID != null && PEUnitID.Count > 0) ? PEUnitID[0].Text : "ยังไม่ได้ระบุ PE/SE ผู้ดูแล Unit แปลงนี้";
+
+
 
             var FilterData = new QC5ChecklistModel
             {
@@ -68,6 +79,16 @@ namespace Project.ConstructionTracking.Web.Controllers
             return Json(ListDefectDescription);
         }
 
+
+        [HttpGet]
+        public IActionResult GetQC5DefactEdit(int DefectID)
+        {
+            var filter = new QC5DefectModel { DefectID = DefectID };
+            QC5DefectModel defectData = _QC5CheckService.GetQC5DefactEdit(filter);
+            return Json(defectData); // Return the defect data as JSON
+        }
+
+
         [HttpPost]
         public IActionResult SaveDefectData(QC5IUDModel model)
         {
@@ -87,13 +108,94 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
-        //[HttpPost]
-        //public IActionResult GetDefactDetail(QC5DefectModel model)
-        //{
+        [HttpPost]
+        public IActionResult EditDefectData(QC5IUDModel model)
+        {
+            try
+            {
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                model.ApplicationPath = _hosting.ContentRootPath;
+                model.UserID = userid;
+                _QC5CheckService.UpdateQCUnitCheckListDefect(model);
 
-        //}
+                // Return success response
+                return Json(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
 
 
+        [HttpPost]
+        public IActionResult RemoveImage(Guid resourceId)
+        {
+            try
+            {
+                Guid UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                _QC5CheckService.RemoveImage(resourceId, UserID);
+
+                // Return success response
+                return Json(new { success = true, message = "ลบรูปภาพสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
+        
+
+        [HttpPost]
+        public IActionResult RemoveDefectQC5Unit(QC5IUDModel model)
+        {
+            try
+            {
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                model.UserID = userid;
+                _QC5CheckService.RemoveQCUnitCheckListDefect(model);
+
+                // Return success response
+                return Json(new { success = true, message = "ลบข้อมูลสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult SaveSubmitQC5UnitCheckList(QC5SaveSubmitModel model)
+        {
+            try
+            {
+                // Deserialize the signature data if it's sent as a JSON string
+                if (Request.Form.ContainsKey("Sign"))
+                {
+                    var signJson = Request.Form["Sign"];
+                    model.Sign = JsonConvert.DeserializeObject<SignatureQC5>(signJson);
+                }
+
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                model.ApplicationPath = _hosting.ContentRootPath;
+                model.UserID = userid;
+
+                // Your service logic to save the data
+                _QC5CheckService.SaveSubmitQC5UnitCheckList(model);
+
+
+                // Return success response
+                return Json(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
 
     }
 }

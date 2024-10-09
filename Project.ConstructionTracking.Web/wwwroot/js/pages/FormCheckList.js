@@ -286,7 +286,7 @@ $('#saveButton').on('click', function () {
         }
 
         $.ajax({
-            url: baseUrl + 'FormCheckList/UpdateStatusV1',
+            url: baseUrl + 'FormCheckList/UpdateStatus',
             type: 'POST',
             contentType: false,
             processData: false,

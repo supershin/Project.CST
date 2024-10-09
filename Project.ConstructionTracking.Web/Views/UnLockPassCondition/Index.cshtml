@@ -273,7 +273,7 @@
                                           class="form-control" 
                                           disabled
                                 >@item.PMUnLock_Remark</textarea>
-                                @if (item.UnitFormStatusID == 7 || item.StatusID == 14)
+                                @if (item.StatusID == 8 && item.UnitFormStatusID == 7 || item.StatusID == 8 && item.UnitFormStatusID > 9  || item.StatusID == 14 || item.UnitFormStatusID == 7)
                                 {
                                     <button type="button" class="btn btn-primary" style="margin-top: 15px; float: right;" onclick="saveData('@item.PC_ID','@item.UnitFormID','@item.GroupID')">ขออนุมัติปลดล็อค</button>
                                 }
@@ -421,8 +421,8 @@
                         images.forEach(function (image) {
                             var imageHtml = `
                                 <div class="col-6 position-relative">
-                                    <a data-fslightbox="gallery1" href="${image.FilePath}">
-                                        <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                                        <a data-fslightbox="gallery1" href="${baseUrl}${image.FilePath}">
+                                        <img src="${baseUrl}${image.FilePath}" alt="..." class="img-thumbnail">
                                     </a>
                                 </div>
                             `;
@@ -453,8 +453,8 @@
                         images.forEach(function (image) {
                             var imageHtml = `
                                 <div class="col-6 position-relative">
-                                    <a data-fslightbox="gallery2" href="${image.FilePath}">
-                                        <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                                    <a data-fslightbox="gallery2" href="${baseUrl}${image.FilePath}">
+                                        <img src="${baseUrl}${image.FilePath}" alt="..." class="img-thumbnail">
                                     </a>
                                 </div>
                             `;
@@ -485,8 +485,8 @@
                         images.forEach(function (image) {
                             var imageHtml = `
                                 <div class="col-6 position-relative">
-                                    <a data-fslightbox="gallery3" href="${image.FilePath}">
-                                        <img src="${image.FilePath}" alt="..." class="img-thumbnail">
+                                    <a data-fslightbox="gallery3" href="${baseUrl}${image.FilePath}">
+                                        <img src="${baseUrl}${image.FilePath}" alt="..." class="img-thumbnail">
                                     </a>
                                 </div>
                             `;

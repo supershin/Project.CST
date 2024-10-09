@@ -103,23 +103,8 @@ namespace Project.ConstructionTracking.Web.Controllers
             return View(viewModel);
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> UpdateStatus(FormChecklistIUDModel model,IFormFileCollection files)
-        {
-            try
-            {
-                //await _FormChecklistService.InsertOrUpdate(model, files);
-                return Ok(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { success = false, message = "บันทึกข้อมูลไม่สำเร็จ: " + ex.Message });
-            }
-        }
-
-        [HttpPost]
-        public IActionResult UpdateStatusV1(FormChecklistIUDModel model)
+        public IActionResult UpdateStatus(FormChecklistIUDModel model)
         {
             try
             {

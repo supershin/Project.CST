@@ -405,5 +405,53 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                 }
             }
         }
+
+        public override List<WorkPeriodModel> sp_get_workperiod(WorkPeriodModel en)
+        {
+            using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
+            {
+                SqlCommand SqlCmd = new SqlCommand("sp_get_workperiod", SqlCon);
+                try
+                {
+                    SqlCon.Open();
+                    SqlTransaction Trans = SqlCon.BeginTransaction();
+                    SqlCmd.Transaction = Trans;
+                    SqlCmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = en.act ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@project_id", SqlDbType.NVarChar)).Value = en.project_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = en.unit_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = en.unit_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@user_id", SqlDbType.NVarChar)).Value = en.user_id ?? (object)DBNull.Value;
+                    switch (en.act)
+                    {
+                        case "Getworkperiodlist":
+                            return sp_get_workperiod_ListReader(ExecuteReader(SqlCmd));
+
+                        default:
+                            return new List<WorkPeriodModel>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Stored name : sp_get_unitstatus");
+                    Log.Error("SEND pram1 Act (nvarchar) : {Act}", en.act);
+                    Log.Error("SEND pram2 unit_id (nvarchar) : {Unit_id}", en.unit_id);
+                    Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", en.project_id);
+                    Log.Error("SEND pram4 unit_status (nvarchar) : {Unit_status}", en.unit_status);
+                    Log.Error("SEND pram5 user_id (nvarchar) : {user_id}", en.user_id);
+                    Log.Error(ex.ToString());
+                    Log.Error("=========== END ===========");
+
+                    return new List<WorkPeriodModel>();
+                }
+                finally
+                {
+                    SqlCmd.Dispose();
+                    SqlCon.Close();
+                    SqlCon.Dispose();
+                }
+            }
+        }
     }
 }

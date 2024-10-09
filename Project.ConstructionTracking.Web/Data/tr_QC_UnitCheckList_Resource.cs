@@ -14,7 +14,7 @@ namespace Project.ConstructionTracking.Web.Data
         public int? QCUnitCheckListDetailID { get; set; }
         public int? DefectID { get; set; }
         public Guid? ResourceID { get; set; }
-        public bool? IsDocument { get; set; }
+        public bool? IsSign { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }

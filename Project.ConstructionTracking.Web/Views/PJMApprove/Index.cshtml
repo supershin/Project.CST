@@ -276,7 +276,7 @@
                                         <span class="form-check-label">อนุมัติ</span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="9" @((PJM_Actiontype == "submit" && item.PC_StatusID != 8 && item.PC_StatusID != 12 && item.PC_StatusID != 13 && item.PC_StatusID != 14 && item.PC_StatusID != null) || item.PC_StatusID == 9 ? "checked" : "") @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || item.PC_FlagActive == false || ViewBag.UserRole != SystemConstant.UserRole.PJM.ToString()? "disabled" : "") onclick="toggleRadio(this)">
+                                    <input class="form-check-input" data-action="gr-pass" type="radio" group-id="@item.GroupID" name="radios-inline-@item.GroupID" passconID="@item.PC_ID" value="9" @((item.PC_StatusID == 9) || (item.PC_StatusID < 8 && PJM_Actiontype == "submit") ? "checked" : "") @((PJM_Actiontype == "submit" && UnitFormStatus != "6") || item.PC_FlagActive == false || ViewBag.UserRole != SystemConstant.UserRole.PJM.ToString() ? "disabled" : "") onclick="toggleRadio(this)">
                                         <span class="form-check-label">ไม่อนุมัติ</span>
                                     </label>
                                 </div>

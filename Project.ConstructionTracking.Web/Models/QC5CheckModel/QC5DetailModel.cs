@@ -12,6 +12,7 @@ namespace Project.ConstructionTracking.Web.Models.QC5CheckModel
         public int? ProjectTypeID { get; set; }
         public string? UnitStatusName { get; set; }
         public Guid? QC5UnitChecklistID { get; set; }
+        public int? QC5UnitChecklistActionID { get; set; }
         public int? QCTypeID { get; set; }
         public int? QC5UnitStatusID { get; set; }
         public int? Seq { get; set; }
