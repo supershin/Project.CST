@@ -24,7 +24,7 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime? CraeteDate { get; set; }
+        public DateTime? CreateDate { get; set; }
         public Guid? CreateBy { get; set; }
 
         [ForeignKey("QCUnitCheckListID")]

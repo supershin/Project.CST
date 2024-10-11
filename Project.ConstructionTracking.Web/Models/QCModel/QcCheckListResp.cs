@@ -11,16 +11,22 @@ namespace Project.ConstructionTracking.Web.Models.QCModel
 		public int QcTypeID { get; set; }
 		public int Seq { get; set; }
 
-		// condition checklist status 
-		public bool? IsNotReadyInspect { get; set; }
-		public bool? IsPassCondition { get; set; }
 		public int? QcStatusID { get; set; }
 
+		public string? Remark { get; set; }
 		// user QC
 		public string? UserQcResourceUrl { get; set; }
 
 		// qc action
 		public string? QcActionType { get; set; }
+
+		public List<MainImage> MainImages { get; set; } = new List<MainImage>();
+	}
+
+	public class MainImage
+	{
+		public Guid ImageID { get; set; }
+		public string ImageUrl { get; set; }
 	}
 }
 

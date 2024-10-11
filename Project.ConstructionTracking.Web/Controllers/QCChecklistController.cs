@@ -9,10 +9,13 @@ namespace Project.ConstructionTracking.Web.Controllers
     public class QCChecklistController : BaseController
     {
         private readonly IQcCheckListService _qcCheckListService;
+        private readonly IHostEnvironment _hosting;
 
-        public QCChecklistController(IQcCheckListService qcCheckListService)
+        public QCChecklistController(IQcCheckListService qcCheckListService
+            , IHostEnvironment hosting)
         {
             _qcCheckListService = qcCheckListService;
+            _hosting = hosting;
         }
 
         public IActionResult Index(QcActionModel model)
@@ -36,7 +39,10 @@ namespace Project.ConstructionTracking.Web.Controllers
             {
                 try
                 {
-                    resp = _qcCheckListService.CreateDuplicateQcCheckList((Guid)id, seq);
+                    var userID = Request.Cookies["CST.ID"];
+                    Guid ID = Guid.Parse(userID);
+
+                    resp = _qcCheckListService.CreateDuplicateQcCheckList((Guid)id, seq, ID);
                 }
                 catch (Exception ex)
                 {
@@ -48,13 +54,14 @@ namespace Project.ConstructionTracking.Web.Controllers
             {
                 ProjectID = projectid,
                 UnitID = unitid,
-                ID = resp != null ? resp.QCCheckListID : Guid.Empty,
-                Seq = resp != null ? resp.Seq : seq,
+                ID = resp.QCCheckListID != Guid.Empty ? resp.QCCheckListID : id,
+                Seq = resp.QCCheckListID != Guid.Empty ? resp.Seq : seq,
                 QcTypeID = qctypeid,
                 QcCheckListID = qcchecklistid,
             };
 
             QcCheckListDetailResp dataModel = _qcCheckListService.GetQcCheckListDetail(model);
+            ViewBag.QcID = dataModel.QcCheckList != null ? dataModel.QcCheckList.ID : Guid.Empty;
 
             return View(dataModel); 
         }
@@ -66,6 +73,126 @@ namespace Project.ConstructionTracking.Web.Controllers
             {
                 var resultData = _qcCheckListService.VerifyQcCheckList(model);
 
+                return Json(
+                          new
+                          {
+                              success = true,
+                              data = resultData,
+                          }
+                );
+            }
+            catch (Exception ex)
+            {
+                return Json(
+                            new
+                            {
+                                success = false,
+                                message = ex.Message, //InnerException(ex),
+                                data = new[] { ex.Message },
+                            }
+               );
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SaveQcCheckList(SaveTransQCCheckListModel model)
+        {
+            try
+            {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                Guid user = Guid.Parse(userID);
+                int role = Int32.Parse(RoleID);
+
+                if (model.PeSignResource != null)
+                {
+                    validateUnitEquipmentSign(model.PeSignResource);
+                }
+
+                model.ApplicationPath = _hosting.ContentRootPath;
+                var resultData = _qcCheckListService.SaveQcCheckList(model, user, role);
+                return Json(
+                          new
+                          {
+                              success = true,
+                              data = resultData,
+                          }
+                );
+            }
+            catch (Exception ex)
+            {
+                return Json(
+                            new
+                            {
+                                success = false,
+                                message = ex.Message, //InnerException(ex),
+                                data = new[] { ex.Message },
+                            }
+               );
+            }
+        }
+        private void validateUnitEquipmentSign(string signUser)
+        {
+            if (string.IsNullOrEmpty(signUser))
+                throw new Exception("โปรดระบุลายเซ็นต์");
+        }
+
+        [HttpPost]
+        public IActionResult DeleteImage(Guid qcID, int? detailID, Guid resourceID)
+        {
+            try
+            {
+                var userID = Request.Cookies["CST.ID"];
+                Guid user = Guid.Parse(userID);
+                var result = _qcCheckListService.DeleteImage(qcID, detailID, resourceID, user);
+                if (result)
+                {
+                    return Ok(new { success = true, message = "Image deleted successfully." });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Failed to delete image." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = "An error occurred: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SubmitQcCheckList(SaveTransQCCheckListModel model)
+        {
+            try
+            {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                Guid user = Guid.Parse(userID);
+                int role = Int32.Parse(RoleID);
+
+                if (model.PeSignResource != null)
+                {
+                    validateUnitEquipmentSign(model.PeSignResource);
+                }
+
+                model.ApplicationPath = _hosting.ContentRootPath;
+                var saveData = _qcCheckListService.SaveQcCheckList(model, user, role);
+
+                SubmitQcCheckListModel submitModel = new SubmitQcCheckListModel()
+                {
+                    QcID = saveData.QcID,
+                    ProjectID = saveData.ProjectID,
+                    UnitID = saveData.UnitID,
+                    CheckListID = saveData.CheckListID,
+                    QcTypeID = saveData.QcTypeID,
+                    Seq = saveData.Seq
+                };
+
+                bool resultSubmit = _qcCheckListService.SubmitQcCheckList(submitModel, user, role);
+                var resultData = new SubmitQcCheckListModel();
+
+                if (resultSubmit) resultData = submitModel;
+                    
                 return Json(
                           new
                           {

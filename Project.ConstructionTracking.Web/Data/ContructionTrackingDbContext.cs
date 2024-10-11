@@ -506,20 +506,15 @@ namespace Project.ConstructionTracking.Web.Data
                     .HasForeignKey(d => d.CheckListID)
                     .HasConstraintName("FK_tr_QC_UnitCheckList_tm_QC_CheckList");
 
+                entity.HasOne(d => d.PESignResource)
+                    .WithMany(p => p.tr_QC_UnitCheckList)
+                    .HasForeignKey(d => d.PESignResourceID)
+                    .HasConstraintName("FK_tr_QC_UnitCheckList_tm_Resource");
+
                 entity.HasOne(d => d.Project)
                     .WithMany(p => p.tr_QC_UnitCheckList)
                     .HasForeignKey(d => d.ProjectID)
                     .HasConstraintName("FK_tr_QC_UnitCheckList_tm_Project");
-
-                entity.HasOne(d => d.QCSign)
-                    .WithMany(p => p.tr_QC_UnitCheckList)
-                    .HasForeignKey(d => d.QCSignID)
-                    .HasConstraintName("FK_tr_QC_UnitCheckList_tm_User");
-
-                entity.HasOne(d => d.QCSignResource)
-                    .WithMany(p => p.tr_QC_UnitCheckList)
-                    .HasForeignKey(d => d.QCSignResourceID)
-                    .HasConstraintName("FK_tr_QC_UnitCheckList_tm_Resource");
 
                 entity.HasOne(d => d.QCStatus)
                     .WithMany(p => p.tr_QC_UnitCheckList)
@@ -581,6 +576,11 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tr_QC_UnitCheckList_Detail)
                     .HasForeignKey(d => d.QCUnitCheckListID)
                     .HasConstraintName("FK_tr_QC_UnitCheckList_Detail_tr_QC_UnitCheckList_Detail");
+
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.tr_QC_UnitCheckList_Detail)
+                    .HasForeignKey(d => d.StatusID)
+                    .HasConstraintName("FK_tr_QC_UnitCheckList_Detail_tm_Ext");
             });
 
             modelBuilder.Entity<tr_QC_UnitCheckList_Resource>(entity =>

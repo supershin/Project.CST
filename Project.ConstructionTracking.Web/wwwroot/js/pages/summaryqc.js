@@ -18,6 +18,32 @@
             
             summaryqc.VerifyQcCheckList(data);
         });
+
+        $("button[data-action='Status']").click((e) => {
+            var projectId = $(e.currentTarget).attr('data-project-id');
+            var unitId = $(e.currentTarget).attr('data-unit-id');
+            var qcCheckListID = $(e.currentTarget).attr('data-qc-checklist-id');
+            var qcTypeID = $(e.currentTarget).attr('data-qc-type-id');
+            var formID = $(e.currentTarget).attr('data-form-id');
+            var formQcCheckListID = $(e.currentTarget).attr('data-qc-unit-checklist-id');
+            var seq = $(e.currentTarget).attr('data-seq');
+
+            var data = {
+                ProjectID: projectId,
+                UnitID: unitId,
+                QcCheckListID: qcCheckListID,
+                QcTypeID: qcTypeID,
+                FormID: formID,
+                QcUnitCheckListID: formQcCheckListID,
+                Seq: seq // Added Seq to match the button attributes
+            };
+
+            // Build the URL with the parameters
+            var controller = 'QCCheckList/CheckListDetail?';
+            var params = `id=${data.QcUnitCheckListID}&projectid=${data.ProjectID}&unitid=${data.UnitID}&qcchecklistid=${data.QcCheckListID}&seq=${data.Seq}&qctypeid=${data.QcTypeID}`;
+            window.location.href = baseUrl + controller + params;
+            
+        });
     },
     VerifyQcCheckList: function (data) {
         $.ajax({
@@ -38,7 +64,7 @@
                         window.location.href = baseUrl + controller + params
                     }
                 } else {
-                    // Handle case where success is false
+                    showErrorAlert('Error!', resp.message);
                 }
             },
             error: function (xhr, status, error) {

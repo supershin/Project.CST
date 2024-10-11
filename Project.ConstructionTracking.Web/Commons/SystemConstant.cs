@@ -121,6 +121,7 @@
             public const int NotPass = 2;
             public const int IsNotReadyInspect = 3;
             public const int IsPassCondition = 4;
+            public const int InProgress = 5;
         }
 
 

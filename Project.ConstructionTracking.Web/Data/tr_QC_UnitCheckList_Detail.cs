@@ -24,10 +24,10 @@ namespace Project.ConstructionTracking.Web.Data
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
-        public int? CreateBy { get; set; }
+        public Guid? CreateBy { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? UpdateDate { get; set; }
-        public int? UpdateBy { get; set; }
+        public Guid? UpdateBy { get; set; }
 
         [ForeignKey("CheckListDetailID")]
         [InverseProperty("tr_QC_UnitCheckList_Detail")]
@@ -35,6 +35,9 @@ namespace Project.ConstructionTracking.Web.Data
         [ForeignKey("QCUnitCheckListID")]
         [InverseProperty("tr_QC_UnitCheckList_Detail")]
         public virtual tr_QC_UnitCheckList? QCUnitCheckList { get; set; }
+        [ForeignKey("StatusID")]
+        [InverseProperty("tr_QC_UnitCheckList_Detail")]
+        public virtual tm_Ext? Status { get; set; }
         [InverseProperty("QCUnitCheckListDetail")]
         public virtual ICollection<tr_QC_UnitCheckList_Resource> tr_QC_UnitCheckList_Resource { get; set; }
     }

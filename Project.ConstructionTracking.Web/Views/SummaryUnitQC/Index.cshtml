@@ -127,7 +127,6 @@
                                                                         data-type="@listQc.QcTypeID"
                                                                         data-seq="1"
                                                                         class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH ? "green" : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2">
-                                                                    @listQc.QcTypeName
                                                                 </button>
                                                             }
                                                             else
@@ -142,6 +141,7 @@
                                                                         data-seq="@data.Seq"
                                                                         class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH ? "green" : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2">
                                                                 </button>
+
                                                             }
                                                         </div>
                                                     }

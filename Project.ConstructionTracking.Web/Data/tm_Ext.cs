@@ -19,6 +19,7 @@ namespace Project.ConstructionTracking.Web.Data
             tm_UnitUnitType = new HashSet<tm_Unit>();
             tm_User = new HashSet<tm_User>();
             tr_QC_UnitCheckList = new HashSet<tr_QC_UnitCheckList>();
+            tr_QC_UnitCheckList_Detail = new HashSet<tr_QC_UnitCheckList_Detail>();
             tr_UnitForm = new HashSet<tr_UnitForm>();
             tr_UnitFormCheckList = new HashSet<tr_UnitFormCheckList>();
             tr_UnitFormPassCondition = new HashSet<tr_UnitFormPassCondition>();
@@ -63,6 +64,8 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual ICollection<tm_User> tm_User { get; set; }
         [InverseProperty("QCType")]
         public virtual ICollection<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; }
+        [InverseProperty("Status")]
+        public virtual ICollection<tr_QC_UnitCheckList_Detail> tr_QC_UnitCheckList_Detail { get; set; }
         [InverseProperty("Status")]
         public virtual ICollection<tr_UnitForm> tr_UnitForm { get; set; }
         [InverseProperty("Status")]
