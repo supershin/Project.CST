@@ -566,6 +566,83 @@
         </div>
     </div>
 
+    <div class="modal fade" id="Update-detail-defect" tabindex="-1" aria-labelledby="Update-detail-defect-Label" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">เพิ่มรูปภาพและหมายเหตุของรายการ Defect </h5>
+                    <input type="hidden" id="UpQC5DefectID" name="UpQC5DefectID">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2 g-md-3">
+                        <!-- Existing Image List (Populated by JavaScript) -->
+                        <div class="col-12 mt-3">
+                            <div id="imagePreview3" class="image-preview">
+                                <!-- Images will be dynamically added here by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Dropzone for uploading images -->
+                        @if (ViewBag.ActionTypeEn != "submit")
+                        {
+                            <div class="col-12">
+                                <div class="form-label text-danger">
+                                    ถ่ายได้ไม่เกิน 5 รูปต่อรายการ
+                                </div>
+                                <div id="drop-zone-edit" class="drop-zone form-control">
+                                    <p class="drop-zone-text">
+                                        <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                    </p>
+                                    <input type="file" id="file-input-edit" class="drop-zone-input" multiple>
+                                    <div id="preview-container-edit" class="row preview-container"></div>
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Display defect information as text -->
+                        <div class="col-12 col-sm-6">
+                            <div class="form-label">ตำแหน่ง</div>
+                            <input class="form-control" type="text" id="defectAreaText" placeholder="ความคิดเห็น" disabled>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-label">หมวดงาน</div>
+                            <input class="form-control" type="text" id="defectTypeText" placeholder="ความคิดเห็น" disabled>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-label">รายการ defect</div>
+                            <input class="form-control" type="text" id="defectDescriptionText" placeholder="ความคิดเห็น" disabled>
+                        </div>
+@*                         <div class="col-12">
+                            <h3>DefectArea: <small id="defectAreaText">text show</small></h3>
+                            <h3>DefectType: <small id="defectTypeText">text show</small></h3>
+                            <h3>DefectDescription: <small id="defectDescriptionText">text show</small></h3>
+                        </div> *@
+
+                        <div class="col-12">
+                            <div class="form-label">ความเห็น</div>
+                            <textarea class="form-control" id="commentTextareaupdate" rows="2" placeholder="ความคิดเห็น"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-check">
+                                <input class="form-check-input" type="checkbox" id="majorDefectCheckboxupdate" disabled>
+                                <span class="form-check-label text-danger">เป็น Major Defect</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    @if (ViewBag.ActionTypeEn != "submit")
+                    {
+                        <button type="button" class="btn me-auto btn-danger" id="RemoveQC5Button" data-bs-dismiss="modal">ลบรายการนี้</button>
+                        <button type="button" class="btn btn-primary" id="EditButton" data-bs-dismiss="modal">บันทึก</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </div>
 

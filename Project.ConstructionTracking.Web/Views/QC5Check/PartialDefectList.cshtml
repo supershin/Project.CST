@@ -36,7 +36,17 @@
                         }
                     </div>
                     <div class="col">
-                        <a href="#!" class="text-body d-block" style="white-space: nowrap; overflow-x: auto;" onclick="openModalEditQC('@item.ID')">
+                        <a href="#!"
+                           class="text-body d-block"
+                           style="white-space: nowrap; overflow-x: auto;"
+                             @if (item.Seq == seq)
+                            {
+                                @:onclick="openModalEditQC('@item.ID');"
+                            }
+                            else
+                            {                               
+                                @:onclick="openModalUpdateDefectDetailQC('@item.ID');"
+                            }>
                             @if (item.IsMajorDefect == true)
                             {
                                 <i class="fa-solid fa-triangle-exclamation" style="color: #ff0000;"></i>

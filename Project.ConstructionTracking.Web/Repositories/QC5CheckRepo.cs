@@ -441,7 +441,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                     var newDefect = new tr_QC_UnitCheckList_Defect
                     {
                         QCUnitCheckListID = QCUnitCheckListID,
-                        Seq = model.Seq.ToInt(),
+                        RefSeq = model.Seq.ToInt(),
+                        Seq = null,
                         DefectAreaID = model.DefectAreaID,
                         DefectTypeID = model.DefectTypeID,
                         DefectDescriptionID = model.DefectDescriptionID,

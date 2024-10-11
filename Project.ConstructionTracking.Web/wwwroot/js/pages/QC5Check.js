@@ -1044,7 +1044,72 @@
                     console.error("Error fetching updated list:", error);
                 }
             });
+}
+
+
+function openModalUpdateDefectDetailQC(defectID) {
+    $.ajax({
+        url: baseUrl + 'QC5Check/GetQC5DefactEdit',
+        type: 'GET',
+        data: { DefectID: defectID }, // Pass the DefectID to the controller
+        success: function (response) {
+            if (response) {
+                // Set the values for the text inputs
+                $('#defectAreaText').val(response.DefectAreaName);  // Set the DefectArea text
+                $('#defectTypeText').val(response.DefectTypeName);  // Set the DefectType text
+                $('#defectDescriptionText').val(response.DefectDescriptionName);  // Set the DefectDescription text
+
+                // Populate other fields in the modal
+                $('#commentTextareaupdate').val(response.Remark).prop('disabled', actionTypeEn === "submit");
+                $('#QC5DefectID').val(response.DefectID);
+                $('#majorDefectCheckboxupdate').prop('checked', response.IsMajorDefect).prop('disabled', actionTypeEn === "submit");
+
+                // Clear existing images in the modal
+                $('#imagePreview3').empty();
+
+                // If there are images, populate the image list
+                if (response.listImageNotpass && response.listImageNotpass.length > 0) {
+                    response.listImageNotpass.forEach(function (image) {
+                        let removeButtonHTML = ''; // Initialize empty remove button
+
+                        // Only show the RemoveImage button if actionTypeEn is not "submit"
+                        if (actionTypeEn !== "submit") {
+                            removeButtonHTML = `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>`;
+                        }
+
+                        $('#imagePreview3').append(`
+                            <div class="position-relative d-inline-block mb-3">
+                                <a data-fslightbox="gallery" href="${image.FilePath}">
+                                    <img src="${image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                </a>
+                                ${removeButtonHTML}
+                            </div>
+                        `);
+                    });
+
+                    // Reinitialize the fslightbox after appending new content
+                    refreshFsLightbox();
+                }
+
+                // Check if there are 5 or more images and hide the dropzone
+                if ($('#imagePreview3 .position-relative').length >= 5) {
+                    $('#drop-zone-edit').hide(); // Hide the dropzone if there are 5 or more images
+                } else {
+                    $('#drop-zone-edit').show(); // Show the dropzone if less than 5 images
+                }
+
+                // Show the modal
+                var myModal = new bootstrap.Modal(document.getElementById('Update-detail-defect'));
+                myModal.show();
+            }
+        },
+        error: function () {
+            alert('Error fetching data. Please try again.');
         }
+    });
+}
+
+
 
 
 
