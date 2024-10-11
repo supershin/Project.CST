@@ -190,7 +190,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                             ActionDate = DateTime.Now,
                             UpdateDate = DateTime.Now,
                             UpdateBy = userid,
-                            CraeteDate = DateTime.Now,
+                            CreateDate = DateTime.Now,
                             CreateBy = userid
                         };
 
@@ -538,14 +538,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                     if (QC_UnitCheckList != null)
                     {
                         QC_UnitCheckList.QCStatusID = model.QCStatusID;
-                        if (model.QCStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect)
-                        {
-                            QC_UnitCheckList.IsNotReadyInspect = true;
-                        }
-                        else if (model.QCStatusID == SystemConstant.UnitQCStatus.IsPassCondition)
-                        {
-                            QC_UnitCheckList.IsPassCondition = true;
-                        }
                         QC_UnitCheckList.UpdateDate = DateTime.Now;
                         QC_UnitCheckList.UpdateBy = model.UserID;
 

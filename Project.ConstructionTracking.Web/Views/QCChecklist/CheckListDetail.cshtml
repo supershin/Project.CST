@@ -1,0 +1,615 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+    var baseUrl = @ViewBag.baseUrl;
+    var backUrl = baseUrl + "SummaryUnitQC?projectId=" + @Model.QcCheckList.ProjectID + "&projectName=" + @Html.Raw(Uri.EscapeDataString(Model.ProjectUnit.ProjectName)) + "&unitId=" + @Model.QcCheckList.UnitID;
+}
+<style>
+    .fixed-size-btn {
+        width: 80px;
+        height: 30px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .status-dot {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        color: white;
+        border: none;
+        outline: none;
+    }
+
+    .status-text {
+        font-size: 1em;
+    }
+
+    .text-yellow {
+        color: yellow;
+    }
+
+    .custom-heading {
+        line-height: 1.2;
+    }
+
+    .fixedButton {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 20px;
+        z-index: 9998;
+        background-color: white;
+        border-radius: 50%;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+
+    #insert-new-qc5 {
+        z-index: 9999;
+    }
+
+    #Edit-qc5 {
+        z-index: 9999;
+    }
+
+    .autocomplete-items {
+        position: absolute;
+        border: 1px solid #d4d4d4;
+        border-bottom: none;
+        border-top: none;
+        z-index: 99;
+        background-color: #fff;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .autocomplete-item {
+        padding: 10px;
+        cursor: pointer;
+    }
+
+        .autocomplete-item:hover {
+            background-color: #e9e9e9;
+        }
+
+    .autocomplete-active {
+        background-color: #e9e9e9 !important;
+    }
+    .drop-zone {
+        border: 2px dashed #007bff;
+        border-radius: 5px;
+        padding: 6px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .drop-zone-text {
+        margin-bottom: 10px;
+    }
+
+    .drop-zone-input {
+        display: none;
+    }
+
+    .preview-container {
+        margin-top: 10px;
+    }
+
+    .remove-button {
+        position: static;
+        top: 0;
+        right: 0;
+        background: rgba(255, 0, 0, 0.8);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 14px;
+        width: 24px;
+        height: 24px;
+        line-height: 18px;
+        text-align: center;
+        padding: 0;
+    }
+
+    #modal-sign .modal-content .modal-body,
+    #modal-sign-mech .modal-content .modal-body {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: block;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        width: 100%;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        margin: 0;
+        padding: 16px 16px;
+    }
+</style>
+
+@model Project.ConstructionTracking.Web.Models.QCModel.QcCheckListDetailResp
+
+<div class="page-wrapper">
+    <!-- Page header -->
+    <div class="page-header d-print-none">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-home-heart">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M21 12l-9 -9l-9 9h2v7a2 2 0 0 0 2 2h6" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.39 0 .754 .112 1.061 .304" />
+                        <path d="M19 21.5l2.518 -2.58a1.74 1.74 0 0 0 0 -2.413a1.627 1.627 0 0 0 -2.346 0l-.168 .172l-.168 -.172a1.627 1.627 0 0 0 -2.346 0a1.74 1.74 0 0 0 0 2.412l2.51 2.59z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-row align-items-baseline">
+                        <button class="status-dot bg-transparent" onclick="window.location.href='@backUrl'">
+                            <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                        </button>
+                    </div>
+                    <div class="d-block d-sm-flex align-items-baseline custom-heading">
+                        <h1 class="mb-0 header-text">Unit : @Model.ProjectUnit.UnitCode</h1>
+                        <div class="text-muted">
+                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0"> @Model.ProjectUnit.ProjectName (สถานะ : @Model.ProjectUnit.UnitStatus)</h5>
+                        </div>
+                    </div>
+                    <div class="align-items-right">
+                        <button class="status-dot bg-transparent">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page body -->
+    <div class="page-body">
+        <div class="container mt-1 mb-3">
+            <div class="row">
+                <div class="col-12 col-sm-5">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item">@Model.AnotherValue.QCNumber</li>
+                                        <li class="breadcrumb-item" aria-current="page">ตรวจครั้งที่ @Model.QcCheckList.Seq</li>
+                                        <li class="breadcrumb-item" aria-current="page">
+                                            ผู้ตรวจ : @(Model.AnotherValue.QCName != null ? Model.AnotherValue.QCName : ViewBag.Name)
+                                        </li>
+                                    </ol>
+                                </div>
+                                <div class="card-body">
+                                    <label class="form-label mb-1">
+                                        <label class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="action-radio" name="action-radio" data-waschecked="false"
+                                                   @(Model.QcCheckList.QcStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect ? "checked" : "")
+                                                   @(Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT ? "disabled" : "")>
+                                            <span class="form-check-label">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
+                                        </label>
+                                    </label>
+                                    <label class="form-label mb-1">
+                                        <textarea id="main-remark" class="form-control custom-textarea" placeholder="ความคิดเห็น" @(Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT ? "disabled" : "")>@Model.QcCheckList.Remark</textarea>
+                                    </label>
+                                    <div class="container mt-4">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                @if (Model.QcCheckList.MainImages != null && Model.QcCheckList.MainImages.Count > 0)
+                                                {
+                                                    @foreach (var image in Model.QcCheckList.MainImages)
+                                                    {
+                                                        <div class="position-relative d-inline-block mb-3">
+                                                            <a data-fslightbox="gallery" href="@baseUrl@image.ImageUrl">
+                                                                <img src="@baseUrl@image.ImageUrl" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                                            </a>
+                                                            @if (Model.QcCheckList.QcActionType == SystemConstant.ActionType.SAVE)
+                                                            {
+                                                                <button type="button" class="remove-button" style="position:absolute" onclick="deleteImage('@image.ImageID')">✖</button>
+                                                            }
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                @if (Model.QcCheckList.QcActionType != SystemConstant.ActionType.SUBMIT)
+                                                {
+                                                    <div id="drop-zone" class="drop-zone">
+                                                        <p class="drop-zone-text">
+                                                            <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                                        </p>
+                                                        <input type="file" id="file-input" class="drop-zone-input" multiple>
+                                                        <div id="preview-container" class="row preview-container">
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-1 d-none d-md-block">
+                            <div class="card">
+                                <div class="card-body">
+                                    <label class="form-label mb-1">
+                                        <button class="btn btn-warning w-100" data-bs-toggle="modal" id="btn-sign" @(Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT ? "disabled" : "")>วิศวกรควบคุมงานลงนาม</button>
+                                    </label>
+                                    <div class="col-12 mt-3 d-flex" style="justify-content:center;">
+                                        @if (Model.QcCheckList.UserQcResourceUrl != null)
+                                        {
+                                            <img id="sign-pe" src="@baseUrl@Model.QcCheckList.UserQcResourceUrl" alt="Image Sign PE" />
+                                        }
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <div class="row">
+                                            @if (@Model.QcCheckList.QcActionType != SystemConstant.ActionType.SUBMIT)
+                                            {
+                                                <div class="col-4 col-sm-6">
+                                                    <button id="save-qc-checklist" class="btn btn-success w-100">Save</button>
+                                                </div>
+                                                <div class="col-4 col-sm-6">
+                                                    <button id="submit-qc-checklist" class="btn btn-primary w-100">Submit</button>
+                                                </div>
+                                            }
+
+                                            @if (@Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT)
+                                            {
+                                                <div class="col-4 col-sm-6">
+                                                    <button class="btn btn-secondary w-100">ดูเอกสารตรวจ</button>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col" id="checklist-container" style="display: block">
+                    <div class="row">
+                        @foreach (var detail in Model.MasterQcCheckListDetail.CheckListDetails)
+                        {
+                            if (detail.ParentDetails.Count == 0)
+                            {
+                                var getQcDetail = Model.QcCheckListDetail.FirstOrDefault(x => x.QcCheckListDetailID == detail.CheckListDetailID);
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="mb-2 row">
+                                            @detail.LineOrder.@detail.Name
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label class="col-12 col-lg-4 col-form-label mb-1">
+                                                <label class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="radios-@detail.CheckListDetailID"
+                                                           value="pass"
+                                                           @(getQcDetail != null && getQcDetail.StatusID == SystemConstant.Qc_CheckList_Status.PASS ? "checked" : "")
+                                                           @(Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT ? "disabled" : "")>
+                                                    <span class="form-check-label">ผ่าน</span>
+                                                </label>
+                                                <label class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="radios-@detail.CheckListDetailID"
+                                                           value="notpass"
+                                                           @(getQcDetail != null && getQcDetail.StatusID == SystemConstant.Qc_CheckList_Status.NOTPASS ? "checked" : "")
+                                                           @(Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT ? "disabled" : "")>
+                                                    <span class="form-check-label">ไม่ผ่าน</span>
+                                                </label>
+                                            </label>
+
+                                            <div class="col mb-1">
+                                                <textarea class="form-control custom-textarea" id="description-@detail.CheckListDetailID"
+                                                          placeholder="ความคิดเห็น"
+                                                          @(Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT ? "disabled" : "")>@getQcDetail?.Remark</textarea>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        @if (getQcDetail?.Images != null && getQcDetail.Images.Any())
+                                                        {
+                                                            @foreach (var image in getQcDetail.Images)
+                                                            {
+                                                                <div class="position-relative d-inline-block mb-3">
+                                                                    <a data-fslightbox="gallery" href="@baseUrl@image.FilePath">
+                                                                        <img src="@baseUrl@image.FilePath" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                                                    </a>
+                                                                    @if (Model.QcCheckList.QcActionType == SystemConstant.ActionType.SAVE)
+                                                                    {
+                                                                        <button type="button" class="remove-button" style="position:absolute" onclick="deleteImage('@image.ResourceID', '@detail.CheckListDetailID')">✖</button>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        @if (Model.QcCheckList.QcActionType != SystemConstant.ActionType.SUBMIT)
+                                                        {
+                                                            <div id="drop-zone" class="drop-zone">
+                                                                <p class="drop-zone-text">
+                                                                    <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                                                </p>
+                                                                <input type="file" id="file-input-@detail.CheckListDetailID" class="drop-zone-input" multiple>
+                                                                <div id="preview-container-@detail.CheckListDetailID" class="row preview-container">
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="mb-2 row" style="font-weight: bold; font-size:16px;">
+                                            @detail.LineOrder. @detail.Name
+                                        </div>
+                                        @foreach (var parentDetail in detail.ParentDetails)
+                                        {
+                                            var getQcDetail2 = Model.QcCheckListDetail.FirstOrDefault(x => x.QcCheckListDetailID == parentDetail.CheckListDetailID);
+
+                                            <div class="mb-2 row">
+                                                <li>@parentDetail.Name</li>
+                                            </div>
+                                            <div class="mb-3 row">
+                                                <label class="col-12 col-lg-4 col-form-label mb-1">
+                                                    <label class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="radios-@parentDetail.CheckListDetailID"
+                                                               value="pass"
+                                                               @(getQcDetail2 != null && getQcDetail2.StatusID == SystemConstant.Qc_CheckList_Status.PASS ? "checked" : "")
+                                                               @(Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT ? "disabled" : "")>
+                                                        <span class="form-check-label">ผ่าน</span>
+                                                    </label>
+                                                    <label class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="radios-@parentDetail.CheckListDetailID"
+                                                               value="notpass"
+                                                               @(getQcDetail2 != null && getQcDetail2.StatusID == SystemConstant.Qc_CheckList_Status.NOTPASS ? "checked" : "")
+                                                               @(Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT ? "disabled" : "")>
+                                                        <span class="form-check-label">ไม่ผ่าน</span>
+                                                    </label>
+                                                </label>
+                                                <div class="col mb-1">
+                                                    <textarea class="form-control custom-textarea" id="description-@parentDetail.CheckListDetailID"
+                                                              placeholder="ความคิดเห็น"
+                                                              @(Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT ? "disabled" : "")>@getQcDetail2?.Remark</textarea>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            @if (getQcDetail2?.Images != null && getQcDetail2.Images.Any())
+                                                            {
+                                                                @foreach (var image in getQcDetail2.Images)
+                                                                {
+                                                                    <div class="position-relative d-inline-block mb-3">
+                                                                        <a data-fslightbox="gallery" href="@baseUrl@image.FilePath">
+                                                                            <img src="@baseUrl@image.FilePath" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                                                        </a>
+                                                                        @if (Model.QcCheckList.QcActionType == SystemConstant.ActionType.SAVE)
+                                                                        {
+                                                                            <button type="button" class="remove-button" style="position:absolute" onclick="deleteImage('@image.ResourceID', '@parentDetail.CheckListDetailID')">✖</button>
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            @if (Model.QcCheckList.QcActionType != SystemConstant.ActionType.SUBMIT)
+                                                            {
+                                                                <div id="drop-zone" class="drop-zone">
+                                                                    <p class="drop-zone-text">
+                                                                        <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                                                    </p>
+                                                                    <input type="file" id="file-input-@detail.CheckListDetailID" class="drop-zone-input" multiple>
+                                                                    <div id="preview-container-@detail.CheckListDetailID" class="row preview-container">
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal-sign" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="SignalModalLabel">วิศวกรควบคุมลงนาม</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="sign-body modal-body" style="padding:20px;">
+                    <div class="row">
+                        <div class="col-12 mt-2">
+                            <div class="mb-3 position-relative">
+                                <label for="myInput" class="form-label">เลือกวิศวกรควบคุมงาน</label>
+                                <input id="pe-name" type="text" class="form-control" value="@Model.AnotherValue.PEName" disabled>
+                                <input type="hidden" id="pe-id" value="@Model.AnotherValue.PEID" />
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="col-12 mt-2">
+                            <div id="signature-pad" class="signature-pad" style="justify-content:center;align-items:center;display:flex;">
+                                <div class="signature-pad--body" style="width:332px;height:260px">
+                                    <canvas></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+                        <button type="button" class="clear btn btn-default"><i class="fas fa-reply"></i> เคลียร์</button>
+                        <button id="btn-save-sign" type="button" class="permission btn btn-success"><i class="fas fa-check"></i> บันทึก</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts{
+    @*<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">*@
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <script>document.addEventListener("DOMContentLoaded", function () {
+            const dropZones = document.querySelectorAll(".drop-zone");
+
+            dropZones.forEach(dropZone => {
+                const fileInput = dropZone.querySelector(".drop-zone-input");
+                const previewContainer = dropZone.querySelector(".preview-container");
+                const filesArray = [];
+
+                dropZone.addEventListener("click", function (e) {
+                    if (e.target.classList.contains("remove-button")) {
+                        return;
+                    }
+                    fileInput.click();
+                });
+
+                fileInput.addEventListener("change", function () {
+                    if (fileInput.files.length) {
+                        addFilesToPreview(fileInput.files, dropZone, previewContainer, filesArray, fileInput);
+                    }
+                });
+
+                dropZone.addEventListener("dragover", function (e) {
+                    e.preventDefault();
+                    dropZone.classList.add("drop-zone--over");
+                });
+
+                dropZone.addEventListener("dragleave", function () {
+                    dropZone.classList.remove("drop-zone--over");
+                });
+
+                dropZone.addEventListener("drop", function (e) {
+                    e.preventDefault();
+                    addFilesToPreview(e.dataTransfer.files, dropZone, previewContainer, filesArray, fileInput);
+                });
+            });
+
+            function addFilesToPreview(files, dropZone, previewContainer, filesArray, fileInput) {
+                Array.from(files).forEach(file => {
+                    if (!filesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
+                        filesArray.push(file);
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = function (event) {
+                            const img = document.createElement("img");
+                            img.src = event.target.result;
+                            img.classList.add("img-thumbnail");
+
+                            const previewImage = document.createElement("div");
+                            previewImage.className = "col-4 preview-image";
+
+                            const removeButton = document.createElement("button");
+                            removeButton.className = "remove-button";
+                            removeButton.innerHTML = "&times;";
+                            removeButton.addEventListener("click", function (e) {
+                                e.stopPropagation();
+                                filesArray.splice(filesArray.indexOf(file), 1);
+                                updateFileInput(fileInput, filesArray);
+                                previewImage.remove();
+                            });
+
+                            previewImage.appendChild(img);
+                            previewImage.appendChild(removeButton);
+                            previewContainer.appendChild(previewImage);
+                        };
+                    }
+                });
+                updateFileInput(fileInput, filesArray);
+            }
+
+            function updateFileInput(fileInput, filesArray) {
+                const dataTransfer = new DataTransfer();
+                filesArray.forEach(file => dataTransfer.items.add(file));
+                fileInput.files = dataTransfer.files;
+            }
+        });</script>
+    <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+    <script src="~/lib/core-ui/dist/libs/fslightbox/index.js?1692870487" defer></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="~/lib/core-ui/signature-pad-master/css/signature-pad.css" />
+    <script src="~/lib/core-ui/signature-pad-master/js/signature_pad.umd.js"></script>
+
+    <script src="~/js/pages/checklistqc.js?version=@DateTime.Now.Ticks.ToString()"></script>
+    <script>
+        // Ensure proper string values and handle GUIDs correctly
+        let qcId = '@ViewBag.QcID';  // Assuming this is a string or number, adjust if it's a GUID
+        let projectId = '@Model.QcCheckList.ProjectID';  // Assuming this is a GUID
+        let unitId = '@Model.QcCheckList.UnitID';  // Assuming this is a GUID
+        let qcTypeId = '@Model.QcCheckList.QcTypeID';  // Assuming this is a number
+        let qcCheckListId = '@Model.QcCheckList.QcCheckListID';  // Assuming this is a number or string
+        let seq = '@Model.QcCheckList.Seq';  // Assuming this is a number
+        let listID = @Html.Raw(Json.Serialize(Model.MasterQcCheckListDetail.CheckListDetails.Select(o => o.CheckListDetailID).ToList()));  // Raw JSON serialization for list of IDs
+        let peId = '@Model.AnotherValue.PEID';  // Assuming this is a GUID or string
+        var images = @Html.Raw(Json.Serialize(Model.QcCheckList.MainImages)); // Serialize your images model to JavaScript
+        var signImage = '@Model.QcCheckList.UserQcResourceUrl';
+
+        // When the document is ready, initialize checklistqc
+        $(document).ready(() => {
+            checklistqc.init();
+        });
+
+        $(document).ready(function () {
+            var lastClickedRadios = {}; // Object to store the last clicked radio button for each group
+
+            // Handle radio button click for each group individually
+            $('input[type="radio"]').click(function () {
+                var groupName = $(this).attr('name'); // Get the name attribute (group identifier)
+
+                // Check if the clicked radio is the same as the last clicked one in this group
+                if (lastClickedRadios[groupName] && lastClickedRadios[groupName] === this) {
+                    //console.log("Clicked the same radio button in group: " + groupName);
+                    $(this).prop('checked', false); // Optional: Uncheck the radio button
+                    lastClickedRadios[groupName] = null; // Reset the last clicked radio for this group
+                } else {
+                    //console.log("Clicked a new radio button in group: " + groupName);
+                    lastClickedRadios[groupName] = this; // Update the last clicked radio for this group
+                }
+            });
+
+            // Trigger a click event on all checked radio buttons when the page loads
+            $('input[type="radio"]:checked').each(function () {
+                $(this).trigger('click');
+            });
+        });
+
+
+
+    </script>
+}
+

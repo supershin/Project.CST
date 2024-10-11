@@ -26,6 +26,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             setUserProfile();
             base.OnActionExecuting(context);
         }
+
         private void setUserProfile() {
             var userName = Request.Cookies["CST.UserName"];
             var userRole = Request.Cookies["CST.Role"];

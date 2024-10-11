@@ -33,7 +33,7 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
 
-        [InverseProperty("QCSignResource")]
+        [InverseProperty("PESignResource")]
         public virtual ICollection<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; }
         [InverseProperty("Resource")]
         public virtual ICollection<tr_QC_UnitCheckList_Resource> tr_QC_UnitCheckList_Resource { get; set; }

@@ -84,101 +84,100 @@
             <div class="row row-cards">
                 @foreach (var listQc in Model.QcSummaryLists)
                 {
-@*                  @if(listQc.QcTypeID != SystemConstant.QcTypeID.QC5)
-                    { *@
-                        <div class="col-12 col-sm-6">
-                            <div class="card card-link card-link-pop">
-                                <div class="row justify-content-center">
-                                    <div class="card-body">
-                                        <div class="col-12 d-flex flex-row align-items-center">
-                                            <div class="row">
-                                                <div class="col-3">
+                    <div class="col-12 col-sm-6">
+                        <div class="card card-link card-link-pop">
+                            <div class="row justify-content-center">
+                                <div class="card-body">
+                                    <div class="col-12 d-flex flex-row align-items-center">
+                                        <div class="row">
+                                            <div class="col-3">
                                                 @if (listQc.QcTypeID == SystemConstant.QcTypeID.QC5)
                                                 {
-                                                    <form asp-controller="QC5Check" asp-action="index">
-                                                        <input type="hidden" name="ProjectID" value="@Model.ProjectID" />
-                                                        <input type="hidden" name="UnitID" value="@Model.UnitID" />
-                                                        <input type="hidden" name="Seq" value="1" />
-                                                        <button type="submit" class="btn btn-success fixed-size-btn mb-2">
-                                                            @listQc.QcTypeName
-                                                        </button>
-                                                    </form>
+                                                    <button data-action="Verify"
+                                                            data-qc-type-id="@listQc.QcTypeID"
+                                                            data-seq="1"
+                                                            class="btn btn-success fixed-size-btn mb-2">
+                                                        @listQc.QcTypeName
+                                                    </button>
                                                 }
                                                 else
                                                 {
-                                                    <form asp-controller="QCChecklist" asp-action="index">
-                                                        <input type="hidden" name="ProjectID" value="@Model.ProjectID" />
-                                                        <input type="hidden" name="UnitID" value="@Model.UnitID" />
-                                                        <input type="hidden" name="QcCheckListID" value="@listQc.QcCheckListID" />
-                                                        <input type="hidden" name="QcTypeID" value="@listQc.QcTypeID" />
-                                                        <input type="hidden" name="FormID" value="@listQc.FormID" />
-                                                        <input type="hidden" name="FormQcCheckListID" value="@listQc.FormQcCheckList" />
-                                                        <button type="submit" class="btn btn-success fixed-size-btn mb-2">
-                                                            @listQc.QcTypeName
-                                                        </button>
-                                                    </form>
+                                                    <button data-action="Verify"
+                                                            data-qc-checklist-id="@listQc.QcCheckListID"
+                                                            data-qc-type-id="@listQc.QcTypeID"
+                                                            data-form-id="@listQc.FormID"
+                                                            data-form-qc-checklist-id="@listQc.FormQcCheckList"
+                                                            class="btn btn-success fixed-size-btn mb-2">
+                                                        @listQc.QcTypeName
+                                                    </button>
+
                                                 }
-                                                </div>
-                                                @for (int i = 0; i < 5; i++)
+                                            </div>
+                                            @for (int i = 0; i < 5; i++)
+                                            {
+                                                if (i < listQc.QcInspections.Count)
                                                 {
-                                                    if (i < listQc.QcInspections.Count)
+                                                    var data = listQc.QcInspections[i];
+                                                    if (data != null)
                                                     {
-                                                        var data = listQc.QcInspections[i];
-                                                        if (data != null)
-                                                        {
-                                                            <div class="col">
+                                                        <div class="col">
                                                             @if (listQc.QcTypeID == SystemConstant.QcTypeID.QC5)
                                                             {
-                                                                <form asp-controller="QC5Check" asp-action="index">
-                                                                    <input type="hidden" name="ProjectID" value="@Model.ProjectID" />
-                                                                    <input type="hidden" name="UnitID" value="@Model.UnitID" />
-                                                                    <input type="hidden" name="Seq" value="@data.Seq" />
-                                                                    <button type="submit" class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH ? "green" : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2"></button>
-                                                                </form>
+                                                                <button data-action="Verify"
+                                                                        data-type="@listQc.QcTypeID"
+                                                                        data-seq="1"
+                                                                        class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH ? "green" : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2">
+                                                                </button>
                                                             }
                                                             else
                                                             {
-                                                                <form asp-controller="QCChecklist" asp-action="index">
-                                                                    <input type="hidden" name="ProjectID" value="@Model.ProjectID" />
-                                                                    <input type="hidden" name="UnitID" value="@Model.UnitID" />
-                                                                    <input type="hidden" name="QcCheckListID" value="@listQc.QcCheckListID" />
-                                                                    <input type="hidden" name="QcTypeID" value="@listQc.QcTypeID" />
-                                                                    <input type="hidden" name="FormID" value="@listQc.FormID" />
-                                                                    <input type="hidden" name="FormQcCheckListID" value="@listQc.FormQcCheckList" />
-                                                                    <input type="hidden" name="QcUnitCheckListID" value="@data.QcUnitCheckListID" />
-                                                                    <input type="hidden" name="QcUnitStatusID" value="@data.QcStatusID" />
-                                                                    <input type="hidden" name="Seq" value="@data.Seq" />
-                                                                    <button type="submit" class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH ? "green" : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2"></button>
-                                                                </form>
+                                                                <button data-action="Status"
+                                                                        data-project-id="@Model.ProjectID"
+                                                                        data-unit-id="@Model.UnitID"
+                                                                        data-qc-checklist-id="@listQc.QcCheckListID"
+                                                                        data-qc-type-id="@listQc.QcTypeID"
+                                                                        data-form-id="@listQc.FormID"
+                                                                        data-qc-unit-checklist-id="@data.QcUnitCheckListID"
+                                                                        data-seq="@data.Seq"
+                                                                        class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH ? "green" : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2">
+                                                                </button>
+
                                                             }
-                                                            </div>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="col">
-                                                            <form asp-controller="QCChecklist" asp-action="index">
-                                                                <button type="submit" class="status-dot bg-secondary mx-1 mb-2" disabled></button>
-                                                            </form>
                                                         </div>
                                                     }
                                                 }
-                                                <div class="col">
+                                                else
+                                                {
+                                                    <div class="col">
+                                                        <button class="status-dot bg-secondary mx-1 mb-2" disabled></button>
+                                                    </div>
+                                                }
+                                            }
+                                            <div class="col">
 
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                   @*  } *@
+                    </div>
                 }
             </div>
         </div>
     </div>
 </div>
 
+@section Scripts{
+    <script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+    <script src="~/lib/core-ui/dist/libs/fslightbox/index.js?1692870487" defer></script>
+    <script src="~/js/pages/summaryqc.js?version=@DateTime.Now.Ticks.ToString()"></script>
+    <script>
+        let projectId = '@Model.ProjectID';
+        let unitId = '@Model.UnitID';
+        $(document).ready(() => {
+            summaryqc.init();
+        });
+    </script>
 
-<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
-<script src="~/lib/core-ui/dist/libs/fslightbox/index.js?1692870487" defer></script>
+}
