@@ -7,6 +7,8 @@
             public const int FORM_TYPE_PE = 3;
             public const int FORM_TYPE_QC = 4;
             public const int SAVE_DARF_PE = 8;
+            public const int QC5DefectStatusPass = 27;
+            public const int QC5DefectStatusNotPass = 28;
         }
 
         public static class Ext_Type
@@ -94,9 +96,9 @@
 
         public static class Unit_Form_Status
         {
-            public const int PE_Save = 1; 
-            public const int PE_Submit = 2; 
-            public const int PM_Save = 3; 
+            public const int PE_Save = 1;
+            public const int PE_Submit = 2;
+            public const int PM_Save = 3;
             public const int PM_Approve = 4;
             public const int PM_Reject = 5;
             public const int PM_Sendto_PJM = 6;
@@ -123,13 +125,12 @@
             public const int IsPassCondition = 4;
             public const int InProgress = 5;
         }
-
-
         public static class Qc_CheckList_Status
         {
             public const int PASS = 29;
             public const int NOTPASS = 30;
         }
+
     }
 
 }
