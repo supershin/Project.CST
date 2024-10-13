@@ -10,8 +10,8 @@ using static Project.ConstructionTracking.Web.Commons.SystemConstant;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
-    public interface IQcCheckListRepo
-    {
+	public interface IQcCheckListRepo
+	{
         MasterQcCheckListDetailResp GetMasterQcCheckList(Guid projectID, int qcTypeID);
 
         QcCheckListResp ValidateQcCheckList(QcActionModel model);
@@ -32,13 +32,13 @@ namespace Project.ConstructionTracking.Web.Repositories
         bool SubmitQcCheckList(SubmitQcCheckListModel model, Guid userID, int roleID);
     }
 
-    public class QcCheckListRepo : IQcCheckListRepo
-    {
+	public class QcCheckListRepo : IQcCheckListRepo
+	{
         private readonly ContructionTrackingDbContext _context;
         public QcCheckListRepo(ContructionTrackingDbContext context)
-        {
-            _context = context;
-        }
+		{
+			_context = context;
+		}
 
         public QcCheckListResp ValidateQcCheckList(QcActionModel model)
         {
@@ -92,7 +92,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                         QcStatusID = query.qc.QCStatusID.GetValueOrDefault(),
                         QcActionType = action.ActionType,
-                    };
+                    };  
                 }
                 else
                 {
@@ -125,7 +125,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     .Where(o => o.ProjectTypeID == project.ProjectTypeID
                     && o.QCTypeID == qcTypeID && o.FlagActive == true)
                     .FirstOrDefault();
-
+                
                 if (qcCheckList != null)
                 {
                     resp = new MasterQcCheckListDetailResp()
@@ -189,7 +189,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 .Where(o => o.ProjectID == model.ProjectID && o.UnitID == model.UnitID
                 && o.CheckListID == model.QcCheckListID && o.QCTypeID == model.QcTypeID).OrderByDescending(o => o.Seq).FirstOrDefault();
 
-            if (transQc == null)
+            if( transQc == null)
             {
                 //get Default Qc CheckList
                 QcCheckListResp QcCheckList = ValidateQcCheckList(model);
@@ -210,12 +210,12 @@ namespace Project.ConstructionTracking.Web.Repositories
                 //get Previous Qc CheckList -> Last Seq
                 QcCheckListResp QcCheckList = ValidateQcCheckList(model);
 
-                if (QcCheckList.QcStatusID == SystemConstant.UnitQCStatus.Pass)
+                if(QcCheckList.QcStatusID == SystemConstant.UnitQCStatus.Pass)
                 {
                     throw new Exception("รายการตรวจQC นี้ผ่านแล้ว");
                 }
 
-                if (QcCheckList.Seq == 5)
+                if(QcCheckList.Seq == 5)
                 {
                     throw new Exception("ไม่สามารถสร้างรายการตรวจเพิ่มได้เนื่องจากครบจำนวนครั้งที่กำหนด");
                 }
@@ -233,7 +233,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 //get draft Previous Qc CheckList
                 else
                 {
-                    if (transQc.QCStatusID == SystemConstant.UnitQCStatus.NotPass
+                    if(transQc.QCStatusID == SystemConstant.UnitQCStatus.NotPass
                         || transQc.QCStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect)
                     {
                         resp = new VerifyQcCheckList()
@@ -315,7 +315,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                                       }).ToList()
                                                      }).ToList()
                              }).FirstOrDefault();
-
+                            
                 // Set Data Resp from Query 
                 if (query != null)
                 {
@@ -334,7 +334,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         MainImages = new List<MainImage>()
                     };
 
-                    foreach (var image in query.MainImages)
+                    foreach(var image in query.MainImages)
                     {
                         MainImage addImage = new MainImage()
                         {
@@ -347,7 +347,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     resp.QcCheckListDetail = new List<QcCheckListDetail>();
 
-                    foreach (var detail in query.CheckListDetails)
+                    foreach(var detail in query.CheckListDetails)
                     {
                         QcCheckListDetail qcDetail = new QcCheckListDetail()
                         {
@@ -357,7 +357,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                             Images = new List<ImageQcCheckListDetail>()
                         };
 
-                        foreach (var image in detail.ImageList)
+                        foreach( var image in detail.ImageList)
                         {
                             ImageQcCheckListDetail imageDetail = new ImageQcCheckListDetail()
                             {
@@ -457,7 +457,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 // create draft new qc checklist list detail
                 List<tr_QC_UnitCheckList_Detail> createNewListDetail = new List<tr_QC_UnitCheckList_Detail>(qcCheckListDetail);
 
-                foreach (var list in createNewListDetail)
+                foreach(var list in createNewListDetail)
                 {
                     list.ID = 0;
                     list.QCUnitCheckListID = createNew.ID;
@@ -474,7 +474,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         .ToList();
 
                     List<tr_QC_UnitCheckList_Resource> createNewResource = new List<tr_QC_UnitCheckList_Resource>(selectDetailResource);
-                    foreach (var resource in createNewResource)
+                    foreach(var resource in createNewResource)
                     {
                         resource.ID = 0;
                         resource.QCUnitCheckListID = createNew.ID;
@@ -507,7 +507,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 {
                     QCCheckListID = createNew.ID,
                     Seq = (int)createNew.Seq
-
+                    
                 };
             }
             else
@@ -560,7 +560,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public dynamic SaveQcCheckList(SaveTransQCCheckListModel model, Guid userID, int roleID)
         {
-            if (model.QcID == Guid.Empty || model.QcID == null)
+            if(model.QcID == Guid.Empty || model.QcID == null)
             {
                 // create new QC CheckList
                 tr_QC_UnitCheckList createNewQcCheckList = new tr_QC_UnitCheckList();
@@ -605,7 +605,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 UploadImageResource((Guid)createNewCheckListAction.QCUnitCheckListID, null, model.Images, model.ApplicationPath, userID);
 
                 // create qc checklist detial
-                foreach (var dataList in model.CheckListItems)
+                foreach ( var dataList in model.CheckListItems)
                 {
                     tr_QC_UnitCheckList_Detail createNewDetail = new tr_QC_UnitCheckList_Detail();
                     createNewDetail.QCUnitCheckListID = createNewQcCheckList.ID;
@@ -613,7 +613,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     createNewDetail.CheckListDetailID = dataList.CheckListDetailID;
                     if (dataList.ConditionPass)
                         createNewDetail.StatusID = SystemConstant.Qc_CheckList_Status.PASS;
-                    else if (dataList.ConditionNotPass)
+                    else if(dataList.ConditionNotPass)
                         createNewDetail.StatusID = SystemConstant.Qc_CheckList_Status.NOTPASS;
                     createNewDetail.Remark = dataList.DetailRemark;
                     createNewDetail.UpdateDate = DateTime.Now;
@@ -688,14 +688,14 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     List<int> exceptDetail = selectMasterDetail.Except(detailList).ToList();
 
-                    foreach (var dataDetail in model.CheckListItems)
+                    foreach ( var dataDetail in model.CheckListItems)
                     {
                         tr_QC_UnitCheckList_Detail? qcCheckListDetail = _context.tr_QC_UnitCheckList_Detail
                             .Where(o => o.QCUnitCheckListID == updateQcCheckList.ID
                             && o.CheckListDetailID == dataDetail.CheckListDetailID && o.FlagActive == true)
                             .FirstOrDefault();
 
-                        if (qcCheckListDetail == null)
+                        if(qcCheckListDetail == null)
                         {
                             tr_QC_UnitCheckList_Detail createNewDetail = new tr_QC_UnitCheckList_Detail();
                             createNewDetail.QCUnitCheckListID = updateQcCheckList.ID;
@@ -740,14 +740,14 @@ namespace Project.ConstructionTracking.Web.Repositories
                         }
                     }
 
-                    foreach (var data in exceptDetail)
+                    foreach ( var data in exceptDetail)
                     {
                         tr_QC_UnitCheckList_Detail? qcCheckListDetail = _context.tr_QC_UnitCheckList_Detail
                             .Where(o => o.QCUnitCheckListID == updateQcCheckList.ID
                             && o.CheckListDetailID == data && o.FlagActive == true)
                             .FirstOrDefault();
 
-                        if (qcCheckListDetail != null)
+                        if(qcCheckListDetail != null)
                         {
                             qcCheckListDetail.StatusID = null;
                             qcCheckListDetail.UpdateDate = DateTime.Now;
@@ -775,7 +775,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         void UploadImageResource(Guid qcUnitCheckListID, int? detailID, List<IFormFile> listImages, string applicationPath, Guid userID)
         {
-            if (listImages != null && listImages.Count > 0)
+            if(listImages != null && listImages.Count > 0)
             {
                 var folder = DateTime.Now.ToString("yyyyMM");
                 var dirPath = Path.Combine(applicationPath, "Upload", "document", folder, "QCImage");
@@ -784,9 +784,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                     Directory.CreateDirectory(dirPath);
                 }
 
-                foreach (var image in listImages)
+                foreach( var image in listImages)
                 {
-                    if (image.Length > 0)
+                    if(image.Length > 0)
                     {
                         Guid guidId = Guid.NewGuid();
                         string fileName = guidId + ".jpg";
@@ -886,7 +886,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 resource.Directory = Path.Combine(appPath, dirPath);
                 ConvertByteToImage(resource);
 
-                returnID = CreateUploadSign(QcID, fileName, filePath, userId);
+                returnID = CreateUploadSign(QcID ,fileName, filePath, userId);
             }
 
             return returnID;
@@ -932,7 +932,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-        public Guid CreateUploadSign(Guid? QcID, string fileName, string filePath, Guid userID)
+        public Guid CreateUploadSign(Guid? QcID, string fileName, string filePath, Guid userID )
         {
             tr_QC_UnitCheckList? checkQc = _context.tr_QC_UnitCheckList
                 .Where(o => o.ID == QcID && o.FlagActive == true).FirstOrDefault();
@@ -1028,7 +1028,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             tr_QC_UnitCheckList? checkList = _context.tr_QC_UnitCheckList
                 .Where(o => o.ID == model.QcID && o.ProjectID == model.ProjectID
                 && o.UnitID == model.UnitID && o.QCTypeID == model.QcTypeID
-                && o.CheckListID == model.CheckListID && (o.QCStatusID == SystemConstant.UnitQCStatus.InProgress || o.QCStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect)
+                && o.CheckListID == model.CheckListID && ( o.QCStatusID == SystemConstant.UnitQCStatus.InProgress || o.QCStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect )
                 && o.FlagActive == true)
                 .FirstOrDefault();
 

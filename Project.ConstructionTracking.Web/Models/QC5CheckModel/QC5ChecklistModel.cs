@@ -6,7 +6,6 @@ namespace Project.ConstructionTracking.Web.Models.QC5CheckModel
     {
         public int ID { get; set; }
         public Guid? QCUnitCheckListID { get; set; }
-        public int? RefSeq { get; set; }
         public int? Seq { get; set; }
         public int? DefectAreaID { get; set; }
         public string? DefectAreaName { get; set; }
