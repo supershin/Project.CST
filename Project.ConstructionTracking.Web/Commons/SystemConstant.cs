@@ -7,8 +7,6 @@
             public const int FORM_TYPE_PE = 3;
             public const int FORM_TYPE_QC = 4;
             public const int SAVE_DARF_PE = 8;
-            public const int QC5DefectStatusPass = 27;
-            public const int QC5DefectStatusNotPass = 28;
         }
 
         public static class Ext_Type
