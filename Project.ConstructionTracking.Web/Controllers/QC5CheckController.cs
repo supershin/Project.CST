@@ -51,7 +51,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.ListDefectArea = ListDefectArea;
 
 
-            var PEUnit = new GetDDL { Act = "PEUnit" , GuID = unitId};
+            var PEUnit = new GetDDL { Act = "PEUnit", GuID = unitId };
             List<GetDDL> PEUnitID = _getDDLService.GetDDLList(PEUnit);
             ViewBag.PEID = (PEUnitID != null && PEUnitID.Count > 0) ? PEUnitID[0].ValueGuid : Guid.Empty;
             ViewBag.PEName = (PEUnitID != null && PEUnitID.Count > 0) ? PEUnitID[0].Text : "ยังไม่ได้ระบุ PE/SE ผู้ดูแล Unit แปลงนี้";
@@ -108,7 +108,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             {
                 Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
                 model.ApplicationPath = _hosting.ContentRootPath;
-                _QC5CheckService.InsertQCUnitCheckListDefect(model , userid);
+                _QC5CheckService.InsertQCUnitCheckListDefect(model, userid);
 
                 // Return success response
                 return Json(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
@@ -178,7 +178,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
             }
         }
-        
+
 
         [HttpPost]
         public IActionResult RemoveDefectQC5Unit(QC5IUDModel model)
@@ -244,7 +244,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
                 string ApplicationPath = _hosting.ContentRootPath;
 
-                _QC5CheckService.SaveSignature(model.Sign , ApplicationPath, model.QCUnitCheckListID , userid);
+                _QC5CheckService.SaveSignature(model.Sign, ApplicationPath, model.QCUnitCheckListID, userid);
 
 
                 // Return success response

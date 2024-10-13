@@ -16,20 +16,18 @@
                            value="1"
                            onclick="validateMainStatus(this)"
                     @(ViewBag.QC5UnitStatusID == 1 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
-                    >
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
                     <span class="form-check-label">ผ่าน</span>
                 </label>
                 <label class="form-check form-check-inline">
-                    <input class="form-check-input allow-deselect" 
-                           type="radio" 
-                           name="radios-QC5-status" 
-                           id="radio2" 
-                           value="4" 
+                    <input class="form-check-input allow-deselect"
+                           type="radio"
+                           name="radios-QC5-status"
+                           id="radio2"
+                           value="4"
                            onclick="validateConditionalPass(this)"
                     @(ViewBag.QC5UnitStatusID == 4 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
-                    >
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
                     <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
                 </label>
                 <label class="form-check form-check-inline">
@@ -40,51 +38,49 @@
                            value="2"
                            onclick="ClickNotPass(this)"
                     @(ViewBag.QC5UnitStatusID == 2 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
-                    >
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
                     <span class="form-check-label">ไม่ผ่าน</span>
                 </label>
                 <label class="form-check form-check-inline">
-                    <input class="form-check-input allow-deselect" 
-                           type="radio" 
-                           name="radios-QC5-status" 
-                           id="radio1" 
-                           value="3" 
+                    <input class="form-check-input allow-deselect"
+                           type="radio"
+                           name="radios-QC5-status"
+                           id="radio1"
+                           value="3"
                            onclick="ClickNotReadyInspect(this)"
-                     @(ViewBag.QC5UnitStatusID == 3 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
-                    >
+                    @(ViewBag.QC5UnitStatusID == 3 ? "checked" : "")
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
                     <span class="form-check-label">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
                 </label>
             </div>
             <label class="form-label mb-1">
-                <textarea class="form-control" 
-                          id="QC5Remark" 
-                          rows="2" 
+                <textarea class="form-control"
+                          id="QC5Remark"
+                          rows="2"
                           placeholder="ความคิดเห็น"
-                          @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
-                >@ViewBag.QC5UnitChecklistRemark</textarea>
+                @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>@ViewBag.QC5UnitChecklistRemark</textarea>
             </label>
-                @if (ViewBag.ActionTypeEn != "submit")
-                {
-                    <div class="form-label mt-4">
-                        <div id="drop-zone-save-submit" class="drop-zone form-control">
-                            <p class="drop-zone-text">
-                                <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
-                            </p>
-                            <input type="file" id="file-input-save-submit" class="drop-zone-input" multiple>
-                            <div id="preview-container-save-submit" class="row preview-container"></div>
-                        </div>
+            @if (ViewBag.ActionTypeEn != "submit")
+            {
+                <div class="form-label mt-4">
+                    <div id="drop-zone-save-submit" class="drop-zone form-control">
+                        <p class="drop-zone-text">
+                            <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                        </p>
+                        <input type="file" id="file-input-save-submit" class="drop-zone-input" multiple>
+                        <div id="preview-container-save-submit" class="row preview-container"></div>
                     </div>
-                }
+                </div>
+            }
         </div>
         @if (ViewBag.ActionTypeEn != "submit")
         {
             <div class="col-12 mt-3">
-                <button class="btn btn-warning w-100" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#SignalModal"
-                >วิศวกรควบคุมงานลงนาม</button>
+                <button class="btn btn-warning w-100"
+                        data-bs-toggle="modal"
+                        data-bs-target="#SignalModal">
+                    วิศวกรควบคุมงานลงนาม
+                </button>
             </div>
         }
         @if (ViewBag.PathQC5SignatureImage != null)
@@ -120,8 +116,8 @@
                     </div>
                 </div>
             </div>
-            
-        }       
+
+        }
     </div>
 </div>
 

@@ -88,8 +88,12 @@ builder.Services.AddScoped<IQC5CheckRepo, QC5CheckRepo>();
 builder.Services.AddScoped<IQcSummaryService, QcSummaryService>();
 builder.Services.AddScoped<IQcSummaryRepo, QcSummaryRepo>();
 
+builder.Services.AddScoped<IQcCheckListService, QcCheckListService>();
+builder.Services.AddScoped<IQcCheckListRepo, QcCheckListRepo>();
+
 // Add the new services for SQL and data access
 builder.Services.AddScoped<MasterManagementProviderProject, SqlMasterManagementProject>();
+
 
 var app = builder.Build();
 

@@ -61,16 +61,16 @@
     .fixedButton {
         position: fixed;
         bottom: 20px;
-        right: 20px; 
+        right: 20px;
         padding: 20px;
-        z-index: 9998; 
-        background-color: white; 
-        border-radius: 50%; 
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); 
+        z-index: 9998;
+        background-color: white;
+        border-radius: 50%;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         border: none;
     }
 
-    #insert-new-qc5{
+    #insert-new-qc5 {
         z-index: 9999;
     }
 
@@ -78,7 +78,7 @@
         z-index: 9999;
     }
 
-    #signatureModal{
+    #signatureModal {
         z-index: 9999;
     }
 
@@ -99,9 +99,9 @@
         cursor: pointer;
     }
 
-    .autocomplete-item:hover {
-        background-color: #e9e9e9;
-    }
+        .autocomplete-item:hover {
+            background-color: #e9e9e9;
+        }
 
     .autocomplete-active {
         background-color: #e9e9e9 !important;
@@ -136,13 +136,13 @@
         max-height: 100px;
     }
 
-    .preview-image img {
-        max-width: 100%;
-        max-height: 100%;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        display: block;
-    }
+        .preview-image img {
+            max-width: 100%;
+            max-height: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: block;
+        }
 
     .remove-button {
         position: absolute;
@@ -162,7 +162,7 @@
     }
 
     .custom-btn .fa-signature {
-      font-size: 20px; /* Adjust icon size */
+        font-size: 20px; /* Adjust icon size */
     }
 
     .form-control[readonly] {
@@ -192,11 +192,11 @@
 
 </style>
 
-<input type="hidden" id="hdProject" value="@ViewBag.ProjectId"/>
-<input type="hidden" id="hdUnitId" value="@ViewBag.UnitId"/>
-<input type="hidden" id="hdQC5UnitChecklistID" value="@ViewBag.QC5UnitChecklistID"/>
+<input type="hidden" id="hdProject" value="@ViewBag.ProjectId" />
+<input type="hidden" id="hdUnitId" value="@ViewBag.UnitId" />
+<input type="hidden" id="hdQC5UnitChecklistID" value="@ViewBag.QC5UnitChecklistID" />
 <input type="hidden" id="hdQC5UnitChecklistActionID" value="@ViewBag.QC5UnitChecklistActionID" />
-<input type="hidden" id="hdSeq" value="@ViewBag.Seq"/>
+<input type="hidden" id="hdSeq" value="@ViewBag.Seq" />
 <input type="hidden" id="hdSigNatureData" value="@ViewBag.PathQC5SignatureImage" />
 
 @if (ViewBag.ActionTypeEn != "submit")
@@ -224,6 +224,9 @@
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
                         <form asp-controller="SummaryUnitQC" asp-action="index">
+                            <input type="hidden" name="ProjectId" value="@ViewBag.ProjectId" />
+                            <input type="hidden" name="projectName" value="@ViewBag.ProjectName" />
+                            <input type="hidden" name="UnitId" value="@ViewBag.UnitId" />
                             <button class="status-dot bg-transparent">
                                 <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
                             </button>
@@ -237,7 +240,6 @@
                     </div>
                     <div class="align-items-right">
                         <button class="status-dot bg-transparent">
-
                         </button>
                     </div>
                 </div>
@@ -356,7 +358,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>                   
+                    </div>
                 </div>
             </div>
         </div>
@@ -440,7 +442,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-12">
-                @*           <input type="text" id="PEUnit" class="form-control" value="PE/SE : @PEName" readonly> *@
+                            @*           <input type="text" id="PEUnit" class="form-control" value="PE/SE : @PEName" readonly> *@
                         </div>
                         <div class="col-12 mt-2">
                             <label for="signature-pad" class="form-label">ลงลายเซ็น PE/SE</label>
@@ -456,7 +458,7 @@
                     <div class="d-flex justify-content-between w-100">
                         <!-- Left-aligned button -->
                         <button type="button" class="clear btn btn-default"><i class="fas fa-reply"></i> เคลียร์</button>
-        
+
                         <!-- Right-aligned button -->
                         <button type="button" class="btn btn-primary" onclick="saveSignature()">บันทึก</button>
                     </div>
@@ -614,10 +616,10 @@
                             <div class="form-label">รายการ defect</div>
                             <input class="form-control" type="text" id="defectDescriptionText" placeholder="ความคิดเห็น" disabled>
                         </div>
-@*                         <div class="col-12">
-                            <h3>DefectArea: <small id="defectAreaText">text show</small></h3>
-                            <h3>DefectType: <small id="defectTypeText">text show</small></h3>
-                            <h3>DefectDescription: <small id="defectDescriptionText">text show</small></h3>
+                        @*                         <div class="col-12">
+                        <h3>DefectArea: <small id="defectAreaText">text show</small></h3>
+                        <h3>DefectType: <small id="defectTypeText">text show</small></h3>
+                        <h3>DefectDescription: <small id="defectDescriptionText">text show</small></h3>
                         </div> *@
 
                         <div class="col-12">
@@ -636,7 +638,7 @@
                 <div class="modal-footer">
                     @if (ViewBag.ActionTypeEn != "submit")
                     {
-            @*             <button type="button" class="btn me-auto btn-danger" id="RemoveQC5Button" data-bs-dismiss="modal">ลบรายการนี้</button> *@
+                        @*             <button type="button" class="btn me-auto btn-danger" id="RemoveQC5Button" data-bs-dismiss="modal">ลบรายการนี้</button> *@
                         <button type="button" class="btn btn-primary" id="UpdateDefectButton" data-bs-dismiss="modal">บันทึก</button>
                     }
                 </div>
@@ -648,16 +650,16 @@
 </div>
 
 @section scripts {
-<link href="~/lib/core-ui/signature-pad-master/css/signature-pad.css"/>
-<script src="~/lib/core-ui/signature-pad-master/js/signature_pad.umd.js"></script>
-<script src="~/js/pages/QC5Check.js?ver=@DateTime.Now.Ticks.ToString()"></script>
-<script>
+    <link href="~/lib/core-ui/signature-pad-master/css/signature-pad.css" />
+    <script src="~/lib/core-ui/signature-pad-master/js/signature_pad.umd.js"></script>
+    <script src="~/js/pages/QC5Check.js?ver=@DateTime.Now.Ticks.ToString()"></script>
+    <script>
 
-    $(document).ready(function () {
-        unitEquipment.init();  // Initialize when the document is ready
-    });
+        $(document).ready(function () {
+            unitEquipment.init();  // Initialize when the document is ready
+        });
 
-</script>
+    </script>
 
     <script type="text/javascript">
         var actionTypeEn = '@ViewBag.ActionTypeEn';  // Pass ViewBag.ActionTypeEn to JavaScript

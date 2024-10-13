@@ -14,6 +14,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore;
 using Humanizer.Localisation;
 using System.Linq;
+using QuestPDF.Infrastructure;
+using static Project.ConstructionTracking.Web.Commons.SystemConstant;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -79,6 +81,34 @@ namespace Project.ConstructionTracking.Web.Repositories
         //    _context.SaveChanges();
         //}
 
+
+        public QC5MaxSeqStatusChecklistModel CheckQC5MaxSeqStatusChecklist(QC5MaxSeqStatusChecklistModel filterData)
+        {
+            var result = (from t1 in _context.tr_QC_UnitCheckList
+                          join t2 in _context.tr_QC_UnitCheckList_Action on t1.ID equals t2.QCUnitCheckListID into UnitCheckListAction
+                          from t2 in UnitCheckListAction.DefaultIfEmpty()
+                          where t1.ProjectID == filterData.ProjectID && t1.UnitID == filterData.UnitID && t1.FlagActive == true
+                          orderby t1.Seq descending
+                          select new QC5MaxSeqStatusChecklistModel
+                          {
+                              ProjectID = t1.ProjectID,
+                              UnitID = t1.UnitID,
+                              CheckListID = t1.CheckListID,
+                              QCTypeID = t1.QCTypeID,
+                              Seq = t1.Seq,
+                              CheckListDate = t1.CheckListDate,
+                              QCStatusID = t1.QCStatusID,
+                              ActionType = t2.ActionType,
+                              PESignResourceID = t1.PESignResourceID,
+                              FlagActive = t1.FlagActive,
+                              CreateDate = t1.CreateDate,
+                              CreateBy = t1.CreateBy,
+                              UpdateDate = t1.UpdateDate,
+                              UpdateBy = t1.UpdateBy
+                          }).FirstOrDefault();
+
+            return result;
+        }
 
 
         public QC5DetailModel GetQC5CheckDetail(QC5DetailModel filterData)
@@ -293,7 +323,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             // Step 2: Insert the selected records into the same table
             _context.tr_QC_UnitCheckList_Resource.AddRange(recordsToInsert);
             _context.SaveChanges(); // Commit the transaction
-        } 
+        }
 
 
         public List<QC5ChecklistModel> GetQCUnitCheckListDefects(QC5ChecklistModel filterData)
@@ -404,7 +434,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                             ID = QCUnitCheckListID,
                             ProjectID = model.ProjectID,
                             UnitID = model.UnitID,
-                            CheckListID = null,
+                            CheckListID = 6,
                             QCTypeID = SystemConstant.Unit_Form_QC.QC5,
                             Seq = model.Seq.ToInt(),
                             CheckListDate = DateTime.Now,
