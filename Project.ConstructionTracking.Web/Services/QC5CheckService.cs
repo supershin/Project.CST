@@ -13,6 +13,12 @@ namespace Project.ConstructionTracking.Web.Services
             _IQC5CheckRepo = QC5CheckRepo;
         }
 
+        public QC5MaxSeqStatusChecklistModel CheckQC5MaxSeqStatusChecklist(QC5MaxSeqStatusChecklistModel filterData)
+        {
+            var C5MaxSeqStatusChecklist = _IQC5CheckRepo.CheckQC5MaxSeqStatusChecklist(filterData);
+            return C5MaxSeqStatusChecklist;
+        }
+
         public QC5DetailModel GetQC5CheckDetail(QC5DetailModel filterData)
         {
             var QC5CheckDetail = _IQC5CheckRepo.GetQC5CheckDetail(filterData);

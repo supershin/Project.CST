@@ -5,6 +5,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 {
     public interface IQC5CheckRepo
     {
+        QC5MaxSeqStatusChecklistModel CheckQC5MaxSeqStatusChecklist(QC5MaxSeqStatusChecklistModel filterData);
         QC5DetailModel GetQC5CheckDetail(QC5DetailModel filterData);
         List<QC5ChecklistModel> GetQCUnitCheckListDefects(QC5ChecklistModel filterData);
         QC5DefectModel GetQC5DefactEdit(QC5DefectModel filterData);

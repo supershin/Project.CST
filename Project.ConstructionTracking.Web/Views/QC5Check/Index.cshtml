@@ -224,6 +224,9 @@
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
                         <form asp-controller="SummaryUnitQC" asp-action="index">
+                            <input type="hidden" name="ProjectId" value="@ViewBag.ProjectId" />
+                            <input type="hidden" name="projectName" value="@ViewBag.ProjectName" />
+                            <input type="hidden" name="UnitId" value="@ViewBag.UnitId" />
                             <button class="status-dot bg-transparent">
                                 <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
                             </button>
