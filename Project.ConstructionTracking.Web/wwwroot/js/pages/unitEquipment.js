@@ -59,10 +59,6 @@ var unitEquipment = {
             return;
         }
 
-        console.log(permissionSubmit)
-
-
-
         $('div.card-link').each(function () {
             const statusUse = $(this).find('button.status-dot').data('status-use');
             const cntCheckListAll = parseInt($(this).find('.text1').text().split(' ')[1]);

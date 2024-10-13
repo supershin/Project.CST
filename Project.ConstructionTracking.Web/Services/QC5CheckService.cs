@@ -55,6 +55,18 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
+        public void UpdateDetailQCUnitCheckListDefect(QC5IUDModel model)
+        {
+            try
+            {
+                _IQC5CheckRepo.UpdateDetailQCUnitCheckListDefect(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
+            }
+        }
+
         public void RemoveQCUnitCheckListDefect(QC5IUDModel model)
         {
             try
@@ -84,6 +96,30 @@ namespace Project.ConstructionTracking.Web.Services
             try
             {
                 _IQC5CheckRepo.SaveSubmitQC5UnitCheckList(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
+            }
+        }
+
+        public void SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
+        {
+            try
+            {
+                _IQC5CheckRepo.SaveSignature(signData , appPath , QCUnitCheckListID , userID);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
+            }
+        }
+
+        public void SelectedQCUnitCheckListDefectStatus(QC5IUDModel model)
+        {
+            try
+            {
+                _IQC5CheckRepo.SelectedQCUnitCheckListDefectStatus(model);
             }
             catch (Exception ex)
             {
