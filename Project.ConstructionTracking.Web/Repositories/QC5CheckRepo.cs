@@ -9,6 +9,11 @@ using System.Drawing;
 using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Project.ConstructionTracking.Web.Models.FormGroupModel;
+using System.Reflection;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore;
+using Humanizer.Localisation;
+using System.Linq;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -21,40 +26,275 @@ namespace Project.ConstructionTracking.Web.Repositories
             _context = context;
         }
 
+
+
+        //public void InsertSelectFromQCUnitCheckList(Guid qcUnitCheckListID_where, Guid qcUnitCheckListID_IUD, int? Seq)
+        //{
+
+        //    var defectsToInsert = _context.tr_QC_UnitCheckList_Defect
+        //                        .Where(d => d.QCUnitCheckListID == qcUnitCheckListID_where && d.FlagActive == true)
+        //                        .Select(d => new tr_QC_UnitCheckList_Defect
+        //                        {
+        //                            QCUnitCheckListID = qcUnitCheckListID_IUD,
+        //                            Seq = Seq,
+        //                            SeqPass = null,
+        //                            DefectAreaID = d.DefectAreaID,
+        //                            DefectTypeID = d.DefectTypeID,
+        //                            DefectDescriptionID = d.DefectDescriptionID,
+        //                            StatusID = d.StatusID,
+        //                            Remark = d.Remark,
+        //                            IsMajorDefect = d.IsMajorDefect,
+        //                            FlagActive = d.FlagActive,
+        //                            CreateDate = DateTime.Now,
+        //                            CreateBy = d.CreateBy,
+        //                            UpdateDate = DateTime.Now,
+        //                            UpdateBy = d.UpdateBy
+        //                        }).ToList();
+
+        //    _context.tr_QC_UnitCheckList_Defect.AddRange(defectsToInsert);
+        //    _context.SaveChanges();
+        //}
+
+
+
+        //public void InsertSelectFromQCUnitCheckList_Resource(Guid qcUnitCheckListID_where, Guid qcUnitCheckListID_IUD)
+        //{
+        //    var QCUnitCheckListResourceToInsert = _context.tr_QC_UnitCheckList_Resource
+        //                        .Where(d => d.QCUnitCheckListID == qcUnitCheckListID_where && d.FlagActive == true)
+        //                        .Select(d => new tr_QC_UnitCheckList_Resource
+        //                        {
+        //                            QCUnitCheckListID = qcUnitCheckListID_IUD,
+        //                            QCUnitCheckListDetailID = d.QCUnitCheckListDetailID,
+        //                            DefectID = d.DefectID,
+        //                            ResourceID = d.ResourceID,
+        //                            IsSign = d.IsSign,
+        //                            FlagActive = d.FlagActive,
+        //                            CreateDate = DateTime.Now,
+        //                            CreateBy = d.CreateBy,
+        //                            UpdateDate = DateTime.Now,
+        //                            UpdateBy = d.UpdateBy
+        //                        }).ToList();
+
+        //    _context.tr_QC_UnitCheckList_Resource.AddRange(QCUnitCheckListResourceToInsert);
+        //    _context.SaveChanges();
+        //}
+
+
+
         public QC5DetailModel GetQC5CheckDetail(QC5DetailModel filterData)
         {
-            var query = (from t1 in _context.tm_Project
-                         join t2 in _context.tm_Unit on t1.ProjectID equals t2.ProjectID into unitGroup
-                         from t2 in unitGroup.DefaultIfEmpty()
-                         join t3 in _context.tm_Ext on t2.UnitStatusID equals t3.ID into extGroup
-                         from t3 in extGroup.DefaultIfEmpty()
-                         join t4 in _context.tr_QC_UnitCheckList on new { ProjectID = (Guid?)t1.ProjectID, UnitID = (Guid?)t2.UnitID, filterData.Seq } equals new { t4.ProjectID, t4.UnitID, t4.Seq } into unitCheckListGroup
-                         from t4 in unitCheckListGroup.DefaultIfEmpty()
-                         join t5 in _context.tr_QC_UnitCheckList_Action on t4.ID equals t5.QCUnitCheckListID into actionGroup
-                         from t5 in actionGroup.DefaultIfEmpty()
-                         join t6 in _context.tm_User on t5.UpdateBy equals t6.ID into Users
-                         from t6 in Users.DefaultIfEmpty()
-                         where t1.ProjectID == filterData.ProjectID
-                               && t2.UnitID == filterData.UnitID
-                         select new QC5DetailModel
-                         {
-                             ProjectID = t1.ProjectID,
-                             ProjectName = t1.ProjectName,
-                             ProjectTypeID = t1.ProjectTypeID,
-                             UnitID = t2.UnitID,
-                             UnitCode = t2.UnitCode,
-                             UnitStatusName = t3.Name,
-                             QC5UnitChecklistID = t4.ID,
-                             QC5UnitChecklistActionID = t5.ID,
-                             QC5UnitStatusID = t4.QCStatusID,
-                             QC5UpdateDate = FormatExtension.FormatDateToDayMonthNameYearTime(t4.UpdateDate),
-                             QC5UpdateByName = t6.FirstName + ' ' + t6.LastName,
-                             Seq = t4.Seq,
-                             ActionType = t5.ActionType
-                         }).FirstOrDefault();
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
+            {
+                var Chk_QC5_Previous = _context.tr_QC_UnitCheckList.FirstOrDefault(d => d.ProjectID == filterData.ProjectID && d.UnitID == filterData.UnitID && d.Seq == filterData.Seq - 1);
 
-            return query;
+                var Chk_QC5 = _context.tr_QC_UnitCheckList.FirstOrDefault(d => d.ProjectID == filterData.ProjectID && d.UnitID == filterData.UnitID && d.Seq == filterData.Seq);
+
+                if (Chk_QC5 == null && Chk_QC5_Previous != null)
+                {
+                    Guid QCUnitCheckListID = Guid.NewGuid();
+
+                    Chk_QC5 = new tr_QC_UnitCheckList
+                    {
+                        ID = QCUnitCheckListID,
+                        ProjectID = filterData.ProjectID,
+                        UnitID = filterData.UnitID,
+                        CheckListID = 6,
+                        QCTypeID = SystemConstant.Unit_Form_QC.QC5,
+                        Seq = filterData.Seq,
+                        CheckListDate = DateTime.Now,
+                        FlagActive = true,
+                        CreateDate = DateTime.Now,
+                        CreateBy = filterData.UserID,
+                        UpdateDate = DateTime.Now,
+                        UpdateBy = filterData.UserID
+                    };
+
+                    _context.tr_QC_UnitCheckList.Add(Chk_QC5);
+                    _context.SaveChanges();
+
+                    var existingAction_Previous = _context.tr_QC_UnitCheckList_Action.FirstOrDefault(d => d.QCUnitCheckListID == QCUnitCheckListID);
+
+                    var existingAction = _context.tr_QC_UnitCheckList_Action.FirstOrDefault(x => x.QCUnitCheckListID == QCUnitCheckListID);
+
+                    if (existingAction == null)
+                    {
+                        var newAction = new tr_QC_UnitCheckList_Action
+                        {
+                            QCUnitCheckListID = QCUnitCheckListID,
+                            RoleID = SystemConstant.UserRole.QC,
+                            Remark = existingAction_Previous?.Remark,
+                            ActionDate = DateTime.Now,
+                            UpdateDate = DateTime.Now,
+                            UpdateBy = filterData.UserID,
+                            CreateDate = DateTime.Now,
+                            CreateBy = filterData.UserID
+                        };
+
+                        _context.tr_QC_UnitCheckList_Action.Add(newAction);
+                    }
+
+                    var defectIDMapping = InsertSelectFromQCUnitCheckList(Chk_QC5_Previous.ID, QCUnitCheckListID, filterData.Seq);
+                    InsertSelectFromQCUnitCheckList_ResourceDefect(Chk_QC5_Previous.ID, QCUnitCheckListID, defectIDMapping, filterData.Seq - 1);
+                    InsertSelectFromQCUnitCheckList_Resource(Chk_QC5_Previous.ID, QCUnitCheckListID);
+
+                    //InsertSelectFromQCUnitCheckList(Chk_QC5_Previous.ID, QCUnitCheckListID, filterData.Seq);
+
+                    //InsertSelectFromQCUnitCheckList_Resource(Chk_QC5_Previous.ID, QCUnitCheckListID);
+
+                    _context.SaveChanges();
+                }
+
+                var query = (from t1 in _context.tm_Project
+                             join t2 in _context.tm_Unit on t1.ProjectID equals t2.ProjectID into unitGroup
+                             from t2 in unitGroup.DefaultIfEmpty()
+                             join t3 in _context.tm_Ext on t2.UnitStatusID equals t3.ID into extGroup
+                             from t3 in extGroup.DefaultIfEmpty()
+                             join t4 in _context.tr_QC_UnitCheckList on new { ProjectID = (Guid?)t1.ProjectID, UnitID = (Guid?)t2.UnitID, filterData.Seq } equals new { t4.ProjectID, t4.UnitID, t4.Seq } into unitCheckListGroup
+                             from t4 in unitCheckListGroup.DefaultIfEmpty()
+                             join t5 in _context.tr_QC_UnitCheckList_Action on t4.ID equals t5.QCUnitCheckListID into actionGroup
+                             from t5 in actionGroup.DefaultIfEmpty()
+                             join t6 in _context.tm_User on t5.UpdateBy equals t6.ID into Users
+                             from t6 in Users.DefaultIfEmpty()
+                             join t7 in _context.tr_QC_UnitCheckList_Resource on new { QCUnitCheckListID = (Guid?)t4.ID, FlagActive = (bool?)true, IsSign = (bool?)true } equals new { t7.QCUnitCheckListID, t7.FlagActive, t7.IsSign } into QC5UnitResourceGroup
+                             from t7 in QC5UnitResourceGroup.DefaultIfEmpty()
+                             join t8 in _context.tm_Resource on t7.ResourceID equals t8.ID into ResourceGroups
+                             from t8 in ResourceGroups.DefaultIfEmpty()
+                             where t1.ProjectID == filterData.ProjectID
+                                   && t2.UnitID == filterData.UnitID
+                             select new QC5DetailModel
+                             {
+                                 ProjectID = t1.ProjectID,
+                                 ProjectName = t1.ProjectName,
+                                 ProjectTypeID = t1.ProjectTypeID,
+                                 UnitID = t2.UnitID,
+                                 UnitCode = t2.UnitCode,
+                                 UnitStatusName = t3.Name,
+                                 QC5UnitChecklistID = t4.ID,
+                                 QC5UnitChecklistActionID = t5.ID,
+                                 QC5UnitStatusID = t4.QCStatusID,
+                                 QC5UnitChecklistRemark = t5.Remark,
+                                 PathQC5SignatureImage = t8.FilePath,
+                                 QC5SignatureDate = FormatExtension.FormatDateToDayMonthNameYearTime(t8.UpdateDate),
+                                 QC5UpdateDate = FormatExtension.FormatDateToDayMonthNameYearTime(t4.UpdateDate),
+                                 QC5UpdateByName = t6.FirstName + ' ' + t6.LastName,
+                                 Seq = t4.Seq,
+                                 ActionType = t5.ActionType
+                             }).FirstOrDefault();
+
+                scope.Complete();  // Commit transaction if everything is successful
+
+                return query;
+            }
         }
+
+        public Dictionary<int?, int?> InsertSelectFromQCUnitCheckList(Guid qcUnitCheckListID_where, Guid qcUnitCheckListID_IUD, int? Seq)
+        {
+            var defectsToInsert = _context.tr_QC_UnitCheckList_Defect
+                                    .Where(d => d.QCUnitCheckListID == qcUnitCheckListID_where
+                                             && d.FlagActive == true
+                                             //&& d.StatusID == 28
+                                             )
+                                    .Select(d => new tr_QC_UnitCheckList_Defect
+                                    {
+                                        QCUnitCheckListID = qcUnitCheckListID_IUD,
+                                        RefSeq = d.RefSeq,
+                                        Seq = d.StatusID == 27 ? null : Seq,
+                                        DefectAreaID = d.DefectAreaID,
+                                        DefectTypeID = d.DefectTypeID,
+                                        DefectDescriptionID = d.DefectDescriptionID,
+                                        StatusID = d.StatusID,
+                                        Remark = d.Remark,
+                                        IsMajorDefect = d.IsMajorDefect,
+                                        FlagActive = d.FlagActive,
+                                        CreateDate = DateTime.Now,
+                                        CreateBy = d.CreateBy,
+                                        UpdateDate = DateTime.Now,
+                                        UpdateBy = d.UpdateBy
+                                    }).ToList();
+
+            _context.tr_QC_UnitCheckList_Defect.AddRange(defectsToInsert);
+            _context.SaveChanges();
+
+            // Create a dictionary to map old DefectID to new DefectID
+            var defectIDMapping = new Dictionary<int?, int?>();
+
+            // Map the old DefectIDs to new ones
+            for (int i = 0; i < defectsToInsert.Count; i++)
+            {
+                var oldDefectID = _context.tr_QC_UnitCheckList_Defect
+                                 .Where(d => d.QCUnitCheckListID == qcUnitCheckListID_where
+                                          && d.FlagActive == true
+                                        //&& d.StatusID == 28
+                                        )
+                                 .Select(d => d.ID).Skip(i).First();
+
+                defectIDMapping[oldDefectID] = defectsToInsert[i].ID;
+            }
+
+            return defectIDMapping;
+        }
+
+        public void InsertSelectFromQCUnitCheckList_ResourceDefect(Guid qcUnitCheckListID_where, Guid qcUnitCheckListID_IUD, Dictionary<int?, int?> defectIDMapping, int? Seq)
+        {
+            var QCUnitCheckListResourceToInsert = _context.tr_QC_UnitCheckList_Resource
+                .Join(_context.tr_QC_UnitCheckList,
+                      t1 => t1.QCUnitCheckListID,
+                      t2 => t2.ID,
+                      (t1, t2) => new { t1, t2 })
+                .Join(_context.tr_QC_UnitCheckList_Defect,
+                      combined => combined.t1.DefectID,
+                      t3 => t3.ID,
+                      (combined, t3) => new { combined.t1, combined.t2, t3 })
+                .Where(x => x.t1.QCUnitCheckListID == qcUnitCheckListID_where
+                            && x.t1.FlagActive == true
+                            && x.t2.FlagActive == true
+                            && x.t3.FlagActive == true
+                            && x.t2.Seq == Seq
+                       //&& x.t3.StatusID == 28
+                       )
+                .Select(x => new tr_QC_UnitCheckList_Resource
+                {
+                    QCUnitCheckListID = qcUnitCheckListID_IUD,
+                    QCUnitCheckListDetailID = x.t1.QCUnitCheckListDetailID,
+                    DefectID = x.t1.DefectID.HasValue ? defectIDMapping[x.t1.DefectID.Value] : (int?)null, // Handle nullable DefectID
+                    ResourceID = x.t1.ResourceID,
+                    IsSign = x.t1.IsSign,
+                    FlagActive = x.t1.FlagActive,
+                    CreateDate = DateTime.Now,
+                    CreateBy = x.t1.CreateBy,
+                    UpdateDate = DateTime.Now,
+                    UpdateBy = x.t1.UpdateBy
+                }).ToList();
+
+            _context.tr_QC_UnitCheckList_Resource.AddRange(QCUnitCheckListResourceToInsert);
+            _context.SaveChanges();
+
+        }
+
+        public void InsertSelectFromQCUnitCheckList_Resource(Guid qcUnitCheckListID_where, Guid qcUnitCheckListID_IUD)
+        {
+            // Step 1: Query to select records where QCUnitCheckListID = sourceQCUnitCheckListID and DefectID is null
+            var recordsToInsert = _context.tr_QC_UnitCheckList_Resource
+                .Where(d => d.QCUnitCheckListID == qcUnitCheckListID_where && d.DefectID == null)
+                .Select(d => new tr_QC_UnitCheckList_Resource
+                {
+                    QCUnitCheckListID = qcUnitCheckListID_IUD, // Inserting into the same table with new QCUnitCheckListID
+                    QCUnitCheckListDetailID = d.QCUnitCheckListDetailID,
+                    DefectID = d.DefectID, // DefectID is null here, as per your filter
+                    ResourceID = d.ResourceID,
+                    IsSign = d.IsSign,
+                    FlagActive = d.FlagActive,
+                    CreateDate = DateTime.Now, // Set current date for the new record
+                    CreateBy = d.CreateBy,
+                    UpdateDate = DateTime.Now, // Set current date for the new record
+                    UpdateBy = d.UpdateBy
+                }).ToList();
+
+            // Step 2: Insert the selected records into the same table
+            _context.tr_QC_UnitCheckList_Resource.AddRange(recordsToInsert);
+            _context.SaveChanges(); // Commit the transaction
+        }
+
 
         public List<QC5ChecklistModel> GetQCUnitCheckListDefects(QC5ChecklistModel filterData)
         {
@@ -70,6 +310,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                           {
                               ID = t1.ID,
                               QCUnitCheckListID = t1.QCUnitCheckListID,
+                              RefSeq = t1.RefSeq,
                               Seq = t1.Seq,
                               DefectAreaID = t1.DefectAreaID,
                               DefectAreaName = t2.Name,
@@ -96,6 +337,8 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public QC5DefectModel GetQC5DefactEdit(QC5DefectModel filterData)
         {
+
+
             var result = (from t1 in _context.tr_QC_UnitCheckList_Defect
                           join t2 in _context.tm_DefectArea on t1.DefectAreaID equals t2.ID into defectAreaGroup
                           from t2 in defectAreaGroup.DefaultIfEmpty()
@@ -122,7 +365,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                               listImageNotpass = (from rs in _context.tr_QC_UnitCheckList_Resource
                                                   join resource in _context.tm_Resource on rs.ResourceID equals resource.ID
-                                                  where rs.DefectID == filterData.DefectID && rs.FlagActive == true && resource.FlagActive == true
+                                                  where rs.DefectID == filterData.DefectID && rs.FlagActive == true && resource.FlagActive == true && rs.IsSign != true
                                                   select new QC5DefactListImageNotPass
                                                   {
                                                       ResourceID = rs.ResourceID,
@@ -201,11 +444,12 @@ namespace Project.ConstructionTracking.Web.Repositories
                     var newDefect = new tr_QC_UnitCheckList_Defect
                     {
                         QCUnitCheckListID = QCUnitCheckListID,
-                        Seq = model.Seq.ToInt(),
+                        RefSeq = model.Seq.ToInt(),
+                        Seq = null,
                         DefectAreaID = model.DefectAreaID,
                         DefectTypeID = model.DefectTypeID,
                         DefectDescriptionID = model.DefectDescriptionID,
-                        StatusID = model.StatusID,
+                        StatusID = 28,
                         Remark = string.IsNullOrEmpty(model.Remark) ? "" : model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
                         IsMajorDefect = model.isMajorDefect,
                         FlagActive = true,
@@ -422,6 +666,112 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
+        public void UpdateDetailQCUnitCheckListDefect(QC5IUDModel model)
+        {
+            var transactionOptions = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TimeSpan.FromMinutes(2)
+            };
+
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            {
+                try
+                {
+                    var existingDefect = _context.tr_QC_UnitCheckList_Defect.FirstOrDefault(d => d.ID == model.ID);
+
+                    if (existingDefect != null)
+                    {
+                        if (!string.IsNullOrEmpty(model.Remark))
+                        {
+                            if (existingDefect.Remark != model.Remark)
+                            {
+                                existingDefect.Remark = model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
+                            }
+                        }
+                        else
+                        {
+                            existingDefect.Remark = "";
+                        }
+                        existingDefect.UpdateDate = DateTime.Now;
+                        existingDefect.UpdateBy = model.UserID;
+
+
+                        if (model.Images != null && model.Images.Count > 0)
+                        {
+                            var folder = DateTime.Now.ToString("yyyyMM");
+                            var dirPath = Path.Combine(model.ApplicationPath, "wwwroot", "Upload", "document", folder, "QC5Image");
+                            if (!Directory.Exists(dirPath))
+                            {
+                                Directory.CreateDirectory(dirPath);
+                            }
+
+                            foreach (var image in model.Images)
+                            {
+                                if (image.Length > 0)
+                                {
+                                    Guid guidId = Guid.NewGuid();
+                                    string fileName = guidId + ".jpg";
+                                    var filePath = Path.Combine(dirPath, fileName);
+
+                                    // Resize and save the image
+                                    using (var imageStream = image.OpenReadStream())
+                                    {
+                                        using (var resizedImageStream = ResizeImage(imageStream, 0.7)) // Resize to 50%
+                                        {
+                                            using (var fileStream = new FileStream(filePath, FileMode.Create))
+                                            {
+                                                resizedImageStream.CopyTo(fileStream); // Save resized image
+                                            }
+                                        }
+                                    }
+
+                                    string relativeFilePath = Path.Combine("Upload", "document", folder, "QC5Image", fileName).Replace("\\", "/");
+
+                                    var newResource = new tm_Resource
+                                    {
+                                        ID = Guid.NewGuid(),
+                                        FileName = fileName,
+                                        FilePath = relativeFilePath,
+                                        MimeType = "image/jpeg",
+                                        FlagActive = true,
+                                        CreateDate = DateTime.Now,
+                                        CreateBy = model.UserID,
+                                        UpdateDate = DateTime.Now,
+                                        UpdateBy = model.UserID
+                                    };
+                                    _context.tm_Resource.Add(newResource);
+
+                                    var newQCUnitCheckListResource = new tr_QC_UnitCheckList_Resource
+                                    {
+                                        QCUnitCheckListID = existingDefect.QCUnitCheckListID,
+                                        DefectID = existingDefect.ID,
+                                        ResourceID = newResource.ID,
+                                        FlagActive = true,
+                                        CreateDate = DateTime.Now,
+                                        CreateBy = model.UserID,
+                                        UpdateDate = DateTime.Now,
+                                        UpdateBy = model.UserID
+                                    };
+                                    _context.tr_QC_UnitCheckList_Resource.Add(newQCUnitCheckListResource);
+                                }
+                            }
+                        }
+
+                        _context.SaveChanges();
+                    }
+
+
+
+                    scope.Complete(); // Commit the transaction
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("แก้ไขข้อมูลลง tr_QC_UnitCheckList_Defect ไม่สำเร็จ", ex);
+                }
+            }
+        }
+
         public void RemoveQCUnitCheckListDefect(QC5IUDModel model)
         {
             var transactionOptions = new TransactionOptions
@@ -520,7 +870,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-
         public void SaveSubmitQC5UnitCheckList(QC5SaveSubmitModel model)
         {
             var transactionOptions = new TransactionOptions
@@ -538,6 +887,14 @@ namespace Project.ConstructionTracking.Web.Repositories
                     if (QC_UnitCheckList != null)
                     {
                         QC_UnitCheckList.QCStatusID = model.QCStatusID;
+                        //if (model.QCStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect)
+                        //{
+                        //    QC_UnitCheckList.IsNotReadyInspect = true;
+                        //}
+                        //else if (model.QCStatusID == SystemConstant.UnitQCStatus.IsPassCondition)
+                        //{
+                        //    QC_UnitCheckList.IsPassCondition = true;
+                        //}
                         QC_UnitCheckList.UpdateDate = DateTime.Now;
                         QC_UnitCheckList.UpdateBy = model.UserID;
 
@@ -546,7 +903,17 @@ namespace Project.ConstructionTracking.Web.Repositories
                         if (QC_UnitCheckList_Action != null)
                         {
                             QC_UnitCheckList_Action.ActionType = model.ActionType;
-                            QC_UnitCheckList_Action.Remark = model.QCRemark;
+                            if (!string.IsNullOrEmpty(model.QCRemark))
+                            {
+                                if (QC_UnitCheckList_Action.Remark != model.QCRemark)
+                                {
+                                    QC_UnitCheckList_Action.Remark = model.QCRemark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
+                                }
+                            }
+                            else
+                            {
+                                QC_UnitCheckList_Action.Remark = "";
+                            }
                             QC_UnitCheckList_Action.ActionDate = DateTime.Now;
                             QC_UnitCheckList_Action.UpdateDate = DateTime.Now;
                             QC_UnitCheckList_Action.UpdateBy = model.UserID;
@@ -614,10 +981,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                             }
                         }
 
-                        if (model.Sign != null)
-                        {
-                            SaveSignature(model.Sign, model.ApplicationPath, model.QCUnitCheckListID, model.UserID);
-                        }
+                        //if (model.Sign != null)
+                        //{
+                        //    SaveSignature(model.Sign, model.ApplicationPath, model.QCUnitCheckListID, model.UserID);
+                        //}
 
                         _context.SaveChanges();
                     }
@@ -630,7 +997,40 @@ namespace Project.ConstructionTracking.Web.Repositories
                 }
             }
         }
-        private void SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
+
+        public void SelectedQCUnitCheckListDefectStatus(QC5IUDModel model)
+        {
+            var transactionOptions = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TimeSpan.FromMinutes(2)
+            };
+
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            {
+                try
+                {
+                    var existingDefect = _context.tr_QC_UnitCheckList_Defect.FirstOrDefault(d => d.ID == model.ID);
+
+                    if (existingDefect != null)
+                    {
+                        existingDefect.StatusID = model.StatusID;
+                        existingDefect.UpdateDate = DateTime.Now;
+                        existingDefect.UpdateBy = model.UserID;
+                        _context.SaveChanges();
+                    }
+                    scope.Complete(); // Commit the transaction
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("แก้ไขข้อมูลลง tr_QC_UnitCheckList_Defect ไม่สำเร็จ", ex);
+                }
+            }
+        }
+
+
+
+        public void SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
         {
             var resource = new ResourcesSignatureQC5
             {
@@ -741,6 +1141,5 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return true;
         }
-
     }
 }
