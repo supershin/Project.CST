@@ -9,6 +9,7 @@ namespace Project.ConstructionTracking.Web.Services
         QC5DefectModel GetQC5DefactEdit(QC5DefectModel filterData);
         void InsertQCUnitCheckListDefect(QC5IUDModel model , Guid userid);
         void UpdateQCUnitCheckListDefect(QC5IUDModel model);
+        void UpdateDetailQCUnitCheckListDefect(QC5IUDModel model);
         void RemoveQCUnitCheckListDefect(QC5IUDModel model);
         void RemoveImage(Guid resourceId, Guid UserID);
         void SaveSubmitQC5UnitCheckList(QC5SaveSubmitModel model);

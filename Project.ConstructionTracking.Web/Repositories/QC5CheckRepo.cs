@@ -112,6 +112,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                     _context.tr_QC_UnitCheckList.Add(Chk_QC5);
                     _context.SaveChanges();
 
+                    var existingAction_Previous = _context.tr_QC_UnitCheckList_Action.FirstOrDefault(d => d.QCUnitCheckListID == QCUnitCheckListID);
+
                     var existingAction = _context.tr_QC_UnitCheckList_Action.FirstOrDefault(x => x.QCUnitCheckListID == QCUnitCheckListID);
 
                     if (existingAction == null)
@@ -120,6 +122,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         {
                             QCUnitCheckListID = QCUnitCheckListID,
                             RoleID = SystemConstant.UserRole.QC,
+                            Remark = existingAction_Previous?.Remark,
                             ActionDate = DateTime.Now,
                             UpdateDate = DateTime.Now,
                             UpdateBy = filterData.UserID,
@@ -663,6 +666,112 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
+        public void UpdateDetailQCUnitCheckListDefect(QC5IUDModel model)
+        {
+            var transactionOptions = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TimeSpan.FromMinutes(2)
+            };
+
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            {
+                try
+                {
+                    var existingDefect = _context.tr_QC_UnitCheckList_Defect.FirstOrDefault(d => d.ID == model.ID);
+
+                    if (existingDefect != null)
+                    {
+                        if (!string.IsNullOrEmpty(model.Remark))
+                        {
+                            if (existingDefect.Remark != model.Remark)
+                            {
+                                existingDefect.Remark = model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
+                            }
+                        }
+                        else
+                        {
+                            existingDefect.Remark = "";
+                        }
+                        existingDefect.UpdateDate = DateTime.Now;
+                        existingDefect.UpdateBy = model.UserID;
+
+
+                        if (model.Images != null && model.Images.Count > 0)
+                        {
+                            var folder = DateTime.Now.ToString("yyyyMM");
+                            var dirPath = Path.Combine(model.ApplicationPath, "wwwroot", "Upload", "document", folder, "QC5Image");
+                            if (!Directory.Exists(dirPath))
+                            {
+                                Directory.CreateDirectory(dirPath);
+                            }
+
+                            foreach (var image in model.Images)
+                            {
+                                if (image.Length > 0)
+                                {
+                                    Guid guidId = Guid.NewGuid();
+                                    string fileName = guidId + ".jpg";
+                                    var filePath = Path.Combine(dirPath, fileName);
+
+                                    // Resize and save the image
+                                    using (var imageStream = image.OpenReadStream())
+                                    {
+                                        using (var resizedImageStream = ResizeImage(imageStream, 0.7)) // Resize to 50%
+                                        {
+                                            using (var fileStream = new FileStream(filePath, FileMode.Create))
+                                            {
+                                                resizedImageStream.CopyTo(fileStream); // Save resized image
+                                            }
+                                        }
+                                    }
+
+                                    string relativeFilePath = Path.Combine("Upload", "document", folder, "QC5Image", fileName).Replace("\\", "/");
+
+                                    var newResource = new tm_Resource
+                                    {
+                                        ID = Guid.NewGuid(),
+                                        FileName = fileName,
+                                        FilePath = relativeFilePath,
+                                        MimeType = "image/jpeg",
+                                        FlagActive = true,
+                                        CreateDate = DateTime.Now,
+                                        CreateBy = model.UserID,
+                                        UpdateDate = DateTime.Now,
+                                        UpdateBy = model.UserID
+                                    };
+                                    _context.tm_Resource.Add(newResource);
+
+                                    var newQCUnitCheckListResource = new tr_QC_UnitCheckList_Resource
+                                    {
+                                        QCUnitCheckListID = existingDefect.QCUnitCheckListID,
+                                        DefectID = existingDefect.ID,
+                                        ResourceID = newResource.ID,
+                                        FlagActive = true,
+                                        CreateDate = DateTime.Now,
+                                        CreateBy = model.UserID,
+                                        UpdateDate = DateTime.Now,
+                                        UpdateBy = model.UserID
+                                    };
+                                    _context.tr_QC_UnitCheckList_Resource.Add(newQCUnitCheckListResource);
+                                }
+                            }
+                        }
+
+                        _context.SaveChanges();
+                    }
+
+
+
+                    scope.Complete(); // Commit the transaction
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("แก้ไขข้อมูลลง tr_QC_UnitCheckList_Defect ไม่สำเร็จ", ex);
+                }
+            }
+        }
+
         public void RemoveQCUnitCheckListDefect(QC5IUDModel model)
         {
             var transactionOptions = new TransactionOptions
@@ -777,7 +886,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     if (QC_UnitCheckList != null)
                     {
-                        QC_UnitCheckList.QCStatusID = model.QCStatusID ?? 2;
+                        QC_UnitCheckList.QCStatusID = model.QCStatusID;
                         //if (model.QCStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect)
                         //{
                         //    QC_UnitCheckList.IsNotReadyInspect = true;
@@ -794,7 +903,17 @@ namespace Project.ConstructionTracking.Web.Repositories
                         if (QC_UnitCheckList_Action != null)
                         {
                             QC_UnitCheckList_Action.ActionType = model.ActionType;
-                            QC_UnitCheckList_Action.Remark = model.QCRemark;
+                            if (!string.IsNullOrEmpty(model.QCRemark))
+                            {
+                                if (QC_UnitCheckList_Action.Remark != model.QCRemark)
+                                {
+                                    QC_UnitCheckList_Action.Remark = model.QCRemark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
+                                }
+                            }
+                            else
+                            {
+                                QC_UnitCheckList_Action.Remark = "";
+                            }
                             QC_UnitCheckList_Action.ActionDate = DateTime.Now;
                             QC_UnitCheckList_Action.UpdateDate = DateTime.Now;
                             QC_UnitCheckList_Action.UpdateBy = model.UserID;

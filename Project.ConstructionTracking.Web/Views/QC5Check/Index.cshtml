@@ -197,6 +197,7 @@
 <input type="hidden" id="hdQC5UnitChecklistID" value="@ViewBag.QC5UnitChecklistID"/>
 <input type="hidden" id="hdQC5UnitChecklistActionID" value="@ViewBag.QC5UnitChecklistActionID" />
 <input type="hidden" id="hdSeq" value="@ViewBag.Seq"/>
+<input type="hidden" id="hdSigNatureData" value="@ViewBag.PathQC5SignatureImage" />
 
 @if (ViewBag.ActionTypeEn != "submit")
 {
@@ -590,12 +591,12 @@
                                 <div class="form-label text-danger">
                                     ถ่ายได้ไม่เกิน 5 รูปต่อรายการ
                                 </div>
-                                <div id="drop-zone-edit" class="drop-zone form-control">
+                                <div id="drop-zone-update" class="drop-zone form-control">
                                     <p class="drop-zone-text">
                                         <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
                                     </p>
-                                    <input type="file" id="file-input-edit" class="drop-zone-input" multiple>
-                                    <div id="preview-container-edit" class="row preview-container"></div>
+                                    <input type="file" id="file-input-update" class="drop-zone-input" multiple>
+                                    <div id="preview-container-update" class="row preview-container"></div>
                                 </div>
                             </div>
                         }
@@ -635,8 +636,8 @@
                 <div class="modal-footer">
                     @if (ViewBag.ActionTypeEn != "submit")
                     {
-                        <button type="button" class="btn me-auto btn-danger" id="RemoveQC5Button" data-bs-dismiss="modal">ลบรายการนี้</button>
-                        <button type="button" class="btn btn-primary" id="EditButton" data-bs-dismiss="modal">บันทึก</button>
+            @*             <button type="button" class="btn me-auto btn-danger" id="RemoveQC5Button" data-bs-dismiss="modal">ลบรายการนี้</button> *@
+                        <button type="button" class="btn btn-primary" id="UpdateDefectButton" data-bs-dismiss="modal">บันทึก</button>
                     }
                 </div>
             </div>

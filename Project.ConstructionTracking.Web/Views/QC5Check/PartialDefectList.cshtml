@@ -8,7 +8,11 @@
         }
         @foreach (var item in Model)
         {
-            <div class="list-group-item card-item" data-status="@(item.StatusID)" data-defect="@item.DefectAreaName @item.DefectTypeName @item.DefectDescriptionName" data-remark="@item.Remark">
+            <div class="list-group-item card-item"
+                 data-status="@(item.StatusID)"
+                 data-defect="@item.DefectAreaName @item.DefectTypeName @item.DefectDescriptionName"
+                 data-remark="@item.Remark"
+                 data-is-major-defect="@item.IsMajorDefect">
                 <div class="row">
                     <div class="col-auto d-flex align-items-center justify-content-center">
                         @{
@@ -39,9 +43,13 @@
                         <a href="#!"
                            class="text-body d-block"
                            style="white-space: nowrap; overflow-x: auto;"
-                             @if (item.Seq == seq)
+                            @if (seq == 1)
                             {
                                 @:onclick="openModalEditQC('@item.ID');"
+                            }
+                            else if (item.Seq == seq)
+                            {
+                                @:onclick="openModalUpdateDefectDetailQC('@item.ID');"
                             }
                             else
                             {                               

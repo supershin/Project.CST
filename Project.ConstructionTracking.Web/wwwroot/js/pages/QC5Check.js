@@ -596,31 +596,46 @@
         });
 
         function RemoveImage(resourceID) {
+            // Confirmation alert before proceeding
+            showConfirmationAlert(
+                'ยืนยันการลบรูปภาพ',
+                'คุณต้องการลบรูปภาพนี้ใช่หรือไม่?',
+                'warning',
+                'ใช่',
+                'ยกเลิก',
+                function () {
+                    // If confirmed, proceed with image removal
+                    showLoadingAlert();
 
-            showLoadingAlert();
+                    $.ajax({
+                        url: baseUrl + 'QC5Check/RemoveImage',
+                        type: 'POST',
+                        data: { resourceID: resourceID },
+                        success: function (response) {
+                            Swal.close(); // Close the loading indicator
+                            if (response.success) {
+                                // Remove the image container
+                                $(`button[onclick="RemoveImage('${resourceID}')"]`).parent().remove();
 
-            $.ajax({
-                url: baseUrl + 'QC5Check/RemoveImage',
-                type: 'POST',
-                data: { resourceID: resourceID },
-                success: function (response) {
-                    Swal.close(); 
-                    if (response.success) {
-                        $(`button[onclick="RemoveImage('${resourceID}')"]`).parent().remove();
-                        if ($('#imagePreview2 .position-relative').length < 5) {
-                            $('#drop-zone-edit').show();
+                                // Show dropzone if less than 5 images are present
+                                if ($('#imagePreview2 .position-relative').length < 5) {
+                                    $('#drop-zone-edit').show();
+                                }
+
+                                showSuccessAlert('สำเร็จ!', 'ลบรูปภาพสำเร็จ');
+                            } else {
+                                showErrorAlert('เกิดข้อผิดพลาด!', 'ไม่สามารถลบรูปภาพได้');
+                            }
+                        },
+                        error: function () {
+                            Swal.close();  // Close the loading indicator if the request fails
+                            showErrorAlert('เกิดข้อผิดพลาด!', 'การลบรูปภาพล้มเหลว');
                         }
-                        showSuccessAlert('สำเร็จ!', 'ลบรูปภาพสำเร็จ');
-                    } else {
-                        showErrorAlert('เกิดข้อผิดพลาด!', 'ไม่สามารถลบรูปภาพได้');
-                    }
-                },
-                error: function () {
-                    Swal.close();  // Close the loading indicator if the request fails
-                    showErrorAlert('เกิดข้อผิดพลาด!', 'การลบรูปภาพล้มเหลว');
+                    });
                 }
-            });
-}
+            );
+        }
+
 
         document.getElementById('RemoveQC5Button').addEventListener('click', function () {
             onRemoveQC5ButtonClick();
@@ -632,37 +647,49 @@
             var unitId = document.getElementById('hdUnitId').value;
             var seq = document.getElementById('hdSeq').value;
 
-
             var formData = new FormData();
             formData.append('ID', DefectID);
             formData.append('ProjectID', projectId);
             formData.append('UnitID', unitId);
             formData.append('Seq', seq);
 
-            showLoadingAlert();
+            // Confirmation alert before proceeding
+            showConfirmationAlert(
+                'ยืนยันการลบข้อมูล', // Confirm deletion
+                'คุณต้องการลบข้อมูลนี้ใช่หรือไม่?', // Do you want to delete this data?
+                'warning',
+                'ใช่',  // Yes
+                'ยกเลิก',  // Cancel
+                function () {
+                    // If confirmed, proceed with data removal
+                    showLoadingAlert();
 
-            $.ajax({
-                url: baseUrl + 'QC5Check/RemoveDefectQC5Unit',
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (response) {
-                    Swal.close();
-                    if (response.success) {
-                        showSuccessAlert('สำเร็จ!', 'ลบข้อมูลสำเร็จ', function () {
-                            window.location.reload();
-                        });
-                    } else {
-                        showErrorAlert('ลบข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการลบข้อมูล');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    Swal.close();
-                    showErrorAlert('เกิดข้อผิดพลาด!', error);
+                    $.ajax({
+                        url: baseUrl + 'QC5Check/RemoveDefectQC5Unit',
+                        type: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            Swal.close(); // Close loading indicator
+                            if (response.success) {
+                                // Success alert and reload the page
+                                showSuccessAlert('สำเร็จ!', 'ลบข้อมูลสำเร็จ', function () {
+                                    window.location.reload();
+                                });
+                            } else {
+                                showErrorAlert('ลบข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการลบข้อมูล');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.close(); // Close loading indicator on error
+                            showErrorAlert('เกิดข้อผิดพลาด!', error);
+                        }
+                    });
                 }
-            });
-}
+            );
+        }
+
 
         let signaturePad;
 
@@ -779,7 +806,6 @@
 
         function saveUnitQC5() {
             showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
-
             var QCUnitCheckListID = document.getElementById('hdQC5UnitChecklistID').value;
             var QCUnitCheckListActionID = document.getElementById('hdQC5UnitChecklistActionID').value;
             var QCStatusID = selectedRadioQC5Status;  // Ensure this value is set
@@ -881,58 +907,71 @@
         }
 
         function SubmitUnitQC5() {
-            showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
-
+            // Perform initial validation
             var QCUnitCheckListID = document.getElementById('hdQC5UnitChecklistID').value;
             var QCUnitCheckListActionID = document.getElementById('hdQC5UnitChecklistActionID').value;
-            var QCStatusID = selectedRadioQC5Status;  // Ensure this value is set
-            var ActionType = 'submit';
+            var QCStatusID = selectedRadioQC5Status;
             var QCRemark = document.getElementById('QC5Remark').value;
             var files = $('#file-input-save-submit')[0].files;
-            // var signData = unitEquipment.getSignatureData();  
+            var SigNatureData = document.getElementById('hdSigNatureData').value;
 
-            var formData = new FormData();
-            formData.append('QCUnitCheckListID', QCUnitCheckListID);
-            formData.append('QCUnitCheckListActionID', QCUnitCheckListActionID);
-            formData.append('QCStatusID', QCStatusID);  // Ensure this is the correct value
-            formData.append('ActionType', ActionType);
-            formData.append('QCRemark', QCRemark);
-
-
-            for (var i = 0; i < files.length; i++) {
-                formData.append('Images', files[i]);
+            if (!QCStatusID) {
+                showErrorAlert('คำเตือน!', 'กรุณาเลือกสถานะของ QC รอบนี้');
+                return;
             }
 
-            //if (signData) {
-            //    var signatureData = {
-            //        MimeType: signData.MimeType,
-            //        StorageBase64: signData.StorageBase64
-            //    };
-            //    formData.append('Sign', JSON.stringify(signatureData));
-            //}
+            if (!SigNatureData) {
+                showErrorAlert('คำเตือน!', 'กรุณาระบุลายเซ็น');
+                return;
+            }
 
-            $.ajax({
-                url: baseUrl + 'QC5Check/SaveSubmitQC5UnitCheckList',
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (res) {
-                    Swal.close();
-                    if (res.success) {
-                        showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
-                            window.location.reload();
-                        });
-                    } else {
-                        showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+            // Confirmation alert before proceeding
+            showConfirmationAlert(
+                'ยืนยันการดำเนินการ',
+                'คุณต้องการยืนยันข้อมูลนี้ใช่หรือไม่?',
+                'warning',
+                'ใช่',
+                'ยกเลิก',
+                function () {
+                    // If confirmed, proceed with the submission
+                    showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
+
+                    var formData = new FormData();
+                    formData.append('QCUnitCheckListID', QCUnitCheckListID);
+                    formData.append('QCUnitCheckListActionID', QCUnitCheckListActionID);
+                    formData.append('QCStatusID', QCStatusID);
+                    formData.append('ActionType', 'submit');
+                    formData.append('QCRemark', QCRemark);
+
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append('Images', files[i]);
                     }
-                },
-                error: function (xhr, status, error) {
-                    Swal.close();
-                    showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+
+                    $.ajax({
+                        url: baseUrl + 'QC5Check/SaveSubmitQC5UnitCheckList',
+                        type: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (res) {
+                            Swal.close();
+                            if (res.success) {
+                                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                                    window.location.reload();
+                                });
+                            } else {
+                                showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.close();
+                            showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                        }
+                    });
                 }
-            });
-}
+            );
+        }
+
 
         function toggleRadioForRadioCheck(radio, id) {
             if (radio.checked && radio.dataset.wasChecked) {
@@ -1047,67 +1086,312 @@
 }
 
 
-function openModalUpdateDefectDetailQC(defectID) {
-    $.ajax({
-        url: baseUrl + 'QC5Check/GetQC5DefactEdit',
-        type: 'GET',
-        data: { DefectID: defectID }, // Pass the DefectID to the controller
-        success: function (response) {
-            if (response) {
-                // Set the values for the text inputs
-                $('#defectAreaText').val(response.DefectAreaName);  // Set the DefectArea text
-                $('#defectTypeText').val(response.DefectTypeName);  // Set the DefectType text
-                $('#defectDescriptionText').val(response.DefectDescriptionName);  // Set the DefectDescription text
+        function openModalUpdateDefectDetailQC(defectID) {
+            $.ajax({
+                url: baseUrl + 'QC5Check/GetQC5DefactEdit',
+                type: 'GET',
+                data: { DefectID: defectID }, // Pass the DefectID to the controller
+                success: function (response) {
+                    if (response) {
+                        // Clear dropzone file input and preview container before binding new data
+                        $('#file-input-update').val('');  // Clear file input
+                        $('#preview-container-update').empty();  // Clear preview container
 
-                // Populate other fields in the modal
-                $('#commentTextareaupdate').val(response.Remark).prop('disabled', actionTypeEn === "submit");
-                $('#QC5DefectID').val(response.DefectID);
-                $('#majorDefectCheckboxupdate').prop('checked', response.IsMajorDefect).prop('disabled', actionTypeEn === "submit");
+                        // Set the values for the text inputs
+                        $('#UpQC5DefectID').val(response.DefectID);  // Set the DefectID
+                        $('#defectAreaText').val(response.DefectAreaName);  // Set the DefectArea text
+                        $('#defectTypeText').val(response.DefectTypeName);  // Set the DefectType text
+                        $('#defectDescriptionText').val(response.DefectDescriptionName);  // Set the DefectDescription text
 
-                // Clear existing images in the modal
-                $('#imagePreview3').empty();
+                        // Populate other fields in the modal
+                        $('#commentTextareaupdate').val(response.Remark).prop('disabled', actionTypeEn === "submit");
+                        $('#QC5DefectID').val(response.DefectID);
+                        $('#majorDefectCheckboxupdate').prop('checked', response.IsMajorDefect).prop('disabled', actionTypeEn === "submit");
 
-                // If there are images, populate the image list
-                if (response.listImageNotpass && response.listImageNotpass.length > 0) {
-                    response.listImageNotpass.forEach(function (image) {
-                        let removeButtonHTML = ''; // Initialize empty remove button
+                        // Clear existing images in the modal
+                        $('#imagePreview3').empty();
 
-                        // Only show the RemoveImage button if actionTypeEn is not "submit"
-                        if (actionTypeEn !== "submit") {
-                            removeButtonHTML = `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>`;
+                        // If there are images, populate the image list
+                        if (response.listImageNotpass && response.listImageNotpass.length > 0) {
+                            response.listImageNotpass.forEach(function (image) {
+                                let removeButtonHTML = ''; // Initialize empty remove button
+
+                                // Only show the RemoveImage button if actionTypeEn is not "submit"
+                                if (actionTypeEn !== "submit") {
+                                    removeButtonHTML = `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>`;
+                                }
+
+                                $('#imagePreview3').append(`
+                                    <div class="position-relative d-inline-block mb-3">
+                                        <a data-fslightbox="gallery" href="${image.FilePath}">
+                                            <img src="${image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                        </a>
+                                        ${removeButtonHTML}
+                                    </div>
+                                `);
+                            });
+
+                            // Reinitialize the fslightbox after appending new content
+                            refreshFsLightbox();
                         }
 
-                        $('#imagePreview3').append(`
-                            <div class="position-relative d-inline-block mb-3">
-                                <a data-fslightbox="gallery" href="${image.FilePath}">
-                                    <img src="${image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
-                                </a>
-                                ${removeButtonHTML}
-                            </div>
-                        `);
-                    });
+                        // Check if there are 5 or more images and hide the dropzone
+                        //if ($('#imagePreview3 .position-relative').length >= 5) {
+                        //    $('#drop-zone-update').hide(); 
+                        //} else {
+                        //    $('#drop-zone-update').show();
+                        //}
 
-                    // Reinitialize the fslightbox after appending new content
-                    refreshFsLightbox();
+                        // Show the modal
+                        var myModal = new bootstrap.Modal(document.getElementById('Update-detail-defect'));
+                        myModal.show();
+                    }
+                },
+                error: function () {
+                    alert('Error fetching data. Please try again.');
                 }
-
-                // Check if there are 5 or more images and hide the dropzone
-                if ($('#imagePreview3 .position-relative').length >= 5) {
-                    $('#drop-zone-edit').hide(); // Hide the dropzone if there are 5 or more images
-                } else {
-                    $('#drop-zone-edit').show(); // Show the dropzone if less than 5 images
-                }
-
-                // Show the modal
-                var myModal = new bootstrap.Modal(document.getElementById('Update-detail-defect'));
-                myModal.show();
-            }
-        },
-        error: function () {
-            alert('Error fetching data. Please try again.');
+            });
         }
-    });
+
+
+        function validateMainStatus(mainRadio) {
+            let allItems = document.querySelectorAll('.card-item[data-status]');
+            let hasNotPass = false;
+            allItems.forEach(function (item) {
+                let status = item.getAttribute('data-status');
+                if (status === '28') {
+                    hasNotPass = true;
+                }
+            });
+
+            if (hasNotPass) {
+                showErrorAlert('คำเตือน!', 'ยังมีรายการ Defect ที่ไม่ผ่าน');
+                mainRadio.checked = false;
+            } else {
+                if (mainRadio.checked && mainRadio.dataset.wasChecked) {
+                    mainRadio.checked = false;
+                    mainRadio.dataset.wasChecked = "";
+                    selectedRadioQC5Status = null; 
+                } else {
+                    let radios = document.getElementsByName(mainRadio.name);
+                    for (let i = 0; i < radios.length; i++) {
+                        radios[i].dataset.wasChecked = "";
+                    }
+                    mainRadio.dataset.wasChecked = "true"; // Mark the current one as checked
+                    selectedRadioQC5Status = mainRadio.value;
+                }
+            }
+        }
+
+
+        function validateConditionalPass(mainRadio) {
+            // Get all list items with data-is-major-defect and data-status attributes
+            let allItems = document.querySelectorAll('.card-item[data-is-major-defect][data-status]');
+            let hasMajorDefect = false;
+            let hasNotPass = false;
+
+            // Loop through the list items to check for major defects and not pass status
+            allItems.forEach(function (item) {
+                let isMajorDefect = item.getAttribute('data-is-major-defect') === 'True';
+                let statusID = item.getAttribute('data-status');
+
+                if (isMajorDefect && statusID == "28") {
+                    hasMajorDefect = true;
+                }
+            });
+
+            // If any item has IsMajorDefect == true or StatusID == 28 (not pass), show an alert and prevent selection
+            if (hasMajorDefect || hasNotPass) {
+                showErrorAlert('คำเตือน!', 'ยังมีรายการ Major Defect ที่ไม่ผ่าน');
+                // Prevent the radio button from being checked
+                mainRadio.checked = false;
+            } else {
+                // If no major defects or not pass status, proceed with checking/unchecking behavior
+                if (mainRadio.checked && mainRadio.dataset.wasChecked) {
+                    mainRadio.checked = false;  // Uncheck if already checked
+                    mainRadio.dataset.wasChecked = "";
+                    selectedRadioQC5Status = null;
+                } else {
+                    // Uncheck all radios in the same group and set this as checked
+                    var radios = document.getElementsByName(mainRadio.name);
+                    for (var i = 0; i < radios.length; i++) {
+                        radios[i].dataset.wasChecked = "";
+                    }
+                    mainRadio.dataset.wasChecked = "true";  // Mark the current one as checked
+                    selectedRadioQC5Status = mainRadio.value;                     
+                }
+            }
 }
+
+        function ClickNotReadyInspect(mainRadio) {
+            // Check if the radio is already checked and has been clicked again
+            if (mainRadio.checked && mainRadio.dataset.wasChecked) {
+                // Uncheck the radio if it's clicked when already checked
+                mainRadio.checked = false;
+                mainRadio.dataset.wasChecked = "";
+                selectedRadioQC5Status = '';  // Unset the selected value
+            } else {
+                // Uncheck all radios in the same group and set the clicked one as checked
+                var radios = document.getElementsByName(mainRadio.name);
+                for (var i = 0; i < radios.length; i++) {
+                    radios[i].dataset.wasChecked = "";
+                }
+                mainRadio.dataset.wasChecked = "true";
+                selectedRadioQC5Status = mainRadio.value;  // Set the selected value
+            }
+        }
+
+        function ClickNotPass(mainRadio) {
+            // Check if the radio is already checked and has been clicked again
+            if (mainRadio.checked && mainRadio.dataset.wasChecked) {
+                // Uncheck the radio if it's clicked when already checked
+                mainRadio.checked = false;
+                mainRadio.dataset.wasChecked = "";
+                selectedRadioQC5Status = '';  // Unset the selected value
+            } else {
+                // Uncheck all radios in the same group and set the clicked one as checked
+                var radios = document.getElementsByName(mainRadio.name);
+                for (var i = 0; i < radios.length; i++) {
+                    radios[i].dataset.wasChecked = "";
+                }
+                mainRadio.dataset.wasChecked = "true";
+                selectedRadioQC5Status = mainRadio.value;  // Set the selected value
+            }
+        }
+
+
+
+        document.getElementById('UpdateDefectButton').addEventListener('click', function () {
+            onUpdateDefectButtonClick();
+        });
+
+
+        function onUpdateDefectButtonClick() {
+            var DefectID = document.getElementById('UpQC5DefectID').value;
+            var comment = document.getElementById('commentTextareaupdate').value;
+            var files = $('#file-input-update')[0].files;
+
+            // Get hidden input values
+            var projectId = document.getElementById('hdProject').value;
+            var unitId = document.getElementById('hdUnitId').value;
+            var seq = document.getElementById('hdSeq').value;
+
+
+            var formData = new FormData();
+            formData.append('ID', DefectID);
+            formData.append('ProjectID', projectId);
+            formData.append('UnitID', unitId);
+            formData.append('Remark', comment);
+            formData.append('Seq', seq);
+
+            for (var i = 0; i < files.length; i++) {
+                formData.append('Images', files[i]);
+            }
+
+            showLoadingAlert();
+
+            $.ajax({
+                url: baseUrl + 'QC5Check/UpdateDefectDetail',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    Swal.close();
+                    if (response.success) {
+                        showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
+                    } else {
+                        showErrorAlert('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.close();
+                    showErrorAlert('เกิดข้อผิดพลาด!', error);
+                }
+            });
+}
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var dropZone = document.getElementById("drop-zone-update");
+            var fileInput = document.getElementById("file-input-update");
+            var previewContainer = document.getElementById("preview-container-update");
+            var filesArray = [];
+
+            // Set the max file count limit
+            const MAX_FILE_COUNT = 5;
+
+            dropZone.addEventListener("click", function (e) {
+                if (e.target.classList.contains("remove-button")) {
+                    return;
+                }
+                fileInput.click();
+            });
+
+            fileInput.addEventListener("change", function () {
+                if (fileInput.files.length) {
+                    addFilesToPreview(fileInput.files);
+                }
+            });
+
+            dropZone.addEventListener("dragover", function (e) {
+                e.preventDefault();
+                dropZone.classList.add("drop-zone--over");
+            });
+
+            dropZone.addEventListener("dragleave", function () {
+                dropZone.classList.remove("drop-zone--over");
+            });
+
+            dropZone.addEventListener("drop", function (e) {
+                e.preventDefault();
+                addFilesToPreview(e.dataTransfer.files);
+            });
+
+            function addFilesToPreview(files) {
+                Array.from(files).forEach(file => {
+                    if (filesArray.length < MAX_FILE_COUNT) {
+                        if (!filesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
+                            filesArray.push(file);
+                            const reader = new FileReader();
+                            reader.readAsDataURL(file);
+                            reader.onload = function (event) {
+                                const img = document.createElement("img");
+                                img.src = event.target.result;
+                                const previewImage = document.createElement("div");
+                                previewImage.className = "col-4 preview-image";
+
+                                const removeButton = document.createElement("button");
+                                removeButton.className = "remove-button";
+                                removeButton.innerHTML = "&times;";
+                                removeButton.addEventListener("click", function (e) {
+                                    e.stopPropagation();
+                                    filesArray = filesArray.filter(f => f !== file);
+                                    updateFileInput();
+                                    previewImage.remove();
+                                });
+
+                                previewImage.appendChild(img);
+                                previewImage.appendChild(removeButton);
+                                previewContainer.appendChild(previewImage);
+                            };
+                        }
+                    }
+                });
+                updateFileInput();
+            }
+
+            function updateFileInput() {
+                fileInput.value = '';
+
+                const dataTransfer = new DataTransfer();
+                filesArray.forEach(file => dataTransfer.items.add(file));
+                fileInput.files = dataTransfer.files;
+            }
+        });
+
+
+
 
 
 

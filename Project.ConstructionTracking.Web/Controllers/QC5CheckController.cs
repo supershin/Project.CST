@@ -140,6 +140,26 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult UpdateDefectDetail(QC5IUDModel model)
+        {
+            try
+            {
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                model.ApplicationPath = _hosting.ContentRootPath;
+                model.UserID = userid;
+                _QC5CheckService.UpdateDetailQCUnitCheckListDefect(model);
+
+                // Return success response
+                return Json(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
+
 
         [HttpPost]
         public IActionResult RemoveImage(Guid resourceId)
@@ -252,6 +272,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
             }
         }
+
 
         public IActionResult GetQCUnitCheckListDefects(Guid QC5UnitChecklistID, int Seq)
         {
