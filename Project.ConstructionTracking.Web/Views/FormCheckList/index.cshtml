@@ -251,7 +251,18 @@
                                                             {
                                                                 <div class="col-4">
                                                                     <label class="form-check form-check-inline">
-                                                                        <input class="form-check-input" type="radio" data-action="chk-check-list" name="Packages[@packageIndex].CheckLists[@checklistIndex].radios-inline-@item1.CheckListID" form-id="@ViewBag.FormID" group-id="@item.GroupID" package-id="@item.PackagesID" check-list-id="@item1.CheckListID" Unit-check-list-id="@item1.UnitCheckListID" value="@item2.RadioCheck_ID" onclick="toggleRadio(this)" @(item1.StatusCheck == item2.RadioCheck_ID ? "checked" : "")>
+                                                                        <input class="form-check-input" 
+                                                                               type="radio" 
+                                                                               data-action="chk-check-list" 
+                                                                               name="Packages[@packageIndex].CheckLists[@checklistIndex].radios-inline-@item1.CheckListID" 
+                                                                               form-id="@ViewBag.FormID" 
+                                                                               group-id="@item.GroupID" 
+                                                                               package-id="@item.PackagesID" 
+                                                                               check-list-id="@item1.CheckListID" 
+                                                                               Unit-check-list-id="@item1.UnitCheckListID" 
+                                                                               value="@item2.RadioCheck_ID" 
+                                                                               onclick="toggleRadio(this)" @(item1.StatusCheck == item2.RadioCheck_ID ? "checked" : "")
+                                                                        >
                                                                         <span class="form-check-label">@item2.RadioCheck_Name</span>
                                                                     </label>
                                                                 </div>

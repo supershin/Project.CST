@@ -10,6 +10,15 @@
     var QC5UpdateByName = ViewBag.QC5UpdateByName;
     var QC5UnitChecklistID = ViewBag.QC5UnitChecklistID;
     var QC5UnitChecklistActionID = ViewBag.QC5UnitChecklistActionID;
+    var QC5UnitStatusID = ViewBag.QC5UnitStatusID;
+
+    var QC5UnitChecklistRemark = ViewBag.QC5UnitChecklistRemark;
+    var PathQC5SignatureImage = ViewBag.PathQC5SignatureImage;
+    var QC5SignatureDate = ViewBag.QC5SignatureDate;
+
+    var ImageQC5UnitList = ViewBag.ImageQC5UnitList;
+    var ActionType = ViewBag.ActionType;
+
     var PEID = ViewBag.PEID;
     var PEName = ViewBag.PEName;
 }
@@ -68,6 +77,11 @@
     #Edit-qc5 {
         z-index: 9999;
     }
+
+    #signatureModal{
+        z-index: 9999;
+    }
+
 
     .autocomplete-items {
         position: absolute;
@@ -156,6 +170,26 @@
         cursor: not-allowed; /* Change cursor to indicate non-editable field */
     }
 
+    .image-text {
+        position: absolute;
+        bottom: 5px; /* Adjust this value to control the vertical positioning */
+        right: 5px; /* Adjust this value to control the horizontal positioning */
+        color: white; /* Text color */
+        font-size: 12px; /* Font size */
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for better visibility */
+        padding: 2px 5px; /* Padding around the text */
+        border-radius: 3px; /* Rounded corners for the background */
+    }
+
+    .custom-label {
+        background-color: red; /* Red background */
+        color: white; /* White text color */
+        font-size: 20px; /* Keep the font size */
+        padding: 5px; /* Add some padding around the text */
+        border-radius: 3px; /* Optional: add rounded corners */
+        text-align: center; /* Center the text within the label */
+    }
+
 </style>
 
 <input type="hidden" id="hdProject" value="@ViewBag.ProjectId"/>
@@ -163,9 +197,14 @@
 <input type="hidden" id="hdQC5UnitChecklistID" value="@ViewBag.QC5UnitChecklistID"/>
 <input type="hidden" id="hdQC5UnitChecklistActionID" value="@ViewBag.QC5UnitChecklistActionID" />
 <input type="hidden" id="hdSeq" value="@ViewBag.Seq"/>
-<button class="fixedButton" onclick="openModalDataQC('add')">
-    <i class="fa-solid fa-plus fa-xl"></i>
-</button>
+<input type="hidden" id="hdSigNatureData" value="@ViewBag.PathQC5SignatureImage" />
+
+@if (ViewBag.ActionTypeEn != "submit")
+{
+    <button class="fixedButton" onclick="openModalDataQC('add')">
+        <i class="fa-solid fa-plus fa-xl"></i>
+    </button>
+}
 
 <div class="page-wrapper">
     <!-- Page header -->
@@ -207,140 +246,122 @@
     </div>
     <!-- Page body -->
     <div class="page-body">
+        <label id="statusLabel" class="form-label custom-label">@ActionType</label>
         <div class="container mt-1 mb-3">
             <div class="row">
-                <div class="col-12 col-sm-5 mb-3">
+                <div class="col-12 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">QC 5</a></li>
+                                <li class="breadcrumb-item" aria-current="page">ตรวจครั้งที่ @Seq</li>
+                                @if (@QC5UnitStatusID == SystemConstant.UnitQCStatus.Pass)
+                                {
+                                    <li class="breadcrumb-item" aria-current="page">
+                                        สถานะ : <span class="badge bg-success rounded-pill text-white">ผ่าน</span>
+                                    </li>
+                                }
+                                else if (@QC5UnitStatusID == SystemConstant.UnitQCStatus.NotPass)
+                                {
+                                    <li class="breadcrumb-item" aria-current="page">
+                                        สถานะ : <span class="badge bg-danger rounded-pill text-white">ไม่ผ่าน</span>
+                                    </li>
+                                }
+                                else if (@QC5UnitStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect)
+                                {
+                                    <li class="breadcrumb-item" aria-current="page">
+                                        สถานะ : <span class="badge bg-danger rounded-pill text-white">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
+                                    </li>
+                                }
+                                else if (@QC5UnitStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect)
+                                {
+                                    <li class="breadcrumb-item" aria-current="page">
+                                        สถานะ : <span class="badge bg-primary rounded-pill text-white">ผ่านแบบมีเงื่อนไข</span>
+                                    </li>
+                                }
+                            </ol>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-sm-6 mb-3">
+                                    <div class="col-12">
+                                        <ul>
+                                            <li>จำนวนรายการจากครั้งที่ 1 : 2 รายการ</li>
+                                            <li>จำนวนรายการจากครั้งที่ 2 : 1 รายการ</li>
+                                            <li>จำนวนรายการจากครั้งที่ 3 : 0 รายการ</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-12 text-yellow">รายการทั้งหมด  : 3 รายการ</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="text-green">ผ่าน : 0 รายการ</div>
+                                                    <div class="text-red">ไม่ผ่าน : 2 รายการ</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    @foreach (var image in ImageQC5UnitList)
+                                    {
+                                        <div class="position-relative d-inline-block mb-3">
+                                            <a data-fslightbox="gallery" href="~/@image.Text">
+                                                <img src="~/@image.Text" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                            </a>
+                                            @if (ViewBag.ActionTypeEn != "submit")
+                                            {
+                                                <button type="button" class="remove-button" onclick="RemoveImage('@image.ValueGuid')">✖</button>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-12 col-sm-7 mb-3">
                             <div class="card">
                                 <div class="card-header">
-                                    <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="#">QC 5</a></li>
-                                        <li class="breadcrumb-item" aria-current="page">ตรวจครั้งที่ @Seq</li>
-                                        <li class="breadcrumb-item" aria-current="page">ผู้ตรวจ : @QC5UpdateByName </li>
-                                    </ol>
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <label class="form-check form-check-inline">
-                                            <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio3" value="1">
-                                            <span class="form-check-label">ผ่าน</span>
-                                        </label>
-                                        <label class="form-check form-check-inline">
-                                            <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio2" value="4">
-                                            <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
-                                        </label>
-                                        <label class="form-check form-check-inline">
-                                            <input class="form-check-input allow-deselect" type="radio" name="radios-inline-0" id="radio1" value="3">
-                                            <span class="form-check-label">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
-                                        </label>
-                                    </div>
-                                    <div id="collapseSection" class="collapse">
-                                        <label class="form-label mb-1">
-                                            <textarea class="form-control" id="QC5Remark" rows="2" placeholder="ความคิดเห็น"></textarea>
-                                        </label>
-                                        <div class="form-label mt-4">
-                                            <div id="drop-zone-save-submit" class="drop-zone form-control">
-                                                <p class="drop-zone-text">
-                                                    <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
-                                                </p>
-                                                <input type="file" id="file-input-save-submit" class="drop-zone-input" multiple>
-                                                <div id="preview-container-save-submit" class="row preview-container"></div>
-                                            </div>
+                                    <!-- Search Input -->
+                                    <div class="row col-12">
+                                        <div class="col-12 col-sm-6 mb-1">
+                                            <input type="text" id="searchInput" class="form-control" placeholder="ค้นหา..." onkeyup="filterCards()">
+                                        </div>
+                                        <div class="col-12 col-sm-6">
+                                            <select id="statusFilter" class="form-select" onchange="filterCards()">
+                                                <option value="">ทั้งหมด</option>
+                                                <option value="27">ผ่าน</option>
+                                                <option value="28">ไม่ผ่าน</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="list-group list-group-flush overflow-auto" style="max-height: 39rem">
+                                    <partial name="PartialDefectList" model="Model" seq="@ViewBag.Seq" />
+                                </div>
                             </div>
                         </div>
-                        <div class="col-12 mt-3 d-none d-md-block">
-                            <partial name="PartialSaveSubmitCard"/>
+                        <div class="col-12 col-sm-5">
+                            <div class="row">
+                                <div class="col-12">
+                                    <partial name="PartialSaveSubmitCard" />
+                                </div>
+                            </div>
                         </div>
                     </div>                   
-                </div>
-                <div class="col">
-                    <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <!-- Search Input -->
-                                    <div class="row col-12">
-                                    <div class="col-12 col-sm-6 mb-1">
-                                        <input type="text" id="searchInput" class="form-control" placeholder="ค้นหา..." onkeyup="filterCards()">
-                                    </div>
-                                    <div class="col-12 col-sm-6">
-                                        <select id="statusFilter" class="form-select" onchange="filterCards()">
-                                            <option value="">ทั้งหมด</option>
-                                            <option value="27">ผ่าน</option>
-                                            <option value="28">ไม่ผ่าน</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="list-group list-group-flush overflow-auto" style="max-height: 35rem">
-                                @{
-                                    var Index = 1;
-                                }
-                                @foreach (var item in Model)
-                                {
-                                    <div class="list-group-item card-item" data-status="@(item.StatusID)" data-defect="@item.DefectAreaName @item.DefectTypeName @item.DefectDescriptionName" data-remark="@item.Remark">
-                                        <div class="row">
-                                            <!-- Center the button vertically using d-flex and align-items-center -->
-                                            <div class="col-auto d-flex align-items-center justify-content-center">
-                                                @{
-                                                    string buttonClass = "bg-secondary"; // Default class
-                                                    string iconClass = "fa-solid fa-magnifying-glass"; // Default icon
-
-                                                    @if (item.StatusID == null && item.Seq == Seq)
-                                                    {
-                                                        buttonClass = "bg-secondary";
-                                                        iconClass = "fa-regular fa-pen-to-square";
-                                                    }
-
-                                                    <button type="button" class="status-dot @buttonClass">
-                                                            <i class="@iconClass"></i>
-                                                    </button>
-                                                }
-                                            </div>
-                                            <div class="col">
-                                                    <a href="#!" class="text-body d-block" style="white-space: nowrap; overflow-x: auto;" onclick="openModalEditQC('@item.ID')">
-                                                        @if (item.IsMajorDefect == true)
-                                                        {
-                                                            <i class="fa-solid fa-triangle-exclamation" style="color: #ff0000;"></i>
-                                                        }
-                                                        @item.DefectAreaName > @item.DefectTypeName > @item.DefectDescriptionName
-                                                    </a>
-                                                <div class="text-secondary mt-n1" style="white-space: nowrap; overflow-x: auto;">
-                                                    @item.Remark
-                                                </div>
-                                                    @if (Seq > item.Seq)
-                                                    {
-                                                        <div class="mt-2">
-                                                            <label class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="status_@item.DefectAreaID" value="27" />
-                                                                <span class="form-check-label">ผ่าน</span>
-                                                            </label>
-                                                            <label class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="status_@item.DefectAreaID" value="28" />
-                                                                <span class="form-check-label">ไม่ผ่าน</span>
-                                                            </label>
-                                                        </div>
-                                                    }
-                                            </div>
-                                        </div>
-                                    </div>
-                                    Index++;
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 mt-3 d-block d-md-none">
-                        <partial name="PartialSaveSubmitCard"/>
-                    </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- Modal -->
 
     <div class="modal fade" id="insert-new-qc5" tabindex="-1" aria-labelledby="insert-new-qc5-Label" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
@@ -419,7 +440,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-12">
-                          <input type="text" id="PEUnit" class="form-control" value="PE/SE : @PEName" readonly>
+                @*           <input type="text" id="PEUnit" class="form-control" value="PE/SE : @PEName" readonly> *@
                         </div>
                         <div class="col-12 mt-2">
                             <label for="signature-pad" class="form-label">ลงลายเซ็น PE/SE</label>
@@ -437,7 +458,7 @@
                         <button type="button" class="clear btn btn-default"><i class="fas fa-reply"></i> เคลียร์</button>
         
                         <!-- Right-aligned button -->
-                        <button type="button" class="btn btn-primary">บันทึก</button>
+                        <button type="button" class="btn btn-primary" onclick="saveSignature()">บันทึก</button>
                     </div>
                 </div>
             </div>
@@ -462,18 +483,21 @@
                         </div>
 
                         <!-- Dropzone for uploading images -->
-                        <div class="col-12">
-                            <div class="form-label text-danger">
-                                ถ่ายได้ไม่เกิน 5 รูปต่อรายการ
+                        @if (ViewBag.ActionTypeEn != "submit")
+                        {
+                            <div class="col-12">
+                                <div class="form-label text-danger">
+                                    ถ่ายได้ไม่เกิน 5 รูปต่อรายการ
+                                </div>
+                                <div id="drop-zone-edit" class="drop-zone form-control">
+                                    <p class="drop-zone-text">
+                                        <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                    </p>
+                                    <input type="file" id="file-input-edit" class="drop-zone-input" multiple>
+                                    <div id="preview-container-edit" class="row preview-container"></div>
+                                </div>
                             </div>
-                            <div id="drop-zone-edit" class="drop-zone form-control">
-                                <p class="drop-zone-text">
-                                    <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
-                                </p>
-                                <input type="file" id="file-input-edit" class="drop-zone-input" multiple>
-                                <div id="preview-container-edit" class="row preview-container"></div>
-                            </div>
-                        </div>
+                        }
 
                         <!-- Form Fields -->
                         <div class="col-12 col-sm-6">
@@ -518,8 +542,103 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn me-auto btn-danger" id="RemoveQC5Button" data-bs-dismiss="modal">ลบรายการนี้</button>
-                    <button type="button" class="btn btn-primary" id="EditButton" data-bs-dismiss="modal">บันทึก</button>
+                    @if (ViewBag.ActionTypeEn != "submit")
+                    {
+                        <button type="button" class="btn me-auto btn-danger" id="RemoveQC5Button" data-bs-dismiss="modal">ลบรายการนี้</button>
+                        <button type="button" class="btn btn-primary" id="EditButton" data-bs-dismiss="modal">บันทึก</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="signatureModal" tabindex="-1" aria-labelledby="signatureModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signatureModalLabel">ลายเซ็น</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="~/@ViewBag.PathQC5SignatureImage" alt="Signature Image" class="img-fluid w-100" style="object-fit: cover;">
+                    <p class="mt-3">ลงลายเซ็นวันที่ : @ViewBag.QC5SignatureDate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="Update-detail-defect" tabindex="-1" aria-labelledby="Update-detail-defect-Label" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">เพิ่มรูปภาพและหมายเหตุของรายการ Defect </h5>
+                    <input type="hidden" id="UpQC5DefectID" name="UpQC5DefectID">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2 g-md-3">
+                        <!-- Existing Image List (Populated by JavaScript) -->
+                        <div class="col-12 mt-3">
+                            <div id="imagePreview3" class="image-preview">
+                                <!-- Images will be dynamically added here by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Dropzone for uploading images -->
+                        @if (ViewBag.ActionTypeEn != "submit")
+                        {
+                            <div class="col-12">
+                                <div class="form-label text-danger">
+                                    ถ่ายได้ไม่เกิน 5 รูปต่อรายการ
+                                </div>
+                                <div id="drop-zone-update" class="drop-zone form-control">
+                                    <p class="drop-zone-text">
+                                        <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                    </p>
+                                    <input type="file" id="file-input-update" class="drop-zone-input" multiple>
+                                    <div id="preview-container-update" class="row preview-container"></div>
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Display defect information as text -->
+                        <div class="col-12 col-sm-6">
+                            <div class="form-label">ตำแหน่ง</div>
+                            <input class="form-control" type="text" id="defectAreaText" placeholder="ความคิดเห็น" disabled>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-label">หมวดงาน</div>
+                            <input class="form-control" type="text" id="defectTypeText" placeholder="ความคิดเห็น" disabled>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-label">รายการ defect</div>
+                            <input class="form-control" type="text" id="defectDescriptionText" placeholder="ความคิดเห็น" disabled>
+                        </div>
+@*                         <div class="col-12">
+                            <h3>DefectArea: <small id="defectAreaText">text show</small></h3>
+                            <h3>DefectType: <small id="defectTypeText">text show</small></h3>
+                            <h3>DefectDescription: <small id="defectDescriptionText">text show</small></h3>
+                        </div> *@
+
+                        <div class="col-12">
+                            <div class="form-label">ความเห็น</div>
+                            <textarea class="form-control" id="commentTextareaupdate" rows="2" placeholder="ความคิดเห็น"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-check">
+                                <input class="form-check-input" type="checkbox" id="majorDefectCheckboxupdate" disabled>
+                                <span class="form-check-label text-danger">เป็น Major Defect</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    @if (ViewBag.ActionTypeEn != "submit")
+                    {
+            @*             <button type="button" class="btn me-auto btn-danger" id="RemoveQC5Button" data-bs-dismiss="modal">ลบรายการนี้</button> *@
+                        <button type="button" class="btn btn-primary" id="UpdateDefectButton" data-bs-dismiss="modal">บันทึก</button>
+                    }
                 </div>
             </div>
         </div>
@@ -539,4 +658,9 @@
     });
 
 </script>
+
+    <script type="text/javascript">
+        var actionTypeEn = '@ViewBag.ActionTypeEn';  // Pass ViewBag.ActionTypeEn to JavaScript
+    </script>
+
 }

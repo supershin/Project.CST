@@ -4,7 +4,9 @@ using Newtonsoft.Json;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Services;
+using System;
 using System.Text.RegularExpressions;
+using static Project.ConstructionTracking.Web.Commons.SystemConstant;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
@@ -34,9 +36,15 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.QC5UnitChecklistID = QC5CheckDetail?.QC5UnitChecklistID;
             ViewBag.QC5UnitChecklistActionID = QC5CheckDetail?.QC5UnitChecklistActionID;
             ViewBag.UnitStatusName = QC5CheckDetail?.UnitStatusName;
+            ViewBag.QC5UnitChecklistRemark = QC5CheckDetail?.QC5UnitChecklistRemark;
+            ViewBag.PathQC5SignatureImage = QC5CheckDetail?.PathQC5SignatureImage;
+            ViewBag.QC5SignatureDate = QC5CheckDetail?.QC5SignatureDate;
+            ViewBag.QC5UnitStatusID = QC5CheckDetail?.QC5UnitStatusID;
+            ViewBag.QC5UnitChecklistRemark = QC5CheckDetail?.QC5UnitChecklistRemark;
             ViewBag.Seq = Seq;
             ViewBag.QC5UpdateByName = QC5CheckDetail?.QC5UpdateByName;
-
+            ViewBag.ActionType = QC5CheckDetail?.ActionType == "save" ? "บันทึกร่าง" : QC5CheckDetail?.ActionType == "submit" ? "ยืนยันแล้ว" : "ยังไม่เริ่มตรวจ";
+            ViewBag.ActionTypeEn = QC5CheckDetail?.ActionType;
             // Autocomplete 1
             var filterModel = new GetDDL { Act = "DefectArea", ID = QC5CheckDetail?.ProjectTypeID, searchTerm = "" };
             List<GetDDL> ListDefectArea = _getDDLService.GetDDLList(filterModel);
@@ -47,6 +55,10 @@ namespace Project.ConstructionTracking.Web.Controllers
             List<GetDDL> PEUnitID = _getDDLService.GetDDLList(PEUnit);
             ViewBag.PEID = (PEUnitID != null && PEUnitID.Count > 0) ? PEUnitID[0].ValueGuid : Guid.Empty;
             ViewBag.PEName = (PEUnitID != null && PEUnitID.Count > 0) ? PEUnitID[0].Text : "ยังไม่ได้ระบุ PE/SE ผู้ดูแล Unit แปลงนี้";
+
+            var ddlModel = new GetDDL { Act = "ImageQC5Unit", GuID = QC5CheckDetail?.QC5UnitChecklistID };
+            List<GetDDL> ImageQC5UnitList = _getDDLService.GetDDLList(ddlModel);
+            ViewBag.ImageQC5UnitList = ImageQC5UnitList;
 
 
 
@@ -128,6 +140,26 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult UpdateDefectDetail(QC5IUDModel model)
+        {
+            try
+            {
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                model.ApplicationPath = _hosting.ContentRootPath;
+                model.UserID = userid;
+                _QC5CheckService.UpdateDetailQCUnitCheckListDefect(model);
+
+                // Return success response
+                return Json(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
+
 
         [HttpPost]
         public IActionResult RemoveImage(Guid resourceId)
@@ -173,11 +205,11 @@ namespace Project.ConstructionTracking.Web.Controllers
             try
             {
                 // Deserialize the signature data if it's sent as a JSON string
-                if (Request.Form.ContainsKey("Sign"))
-                {
-                    var signJson = Request.Form["Sign"];
-                    model.Sign = JsonConvert.DeserializeObject<SignatureQC5>(signJson);
-                }
+                //if (Request.Form.ContainsKey("Sign"))
+                //{
+                //    var signJson = Request.Form["Sign"];
+                //    model.Sign = JsonConvert.DeserializeObject<SignatureQC5>(signJson);
+                //}
 
                 Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
                 model.ApplicationPath = _hosting.ContentRootPath;
@@ -196,6 +228,69 @@ namespace Project.ConstructionTracking.Web.Controllers
                 return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
             }
         }
+
+
+        [HttpPost]
+        public IActionResult SaveSignature(QC5SaveSubmitModel model)
+        {
+            try
+            {
+                if (Request.Form.ContainsKey("Sign"))
+                {
+                    var signJson = Request.Form["Sign"];
+                    model.Sign = JsonConvert.DeserializeObject<SignatureQC5>(signJson);
+                }
+
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                string ApplicationPath = _hosting.ContentRootPath;
+
+                _QC5CheckService.SaveSignature(model.Sign , ApplicationPath, model.QCUnitCheckListID , userid);
+
+
+                // Return success response
+                return Json(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
+
+
+        [HttpPost]
+        public IActionResult SelectedQCUnitCheckListDefectStatus(QC5IUDModel model)
+        {
+            try
+            {
+                Guid UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                _QC5CheckService.SelectedQCUnitCheckListDefectStatus(model);
+                return Json(new { success = true, message = "อัปเดตสถานะสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
+
+
+        public IActionResult GetQCUnitCheckListDefects(Guid QC5UnitChecklistID, int Seq)
+        {
+            var filterData = new QC5ChecklistModel
+            {
+                QCUnitCheckListID = QC5UnitChecklistID
+            };
+
+            List<QC5ChecklistModel> listQCUnitCheckListDefects = _QC5CheckService.GetQCUnitCheckListDefects(filterData);
+
+            // Pass both the list and Seq value to the partial view
+            ViewBag.Seq = Seq;
+
+            return PartialView("PartialDefectList", listQCUnitCheckListDefects);
+        }
+
+
+
 
     }
 }

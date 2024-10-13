@@ -13,7 +13,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 		dynamic GetQcSummaryList(Guid projectID, Guid unitID);
 
         QcStatusListSummaryResp VerifyStatusQc(Guid projectID, Guid unitID, int checkListID);
-
 	}
 
 	public class QcSummaryRepo : IQcSummaryRepo
@@ -97,23 +96,35 @@ namespace Project.ConstructionTracking.Web.Repositories
 						}
 						else
 						{
-                            if (listData.QCStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect || listData.QCStatusID == SystemConstant.UnitQCStatus.NotPass)
-                            {
-                                //set status = suspend
-                                qcStatus.QcResultStatus = SystemConstant.QcSummaryStatus.SUSPEND;
-                                qcStatus.QcResultStatusDesc = SystemConstant.QcSummaryStatus.Desc.SUSPEND;
+                            //if (listData.IsNotReadyInspect == true)
+                            //{
+                            //    //set status = suspend
+                            //    qcStatus.QcResultStatus = SystemConstant.QcSummaryStatus.SUSPEND;
+                            //    qcStatus.QcResultStatusDesc = SystemConstant.QcSummaryStatus.Desc.SUSPEND;
 
-                                resp.QcStatusLists.Add(qcStatus);
-                            }
-                            else if (listData.QCStatusID == SystemConstant.UnitQCStatus.Pass)
-                            {
-                                //set status = pass
-                                qcStatus.QcResultStatus = SystemConstant.QcSummaryStatus.FINISH;
-                                qcStatus.QcResultStatusDesc = SystemConstant.QcSummaryStatus.Desc.FINISH;
+                            //    resp.QcStatusLists.Add(qcStatus);
+                            //}
+                            //else if (listData.IsPassCondition == true)
+                            //{
+                            //    if (listData.QCStatusID == SystemConstant.QcStatus.PASS)
+                            //    {
+                            //        //set status = pass
+                            //        qcStatus.QcResultStatus = SystemConstant.QcSummaryStatus.FINISH;
+                            //        qcStatus.QcResultStatusDesc = SystemConstant.QcSummaryStatus.Desc.FINISH;
 
-                                resp.QcStatusLists.Add(qcStatus);
-                            }
-                        }    
+                            //        resp.QcStatusLists.Add(qcStatus);
+                            //    }
+                            //    else
+                            //    {
+                            //        //set status = suspend
+                            //        qcStatus.QcResultStatus = SystemConstant.QcSummaryStatus.SUSPEND;
+                            //        qcStatus.QcResultStatusDesc = SystemConstant.QcSummaryStatus.Desc.SUSPEND;
+
+                            //        resp.QcStatusLists.Add(qcStatus);
+                            //    }
+                            //}
+                        }
+                        
                     }
                 }
             }
