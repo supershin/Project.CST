@@ -168,7 +168,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     var ImageQC5UnitList = from t1 in _context.tr_QC_UnitCheckList_Resource
                                            join t2 in _context.tm_Resource on t1.ResourceID equals t2.ID into joined
                                            from t2 in joined.DefaultIfEmpty()
-                                           where t1.QCUnitCheckListID == Model.GuID && t1.DefectID == null && t1.IsSign == false && t1.FlagActive == true
+                                           where t1.QCUnitCheckListID == Model.GuID && t1.DefectID == null && t1.IsSign == false && t1.FlagActive == true && t2.FlagActive == true
                                            select new GetDDL
                                            {
                                                ValueGuid = t1.ResourceID,
