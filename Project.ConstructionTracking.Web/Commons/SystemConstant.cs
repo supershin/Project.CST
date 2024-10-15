@@ -125,6 +125,14 @@
             public const int IsPassCondition = 4;
             public const int InProgress = 5;
         }
+        public static class UnitQCStatusText
+        {
+            public const string Pass = "ผ่าน";
+            public const string NotPass = "ไม่ผ่าน";
+            public const string IsNotReadyInspect = "ผู้รับเหมาไม่พร้อมให้ตรวจ";
+            public const string IsPassCondition = "ผ่านแบบมีเงื่อนไข";
+            public const string InProgress = "กำลังดำเนินการ";
+        }
         public static class Qc_CheckList_Status
         {
             public const int PASS = 29;

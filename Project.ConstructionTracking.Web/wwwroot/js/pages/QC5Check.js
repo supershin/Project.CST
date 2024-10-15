@@ -110,6 +110,9 @@ function openModalDataQC(action, data = null) {
         $('#defectAreaId, #defectTypeId, #defectDescriptionId').val('');
         $('#otherDefectInput, #commentTextarea').val('');
         $('#majorDefectCheckbox').prop('checked', false);
+        // Clear dropzone file input and preview container before binding new data
+        $('#file-input').val('');
+        $('#preview-container').empty();  // Clear preview container
     }
 
     myModal.show();
@@ -175,6 +178,18 @@ function onSaveButtonClick() {
         success: function (response) {
             Swal.close();
             if (response.success) {
+                //var mainPassRadio = document.getElementById('radio3');
+                //if (mainPassRadio && mainPassRadio.checked) {
+                //    mainPassRadio.checked = false;
+                //    mainPassRadio.dataset.wasChecked = "";
+                //    selectedRadioQC5Status = '';
+                //}
+                //if (isMajorDefect == "True") { 
+                //    var mainPassWithConditionRadio = document.getElementById('radio2');
+                //    mainPassWithConditionRadio.checked = false;
+                //    mainPassWithConditionRadio.dataset.wasChecked = "";
+                //    selectedRadioQC5Status = '';
+                //}
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
                     window.location.reload();
                 });
@@ -299,9 +314,11 @@ function openModalEditQC(defectID) {
         data: { DefectID: defectID }, // Pass the DefectID to the controller
         success: function (response) {
             if (response) {
+                // Clear dropzone file input and preview container before binding new data
+                $('#file-input-edit').val('');
+                $('#preview-container-edit').empty();  // Clear preview container
 
                 $('#dropdown1Edit').val(response.DefectAreaID).trigger('change');
-
                 $.ajax({
                     url: baseUrl + 'QC5Check/GetDDLDefectType',
                     data: { defectAreaId: response.DefectAreaID },
@@ -372,6 +389,7 @@ function openModalEditQC(defectID) {
                 }
 
                 // Check if there are 5 or more images and hide the dropzone
+                
                 if ($('#imagePreview2 .position-relative').length >= 5) {
                     $('#drop-zone-edit').hide(); // Hide the dropzone if there are 5 or more images
                 } else {
@@ -974,26 +992,60 @@ function SubmitUnitQC5() {
 }
 
 
-function toggleRadioForRadioCheck(radio, id) {
+//function toggleRadioForRadioCheck(radio, id) {
+//    if (radio.checked && radio.dataset.wasChecked) {
+//        // Uncheck the radio if clicked while already checked
+//        radio.checked = false;
+//        radio.dataset.wasChecked = "";
+
+//        // Send null to the radioChanged function to indicate uncheck
+//        radioChanged(id, null);
+//    } else {
+//        // Uncheck all radios in the same group
+//        var radios = document.getElementsByName(radio.name);
+//        for (var i = 0; i < radios.length; i++) {
+//            radios[i].dataset.wasChecked = "";
+//        }
+
+//        // Mark the clicked radio as checked
+//        radio.dataset.wasChecked = "true";
+
+//        // Send the checked value to the radioChanged function
+//        radioChanged(id, radio.value);
+//    }
+//}
+
+
+function toggleRadioForRadioCheck(radio, id, majordefect) {
     if (radio.checked && radio.dataset.wasChecked) {
-        // Uncheck the radio if clicked while already checked
         radio.checked = false;
         radio.dataset.wasChecked = "";
 
-        // Send null to the radioChanged function to indicate uncheck
         radioChanged(id, null);
     } else {
-        // Uncheck all radios in the same group
         var radios = document.getElementsByName(radio.name);
         for (var i = 0; i < radios.length; i++) {
             radios[i].dataset.wasChecked = "";
         }
 
-        // Mark the clicked radio as checked
-        radio.dataset.wasChecked = "true";
+        radio.dataset.wasChecked = "True";
 
-        // Send the checked value to the radioChanged function
         radioChanged(id, radio.value);
+
+        if (radio.value == 28) {
+            var mainPassRadio = document.getElementById('radio3');
+            if (mainPassRadio && mainPassRadio.checked) {
+                mainPassRadio.checked = false;
+                mainPassRadio.dataset.wasChecked = "";
+                selectedRadioQC5Status = '';
+            }
+            if (majordefect == "True") {
+                var mainPassWithConditionRadio = document.getElementById('radio2');
+                mainPassWithConditionRadio.checked = false;
+                mainPassWithConditionRadio.dataset.wasChecked = "";
+                selectedRadioQC5Status = '';
+            }
+        }
     }
 }
 

@@ -16,7 +16,8 @@
                            value="1"
                            onclick="validateMainStatus(this)"
                     @(ViewBag.QC5UnitStatusID == 1 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
+                    >
                     <span class="form-check-label">ผ่าน</span>
                 </label>
                 <label class="form-check form-check-inline">
@@ -27,7 +28,8 @@
                            value="4"
                            onclick="validateConditionalPass(this)"
                     @(ViewBag.QC5UnitStatusID == 4 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
+                    >
                     <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
                 </label>
                 <label class="form-check form-check-inline">
