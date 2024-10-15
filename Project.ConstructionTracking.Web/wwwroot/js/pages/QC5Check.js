@@ -102,6 +102,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function openModalDataQC(action, data = null) {
     var myModal = new bootstrap.Modal(document.getElementById('insert-new-qc5'));
+    // Hide the fixed button
+    var fixedButton = document.querySelector('.fixedButton');
+    fixedButton.style.display = 'none';  // Hide the button
 
     var modalTitle = document.getElementById('insert-new-qc5-Label');
     if (action === 'add') {
@@ -290,12 +293,13 @@ function filterCards() {
     var cards = document.querySelectorAll('.card-item');
 
     cards.forEach(function (card) {
+        var refseqText = card.getAttribute('data-refseq').toLowerCase();
         var defectText = card.getAttribute('data-defect').toLowerCase();
         var remarkText = card.getAttribute('data-remark').toLowerCase();
         var cardStatus = card.getAttribute('data-status');
 
         // Check if the card matches the search term and the selected filter
-        var matchesSearch = defectText.includes(searchInput) || remarkText.includes(searchInput);
+        var matchesSearch = refseqText.includes(searchInput) || defectText.includes(searchInput) || remarkText.includes(searchInput);
         var matchesFilter = !statusFilter || cardStatus === statusFilter;
 
         // Show or hide the card based on the search and filter conditions
@@ -317,6 +321,9 @@ function openModalEditQC(defectID) {
                 // Clear dropzone file input and preview container before binding new data
                 $('#file-input-edit').val('');
                 $('#preview-container-edit').empty();  // Clear preview container
+                // Hide the fixed button
+                var fixedButton = document.querySelector('.fixedButton');
+                fixedButton.style.display = 'none';  // Hide the button
 
                 $('#dropdown1Edit').val(response.DefectAreaID).trigger('change');
                 $.ajax({
@@ -523,6 +530,7 @@ function onEditButtonClick() {
         success: function (response) {
             Swal.close();
             if (response.success) {
+                showFixedButton() 
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
             } else {
                 showErrorAlert('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -1149,6 +1157,9 @@ function openModalUpdateDefectDetailQC(defectID) {
                 // Clear dropzone file input and preview container before binding new data
                 $('#file-input-update').val('');  // Clear file input
                 $('#preview-container-update').empty();  // Clear preview container
+                // Hide the fixed button
+                var fixedButton = document.querySelector('.fixedButton');
+                fixedButton.style.display = 'none';  // Hide the button
 
                 // Set the values for the text inputs
                 $('#UpQC5DefectID').val(response.DefectID);  // Set the DefectID
@@ -1352,6 +1363,7 @@ function onUpdateDefectButtonClick() {
         success: function (response) {
             Swal.close();
             if (response.success) {
+                showFixedButton() 
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
             } else {
                 showErrorAlert('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -1443,6 +1455,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+
+// Function to show the fixed button
+function showFixedButton() {
+    var fixedButton = document.querySelector('.fixedButton');
+    fixedButton.style.display = 'block';  // Show the button again
+}
 
 
 

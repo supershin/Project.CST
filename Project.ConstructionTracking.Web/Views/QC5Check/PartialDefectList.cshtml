@@ -9,6 +9,7 @@
 @foreach (var item in Model)
 {
     <div class="list-group-item card-item"
+            data-refseq="@("รอบที่ "+item.RefSeq)"
             data-status="@(item.StatusID)"
             data-defect="@item.DefectAreaName @item.DefectTypeName @item.DefectDescriptionName"
             data-remark="@item.Remark"

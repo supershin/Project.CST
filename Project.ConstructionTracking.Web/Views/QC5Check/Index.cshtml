@@ -63,20 +63,20 @@
         bottom: 20px;
         right: 20px;
         padding: 20px;
-        z-index: 9998;
+        z-index: 9997;
         background-color: white;
         border-radius: 50%;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         border: none;
     }
 
-    #insert-new-qc5 {
+/*     #insert-new-qc5 {
         z-index: 9999;
-    }
+    } */
 
-    #Edit-qc5 {
-        z-index: 9999;
-    }
+/*     #Edit-qc5 {
+        z-index: 9998;
+    } */
 
     #signatureModal {
         z-index: 9999;
@@ -136,13 +136,13 @@
         max-height: 100px;
     }
 
-        .preview-image img {
-            max-width: 100%;
-            max-height: 100%;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            display: block;
-        }
+    .preview-image img {
+        max-width: 100%;
+        max-height: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        display: block;
+    }
 
     .remove-button {
         position: absolute;
@@ -371,7 +371,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="insert-new-qc5-Label">เพิ่มข้อมูลรายการ</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="showFixedButton()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-2 g-md-3">
@@ -425,7 +425,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn me-auto" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="button" class="btn me-auto" data-bs-dismiss="modal" onclick="showFixedButton()">ยกเลิก</button>
                     <button type="button" class="btn btn-primary" id="saveButton" data-bs-dismiss="modal">บันทึก</button>
                 </div>
             </div>
@@ -473,7 +473,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">แก้ไขข้อมูลรายการ</h5>
                     <input type="hidden" id="QC5DefectID" name="QC5DefectID">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="showFixedButton()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-2 g-md-3">
@@ -575,7 +575,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">เพิ่มรูปภาพและหมายเหตุของรายการ Defect </h5>
                     <input type="hidden" id="UpQC5DefectID" name="UpQC5DefectID">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="showFixedButton()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-2 g-md-3">
