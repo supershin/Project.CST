@@ -245,7 +245,7 @@ function gatherAllValues() {
     var checklistItems = [];
     listID.forEach(function (id) {
         var selectedRadio = document.querySelector(`input[name="radios-${id}"]:checked`);
-        var detailRemark = document.getElementById(`description-${id}`).value;
+        var detailRemark = $("#description-" + id).val();
 
         if (selectedRadio || detailRemark || document.getElementById(`file-input-${id}`).files.length > 0) {
             var checklistItem = {
