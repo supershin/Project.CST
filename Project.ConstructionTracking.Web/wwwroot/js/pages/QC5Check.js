@@ -110,6 +110,9 @@ function openModalDataQC(action, data = null) {
         $('#defectAreaId, #defectTypeId, #defectDescriptionId').val('');
         $('#otherDefectInput, #commentTextarea').val('');
         $('#majorDefectCheckbox').prop('checked', false);
+        // Clear dropzone file input and preview container before binding new data
+        $('#file-input').val('');
+        $('#preview-container').empty();  // Clear preview container
     }
 
     myModal.show();
@@ -311,9 +314,11 @@ function openModalEditQC(defectID) {
         data: { DefectID: defectID }, // Pass the DefectID to the controller
         success: function (response) {
             if (response) {
+                // Clear dropzone file input and preview container before binding new data
+                $('#file-input-edit').val('');
+                $('#preview-container-edit').empty();  // Clear preview container
 
                 $('#dropdown1Edit').val(response.DefectAreaID).trigger('change');
-
                 $.ajax({
                     url: baseUrl + 'QC5Check/GetDDLDefectType',
                     data: { defectAreaId: response.DefectAreaID },
@@ -384,6 +389,7 @@ function openModalEditQC(defectID) {
                 }
 
                 // Check if there are 5 or more images and hide the dropzone
+                
                 if ($('#imagePreview2 .position-relative').length >= 5) {
                     $('#drop-zone-edit').hide(); // Hide the dropzone if there are 5 or more images
                 } else {

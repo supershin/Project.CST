@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
+using static Project.ConstructionTracking.Web.Commons.SystemConstant;
+using static Project.ConstructionTracking.Web.Models.GeneratePDFModel.DataGenerateQCPDFResp;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -126,6 +129,60 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return query;
 		}
+
+        //public DataGenerateQCPDFResp GetDataQCToGeneratePDF(DataToGenerateModel model)
+        //{
+        //    var query = (from trQC in _context.tr_QC_UnitCheckList
+        //                 join tmExQcType in _context.tm_Ext on trQC.QCTypeID equals tmExQcType.ID
+        //                 join tmp in _context.tm_Project on trQC.ProjectID equals tmp.ProjectID
+        //                 join tmu in _context.tm_Unit on trQC.UnitID equals tmu.UnitID
+        //                 join tmpeunit in _context.tr_PE_Unit on tmu.UnitID equals tmpeunit.UnitID
+        //                 join tmcv in _context.tm_CompanyVendor on tmu.CompanyVendorID equals tmcv.ID
+        //                 join trfqc in _context.tr_Form_QCCheckList on trQC.CheckListID equals trfqc.CheckListID
+        //                 join tmf in _context.tm_Form on trfqc.FormID equals tmf.ID
+        //                 join tmuserqc in _context.tm_User on trQC.UpdateBy equals tmuserqc.ID
+        //                 join tmuserpe in _context.tm_User on tmpeunit.UserID equals tmuserpe.ID
+        //                 where trQC.ProjectID == model.ProjectID
+        //                    && trQC.UnitID == model.UnitID
+        //                    && trQC.ID == model.QCUnitCheckListID
+        //                 select new
+        //                 {
+        //                     QCTypeName = tmExQcType.Name,
+        //                     ProjectName = tmp.ProjectName,
+        //                     UnitCode = tmu.UnitCode,
+        //                     CompanyVendorName = tmcv.Name,
+        //                     FormName = tmf.Name,
+        //                     QCInspectorName = tmuserqc.FirstName + " " + tmuserqc.LastName,
+        //                     PEInspectorName = tmuserpe.FirstName + " " + tmuserpe.LastName,
+        //                     QCCheckDate = trQC.CheckListDate,
+        //                     QCStatus = trQC.QCStatusID
+        //                 }).FirstOrDefault();
+
+
+
+        //    //select new DataGenerateQCPDFResp.HeaderQCPdfData // Header
+        //    //{
+        //    //    QCName = tmExQcType.Name,
+        //    //    FormName = tmf.Name,
+        //    //    ProjectName = tmp.ProjectName,
+        //    //    UnitCode = tmu.UnitCode,
+        //    //    CompanyVenderName = tmcv.Name,
+        //    //    PEInspectorName =  tmuserpe.FirstName + " " + tmuserpe.LastName,
+        //    //    QCInspectorName = tmuserqc.FirstName + " " + tmuserqc.LastName,
+        //    //    //Seq = FormatExtension.NullToString(trQC.Seq.HasValue),
+        //    //    //QCStatus = FormatExtension.NullToString(trQC.QCStatusID.HasValue),
+        //    //    //QCStatusText = trQC.QCStatusID == SystemConstant.UnitQCStatus.Pass ? SystemConstant.UnitQCStatusText.Pass
+        //    //    //            : (trQC.QCStatusID == SystemConstant.UnitQCStatus.NotPass ? SystemConstant.UnitQCStatusText.NotPass
+        //    //    //            : (trQC.QCStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect ? SystemConstant.UnitQCStatusText.IsNotReadyInspect
+        //    //    //            : (trQC.QCStatusID == SystemConstant.UnitQCStatus.IsPassCondition ? SystemConstant.UnitQCStatusText.IsPassCondition
+        //    //    //            : (trQC.QCStatusID == SystemConstant.UnitQCStatus.InProgress ? SystemConstant.UnitQCStatusText.InProgress
+        //    //    //            : "ไม่พบสถานะ"))
+
+        //    //});.FirstOrDefault();
+
+        //    return query;
+        //}
+
 
         public DataDocumentModel GenerateDocumentNO(Guid projectID)
         {
