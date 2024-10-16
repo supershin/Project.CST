@@ -383,8 +383,8 @@ function openModalEditQC(defectID) {
 
                         $('#imagePreview2').append(`
                                     <div class="position-relative d-inline-block mb-3">
-                                        <a data-fslightbox="gallery" href="${image.FilePath}">
-                                            <img src="${image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                        <a data-fslightbox="gallery" href="${baseUrl+image.FilePath}">
+                                            <img src="${baseUrl+image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                         </a>
                                         ${removeButtonHTML}  <!-- Conditionally render remove button -->
                                     </div>
@@ -839,6 +839,7 @@ function saveUnitQC5() {
     var ActionType = 'save';
     var QCRemark = document.getElementById('QC5Remark').value;
     var files = $('#file-input-save-submit')[0].files;
+    debugger
     // var signData = unitEquipment.getSignatureData();  
 
     var formData = new FormData();
@@ -1187,8 +1188,8 @@ function openModalUpdateDefectDetailQC(defectID) {
 
                         $('#imagePreview3').append(`
                                     <div class="position-relative d-inline-block mb-3">
-                                        <a data-fslightbox="gallery" href="${image.FilePath}">
-                                            <img src="${image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                        <a data-fslightbox="gallery" href="${baseUrl+image.FilePath}">
+                                            <img src="${baseUrl+image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                         </a>
                                         ${removeButtonHTML}
                                     </div>

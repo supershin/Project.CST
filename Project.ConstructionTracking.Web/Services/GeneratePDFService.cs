@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.CodeAnalysis;
 using Project.ConstructionTracking.Web.Commons;
+using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Repositories;
 
@@ -9,6 +10,7 @@ namespace Project.ConstructionTracking.Web.Services
 	public interface IGeneratePDFService
 	{
 		DataGenerateCheckListResp GetDataToGeneratePDF(DataToGenerateModel model);
+        DataGenerateQCPDFResp GetDataQCToGeneratePDF(DataToGenerateModel model);
         DataDocumentModel GenerateDocumentNO(Guid projectID);
         bool SaveFileDocument(DataSaveTableResource model);
     }
@@ -133,6 +135,12 @@ namespace Project.ConstructionTracking.Web.Services
 			resp.FooterData.VendorData.VendorImageSignUrl = queryData.SignVendor;
 
 			return resp;
+        }
+
+        public DataGenerateQCPDFResp GetDataQCToGeneratePDF(DataToGenerateModel filterData)
+        {
+            var DataQCToGeneratePDF = _generatePDFRepo.GetDataQCToGeneratePDF(filterData);
+            return DataQCToGeneratePDF;
         }
 
         public DataDocumentModel GenerateDocumentNO(Guid projectID)

@@ -16,16 +16,21 @@ using Humanizer.Localisation;
 using System.Linq;
 using QuestPDF.Infrastructure;
 using static Project.ConstructionTracking.Web.Commons.SystemConstant;
+using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
+using QuestPDF.Drawing;
+using QuestPDF.Fluent;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
     public class QC5CheckRepo : IQC5CheckRepo
     {
         private readonly ContructionTrackingDbContext _context;
+        private readonly IGeneratePDFRepo _generatePDFRepo;
 
-        public QC5CheckRepo(ContructionTrackingDbContext context)
+        public QC5CheckRepo(ContructionTrackingDbContext context, IGeneratePDFRepo generatePDFRepo)
         {
             _context = context;
+            _generatePDFRepo = generatePDFRepo;
         }
 
 
@@ -924,14 +929,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                     if (QC_UnitCheckList != null)
                     {
                         QC_UnitCheckList.QCStatusID = model.QCStatusID;
-                        //if (model.QCStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect)
-                        //{
-                        //    QC_UnitCheckList.IsNotReadyInspect = true;
-                        //}
-                        //else if (model.QCStatusID == SystemConstant.UnitQCStatus.IsPassCondition)
-                        //{
-                        //    QC_UnitCheckList.IsPassCondition = true;
-                        //}
                         QC_UnitCheckList.UpdateDate = DateTime.Now;
                         QC_UnitCheckList.UpdateBy = model.UserID;
 
@@ -1018,10 +1015,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                             }
                         }
 
-                        //if (model.Sign != null)
-                        //{
-                        //    SaveSignature(model.Sign, model.ApplicationPath, model.QCUnitCheckListID, model.UserID);
-                        //}
+
+                        var filterModel = new DataToGenerateModel { ProjectID = FormatExtension.ConvertStringToGuid(QC_UnitCheckList.ProjectID) 
+                                                                  , UnitID = FormatExtension.ConvertStringToGuid(QC_UnitCheckList.UnitID), 
+                                                                    QCUnitCheckListID = FormatExtension.ConvertStringToGuid(model.QCUnitCheckListID) };
+
+                        DataGenerateQCPDFResp dataForGenQCPdf = _generatePDFRepo.GetDataQCToGeneratePDF(filterModel);
+                        DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(FormatExtension.ConvertStringToGuid(QC_UnitCheckList.ProjectID));
 
                         _context.SaveChanges();
                     }
@@ -1064,7 +1064,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                 }
             }
         }
-
 
 
         public void SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
@@ -1145,6 +1144,15 @@ namespace Project.ConstructionTracking.Web.Repositories
         public bool InsertOrUpdateQCUnitCheckListResource(Guid ResourceID, Guid? QCUnitCheckListID, Guid? userID)
         {
 
+            var QC_UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(d => d.ID == QCUnitCheckListID);
+
+            if (QC_UnitCheckList != null)
+            {
+                QC_UnitCheckList.PESignResourceID = ResourceID;
+                _context.tr_QC_UnitCheckList.Update(QC_UnitCheckList);
+            }
+
+
             var QCUnitCheckListResource = _context.tr_QC_UnitCheckList_Resource.FirstOrDefault(r => r.QCUnitCheckListID == QCUnitCheckListID);
 
             if (QCUnitCheckListResource != null)
@@ -1178,5 +1186,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return true;
         }
+
     }
 }
