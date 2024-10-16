@@ -208,7 +208,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               PM_getListgroup = (from fg in _context.tm_FormGroup
                                                  join t7 in _context.tr_UnitFormPassCondition on new { UnitFormID = (Guid?)t1.ID, GroupID = (int?)fg.ID } equals new { t7.UnitFormID, t7.GroupID } into unitFormPassConditions
                                                  from passCondition in unitFormPassConditions.DefaultIfEmpty()
-                                                 where fg.FormID == t1.FormID
+                                                 where fg.FormID == t1.FormID && fg.FlagActive == true
                                                  select new PM_getListgroup
                                                  {
                                                      Group_ID = fg.ID,
