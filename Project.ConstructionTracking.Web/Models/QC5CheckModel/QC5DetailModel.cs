@@ -15,8 +15,12 @@ namespace Project.ConstructionTracking.Web.Models.QC5CheckModel
         public int? QC5UnitChecklistActionID { get; set; }
         public int? QCTypeID { get; set; }
         public int? QC5UnitStatusID { get; set; }
+        public string? QC5UnitChecklistRemark { get; set; }
+        public string? PathQC5SignatureImage { get; set; }
+        public string? QC5SignatureDate { get; set; }
         public int? Seq { get; set; }
         public Guid? UnitFormID { get; set; }
+        public Guid? UserID { get; set; }
         public string? UnitFormName { get; set; }
         public int? UnitFormStatatusID { get; set; }
         public string? UnitFormStatatusName { get; set; }
@@ -25,6 +29,6 @@ namespace Project.ConstructionTracking.Web.Models.QC5CheckModel
         public string? QC5UpdateDate { get; set; }
         public string? QC5UpdateByName { get; set; }
         public string? ActionType { get; set; }
-        
+
     }
 }

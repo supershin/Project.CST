@@ -13,6 +13,12 @@ namespace Project.ConstructionTracking.Web.Services
             _IQC5CheckRepo = QC5CheckRepo;
         }
 
+        public QC5MaxSeqStatusChecklistModel CheckQC5MaxSeqStatusChecklist(QC5MaxSeqStatusChecklistModel filterData)
+        {
+            var C5MaxSeqStatusChecklist = _IQC5CheckRepo.CheckQC5MaxSeqStatusChecklist(filterData);
+            return C5MaxSeqStatusChecklist;
+        }
+
         public QC5DetailModel GetQC5CheckDetail(QC5DetailModel filterData)
         {
             var QC5CheckDetail = _IQC5CheckRepo.GetQC5CheckDetail(filterData);
@@ -35,7 +41,7 @@ namespace Project.ConstructionTracking.Web.Services
         {
             try
             {
-                _IQC5CheckRepo.InsertQCUnitCheckListDefect(model , userid);
+                _IQC5CheckRepo.InsertQCUnitCheckListDefect(model, userid);
             }
             catch (Exception ex)
             {
@@ -48,6 +54,18 @@ namespace Project.ConstructionTracking.Web.Services
             try
             {
                 _IQC5CheckRepo.UpdateQCUnitCheckListDefect(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
+            }
+        }
+
+        public void UpdateDetailQCUnitCheckListDefect(QC5IUDModel model)
+        {
+            try
+            {
+                _IQC5CheckRepo.UpdateDetailQCUnitCheckListDefect(model);
             }
             catch (Exception ex)
             {
@@ -71,7 +89,7 @@ namespace Project.ConstructionTracking.Web.Services
         {
             try
             {
-                _IQC5CheckRepo.RemoveImage(resourceId , UserID);
+                _IQC5CheckRepo.RemoveImage(resourceId, UserID);
             }
             catch (Exception ex)
             {
@@ -84,6 +102,30 @@ namespace Project.ConstructionTracking.Web.Services
             try
             {
                 _IQC5CheckRepo.SaveSubmitQC5UnitCheckList(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
+            }
+        }
+
+        public void SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
+        {
+            try
+            {
+                _IQC5CheckRepo.SaveSignature(signData, appPath, QCUnitCheckListID, userID);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
+            }
+        }
+
+        public void SelectedQCUnitCheckListDefectStatus(QC5IUDModel model)
+        {
+            try
+            {
+                _IQC5CheckRepo.SelectedQCUnitCheckListDefectStatus(model);
             }
             catch (Exception ex)
             {

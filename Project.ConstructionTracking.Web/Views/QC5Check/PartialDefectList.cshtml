@@ -1,0 +1,103 @@
+﻿@model List<Project.ConstructionTracking.Web.Models.QC5CheckModel.QC5ChecklistModel>
+@{
+    int seq = ViewBag.Seq;  // Retrieve the Seq from ViewBag
+}
+
+@{
+    var Index = 1;
+}
+@foreach (var item in Model)
+{
+    <div class="list-group-item card-item"
+            data-refseq="@("รอบที่ "+item.RefSeq)"
+            data-status="@(item.StatusID)"
+            data-defect="@item.DefectAreaName @item.DefectTypeName @item.DefectDescriptionName"
+            data-remark="@item.Remark"
+            data-is-major-defect="@item.IsMajorDefect">
+        <div class="row">
+            <div class="col-auto d-flex align-items-center justify-content-center">
+                @{
+                    string buttonClass = "bg-secondary"; // Default class
+                    string iconClass = "fa-solid fa-magnifying-glass"; // Default icon
+
+                    @if (item.RefSeq == seq)
+                    {
+                        buttonClass = "bg-secondary";
+                        iconClass = "fa-regular fa-pen-to-square";
+                    }
+                    else if (item.StatusID == 27 && item.RefSeq < seq)
+                    {
+                        buttonClass = "bg-success";
+                        iconClass = "fa-solid fa-check";
+                    }
+                    else if (item.StatusID == 28 && item.RefSeq < seq)
+                    {
+                        buttonClass = "bg-danger";
+                        iconClass = "fa-solid fa-xmark";
+                    }
+                    <button type="button" class="status-dot @buttonClass">
+                        <i class="@iconClass"></i>
+                    </button>
+                }
+            </div>
+            <div class="col">
+                <a href="#!"
+                    class="text-body d-block"
+                    style="white-space: nowrap; overflow-x: auto;"
+                    @if (seq == 1)
+                    {
+                        @:onclick="openModalEditQC('@item.ID');"
+                    }
+                    else if (item.RefSeq == seq)
+                    {
+                        @:onclick="openModalEditQC('@item.ID');"
+                    }
+                    else if (item.Seq == seq)
+                    {
+                        @:onclick="openModalUpdateDefectDetailQC('@item.ID');"
+                    }
+                    else
+                    {                               
+                        @:onclick="openModalUpdateDefectDetailQC('@item.ID');"
+                    }
+                >
+                    @if (item.IsMajorDefect == true)
+                    {
+                        <i class="fa-solid fa-triangle-exclamation" style="color: #ff0000;"></i>
+                    }
+                        รอบที่ @item.RefSeq : @item.DefectAreaName > @item.DefectTypeName > @item.DefectDescriptionName
+                </a>
+                    <div class="text-secondary mt-n1" style="white-space: nowrap; overflow-x: auto;">
+                        @item.Remark
+                    </div>
+                    @if (item.RefSeq < item.Seq)
+                    {
+                        <div class="mt-2">
+                            <label class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                        type="radio"
+                                        name="status_@item.ID"
+                                        value="@SystemConstant.Ext.QC5DefectStatusPass"
+                                        onclick="toggleRadioForRadioCheck(this, '@item.ID' , '')"
+                                        @(item.StatusID == SystemConstant.Ext.QC5DefectStatusPass ? "checked" : "")
+                                        @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "") />
+                                <span class="form-check-label">ผ่าน</span>
+                            </label>
+                            <label class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                        type="radio"
+                                        name="status_@item.ID"
+                                        value="@SystemConstant.Ext.QC5DefectStatusNotPass"
+                                        onclick="toggleRadioForRadioCheck(this, '@item.ID' , '@item.IsMajorDefect')"
+                                        @(item.StatusID == SystemConstant.Ext.QC5DefectStatusNotPass ? "checked" : "")
+                                        @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "") />
+                                <span class="form-check-label">ไม่ผ่าน</span>
+                            </label>
+                        </div>
+    }
+            </div>
+        </div>
+    </div>
+    Index++;
+}
+

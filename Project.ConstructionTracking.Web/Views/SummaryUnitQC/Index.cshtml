@@ -93,12 +93,12 @@
                                             <div class="col-3">
                                                 @if (listQc.QcTypeID == SystemConstant.QcTypeID.QC5)
                                                 {
-                                                    <button data-action="Verify"
-                                                            data-qc-type-id="@listQc.QcTypeID"
-                                                            data-seq="1"
-                                                            class="btn btn-success fixed-size-btn mb-2">
+                                                    <button type="button"
+                                                            class="btn btn-success fixed-size-btn mb-2"
+                                                            onclick="checkQC5MaxSeqStatus('@Model.ProjectID', '@Model.UnitID')">
                                                         @listQc.QcTypeName
                                                     </button>
+                            
                                                 }
                                                 else
                                                 {
@@ -123,11 +123,14 @@
                                                         <div class="col">
                                                             @if (listQc.QcTypeID == SystemConstant.QcTypeID.QC5)
                                                             {
-                                                                <button data-action="Verify"
-                                                                        data-type="@listQc.QcTypeID"
-                                                                        data-seq="1"
-                                                                        class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH ? "green" : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2">
-                                                                </button>
+                                                                <form asp-controller="QC5Check" asp-action="index">
+                                                                    <input type="hidden" name="ProjectID" value="@Model.ProjectID" />
+                                                                    <input type="hidden" name="UnitID" value="@Model.UnitID" />
+                                                                    <input type="hidden" name="Seq" value="@data.Seq" />
+                                                                    <button 
+                                                                          class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH ? "green" : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2">
+                                                                    </button>
+                                                                </form>
                                                             }
                                                             else
                                                             {
