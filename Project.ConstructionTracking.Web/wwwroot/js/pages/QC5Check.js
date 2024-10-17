@@ -839,7 +839,6 @@ function saveUnitQC5() {
     var ActionType = 'save';
     var QCRemark = document.getElementById('QC5Remark').value;
     var files = $('#file-input-save-submit')[0].files;
-    debugger
     // var signData = unitEquipment.getSignatureData();  
 
     var formData = new FormData();
@@ -1462,6 +1461,39 @@ function showFixedButton() {
     var fixedButton = document.querySelector('.fixedButton');
     fixedButton.style.display = 'block';  // Show the button again
 }
+
+
+function genPDF() {
+    showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
+    var projectId = document.getElementById('hdProject').value;
+    var unitId = document.getElementById('hdUnitId').value;
+    var QCUnitCheckListID = document.getElementById('hdQC5UnitChecklistID').value;
+
+    $.ajax({
+        url: baseUrl + 'QC5Check/PrintPDF',
+        type: 'POST',
+        data: {
+            projectID: projectId,
+            unitID: unitId,
+            QCID: QCUnitCheckListID
+        },
+        success: function (res) {
+            Swal.close();
+            if (res.success) {
+                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                    window.location.reload();
+                });
+            } else {
+                showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+            }
+        },
+        error: function (xhr, status, error) {
+            Swal.close();
+            showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+        }
+    });
+}
+
 
 
 

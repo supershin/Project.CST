@@ -13,6 +13,7 @@ namespace Project.ConstructionTracking.Web.Services
         DataGenerateQCPDFResp GetDataQCToGeneratePDF(DataToGenerateModel model);
         DataDocumentModel GenerateDocumentNO(Guid projectID);
         bool SaveFileDocument(DataSaveTableResource model);
+        string GenerateQCPDF(Guid guid, DataGenerateQCPDFResp dataForGenPdf, DataDocumentModel genDocumentNo);
     }
 	public class GeneratePDFService : IGeneratePDFService
 	{
@@ -153,6 +154,13 @@ namespace Project.ConstructionTracking.Web.Services
         {
 
             bool result = _generatePDFRepo.SaveFileDocument(model);
+            return result;
+        }
+
+        public string GenerateQCPDF(Guid guid, DataGenerateQCPDFResp dataForGenPdf, DataDocumentModel genDocumentNo)
+        {
+
+            string result = _generatePDFRepo.GenerateQCPDF(guid , dataForGenPdf , genDocumentNo);
             return result;
         }
     }

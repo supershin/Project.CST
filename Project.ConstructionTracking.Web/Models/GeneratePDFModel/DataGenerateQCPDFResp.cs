@@ -14,6 +14,7 @@
         public string? ProjectName { get; set; }
         public string? UnitCode { get; set; }
         public string? CompanyVenderName { get; set; }
+        public string? UpdateDate { get; set; }
         public string? PEInspectorName { get; set; }
         public string? QCInspectorName { get; set; }
         public string? Seq { get; set; }

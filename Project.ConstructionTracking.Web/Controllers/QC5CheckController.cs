@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.Data.SqlClient.Server;
 using Newtonsoft.Json;
 using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Services;
+using QuestPDF.Infrastructure;
 using System;
 using System.Text.RegularExpressions;
 using static Project.ConstructionTracking.Web.Commons.SystemConstant;
@@ -15,12 +18,14 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IQC5CheckService _QC5CheckService;
         private readonly IHostEnvironment _hosting;
         private readonly IGetDDLService _getDDLService;
+        private readonly IGeneratePDFService _generatePDFService;
 
-        public QC5CheckController(IQC5CheckService QC5CheckService, IHostEnvironment hosting, IGetDDLService getDDLService)
+        public QC5CheckController(IQC5CheckService QC5CheckService, IHostEnvironment hosting, IGetDDLService getDDLService , IGeneratePDFService generatePDFService)
         {
             _QC5CheckService = QC5CheckService;
             _hosting = hosting;
             _getDDLService = getDDLService;
+            _generatePDFService = generatePDFService;
         }
 
         public IActionResult Index(Guid projectId, Guid unitId, int Seq)
@@ -289,6 +294,30 @@ namespace Project.ConstructionTracking.Web.Controllers
             return PartialView("PartialDefectList", listQCUnitCheckListDefects);
         }
 
+
+        [HttpPost]
+        public IActionResult PrintPDF(Guid projectID , Guid unitID , Guid QCID)
+        {
+            try
+            {
+                var filterModel = new DataToGenerateModel { ProjectID = projectID, UnitID = unitID, QCUnitCheckListID = QCID };
+
+                DataGenerateQCPDFResp QC5PDFData = _generatePDFService.GetDataQCToGeneratePDF(filterModel);
+                var guid = Guid.NewGuid();
+
+                DataDocumentModel genDocumentNo = _generatePDFService.GenerateDocumentNO(projectID);
+
+                string pathUrl = _generatePDFService.GenerateQCPDF(guid, QC5PDFData, genDocumentNo);
+
+                // Return success response
+                return Json(new { success = true, message = "ลบรูปภาพสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
 
 
 
