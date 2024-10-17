@@ -17,6 +17,7 @@ using static System.Net.Mime.MediaTypeNames;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
+using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -283,9 +284,12 @@ namespace Project.ConstructionTracking.Web.Repositories
                                join tmf in _context.tm_Form on trfqc.FormID equals tmf.ID
                                join tmuserqc in _context.tm_User on trQC.UpdateBy equals tmuserqc.ID
                                join tmuserpe in _context.tm_User on tmpeunit.UserID equals tmuserpe.ID
-                               join truserresourc in _context.tr_UserResource on trQC.UpdateBy equals truserresourc.UserID
-                               join qcsignpath in _context.tm_Resource on trQC.PESignResourceID equals qcsignpath.ID
-                               join pesignpath in _context.tm_Resource on truserresourc.ResourceID equals pesignpath.ID
+                               join truserresourc in _context.tr_UserResource.Where(ur => ur.FlagActive == true) on trQC.UpdateBy equals truserresourc.UserID into truserresourcJoin
+                               from truserresourc in truserresourcJoin.DefaultIfEmpty()
+                               join pesignpath in _context.tm_Resource on trQC.PESignResourceID equals pesignpath.ID
+                               join qcsignpath in _context.tm_Resource on truserresourc.ResourceID equals qcsignpath.ID
+                               //join qcsignpath in _context.tm_Resource on new { ID = (Guid)truserresourc.ResourceID, qcsignpath.FlagActive } equals new { qcsignpath.ID, FlagActive = (bool?)true} into qcsignpathJoin
+                               //from qcsignpath in qcsignpathJoin.DefaultIfEmpty()
                                where trQC.ProjectID == model.ProjectID
                                   && trQC.UnitID == model.UnitID
                                   && trQC.ID == model.QCUnitCheckListID
@@ -393,8 +397,8 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 var resultFooter = new FooterQCPdfData
                 {
-                    PESignaturePathImageUrl = queryHeaderFooter.PEInspectorName,
-                    QCSignaturePathImageUrl = queryHeaderFooter.QCInspectorName
+                    PESignaturePathImageUrl = queryHeaderFooter.PESignPath,
+                    QCSignaturePathImageUrl = queryHeaderFooter.QCSignPath
                 };
 
                 // Return the final response with header, body, and summary data
@@ -497,6 +501,285 @@ namespace Project.ConstructionTracking.Web.Repositories
         }
 
 
+        //public string GenerateQCPDF(Guid guid, DataGenerateQCPDFResp dataQCGenerate, DataDocumentModel genDocumentNo)
+        //{
+        //    QuestPDF.Settings.License = LicenseType.Community;
+        //    var fontPath = _hosting.ContentRootPath + "/wwwroot/lib/fonts/BrowalliaUPC.ttf";
+
+        //    FontManager.RegisterFont(System.IO.File.OpenRead(fontPath));
+
+        //    var imageHeader = Directory.GetCurrentDirectory() + "/wwwroot/img/img1.png";
+        //    var imageBox = Directory.GetCurrentDirectory() + "/wwwroot/img/box.png";
+        //    var imageCheckBox = Directory.GetCurrentDirectory() + "/wwwroot/img/checkbox.png";
+        //    var imageCheck = Directory.GetCurrentDirectory() + "/wwwroot/img/check.png";
+
+        //    var document = QuestPDF.Fluent.Document.Create(container =>
+        //    {
+        //        container.Page(page =>
+        //        {
+        //            page.Size(PageSizes.A4);
+        //            page.MarginTop(1, Unit.Centimetre);
+        //            page.MarginBottom(1, Unit.Centimetre);
+        //            page.MarginLeft(1, Unit.Centimetre);
+        //            page.MarginRight(1, Unit.Centimetre);
+
+        //            page.PageColor(Colors.White);
+        //            page.DefaultTextStyle(x => x.FontSize(16));
+        //            page.PageColor(Colors.White);
+        //            page.DefaultTextStyle(TextStyle
+        //                       .Default
+        //                       .FontFamily("BrowalliaUPC")
+        //                       .FontSize(12));
+
+        //            page.Header().Column(column =>
+        //            {
+        //                column.Item().Column(col1 =>
+        //                {
+        //                    col1.Item().PaddingVertical(5).Width(150).Image(imageHeader);
+        //                });
+
+        //                column.Item().Border(1).Table(table =>
+        //                {
+        //                    table.ColumnsDefinition(columns =>
+        //                    {
+        //                        columns.RelativeColumn(2);
+        //                        columns.RelativeColumn(2);
+        //                        columns.RelativeColumn(2);
+        //                        columns.RelativeColumn(2);
+        //                        columns.RelativeColumn(2);
+        //                        columns.RelativeColumn(2);
+        //                    });
+
+
+        //                    table.Cell().Row(1).Column(1).ColumnSpan(4).AlignLeft().Text(" ผลการตรวจ " + dataQCGenerate.HeaderQCData?.QCName).FontSize(20).Bold();
+        //                    table.Cell().Row(1).Column(5).ColumnSpan(2).AlignLeft().Text("ครั้งที่ " + dataQCGenerate.HeaderQCData?.Seq).FontSize(20).Bold();
+
+        //                    table.Cell().Row(2).Column(1).ColumnSpan(2).AlignLeft().Text(text =>
+        //                    {
+        //                        text.Span("  ตรวจใน ");
+        //                        text.Span(dataQCGenerate.HeaderQCData?.FormName).Underline();
+        //                    });
+        //                    table.Cell().Row(2).Column(3).ColumnSpan(2).AlignLeft().Text(text =>
+        //                    {
+        //                        string checkboxSymbol = dataQCGenerate.HeaderQCData?.QCStatus == 4 ? "☑" : "☐";
+        //                        text.Span(checkboxSymbol + " ").FontColor("#FF0000").FontSize(12);
+        //                        text.Span("ไม่พร้อมให้ตรวจ").FontColor("#FF0000").FontSize(12);
+        //                    });
+        //                    table.Cell().Row(2).Column(5).ColumnSpan(2).AlignLeft().Text(text =>
+        //                    {
+        //                        text.Span("วันที่ตรวจ ");
+        //                        text.Span(dataQCGenerate.HeaderQCData?.UpdateDate).Underline();
+        //                    });
+
+        //                    table.Cell().Row(3).Column(1).ColumnSpan(2).AlignLeft().Text(text =>
+        //                    {
+        //                        text.Span("  โครงการ ");
+        //                        text.Span(dataQCGenerate.HeaderQCData?.ProjectName).Underline();
+        //                    });
+        //                    table.Cell().Row(3).Column(3).ColumnSpan(2).AlignLeft().Text(text =>
+        //                    {
+        //                        text.Span("แปลงที่ ");
+        //                        text.Span(dataQCGenerate.HeaderQCData?.UnitCode).Underline();
+        //                    });
+        //                    table.Cell().Row(3).Column(5).ColumnSpan(2).AlignLeft().Text(text =>
+        //                    {
+        //                        text.Span("บริษัทผู้รับเหมา ");
+        //                        text.Span(dataQCGenerate.HeaderQCData?.CompanyVenderName).Underline();
+        //                    });
+
+        //                    table.Cell().Row(4).Column(1).ColumnSpan(2).AlignLeft().Text(text =>
+        //                    {
+        //                        text.Span("  วิศวกรผู้ควบคุมงาน ");
+        //                        text.Span(dataQCGenerate.HeaderQCData?.PEInspectorName).Underline();
+        //                    });
+        //                    table.Cell().Row(4).Column(3).ColumnSpan(2).AlignLeft().Text(text =>
+        //                    {
+        //                        text.Span("QC ผู้ตรวจสอบ ");
+        //                        text.Span(dataQCGenerate.HeaderQCData?.QCInspectorName).Underline();
+        //                    });
+
+        //                });
+        //            });
+
+        //            page.Content()
+        //                //.PaddingVertical(4)
+        //                .Column(col1 =>
+        //            {
+        //                IContainer DefaultCellStyle(IContainer container, string backgroundColor)
+        //                {
+        //                    return container
+        //                        .Border(1)
+        //                        .BorderColor(Colors.Black)
+        //                        .Background(backgroundColor)
+        //                        .PaddingVertical(1)
+        //                        .PaddingHorizontal(3)
+        //                        .AlignCenter()
+        //                        .AlignTop();
+        //                }
+
+        //                col1.Item().Table(table2 =>
+        //                {
+        //                    table2.ColumnsDefinition(columns =>
+        //                    {
+        //                        columns.RelativeColumn(1); // Column for index
+        //                        columns.RelativeColumn(3); // Column for "รายการ"
+        //                        columns.RelativeColumn(3); // Column for "รูปรายการ"
+        //                        columns.RelativeColumn(2); // Column for "ความเห็นเพิ่มเติม"
+        //                        columns.RelativeColumn(1); // Column for "Major Defect"
+        //                        columns.RelativeColumn(1); // Column for "ผ่าน"
+        //                        columns.RelativeColumn(1); // Column for "ไม่ผ่าน"
+        //                    });
+
+        //                    // Header row
+        //                    table2.Header(header =>
+        //                    {
+        //                        header.Cell().Element(CellStyle).Text("ลำดับ").FontSize(15).Bold();
+        //                        header.Cell().Element(CellStyle).Text("รายการ").FontSize(15).Bold();
+        //                        header.Cell().Element(CellStyle).Text("รูปรายการ").FontSize(15).Bold();
+        //                        header.Cell().Element(CellStyle).Text("ความเห็นเพิ่มเติม").FontSize(15).Bold();
+        //                        header.Cell().Element(CellStyle).Text("Major Defect").FontSize(15).Bold();
+        //                        header.Cell().Element(CellStyle).Text("ผ่าน").FontSize(15).Bold();
+        //                        header.Cell().Element(CellStyle).Text("ไม่ผ่าน").FontSize(15).Bold();
+        //                    });
+
+        //                    int index = 1;
+        //                    foreach (var data in dataQCGenerate?.BodyListDefectQCData)
+        //                    {
+        //                        table2.Cell().Element(CellStyle).Text(index.ToString());  // Index column
+
+        //                        // Multi-line "รายการ" column
+        //                        table2.Cell().Element(CellStyle).Text(text =>
+        //                        {
+        //                            text.Line("ตำแหน่ง: " + data.RefSeqDefectText);
+        //                            text.Line("หมวดงาน: " + data.DefectAreaText);
+        //                            text.Line("รายการแก้ไข: " + data.DefectTypeText);
+        //                        });
+
+        //                        // Display image URLs in "รูปรายการ" column
+        //                        table2.Cell().Element(CellStyle).Grid(grid =>
+        //                        {
+        //                            grid.AlignLeft();  // Align the grid content to the left
+        //                            grid.Columns(6);    // Create a 6-column grid to display images
+
+        //                            foreach (var image in data.ListImageDefact)
+        //                            {
+        //                                string pathImage = image.PathImageUrl;
+        //                                var imgPath = _hosting.ContentRootPath + "/wwwroot/" + pathImage;
+
+        //                                if (System.IO.File.Exists(imgPath))
+        //                                {
+        //                                    using var img = new FileStream(imgPath, FileMode.Open, FileAccess.Read);
+
+        //                                    // Display each image and let QuestPDF handle the natural size
+        //                                    grid.Item(6).AlignCenter().AlignMiddle()  // Center the image both horizontally and vertically
+        //                                        .Border(0.5f)                        // Optional border for styling
+        //                                        .Width(125)
+        //                                        .Height(100)
+        //                                        .Image(img);                         // Automatically adjust size based on image
+        //                                }
+        //                            }
+        //                        });
+
+        //                        table2.Cell().Element(CellStyle).Text(data.DefectRemark);      // ความเห็นเพิ่มเติม
+        //                        table2.Cell().Element(CellStyle).Text(data.IsMajorDefectText); // Major Defect
+
+        //                        // Handle "ผ่าน" and "ไม่ผ่าน" columns based on DefectStatus
+        //                        if (data.DefectStatus == 27)
+        //                        {
+        //                            table2.Cell().Element(CellStyle).Text("✓"); // "ผ่าน" column (checked)
+        //                            table2.Cell().Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+        //                        }
+        //                        else
+        //                        {
+        //                            table2.Cell().Element(CellStyle).Text("");  // "ผ่าน" column (empty)
+        //                            table2.Cell().Element(CellStyle).Text("✗"); // "ไม่ผ่าน" column (checked)
+        //                        }
+
+        //                        index++;
+        //                    }
+
+
+        //                    IContainer CellStyle(IContainer container) => DefaultCellStyle(container, Colors.White);
+        //                });
+
+        //                col1.Item().Border(1).Table(table3 =>
+        //                {
+        //                    table3.ColumnsDefinition(columns =>
+        //                    {
+        //                        columns.RelativeColumn(2);
+        //                        columns.RelativeColumn(2);
+        //                        columns.RelativeColumn(2);
+        //                        columns.RelativeColumn(2);
+        //                        columns.RelativeColumn(2);
+        //                        columns.RelativeColumn(2);
+        //                    });
+
+        //                    table3.Cell().Row(1).Column(1).ColumnSpan(6).AlignLeft().Text(" สรุปจำนวน").Bold();
+        //                    table3.Cell().Row(1).Column(3).ColumnSpan(3).AlignLeft().Text(text =>
+        //                    {
+        //                        text.Span("  รายการทั้งหมด : ").Bold();
+        //                        text.Span(dataQCGenerate.SummaryQCData?.SumAllDefect.ToString());
+        //                    });
+        //                    table3.Cell().Row(2).Column(1).ColumnSpan(6).Text(text =>
+        //                    {
+        //                        foreach (var data in dataQCGenerate?.SummaryQCData.CalDefectBySeq)
+        //                        {
+        //                            // Instead of writing to a new row, combine the content into a single cell using `text.Line()`
+        //                            text.Line(" จำนวนรายการครั้งที่ " + data.RefSeq + " : " + data.RefSeqCnt + " รายการ");
+        //                        }
+        //                    });
+        //                    table3.Cell().Row(2).Column(3).ColumnSpan(3).Text(text =>
+        //                    {
+        //                        text.Line(" ผ่าน : " + dataQCGenerate.SummaryQCData?.SumPassDefect.ToString());
+        //                        text.Line(" ไม่ผ่าน : " + dataQCGenerate.SummaryQCData?.SumNotPassDefect.ToString());
+        //                    });
+
+        //                });
+        //            });
+
+        //            page.Footer().Table(table2 =>
+        //            {
+        //                string pathQc = _hosting.ContentRootPath + "/" + dataQCGenerate.FooterQCData?.QCSignaturePathImageUrl;
+        //                var signQc = new FileStream(pathQc, FileMode.Open);
+
+        //                string pathPe = _hosting.ContentRootPath + "/wwwroot/" + dataQCGenerate.FooterQCData?.PESignaturePathImageUrl;
+        //                var signPe = new FileStream(pathPe, FileMode.Open);
+
+        //                table2.ColumnsDefinition(columns =>
+        //                {
+        //                    columns.RelativeColumn(6);
+        //                    columns.RelativeColumn(6);
+        //                });
+
+        //                // Engineer signature
+        //                table2.Cell().Row(1).Column(1).AlignCenter().Width(60).Image(signPe);
+        //                table2.Cell().Row(2).Column(1).AlignCenter().Text("วิศวกรผู้ควบคุมงาน");
+        //                table2.Cell().Row(3).Column(1).AlignCenter().Text("( " + dataQCGenerate.HeaderQCData?.PEInspectorName + " )");
+
+        //                // QC signature
+        //                table2.Cell().Row(1).Column(2).AlignCenter().Width(60).Image(signQc);
+        //                table2.Cell().Row(2).Column(2).AlignCenter().Text("Quality Control (QC)");
+        //                table2.Cell().Row(3).Column(2).AlignCenter().Text("( " + dataQCGenerate.HeaderQCData?.QCInspectorName + " )");
+
+        //                // Page number in column 2
+        //                table2.Cell().Row(4).Column(2).AlignRight().Text(text =>
+        //                {
+        //                    text.Span("Page ");
+        //                    text.CurrentPageNumber();
+        //                    text.Span(" of ");
+        //                    text.TotalPages();
+        //                });
+        //            });
+        //        });
+        //    });
+
+        //    string returnPath = "Upload/temp/" + "QCDocumentNo" + "-" + guid + ".pdf";
+        //    document.GeneratePdf(returnPath);
+        //    //document.ShowInPreviewer();
+
+        //    return returnPath;
+        //}
+
         public string GenerateQCPDF(Guid guid, DataGenerateQCPDFResp dataQCGenerate, DataDocumentModel genDocumentNo)
         {
             QuestPDF.Settings.License = LicenseType.Community;
@@ -597,9 +880,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         });
                     });
 
-                    page.Content()
-                        .PaddingVertical(4)
-                        .Column(col1 =>
+                    page.Content().Column(col1 =>
                     {
                         IContainer DefaultCellStyle(IContainer container, string backgroundColor)
                         {
@@ -626,7 +907,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 columns.RelativeColumn(1); // Column for "ไม่ผ่าน"
                             });
 
-
                             // Header row
                             table2.Header(header =>
                             {
@@ -647,9 +927,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 // Multi-line "รายการ" column
                                 table2.Cell().Element(CellStyle).Text(text =>
                                 {
-                                    text.Line("ตำแหน่ง: " + data.RefSeqDefectText); 
-                                    text.Line("หมวดงาน: " + data.DefectAreaText);    
-                                    text.Line("รายการแก้ไข: " + data.DefectTypeText);  
+                                    text.Line("ตำแหน่ง: " + data.RefSeqDefectText);
+                                    text.Line("หมวดงาน: " + data.DefectAreaText);
+                                    text.Line("รายการแก้ไข: " + data.DefectTypeText);
                                 });
 
                                 // Display image URLs in "รูปรายการ" column
@@ -711,79 +991,104 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 columns.RelativeColumn(2);
                             });
 
-                            table3.Cell().Row(1).Column(1).ColumnSpan(6).AlignLeft().Text(" สรุปจำนวน").Underline();
-                            int row = 2;
-                            foreach (var data in dataQCGenerate?.SummaryQCData.CalDefectBySeq)
+                            table3.Cell().Row(1).Column(1).ColumnSpan(6).AlignLeft().Text(" สรุปจำนวน").Bold();
+                            table3.Cell().Row(1).Column(3).ColumnSpan(3).AlignLeft().Text(text =>
                             {
-                                table3.Cell().Row((uint)row).Column(1).ColumnSpan(6).AlignLeft().Text(" XX" + data.RefSeqCnt.ToString).Underline();
-                                row++;
-                            }
-
-                            //table3.Cell().Row(2).Column(5).ColumnSpan(2).AlignLeft().Text("ครั้งที่ " + dataQCGenerate.HeaderQCData?.Seq).FontSize(20).Bold();
+                                text.Span("  รายการทั้งหมด : ").Bold();
+                                text.Span(dataQCGenerate.SummaryQCData?.SumAllDefect.ToString());
+                            });
+                            table3.Cell().Row(2).Column(1).ColumnSpan(6).Text(text =>
+                            {
+                                foreach (var data in dataQCGenerate?.SummaryQCData.CalDefectBySeq)
+                                {
+                                    // Instead of writing to a new row, combine the content into a single cell using `text.Line()`
+                                    text.Line(" จำนวนรายการครั้งที่ " + data.RefSeq + " : " + data.RefSeqCnt + " รายการ");
+                                }
+                            });
+                            table3.Cell().Row(2).Column(3).ColumnSpan(3).Text(text =>
+                            {
+                                text.Line(" ผ่าน : " + dataQCGenerate.SummaryQCData?.SumPassDefect.ToString());
+                                text.Line(" ไม่ผ่าน : " + dataQCGenerate.SummaryQCData?.SumNotPassDefect.ToString());
+                            });
 
                         });
                     });
 
+                    // Footer Setup
+                    page.Footer().Table(table =>
+                    {
+                        // Paths to the signature images
+                        string pathQc = _hosting.ContentRootPath + "/" + dataQCGenerate.FooterQCData?.QCSignaturePathImageUrl;
+                        string pathPe = _hosting.ContentRootPath + "/wwwroot/" + dataQCGenerate.FooterQCData?.PESignaturePathImageUrl;
 
+                        // Load images using FileStream
+                        FileStream? signQcStream = null;
+                        FileStream? signPeStream = null;
 
+                        if (System.IO.File.Exists(pathQc))
+                        {
+                            signQcStream = new FileStream(pathQc, FileMode.Open, FileAccess.Read);
+                        }
 
+                        if (System.IO.File.Exists(pathPe))
+                        {
+                            signPeStream = new FileStream(pathPe, FileMode.Open, FileAccess.Read);
+                        }
 
+                        // Define columns for signatures
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.RelativeColumn(6);
+                            columns.RelativeColumn(6);
+                        });
 
-                    //page.Footer().Table(table2 =>
-                    //{
-                    //    string pathVendor = Directory.GetCurrentDirectory() + "/wwwroot/" + dataGenerate.FooterData.VendorData.VendorImageSignUrl;
-                    //    var signVendor = new FileStream(pathVendor, FileMode.Open);
+                        // Engineer Signature
+                        if (signPeStream != null)
+                        {
+                            table.Cell().Row(1).Column(1).AlignCenter().Width(60).Image(signPeStream); // PE signature
+                        }
+                        else
+                        {
+                            table.Cell().Row(1).Column(1).AlignCenter().Text("PE Signature Missing");
+                        }
+                        table.Cell().Row(2).Column(1).AlignCenter().Text("วิศวกรผู้ควบคุมงาน");
+                        table.Cell().Row(3).Column(1).AlignCenter().Text("( " + dataQCGenerate.HeaderQCData?.PEInspectorName + " )");
 
-                    //    string pathPe = _hosting.ContentRootPath + "/" + dataGenerate.FooterData.PEData.PEImageSignUrl;
-                    //    var signPe = new FileStream(pathPe, FileMode.Open);
+                        // QC Signature
+                        if (signQcStream != null)
+                        {
+                            table.Cell().Row(1).Column(2).AlignCenter().Width(60).Image(signQcStream); // QC signature
+                        }
+                        else
+                        {
+                            table.Cell().Row(1).Column(2).AlignCenter().Text("QC Signature Missing");
+                        }
+                        table.Cell().Row(2).Column(2).AlignCenter().Text("Quality Control (QC)");
+                        table.Cell().Row(3).Column(2).AlignCenter().Text("( " + dataQCGenerate.HeaderQCData?.QCInspectorName + " )");
 
-                    //    string pathPm = _hosting.ContentRootPath + "/" + dataGenerate.FooterData.PMData.PMImageSignUrl;
-                    //    var signPm = new FileStream(pathPm, FileMode.Open);
+                        // Page number in column 2
+                        table.Cell().Row(4).Column(2).AlignRight().Text(text =>
+                        {
+                            text.Span("Page ");
+                            text.CurrentPageNumber();
+                            text.Span(" of ");
+                            text.TotalPages();
+                        });
 
-                    //    table2.ColumnsDefinition(columns =>
-                    //    {
-                    //        columns.RelativeColumn(3);
-                    //        columns.RelativeColumn(3);
-                    //        columns.RelativeColumn(3);
-                    //        columns.RelativeColumn(3);
-                    //    });
-
-                    //    table2.Cell().Row(1).Column(1).AlignCenter().Width(60).Image(signVendor);
-                    //    table2.Cell().Row(2).Column(1).AlignCenter().Text("ผู้รับเหมา");
-                    //    table2.Cell().Row(3).Column(1).AlignCenter().Text("( " + dataGenerate.FooterData.VendorData.VendorName + " )");
-
-                    //    table2.Cell().Row(1).Column(2).AlignCenter().Width(60).Image(signPe);
-                    //    table2.Cell().Row(2).Column(2).AlignCenter().Text("วิศวกรผู้ควบคุมงาน");
-                    //    table2.Cell().Row(3).Column(2).AlignCenter().Text("( " + dataGenerate.FooterData.PEData.PEName + " )");
-
-                    //    table2.Cell().Row(1).Column(3).AlignCenter().Width(60).Image(signPm);
-                    //    table2.Cell().Row(2).Column(3).AlignCenter().Text("Project Manager");
-                    //    table2.Cell().Row(3).Column(3).AlignCenter().Text("( " + dataGenerate.FooterData.PMData.PMName + " )");
-
-                    //    //QC
-                    //    //table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image("");
-                    //    table2.Cell().Row(2).Column(4).AlignCenter().Text("Quality Control (QC)");
-                    //    table2.Cell().Row(3).Column(4).AlignCenter().Text("(                  )");
-
-
-                    //    // Page number 
-                    //    table2.Cell().Row(4).ColumnSpan(4).AlignRight().Text(text =>
-                    //    {
-                    //        text.Span("Page ");
-                    //        text.CurrentPageNumber();
-                    //        text.Span(" of ");
-                    //        text.TotalPages();
-                    //    });
-                    //});
+                        // Ensure to close the file streams after usage
+                        signQcStream?.Dispose();
+                        signPeStream?.Dispose();
+                    });
                 });
             });
 
             string returnPath = "Upload/temp/" + "QCDocumentNo" + "-" + guid + ".pdf";
             document.GeneratePdf(returnPath);
-            //document.ShowInPreviewer();
 
             return returnPath;
         }
+
+
 
         public class MockupData
         {
