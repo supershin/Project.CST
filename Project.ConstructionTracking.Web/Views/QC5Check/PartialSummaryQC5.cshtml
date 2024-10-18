@@ -1,0 +1,26 @@
+﻿@model Project.ConstructionTracking.Web.Models.GeneratePDFModel.SummaryQCPdfData
+
+
+    <div class="col-12">
+        <ul>
+            @if (Model?.CalDefectBySeq != null && Model.CalDefectBySeq.Any())
+            {
+                foreach (var item in Model.CalDefectBySeq)
+                {
+                    <li>จำนวนรายการจากครั้งที่ @item.RefSeq : @item.RefSeqCnt รายการ</li>
+                }
+            }
+            else
+            {
+                <li>ไม่พบข้อมูลรายการ</li>
+            }
+        </ul>
+    </div>
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12 text-yellow">รายการทั้งหมด  : @Model?.SumAllDefect รายการ</div>
+            <div class="col-12 text-green">ผ่าน : @Model?.SumPassDefect รายการ</div>
+            <div class="col-12 text-red">ไม่ผ่าน : @Model?.SumNotPassDefect รายการ</div>
+        </div>
+    </div>
+

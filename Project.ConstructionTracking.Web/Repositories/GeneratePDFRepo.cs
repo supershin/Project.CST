@@ -288,8 +288,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                                from truserresourc in truserresourcJoin.DefaultIfEmpty()
                                join pesignpath in _context.tm_Resource on trQC.PESignResourceID equals pesignpath.ID
                                join qcsignpath in _context.tm_Resource on truserresourc.ResourceID equals qcsignpath.ID
-                               //join qcsignpath in _context.tm_Resource on new { ID = (Guid)truserresourc.ResourceID, qcsignpath.FlagActive } equals new { qcsignpath.ID, FlagActive = (bool?)true} into qcsignpathJoin
-                               //from qcsignpath in qcsignpathJoin.DefaultIfEmpty()
                                where trQC.ProjectID == model.ProjectID
                                   && trQC.UnitID == model.UnitID
                                   && trQC.ID == model.QCUnitCheckListID
@@ -316,7 +314,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                              from t3 in defectTypeGroup.DefaultIfEmpty()
                              join t4 in _context.tm_DefectDescription on t1.DefectDescriptionID equals t4.ID into defectDescriptionGroup
                              from t4 in defectDescriptionGroup.DefaultIfEmpty()
-                             where t1.QCUnitCheckListID == model.QCUnitCheckListID
+                             where t1.QCUnitCheckListID == model.QCUnitCheckListID && t1.FlagActive == true
+                             //orderby t1.StatusID == 28 , t1.StatusID == 27 , t1.ID
                              select new BodyQCPdfListDefectData
                              {
                                  RefSeqDefectText = t2.Name,
@@ -333,7 +332,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                     {
                                                         PathImageUrl = t6.FilePath
                                                     }).ToList()
-                             }).ToList();
+                             }).OrderByDescending(e=>e.DefectStatus).ToList();
 
 
             // RefSeq counts
@@ -432,7 +431,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             if (project != null)
             {
-                documentPrefix = "C" + project.ProjectCode + formatYear + DateTime.Now.ToString("MM");
+                documentPrefix = "QC" + project.ProjectCode + formatYear + DateTime.Now.ToString("MM");
             }
 
             tr_Document? document = _context.tr_Document
@@ -791,6 +790,8 @@ namespace Project.ConstructionTracking.Web.Repositories
             var imageBox = Directory.GetCurrentDirectory() + "/wwwroot/img/box.png";
             var imageCheckBox = Directory.GetCurrentDirectory() + "/wwwroot/img/checkbox.png";
             var imageCheck = Directory.GetCurrentDirectory() + "/wwwroot/img/check.png";
+            var imageQCPass = Directory.GetCurrentDirectory() + "/wwwroot/img/QCpass.jpg";
+            var imageQCPassWithCondition = Directory.GetCurrentDirectory() + "/wwwroot/img/QCPWC.jpg";
 
             var document = QuestPDF.Fluent.Document.Create(container =>
             {
@@ -831,19 +832,27 @@ namespace Project.ConstructionTracking.Web.Repositories
 
 
                             table.Cell().Row(1).Column(1).ColumnSpan(4).AlignLeft().Text(" ผลการตรวจ " + dataQCGenerate.HeaderQCData?.QCName).FontSize(20).Bold();
-                            table.Cell().Row(1).Column(5).ColumnSpan(2).AlignLeft().Text("ครั้งที่ " + dataQCGenerate.HeaderQCData?.Seq).FontSize(20).Bold();
+                            if(dataQCGenerate.HeaderQCData?.QCStatus == SystemConstant.UnitQCStatus.Pass)
+                            {
+                                table.Cell().Row(1).Column(4).RowSpan(4).AlignMiddle().Width(80).Image(imageQCPass);
+                            }
+                            else if(dataQCGenerate.HeaderQCData?.QCStatus == SystemConstant.UnitQCStatus.IsPassCondition)
+                            {
+                                table.Cell().Row(1).Column(4).RowSpan(4).AlignMiddle().Width(80).Image(imageQCPassWithCondition);
+                            }
+                            table.Cell().Row(1).Column(6).ColumnSpan(1).AlignLeft().Text("ครั้งที่ " + dataQCGenerate.HeaderQCData?.Seq).FontSize(20).Bold();
 
                             table.Cell().Row(2).Column(1).ColumnSpan(2).AlignLeft().Text(text =>
                             {
                                 text.Span("  ตรวจใน ");
                                 text.Span(dataQCGenerate.HeaderQCData?.FormName).Underline();
                             });
-                            table.Cell().Row(2).Column(3).ColumnSpan(2).AlignLeft().Text(text =>
+                            table.Cell().Row(2).Column(3).ColumnSpan(1).AlignLeft().Text(text =>
                             {
-                                string checkboxSymbol = dataQCGenerate.HeaderQCData?.QCStatus == 4 ? "☑" : "☐";
+                                string checkboxSymbol = dataQCGenerate.HeaderQCData?.QCStatus == SystemConstant.UnitQCStatus.IsNotReadyInspect ? "☑" : "☐";
                                 text.Span(checkboxSymbol + " ").FontColor("#FF0000").FontSize(12);
                                 text.Span("ไม่พร้อมให้ตรวจ").FontColor("#FF0000").FontSize(12);
-                            });
+                            });                          
                             table.Cell().Row(2).Column(5).ColumnSpan(2).AlignLeft().Text(text =>
                             {
                                 text.Span("วันที่ตรวจ ");
@@ -876,7 +885,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 text.Span("QC ผู้ตรวจสอบ ");
                                 text.Span(dataQCGenerate.HeaderQCData?.QCInspectorName).Underline();
                             });
-
+                            table.Cell().Row(4).Column(5).ColumnSpan(2).AlignLeft().Text("เลขที่ใบตรวจ: " + genDocumentNo.documentNo);
                         });
                     });
 
@@ -925,7 +934,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 table2.Cell().Element(CellStyle).Text(index.ToString());  // Index column
 
                                 // Multi-line "รายการ" column
-                                table2.Cell().Element(CellStyle).Text(text =>
+                                table2.Cell().Element(CellStyle).AlignLeft().Text(text =>
                                 {
                                     text.Line("ตำแหน่ง: " + data.RefSeqDefectText);
                                     text.Line("หมวดงาน: " + data.DefectAreaText);
@@ -957,7 +966,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                     }
                                 });
 
-                                table2.Cell().Element(CellStyle).Text(data.DefectRemark);      // ความเห็นเพิ่มเติม
+                                table2.Cell().Element(CellStyle).AlignLeft().Text(data.DefectRemark);      // ความเห็นเพิ่มเติม
                                 table2.Cell().Element(CellStyle).Text(data.IsMajorDefectText); // Major Defect
 
                                 // Handle "ผ่าน" and "ไม่ผ่าน" columns based on DefectStatus
@@ -992,7 +1001,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                             });
 
                             table3.Cell().Row(1).Column(1).ColumnSpan(6).AlignLeft().Text(" สรุปจำนวน").Bold();
-                            table3.Cell().Row(1).Column(3).ColumnSpan(3).AlignLeft().Text(text =>
+                            table3.Cell().Row(1).Column(3).ColumnSpan(3).AlignLeft().PaddingTop(2).Text(text =>
                             {
                                 text.Span("  รายการทั้งหมด : ").Bold();
                                 text.Span(dataQCGenerate.SummaryQCData?.SumAllDefect.ToString());
@@ -1007,8 +1016,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                             });
                             table3.Cell().Row(2).Column(3).ColumnSpan(3).Text(text =>
                             {
-                                text.Line(" ผ่าน : " + dataQCGenerate.SummaryQCData?.SumPassDefect.ToString());
-                                text.Line(" ไม่ผ่าน : " + dataQCGenerate.SummaryQCData?.SumNotPassDefect.ToString());
+                                text.Line("  ผ่าน : " + dataQCGenerate.SummaryQCData?.SumPassDefect.ToString());
+                                text.Line("  ไม่ผ่าน : " + dataQCGenerate.SummaryQCData?.SumNotPassDefect.ToString());
                             });
 
                         });
@@ -1086,20 +1095,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             document.GeneratePdf(returnPath);
 
             return returnPath;
-        }
-
-
-
-        public class MockupData
-        {
-            public string Item1 { get; set; }  // For "ตำแหน่ง : ห้องรับแขก"
-            public string Item2 { get; set; }  // For "หมวดงาน : พื้นลามิเนต"
-            public string Item3 { get; set; }  // For "รายการแก้ไข : ปูไม่เรียบ"
-            public string Image { get; set; }
-            public string Comment { get; set; }
-            public string MajorDefect { get; set; }
-            public string Pass { get; set; }
-            public string NotPass { get; set; }
         }
     }
 }

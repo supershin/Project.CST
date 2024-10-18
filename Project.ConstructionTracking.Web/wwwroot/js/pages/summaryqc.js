@@ -99,27 +99,36 @@
 //}
 
 function checkQC5MaxSeqStatus(ProjectID, UnitID) {
-    $.ajax({
-        url: baseUrl + 'SummaryUnitQC/CheckQC5MaxSeqStatus', // Use the baseUrl here
-        type: 'POST',
-        data: {
-            Project_ID: ProjectID, // Pass Project ID
-            Unit_ID: UnitID        // Pass Unit ID
-        },
-        success: function (response) {
-            if (response.success) {
-                // If a redirect URL is returned from the server, redirect to it
-                window.location.href = baseUrl + 'QC5Check/Index?projectId=' + ProjectID + '&unitId=' + UnitID + '&Seq=' + response.NewSeq;
-            } else {
-                // Show an alert message if the server responds with an error
-                showErrorAlert('คำเตือน!', response.message);
-            }
-        },
-        error: function () {
-            // Handle any general error in the AJAX request
-            showErrorAlert('ผิดพลาด!', 'เกิดข้อผิดพลาดขณะประมวลผลคำขอ');
+    showConfirmationAlert(
+        'ยืนยันการตรวจ QC ในรอบถัดไป',
+        'คุณต้องตรวจ QC ในรอบถัดไปใช่หรือไม่?',
+        'warning',
+        'ใช่',
+        'ยกเลิก',
+        function () {
+            $.ajax({
+                url: baseUrl + 'SummaryUnitQC/CheckQC5MaxSeqStatus', // Use the baseUrl here
+                type: 'POST',
+                data: {
+                    Project_ID: ProjectID, // Pass Project ID
+                    Unit_ID: UnitID        // Pass Unit ID
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // If a redirect URL is returned from the server, redirect to it
+                        window.location.href = baseUrl + 'QC5Check/Index?projectId=' + ProjectID + '&unitId=' + UnitID + '&Seq=' + response.NewSeq;
+                    } else {
+                        // Show an alert message if the server responds with an error
+                        showErrorAlert('คำเตือน!', response.message);
+                    }
+                },
+                error: function () {
+                    // Handle any general error in the AJAX request
+                    showErrorAlert('ผิดพลาด!', 'เกิดข้อผิดพลาดขณะประมวลผลคำขอ');
+                }
+            });
         }
-    });
+    );
 }
 
 

@@ -1,4 +1,5 @@
 ﻿using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Repositories;
 
@@ -109,15 +110,16 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
-        public void SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
+        public (string filePath, string currentDate) SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
         {
             try
             {
-                _IQC5CheckRepo.SaveSignature(signData, appPath, QCUnitCheckListID, userID);
+                var (filePath, currentDate) = _IQC5CheckRepo.SaveSignature(signData, appPath, QCUnitCheckListID, userID);
+                return (filePath, currentDate);
             }
             catch (Exception ex)
             {
-                throw new Exception($"ผิดพลาด : {ex.Message}", ex);
+                throw new Exception($"Error: {ex.Message}", ex);
             }
         }
 
@@ -131,6 +133,12 @@ namespace Project.ConstructionTracking.Web.Services
             {
                 throw new Exception($"ผิดพลาด : {ex.Message}", ex);
             }
+        }
+
+        public SummaryQCPdfData GetSummaryQC5(Guid QCUnitCheckListID)
+        {
+            var DataSummaryQC5 = _IQC5CheckRepo.GetSummaryQC5(QCUnitCheckListID);
+            return DataSummaryQC5;
         }
 
     }
