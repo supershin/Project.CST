@@ -10,7 +10,7 @@ const checklistqc = {
 
         $("#btn-save-sign").click(() => {
             $('#modal-sign').modal('hide');
-            if (!detailLogin.getSignatureData()) {
+            if (!checklistqc.getSignatureData()) {
                 $('#success-icon').hide();
             } else {
                 $('#success-icon').show();
@@ -50,6 +50,7 @@ const checklistqc = {
 
             var allRadiosValid = true;
             var unselectedDetails = [];
+            var missingRemarksOrFiles = false; // Track if any remarks or files are missing
 
             // Loop through each checklist detail to check radio selection
             document.querySelectorAll("[name^='radios-']").forEach(function (radioGroup) {
@@ -59,33 +60,34 @@ const checklistqc = {
                 if (!isChecked) {
                     allRadiosValid = false;
                     unselectedDetails.push(detailID);  // Keep track of the unselected radio groups
-                }
+                } 
             });
 
-            var remark = $('#main-remark').val().trim();
-            var hasImages = images.length > 0;
-            var uploadImages = document.getElementById('file-input').files;
-            console.log(uploadImages)
-            var hasSignature = checklistqc.getSignatureData() || signImage.trim() !== "";
-
-            // Validate remark, images, and signature
-            if (remark === "") {
-                showErrorAlert('ผิดพลาด!', 'กรุณาตรวจสอบความคิดเห็น');
-                return; // Exit early
-            }
-            if (!hasImages && uploadImages.length == 0) {
-                showErrorAlert('ผิดพลาด!', 'กรุณาอัปโหลดอย่างน้อย 1 รูปภาพ'); // Alert in Thai: Please upload at least one image
-                return; // Exit early
-            }
-            if (!hasSignature) {
-                showErrorAlert('ผิดพลาด!', 'กรุณาเซ็นต์ลายเซ็นต์ผู้ควบคุมงาน');
-                return; // Exit early
-            }
-
-            var data = gatherAllValues();
+            var isResult = validateCheckList();
 
             // Confirm submission if action radio is checked
             if ($('input[name="action-radio"]').is(':checked')) {
+                var remark = $('#main-remark').val().trim();
+                var hasImages = images.length > 0;
+                var uploadImages = document.getElementById('file-input').files;
+                var hasSignature = checklistqc.getSignatureData() || signImage.trim() !== "";
+
+                // Validate remark, images, and signature
+                if (remark === "") {
+                    showErrorAlert('ผิดพลาด!', 'กรุณาตรวจสอบความคิดเห็น');
+                    return; // Exit early
+                }
+                if (!hasImages && uploadImages.length == 0) {
+                    showErrorAlert('ผิดพลาด!', 'กรุณาอัปโหลดอย่างน้อย 1 รูปภาพ'); // Alert in Thai: Please upload at least one image
+                    return; // Exit early
+                }
+                if (!hasSignature) {
+                    showErrorAlert('ผิดพลาด!', 'กรุณาเซ็นต์ลายเซ็นต์ผู้ควบคุมงาน');
+                    return; // Exit early
+                }
+
+                var data = gatherAllValues();
+
                 showConfirmationAlert(
                     '',
                     "ต้องการส่งข้อมูลหรือไม่?",
@@ -99,8 +101,12 @@ const checklistqc = {
             } else if (!allRadiosValid) {
                 // If not all radio groups are selected
                 showErrorAlert('ผิดพลาด!', 'กรุณาตรวจรายการตรวจสอบ QC ให้ครบทุกข้อ');
+            } else if (!isResult) {
+                // If not all radio groups are selected
+                showErrorAlert('ผิดพลาด!', 'กรุณากรอกข้อมูลรายละเอียดและอัพโหลดรูปภาพอย่างน้อย 1 รูป ในแต่ละรายการตรวจสอบ QC ที่ไม่ผ่าน');
             } else {
                 // Confirm submission for normal case
+                var data = gatherAllValues();
                 showConfirmationAlert(
                     '',
                     "ต้องการส่งข้อมูลหรือไม่?",
@@ -113,7 +119,7 @@ const checklistqc = {
                 );
             }
         });
-
+                   
     },
     initSignaturePad: () => {
         $('#modal-sign').on('shown.bs.modal', function (e) {
@@ -243,26 +249,36 @@ function gatherAllValues() {
     
     // Gather checklist detail data
     var checklistItems = [];
-    listID.forEach(function (id) {
-        var selectedRadio = document.querySelector(`input[name="radios-${id}"]:checked`);
-        var detailRemark = $("#description-" + id).val();
 
-        if (selectedRadio || detailRemark || document.getElementById(`file-input-${id}`).files.length > 0) {
+    $('[data-action="checkList"]').each(function () {
+        var checkListId = $(this).data('id');
+
+        // Get the checked radio for this checklist item
+        var validRadios = $(`[data-action="selectRadio"][data-id='${checkListId}']:checked`);
+
+        // Get the value of the description text area
+        var validDetail = $(`#description-${checkListId}`).val().trim();
+
+        // Get the file input and its files
+        var validImage = $(`#file-input-${checkListId}`).prop('files');
+
+        // Check if the checklist item has relevant data (radio checked, detail entered, or files uploaded)
+        if ((validRadios.val() === 'pass' || validRadios.val() === 'notpass') || validDetail !== "" || validImage.length > 0) {
             var checklistItem = {
-                CheckListDetailID: id,
-                ConditionPass: selectedRadio && selectedRadio.value === 'pass',
-                ConditionNotPass: selectedRadio && selectedRadio.value === 'notpass',
-                DetailRemark: detailRemark
+                CheckListDetailID: checkListId,
+                ConditionPass: validRadios && validRadios.val() === 'pass',
+                ConditionNotPass: validRadios && validRadios.val() === 'notpass',
+                DetailRemark: validDetail
             };
 
-            // Collect associated images for each checklist item
-            var fileInput = document.getElementById(`file-input-${id}`);
-            if (fileInput && fileInput.files.length > 0) {
-                for (var i = 0; i < fileInput.files.length; i++) {
-                    formData.append(`CheckListItems[${checklistItems.length}].DetailImage`, fileInput.files[i]);
+            // Check if any files were uploaded and append them to the formData
+            if (validImage.length > 0) {
+                for (var i = 0; i < validImage.length; i++) {
+                    formData.append(`CheckListItems[${checklistItems.length}].DetailImage`, validImage[i]);
                 }
             }
 
+            // Push the checklist item to the checklistItems array
             checklistItems.push(checklistItem);
         }
     });
@@ -321,3 +337,44 @@ function deleteImage(resourceId, detailId) {
         }
     );
 }
+
+function validateCheckList() {
+    let isValid = true;
+
+    $('[data-action="selectRadio"]:checked').each(function () {
+        var id = $(this).data('id');
+        var result = $(this).val();
+        var validDetailElement = $(`#description-${id}`); // Get the textarea element
+        var validDetail = validDetailElement.val().trim(); // Get the value
+        var validImageElement = $(`#file-input-${id}`); // Get the input-file element
+        var validImage = validImageElement.prop('files'); // Get the files
+
+        if (result === 'notpass') {
+            // Validate the description
+            if (validDetail === "") {
+                validDetailElement.css('border-color', 'red');
+                isValid = false;
+            } else {
+                validDetailElement.css('border-color', ''); // Reset border color
+            }
+
+            // Validate the file input
+            if (validImage.length === 0) {
+                validImageElement.css('border-color', 'red');
+                isValid = false;
+            } else {
+                validImageElement.css('border-color', ''); // Reset border color
+            }
+        } else {
+            // Reset the border colors if 'notpass' is not selected
+            validDetailElement.css('border-color', '');
+            validImageElement.css('border-color', '');
+        }
+    });
+
+    return isValid;
+}
+
+
+
+

@@ -135,6 +135,13 @@
         margin: 0;
         padding: 16px 16px;
     }
+
+    .text-danger {
+        color: red;
+    }
+    .is-invalid {
+        border: 1px solid red;
+    }
 </style>
 
 @model Project.ConstructionTracking.Web.Models.QCModel.QcCheckListDetailResp
@@ -259,10 +266,10 @@
                                             @if (@Model.QcCheckList.QcActionType != SystemConstant.ActionType.SUBMIT)
                                             {
                                                 <div class="col-4 col-sm-6">
-                                                    <button id="save-qc-checklist" class="btn btn-success w-100">Save</button>
+                                                    <button id="save-qc-checklist" class="btn btn-success w-100">บันทึกร่าง</button>
                                                 </div>
                                                 <div class="col-4 col-sm-6">
-                                                    <button id="submit-qc-checklist" class="btn btn-primary w-100">Submit</button>
+                                                    <button id="submit-qc-checklist" class="btn btn-primary w-100">ยืนยัน</button>
                                                 </div>
                                             }
 
@@ -288,21 +295,21 @@
                                 var getQcDetail = Model.QcCheckListDetail.FirstOrDefault(x => x.QcCheckListDetailID == detail.CheckListDetailID);
                                 <div class="card mb-3">
                                     <div class="card-body">
-                                        <div class="mb-2 row">
+                                        <div class="mb-2 row" data-action="checkList" data-id="@detail.CheckListDetailID">
                                             @detail.LineOrder.@detail.Name
                                         </div>
                                         <div class="mb-3 row">
                                             <label class="col-12 col-lg-4 col-form-label mb-1">
                                                 <label class="form-check form-check-inline">
                                                     <input class="form-check-input" type="radio" name="radios-@detail.CheckListDetailID"
-                                                           value="pass"
+                                                           value="pass" data-id="@detail.CheckListDetailID" data-action="selectRadio"
                                                            @(getQcDetail != null && getQcDetail.StatusID == SystemConstant.Qc_CheckList_Status.PASS ? "checked" : "")
                                                            @(Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT ? "disabled" : "")>
                                                     <span class="form-check-label">ผ่าน</span>
                                                 </label>
                                                 <label class="form-check form-check-inline">
                                                     <input class="form-check-input" type="radio" name="radios-@detail.CheckListDetailID"
-                                                           value="notpass"
+                                                           value="notpass" data-id="@detail.CheckListDetailID" data-action="selectRadio"
                                                            @(getQcDetail != null && getQcDetail.StatusID == SystemConstant.Qc_CheckList_Status.NOTPASS ? "checked" : "")
                                                            @(Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT ? "disabled" : "")>
                                                     <span class="form-check-label">ไม่ผ่าน</span>
@@ -365,21 +372,21 @@
                                         {
                                             var getQcDetail2 = Model.QcCheckListDetail.FirstOrDefault(x => x.QcCheckListDetailID == parentDetail.CheckListDetailID);
 
-                                            <div class="mb-2 row">
+                                            <div class="mb-2 row" data-action="checkList" data-id="@parentDetail.CheckListDetailID">
                                                 <li>@parentDetail.Name</li>
                                             </div>
                                             <div class="mb-3 row">
                                                 <label class="col-12 col-lg-4 col-form-label mb-1">
                                                     <label class="form-check form-check-inline">
                                                         <input class="form-check-input" type="radio" name="radios-@parentDetail.CheckListDetailID"
-                                                               value="pass"
+                                                               value="pass" data-id="@parentDetail.CheckListDetailID" data-action="selectRadio"
                                                                @(getQcDetail2 != null && getQcDetail2.StatusID == SystemConstant.Qc_CheckList_Status.PASS ? "checked" : "")
                                                                @(Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT ? "disabled" : "")>
                                                         <span class="form-check-label">ผ่าน</span>
                                                     </label>
                                                     <label class="form-check form-check-inline">
                                                         <input class="form-check-input" type="radio" name="radios-@parentDetail.CheckListDetailID"
-                                                               value="notpass"
+                                                               value="notpass" data-id="@parentDetail.CheckListDetailID" data-action="selectRadio"
                                                                @(getQcDetail2 != null && getQcDetail2.StatusID == SystemConstant.Qc_CheckList_Status.NOTPASS ? "checked" : "")
                                                                @(Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT ? "disabled" : "")>
                                                         <span class="form-check-label">ไม่ผ่าน</span>
@@ -418,8 +425,8 @@
                                                                     <p class="drop-zone-text">
                                                                         <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
                                                                     </p>
-                                                                    <input type="file" id="file-input-@detail.CheckListDetailID" class="drop-zone-input" multiple>
-                                                                    <div id="preview-container-@detail.CheckListDetailID" class="row preview-container">
+                                                                    <input type="file" id="file-input-@parentDetail.CheckListDetailID" class="drop-zone-input" multiple>
+                                                                    <div id="preview-container-@parentDetail.CheckListDetailID" class="row preview-container">
                                                                     </div>
                                                                 </div>
                                                             }
@@ -574,7 +581,7 @@
         let qcTypeId = '@Model.QcCheckList.QcTypeID';  // Assuming this is a number
         let qcCheckListId = '@Model.QcCheckList.QcCheckListID';  // Assuming this is a number or string
         let seq = '@Model.QcCheckList.Seq';  // Assuming this is a number
-        let listID = @Html.Raw(Json.Serialize(Model.MasterQcCheckListDetail.CheckListDetails.Select(o => o.CheckListDetailID).ToList()));  // Raw JSON serialization for list of IDs
+        @*let listID = @Html.Raw(Json.Serialize(Model.MasterQcCheckListDetail.CheckListDetails.Select(o => o.CheckListDetailID).ToList()));  // Raw JSON serialization for list of IDs*@
         let peId = '@Model.AnotherValue.PEID';  // Assuming this is a GUID or string
         var images = @Html.Raw(Json.Serialize(Model.QcCheckList.MainImages)); // Serialize your images model to JavaScript
         var signImage = '@Model.QcCheckList.UserQcResourceUrl';

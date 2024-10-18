@@ -132,7 +132,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 var RoleID = Request.Cookies["CST.Role"];
                 model.RequestUserID = Guid.Parse(userID);
                 model.RequestRoleID = Int32.Parse(RoleID);
-
+                model.KeyPassword = _appSettings.PasswordKey;
                 if (model.SignUser != null)
                 {
                     validateUnitEquipmentSign(model.SignUser);

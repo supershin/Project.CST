@@ -115,6 +115,7 @@ const detailLogin = {
                     JobPosition: userPosition.value.trim(),
                     RoleID: userRole.value,
                     Password: userPassword.value.trim(),
+                    ConfirmPassword: userPasswordConfirm.value.trim(),
                     SignUser: detailLogin.getSignatureData()
                 };
 
