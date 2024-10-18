@@ -383,8 +383,8 @@ function openModalEditQC(defectID) {
 
                         $('#imagePreview2').append(`
                                     <div class="position-relative d-inline-block mb-3">
-                                        <a data-fslightbox="gallery" href="${image.FilePath}">
-                                            <img src="${image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                        <a data-fslightbox="gallery" href="${baseUrl+image.FilePath}">
+                                            <img src="${baseUrl+image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                         </a>
                                         ${removeButtonHTML}  <!-- Conditionally render remove button -->
                                     </div>
@@ -884,7 +884,12 @@ function saveUnitQC5() {
     });
 }
 
-function openSignatureModal() {
+function openSignatureModal(signatureImagePath, signatureDate) {
+    // Update the image source and signature date dynamically
+    document.getElementById('signatureImage').src = baseUrl+signatureImagePath;
+    document.getElementById('signatureDate').textContent = 'ลงลายเซ็นวันที่ : ' + signatureDate;
+
+    // Show the modal
     var myModal = new bootstrap.Modal(document.getElementById('signatureModal'), {
         keyboard: false
     });
@@ -895,13 +900,12 @@ function saveSignature() {
     showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
 
     var QCUnitCheckListID = document.getElementById('hdQC5UnitChecklistID').value;
-
+    var peName = document.getElementById('hdPeName').value;  // Get PEName from the hidden input
     var signData = unitEquipment.getSignatureData();  // Accessing it from unitEquipment object
 
     var formData = new FormData();
     formData.append('QCUnitCheckListID', QCUnitCheckListID);
 
-    // Append signature data as JSON
     if (signData) {
         var signatureData = {
             MimeType: signData.MimeType,
@@ -914,14 +918,29 @@ function saveSignature() {
         url: baseUrl + 'QC5Check/SaveSignature',
         type: 'POST',
         data: formData,
-        contentType: false,  // Set contentType to false for FormData
-        processData: false,  // Set processData to false for FormData
+        contentType: false,
+        processData: false,
         success: function (res) {
             Swal.close();
             if (res.success) {
-                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
-                    window.location.reload();
-                });
+                // Update the signature image and date dynamically in the card
+                $('#cardsignature').html(`
+                    <div class="col-12">
+                        <input type="text" id="PEUnit" class="form-control" value="PE/SE : ${peName}" readonly>
+                    </div>
+                    <div style="position: relative; display: inline-block;">
+                        <a href="javascript:void(0);" onclick="openSignatureModal('${res.filePath}', '${res.signatureDate}');">
+                            <img src="${baseUrl+res.filePath}" alt="Gallery Image 1" class="rounded" style="width:340px;height:260px;">
+                            <span class="image-text">ลงลายเซ็นวันที่ : ${res.signatureDate}</span>
+                        </a>
+                    </div>
+                `);
+
+                // Close the signature modal
+                $('#ClosesignatureModal').click();
+
+                // Show success alert
+                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
             } else {
                 showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
             }
@@ -932,6 +951,7 @@ function saveSignature() {
         }
     });
 }
+
 
 function SubmitUnitQC5() {
     // Perform initial validation
@@ -1079,6 +1099,7 @@ function radioChanged(id, value) {
 
             // Fetch updated list
             fetchUpdatedList();  // Call the function to reload the list
+            fetchUpdatedSummary();
         },
         error: function (error) {
             // Show SweetAlert for failure
@@ -1093,26 +1114,6 @@ function radioChanged(id, value) {
         }
     });
 }
-
-// Fetch the updated list via AJAX and replace the current content
-//function fetchUpdatedList() {
-//    console.log('fetchUpdatedList')
-//    $.ajax({
-//        url: baseUrl + 'QC5Check/GetQCUnitCheckListDefects',  // Adjust to match your URL
-//        type: 'GET',
-//        data: {
-//            QC5UnitChecklistID: $('#hdQC5UnitChecklistID').val(),
-//            Seq: $('#hdSeq').val()
-//        },
-//        success: function (response) {
-//            // Replace the current list content with the updated data
-//            $('.list-group').html(response);  // Replace list items
-//        },
-//        error: function (error) {
-//            console.error("Error fetching updated list:", error);
-//        }
-//    });
-//}
 
 function fetchUpdatedList() {
     // Step 1: Store the current checked states
@@ -1145,6 +1146,23 @@ function fetchUpdatedList() {
         }
     });
 }
+
+function fetchUpdatedSummary() {
+    $.ajax({
+        url: baseUrl + 'QC5Check/GetDataSummaryQC5',
+        type: 'POST',
+        data: {
+            QC5UnitChecklistID: $('#hdQC5UnitChecklistID').val()
+        },
+        success: function (response) {
+            $('#summaryContainer').html(response); // Update the summary container with new data
+        },
+        error: function (error) {
+            console.error("Error fetching updated summary:", error);
+        }
+    });
+}
+
 
 
 function openModalUpdateDefectDetailQC(defectID) {
@@ -1187,8 +1205,8 @@ function openModalUpdateDefectDetailQC(defectID) {
 
                         $('#imagePreview3').append(`
                                     <div class="position-relative d-inline-block mb-3">
-                                        <a data-fslightbox="gallery" href="${image.FilePath}">
-                                            <img src="${image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                        <a data-fslightbox="gallery" href="${baseUrl+image.FilePath}">
+                                            <img src="${baseUrl+image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                         </a>
                                         ${removeButtonHTML}
                                     </div>
@@ -1461,6 +1479,39 @@ function showFixedButton() {
     var fixedButton = document.querySelector('.fixedButton');
     fixedButton.style.display = 'block';  // Show the button again
 }
+
+
+function genPDF() {
+    showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
+    var projectId = document.getElementById('hdProject').value;
+    var unitId = document.getElementById('hdUnitId').value;
+    var QCUnitCheckListID = document.getElementById('hdQC5UnitChecklistID').value;
+
+    $.ajax({
+        url: baseUrl + 'QC5Check/PrintPDF',
+        type: 'POST',
+        data: {
+            projectID: projectId,
+            unitID: unitId,
+            QCID: QCUnitCheckListID
+        },
+        success: function (res) {
+            Swal.close();
+            if (res.success) {
+                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                    window.location.reload();
+                });
+            } else {
+                showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+            }
+        },
+        error: function (xhr, status, error) {
+            Swal.close();
+            showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+        }
+    });
+}
+
 
 
 

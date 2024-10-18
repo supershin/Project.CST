@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.Data.SqlClient.Server;
 using Newtonsoft.Json;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Services;
+using QuestPDF.Infrastructure;
 using System;
 using System.Text.RegularExpressions;
 using static Project.ConstructionTracking.Web.Commons.SystemConstant;
@@ -15,17 +19,21 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IQC5CheckService _QC5CheckService;
         private readonly IHostEnvironment _hosting;
         private readonly IGetDDLService _getDDLService;
+        private readonly IGeneratePDFService _generatePDFService;
 
-        public QC5CheckController(IQC5CheckService QC5CheckService, IHostEnvironment hosting, IGetDDLService getDDLService)
+        public QC5CheckController(IQC5CheckService QC5CheckService, IHostEnvironment hosting, IGetDDLService getDDLService , IGeneratePDFService generatePDFService)
         {
             _QC5CheckService = QC5CheckService;
             _hosting = hosting;
             _getDDLService = getDDLService;
+            _generatePDFService = generatePDFService;
         }
 
         public IActionResult Index(Guid projectId, Guid unitId, int Seq)
         {
-            var filterunitData = new QC5DetailModel { ProjectID = projectId, UnitID = unitId, Seq = Seq };
+            Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+
+            var filterunitData = new QC5DetailModel { ProjectID = projectId, UnitID = unitId, Seq = Seq ,UserID = userid };
 
             QC5DetailModel QC5CheckDetail = _QC5CheckService.GetQC5CheckDetail(filterunitData);
 
@@ -45,6 +53,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.QC5UpdateByName = QC5CheckDetail?.QC5UpdateByName;
             ViewBag.ActionType = QC5CheckDetail?.ActionType == "save" ? "บันทึกร่าง" : QC5CheckDetail?.ActionType == "submit" ? "ยืนยันแล้ว" : "ยังไม่เริ่มตรวจ";
             ViewBag.ActionTypeEn = QC5CheckDetail?.ActionType;
+            ViewBag.FilePathQCPDF = QC5CheckDetail?.FilePathQCPDF;
             // Autocomplete 1
             var filterModel = new GetDDL { Act = "DefectArea", ID = QC5CheckDetail?.ProjectTypeID, searchTerm = "" };
             List<GetDDL> ListDefectArea = _getDDLService.GetDDLList(filterModel);
@@ -54,13 +63,15 @@ namespace Project.ConstructionTracking.Web.Controllers
             var PEUnit = new GetDDL { Act = "PEUnit", GuID = unitId };
             List<GetDDL> PEUnitID = _getDDLService.GetDDLList(PEUnit);
             ViewBag.PEID = (PEUnitID != null && PEUnitID.Count > 0) ? PEUnitID[0].ValueGuid : Guid.Empty;
-            ViewBag.PEName = (PEUnitID != null && PEUnitID.Count > 0) ? PEUnitID[0].Text : "ยังไม่ได้ระบุ PE/SE ผู้ดูแล Unit แปลงนี้";
+            ViewBag.PEName = (PEUnitID != null && PEUnitID.Count > 0) ? PEUnitID[0].Text : "ยังไม่ได้ระบุวิศวกรควบคุม Unit แปลงนี้";
 
             var ddlModel = new GetDDL { Act = "ImageQC5Unit", GuID = QC5CheckDetail?.QC5UnitChecklistID };
             List<GetDDL> ImageQC5UnitList = _getDDLService.GetDDLList(ddlModel);
             ViewBag.ImageQC5UnitList = ImageQC5UnitList;
 
-
+            Guid QCID = FormatExtension.AsGuid(QC5CheckDetail?.QC5UnitChecklistID);
+            SummaryQCPdfData DataSummaryQC5 = _QC5CheckService.GetSummaryQC5(QCID);
+            ViewData["DataSummaryQC5"] = DataSummaryQC5;
 
             var FilterData = new QC5ChecklistModel
             {
@@ -244,11 +255,14 @@ namespace Project.ConstructionTracking.Web.Controllers
                 Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
                 string ApplicationPath = _hosting.ContentRootPath;
 
-                _QC5CheckService.SaveSignature(model.Sign, ApplicationPath, model.QCUnitCheckListID, userid);
+                // Save the signature and get the file path and date
+                var (filePath, currentDate) = _QC5CheckService.SaveSignature(model.Sign, ApplicationPath, model.QCUnitCheckListID, userid);
 
+                // Return the updated data for the signature
+                ViewBag.PathQC5SignatureImage = filePath;
+                ViewBag.QC5SignatureDate = currentDate;
 
-                // Return success response
-                return Json(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
+                return Json(new { success = true, message = "บันทึกข้อมูลสำเร็จ", filePath = filePath, signatureDate = currentDate });
             }
             catch (Exception ex)
             {
@@ -256,6 +270,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
             }
         }
+
 
 
         [HttpPost]
@@ -289,6 +304,41 @@ namespace Project.ConstructionTracking.Web.Controllers
             return PartialView("PartialDefectList", listQCUnitCheckListDefects);
         }
 
+
+        [HttpPost]
+        public IActionResult PrintPDF(Guid projectID , Guid unitID , Guid QCID)
+        {
+            try
+            {
+                var filterModel = new DataToGenerateModel { ProjectID = projectID, UnitID = unitID, QCUnitCheckListID = QCID };
+
+                DataGenerateQCPDFResp QC5PDFData = _generatePDFService.GetDataQCToGeneratePDF(filterModel);
+                var guid = Guid.NewGuid();
+
+                DataDocumentModel genDocumentNo = _generatePDFService.GenerateDocumentNO(projectID);
+
+                string pathUrl = _generatePDFService.GenerateQCPDF(guid, QC5PDFData, genDocumentNo);
+
+                // Return success response
+                return Json(new { success = true, message = "ลบรูปภาพสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
+
+
+        [HttpPost]
+        public IActionResult GetDataSummaryQC5(Guid QC5UnitChecklistID)
+        {
+
+            Guid QCID = FormatExtension.AsGuid(QC5UnitChecklistID);
+            SummaryQCPdfData DataSummaryQC5 = _QC5CheckService.GetSummaryQC5(QCID);
+
+            return PartialView("PartialSummaryQC5", DataSummaryQC5);
+        }
 
 
 

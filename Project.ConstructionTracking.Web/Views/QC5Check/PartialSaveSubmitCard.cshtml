@@ -40,7 +40,8 @@
                            value="2"
                            onclick="ClickNotPass(this)"
                     @(ViewBag.QC5UnitStatusID == 2 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
+                    >
                     <span class="form-check-label">ไม่ผ่าน</span>
                 </label>
                 <label class="form-check form-check-inline">
@@ -51,7 +52,8 @@
                            value="3"
                            onclick="ClickNotReadyInspect(this)"
                     @(ViewBag.QC5UnitStatusID == 3 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
+                    >
                     <span class="form-check-label">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
                 </label>
             </div>
@@ -93,33 +95,46 @@
                 </div>
                 <div style="position: relative; display: inline-block;">
                     <!-- HTML to open the modal -->
-                    <a href="javascript:void(0);" onclick="openSignatureModal();">
+                    <a href="javascript:void(0);" onclick="openSignatureModal('@ViewBag.PathQC5SignatureImage', '@ViewBag.QC5SignatureDate');">
                         <img src="~/@ViewBag.PathQC5SignatureImage" alt="Gallery Image 1" class="rounded" style="width:340px;height:260px;">
                         <span class="image-text">ลงลายเซ็นวันที่ : @ViewBag.QC5SignatureDate</span>
                     </a>
                 </div>
             </div>
         }
-        @if (ViewBag.QC5UnitChecklistID != null)
+        else
         {
-            <div class="col-12 mt-3">
-                <div class="row">
-                    @if (ViewBag.ActionTypeEn != "submit")
-                    {
-                        <div class="col-4">
-                            <button type="button" class="btn btn-success w-100" id="btn-save-QC5" onclick="saveUnitQC5()">บันทึกร่าง</button>
-                        </div>
-                        <div class="col-4">
-                            <button class="btn btn-primary w-100" id="btn-submit-QC5" onclick="SubmitUnitQC5()">ยืนยัน</button>
-                        </div>
-                    }
-                    <div class="col-4">
-                        <button class="btn btn-secondary w-100">ดูเอกสารตรวจ</button>
-                    </div>
+            <div id="cardsignature" class="col-sm-12 mt-1 mb-2">
+                <div class="col-12">
+                    <input type="text" id="PEUnit" class="form-control" value="PE/SE : @ViewBag.PEName" readonly>
+                </div>
+                <div class="alert alert-warning" role="alert">
+                    ยังไม่มีลายเซ็นสำหรับรายการนี้
                 </div>
             </div>
-
         }
+        <div class="col-12 mt-3">
+            <div class="row">
+                @if (ViewBag.ActionTypeEn != "submit")
+                {
+                    <div class="col-4">
+                        <button type="button" class="btn btn-success w-100" id="btn-save-QC5" onclick="saveUnitQC5()">บันทึกร่าง</button>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-primary w-100" id="btn-submit-QC5" onclick="SubmitUnitQC5()">ยืนยัน</button>
+                    </div>
+                }
+                @if (ViewBag.FilePathQCPDF != null)
+                {
+                    <div class="col-4">
+                        <a href="~/@ViewBag.FilePathQCPDF" target="_blank" class="btn btn-secondary w-100">
+                            ดูเอกสารตรวจ
+                        </a>
+                        @* <button class="btn btn-secondary w-100" onclick="genPDF()">ดูเอกสารตรวจ</button> *@
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 </div>
 

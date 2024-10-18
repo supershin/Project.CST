@@ -198,6 +198,7 @@
 <input type="hidden" id="hdQC5UnitChecklistActionID" value="@ViewBag.QC5UnitChecklistActionID" />
 <input type="hidden" id="hdSeq" value="@ViewBag.Seq" />
 <input type="hidden" id="hdSigNatureData" value="@ViewBag.PathQC5SignatureImage" />
+<input type="hidden" id="hdPeName" value="@ViewBag.PEName" />
 
 @if (ViewBag.ActionTypeEn != "submit")
 {
@@ -286,27 +287,8 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12 col-sm-6 mb-3">
-                                    <div class="col-12">
-                                        <ul>
-                                            <li>จำนวนรายการจากครั้งที่ 1 : 2 รายการ</li>
-                                            <li>จำนวนรายการจากครั้งที่ 2 : 1 รายการ</li>
-                                            <li>จำนวนรายการจากครั้งที่ 3 : 0 รายการ</li>
-                                        </ul>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12 text-yellow">รายการทั้งหมด  : 3 รายการ</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="text-green">ผ่าน : 0 รายการ</div>
-                                                    <div class="text-red">ไม่ผ่าน : 2 รายการ</div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div id="summaryContainer">
+                                        @await Html.PartialAsync("PartialSummaryQC5", ViewData["DataSummaryQC5"])
                                     </div>
                                 </div>
                                 <div class="col-12 col-sm-6">
@@ -437,7 +419,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="SignalModalLabel">ผู้รับเหมาลงนาม</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" id="ClosesignatureModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -562,12 +544,13 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <img src="~/@ViewBag.PathQC5SignatureImage" alt="Signature Image" class="img-fluid w-100" style="object-fit: cover;">
-                    <p class="mt-3">ลงลายเซ็นวันที่ : @ViewBag.QC5SignatureDate</p>
+                    <img id="signatureImage" src="" alt="Signature Image" class="img-fluid w-100" style="object-fit: cover;">
+                    <p id="signatureDate" class="mt-3"></p>
                 </div>
             </div>
         </div>
     </div>
+
 
     <div class="modal fade" id="Update-detail-defect" tabindex="-1" aria-labelledby="Update-detail-defect-Label" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
         <div class="modal-dialog">

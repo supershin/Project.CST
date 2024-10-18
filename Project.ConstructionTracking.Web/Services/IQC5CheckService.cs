@@ -1,4 +1,5 @@
-﻿using Project.ConstructionTracking.Web.Models.QC5CheckModel;
+﻿using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
+using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 
 namespace Project.ConstructionTracking.Web.Services
 {
@@ -15,6 +16,7 @@ namespace Project.ConstructionTracking.Web.Services
         void RemoveImage(Guid resourceId, Guid UserID);
         void SaveSubmitQC5UnitCheckList(QC5SaveSubmitModel model);
         void SelectedQCUnitCheckListDefectStatus(QC5IUDModel model);
-        void SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID);
+        (string filePath, string currentDate) SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID);
+        SummaryQCPdfData GetSummaryQC5(Guid QCUnitCheckListID);
     }
 }
