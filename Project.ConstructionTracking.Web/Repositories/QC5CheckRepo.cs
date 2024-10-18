@@ -127,10 +127,11 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 var Chk_QC5 = _context.tr_QC_UnitCheckList.FirstOrDefault(d => d.ProjectID == filterData.ProjectID && d.UnitID == filterData.UnitID && d.QCTypeID == SystemConstant.QcTypeID.QC5 && d.Seq == filterData.Seq);
 
+                Guid QCUnitCheckListID = Guid.NewGuid();
+
                 if (Chk_QC5 == null && Chk_QC5_Previous != null)
                 {
-                    Guid QCUnitCheckListID = Guid.NewGuid();
-
+                   
                     Chk_QC5 = new tr_QC_UnitCheckList
                     {
                         ID = QCUnitCheckListID,
@@ -152,7 +153,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     _context.tr_QC_UnitCheckList.Add(Chk_QC5);
                     _context.SaveChanges();
 
-                    var existingAction_Previous = _context.tr_QC_UnitCheckList_Action.FirstOrDefault(d => d.QCUnitCheckListID == QCUnitCheckListID);
+                    var existingAction_Previous = _context.tr_QC_UnitCheckList_Action.FirstOrDefault(d => d.QCUnitCheckListID == Chk_QC5_Previous.ID);
 
                     var existingAction = _context.tr_QC_UnitCheckList_Action.FirstOrDefault(x => x.QCUnitCheckListID == QCUnitCheckListID);
 
@@ -181,6 +182,47 @@ namespace Project.ConstructionTracking.Web.Repositories
                     //InsertSelectFromQCUnitCheckList(Chk_QC5_Previous.ID, QCUnitCheckListID, filterData.Seq);
 
                     //InsertSelectFromQCUnitCheckList_Resource(Chk_QC5_Previous.ID, QCUnitCheckListID);
+
+                    _context.SaveChanges();
+                }
+                else if (Chk_QC5 == null && Chk_QC5_Previous == null)
+                {
+                    Chk_QC5 = new tr_QC_UnitCheckList
+                    {
+                        ID = QCUnitCheckListID,
+                        ProjectID = filterData.ProjectID,
+                        UnitID = filterData.UnitID,
+                        CheckListID = 6,
+                        QCTypeID = SystemConstant.Unit_Form_QC.QC5,
+                        Seq = 1,
+                        CheckListDate = DateTime.Now,
+                        FlagActive = true,
+                        CreateDate = DateTime.Now,
+                        CreateBy = filterData.UserID,
+                        UpdateDate = DateTime.Now,
+                        UpdateBy = filterData.UserID
+                    };
+
+                    _context.tr_QC_UnitCheckList.Add(Chk_QC5);
+                   
+                    var existingAction = _context.tr_QC_UnitCheckList_Action.FirstOrDefault(x => x.QCUnitCheckListID == QCUnitCheckListID);
+
+                    if (existingAction == null)
+                    {
+                        var newAction = new tr_QC_UnitCheckList_Action
+                        {
+                            QCUnitCheckListID = QCUnitCheckListID,
+                            RoleID = SystemConstant.UserRole.QC,
+                            ActionType = "save",
+                            ActionDate = DateTime.Now,
+                            UpdateDate = DateTime.Now,
+                            UpdateBy = filterData.UserID,
+                            CreateDate = DateTime.Now,
+                            CreateBy = filterData.UserID
+                        };
+
+                        _context.tr_QC_UnitCheckList_Action.Add(newAction);
+                    }
 
                     _context.SaveChanges();
                 }
@@ -1065,7 +1107,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                         _context.SaveChanges();
                     }
-
                     scope.Complete(); // Commit the transaction
                 }
                 catch (Exception ex)
