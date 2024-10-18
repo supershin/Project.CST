@@ -169,7 +169,7 @@ namespace Project.ConstructionTracking.Web.Repositories
         public dynamic EditUser(EditUserModel model)
         {
             tm_User? edit = _context.tm_User.Where(o => o.ID == model.UserID && o.FlagActive == true).FirstOrDefault();
-            if (edit == null) throw new Exception("ไม่พบข้อมูลยูนิต");
+            if (edit == null) throw new Exception("ไม่พบข้อมูลผู้ใช้งาน");
 
             edit.BUID = model.BUID;
             //create.DepartmentID = ;

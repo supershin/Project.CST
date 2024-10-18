@@ -54,14 +54,34 @@
             success: function (resp) {
                 if (resp.success) {
                     if (resp.data.QcCheckList.ID == null) {
-                        var controller = 'QCCheckList/CheckListDetail?';
-                        var params = `projectid=${projectId}&unitid=${unitId}&qcchecklistid=${resp.data.QcCheckList.QcCheckListID}&seq=${resp.data.QcCheckList.Seq}&qctypeid=${resp.data.QcCheckList.QcTypeID}`;  // Use backticks for template literals
-                        window.location.href = baseUrl + controller + params
+                        showConfirmationAlert(
+                            '',
+                            "ยืนยันการเริ่มรายการตรวจ QC",
+                            'warning',
+                            'ยืนยัน',
+                            'ยกเลิก',
+                            () => {
+                                var controller = 'QCCheckList/CheckListDetail?';
+                                var params = `projectid=${projectId}&unitid=${unitId}&qcchecklistid=${resp.data.QcCheckList.QcCheckListID}&seq=${resp.data.QcCheckList.Seq}&qctypeid=${resp.data.QcCheckList.QcTypeID}`;  // Use backticks for template literals
+                                window.location.href = baseUrl + controller + params
+                            }
+                        );
+                        
                         
                     } else if (resp.data.QcCheckList.ID != null && resp.data.QcCheckList.Seq != null) {
-                        var controller = 'QCCheckList/CheckListDetail?';
-                        var params = `id=${resp.data.QcCheckList.ID}&projectid=${projectId}&unitid=${unitId}&qcchecklistid=${resp.data.QcCheckList.QcCheckListID}&seq=${resp.data.QcCheckList.Seq}&qctypeid=${resp.data.QcCheckList.QcTypeID}&iscreate=true`;  // Use backticks for template literals
-                        window.location.href = baseUrl + controller + params
+                        showConfirmationAlert(
+                            '',
+                            "ยืนยันการเริ่มรายการตรวจ QC",
+                            'warning',
+                            'ยืนยัน',
+                            'ยกเลิก',
+                            () => {
+                                var controller = 'QCCheckList/CheckListDetail?';
+                                var params = `id=${resp.data.QcCheckList.ID}&projectid=${projectId}&unitid=${unitId}&qcchecklistid=${resp.data.QcCheckList.QcCheckListID}&seq=${resp.data.QcCheckList.Seq}&qctypeid=${resp.data.QcCheckList.QcTypeID}&iscreate=true`;  // Use backticks for template literals
+                                window.location.href = baseUrl + controller + params
+                            }
+                        );
+                       
                     }
                 } else {
                     showErrorAlert('Error!', resp.message);
