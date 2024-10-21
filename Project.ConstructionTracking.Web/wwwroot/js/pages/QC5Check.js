@@ -318,12 +318,14 @@ function openModalEditQC(defectID) {
         data: { DefectID: defectID },
         success: function (response) {
             if (response) {
-                // Clear the file input and preview container before binding new data
-                clearFileInputAndPreview();  // Reset everything
 
                 // Hide the fixed button
                 var fixedButton = document.querySelector('.fixedButton');
-                fixedButton.style.display = 'none';
+                if (fixedButton) {
+                    // Only try to hide the button if it exists
+                    fixedButton.style.display = 'none';
+                    clearFileInputAndPreview()
+                }
 
                 // Populate the dropdowns and other fields
                 $('#dropdown1Edit').val(response.DefectAreaID).trigger('change');
@@ -563,14 +565,14 @@ function onEditButtonClick() {
         success: function (response) {
             Swal.close();
             if (response.success) {
-                //showFixedButton();
-                //fetchUpdatedList();
-                //showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
-                //// Close the modal after success
-                //var editModal = bootstrap.Modal.getInstance(document.getElementById('Edit-qc5'));
-                //editModal.hide();
+                showFixedButton();
+                fetchUpdatedList();
+                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
+                // Close the modal after success
+                var editModal = bootstrap.Modal.getInstance(document.getElementById('Edit-qc5'));
+                editModal.hide();
 
-                window.location.reload();
+               // window.location.reload();
             } else {
                 showErrorAlertNotCloseModal('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
             }
@@ -755,13 +757,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Update the file input with the files in the filesArray
     function updateFileInput() {
-        // Clear the input value
         fileInput.value = '';
-
-        // Create a new DataTransfer object to hold the updated file list
         const dataTransfer = new DataTransfer();
         filesArray.forEach(file => dataTransfer.items.add(file));
-        // Update the file input files with the new DataTransfer object
         fileInput.files = dataTransfer.files;
     }
 });
@@ -977,19 +975,18 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function saveUnitQC5() {
-    showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
+    
     var QCUnitCheckListID = document.getElementById('hdQC5UnitChecklistID').value;
     var QCUnitCheckListActionID = document.getElementById('hdQC5UnitChecklistActionID').value;
-    var QCStatusID = selectedRadioQC5Status;  // Ensure this value is set
+    var QCStatusID = selectedRadioQC5Status;
     var ActionType = 'save';
     var QCRemark = document.getElementById('QC5Remark').value;
     var files = $('#file-input-save-submit')[0].files;
-    // var signData = unitEquipment.getSignatureData();  
 
     var formData = new FormData();
     formData.append('QCUnitCheckListID', QCUnitCheckListID);
     formData.append('QCUnitCheckListActionID', QCUnitCheckListActionID);
-    formData.append('QCStatusID', QCStatusID);  // Ensure this is the correct value
+    formData.append('QCStatusID', QCStatusID);
     formData.append('ActionType', ActionType);
     formData.append('QCRemark', QCRemark);
 
@@ -998,13 +995,7 @@ function saveUnitQC5() {
         formData.append('Images', files[i]);
     }
 
-    //if (signData) {
-    //    var signatureData = {
-    //        MimeType: signData.MimeType,
-    //        StorageBase64: signData.StorageBase64
-    //    };
-    //    formData.append('Sign', JSON.stringify(signatureData));
-    //}
+    showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
 
     $.ajax({
         url: baseUrl + 'QC5Check/SaveSubmitQC5UnitCheckList',
@@ -1116,6 +1107,19 @@ function SubmitUnitQC5() {
         showErrorAlert('คำเตือน!', 'กรุณาระบุลายเซ็น');
         return;
     }
+
+    if (QCStatusID === "2" || QCStatusID === "3") {
+        // Access ImageQC5UnitList which was declared in the Razor view
+        if (ImageQC5UnitList.length + files.length === 0) {
+            showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุของการไม่ให้ผ่าน');
+            return;
+        }
+        else if (!QCRemark) {
+            showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุของการไม่ให้ผ่าน');
+            return;
+        }
+    }
+
 
     // Confirmation alert before proceeding
     showConfirmationAlert(
@@ -1242,7 +1246,6 @@ function radioChanged(id, value) {
                 toast: true  // Small popup in the corner
             });
 
-            // Fetch updated list
             fetchUpdatedList();  // Call the function to reload the list
             fetchUpdatedSummary();
         },
@@ -1309,8 +1312,8 @@ function fetchUpdatedSummary() {
 }
 
 
-
 function openModalUpdateDefectDetailQC(defectID) {
+
     $.ajax({
         url: baseUrl + 'QC5Check/GetQC5DefactEdit',
         type: 'GET',
@@ -1322,7 +1325,10 @@ function openModalUpdateDefectDetailQC(defectID) {
                 $('#preview-container-update').empty();  // Clear preview container
                 // Hide the fixed button
                 var fixedButton = document.querySelector('.fixedButton');
-                fixedButton.style.display = 'none';  // Hide the button
+                if (fixedButton) {
+                    // Only try to hide the button if it exists
+                    fixedButton.style.display = 'none';
+                } 
 
                 // Set the values for the text inputs
                 $('#UpQC5DefectID').val(response.DefectID);  // Set the DefectID
@@ -1331,9 +1337,43 @@ function openModalUpdateDefectDetailQC(defectID) {
                 $('#defectDescriptionText').val(response.DefectDescriptionName);  // Set the DefectDescription text
 
                 // Populate other fields in the modal
-                $('#commentTextareaupdate').val(response.Remark).prop('disabled', actionTypeEn === "submit");
+                if (actionTypeEn !== "submit") {
+                    if (response.Seq > response.RefSeq) {
+                        if (response.StatusID !== "27") {
+                            // Make the textarea editable (not disabled)
+                            $('#commentTextareaupdate').val(response.Remark).prop('disabled', false);
+                        } else {
+                            // Make the textarea disabled if StatusID is 27
+                            $('#commentTextareaupdate').val(response.Remark).prop('disabled', true);
+                        }
+                    } else {
+                        // Make the textarea disabled if Seq is not greater than RefSeq
+                        $('#commentTextareaupdate').val(response.Remark).prop('disabled', true);
+                    }
+                } else {
+                    // Disable the textarea if actionTypeEn is "submit"
+                    $('#commentTextareaupdate').val(response.Remark).prop('disabled', true);
+                }
+
                 $('#QC5DefectID').val(response.DefectID);
-                $('#majorDefectCheckboxupdate').prop('checked', response.IsMajorDefect).prop('disabled', actionTypeEn === "submit");
+                if (actionTypeEn !== "submit") {
+                    if (response.Seq > response.RefSeq) {
+                        if (response.StatusID !== "27") {
+                            // Enable and set the checkbox based on response.IsMajorDefect
+                            $('#majorDefectCheckboxupdate').prop('checked', response.IsMajorDefect).prop('disabled', false);
+                        } else {
+                            // Disable the checkbox if StatusID is 27
+                            $('#majorDefectCheckboxupdate').prop('checked', response.IsMajorDefect).prop('disabled', true);
+                        }
+                    } else {
+                        // Disable the checkbox if Seq is not greater than RefSeq
+                        $('#majorDefectCheckboxupdate').prop('checked', response.IsMajorDefect).prop('disabled', true);
+                    }
+                } else {
+                    // Disable the checkbox if actionTypeEn is "submit"
+                    $('#majorDefectCheckboxupdate').prop('checked', response.IsMajorDefect).prop('disabled', true);
+                }
+
 
                 // Clear existing images in the modal
                 $('#imagePreview3').empty();
@@ -1345,7 +1385,11 @@ function openModalUpdateDefectDetailQC(defectID) {
 
                         // Only show the RemoveImage button if actionTypeEn is not "submit"
                         if (actionTypeEn !== "submit") {
-                            removeButtonHTML = `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>`;
+                            if (response.Seq > response.RefSeq) {
+                                if (response.StatusID !== "27") {
+                                    removeButtonHTML = `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>`;
+                                }
+                            }
                         }
 
                         $('#imagePreview3').append(`
@@ -1357,17 +1401,25 @@ function openModalUpdateDefectDetailQC(defectID) {
                                     </div>
                                 `);
                     });
-
                     // Reinitialize the fslightbox after appending new content
                     refreshFsLightbox();
                 }
-
-                // Check if there are 5 or more images and hide the dropzone
-                //if ($('#imagePreview3 .position-relative').length >= 5) {
-                //    $('#drop-zone-update').hide(); 
-                //} else {
-                //    $('#drop-zone-update').show();
-                //}
+                debugger
+                if (response.Seq > response.RefSeq) {
+                    if (response.StatusID !== "27") {
+                        if ($('#imagePreview3 .position-relative').length >= 5) {
+                            $('#drop-zone-update').hide();
+                        } else {
+                            $('#drop-zone-update').show();
+                        }
+                    }
+                    else {
+                        $('#drop-zone-update').hide();
+                    }
+                }
+                else {
+                    $('#drop-zone-update').hide();
+                }
 
                 // Show the modal
                 var myModal = new bootstrap.Modal(document.getElementById('Update-detail-defect'));

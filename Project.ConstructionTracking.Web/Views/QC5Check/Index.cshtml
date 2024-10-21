@@ -628,6 +628,9 @@
 @section scripts {
     <link href="~/lib/core-ui/signature-pad-master/css/signature-pad.css" />
     <script src="~/lib/core-ui/signature-pad-master/js/signature_pad.umd.js"></script>
+    <script type="text/javascript">
+        var ImageQC5UnitList = @Html.Raw(Json.Serialize(ViewBag.ImageQC5UnitList));
+    </script>
     <script src="~/js/pages/QC5Check.js?ver=@DateTime.Now.Ticks.ToString()"></script>
     <script>
 
