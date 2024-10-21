@@ -569,8 +569,10 @@ function onEditButtonClick() {
                 fetchUpdatedList();
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
                 // Close the modal after success
-                var editModal = bootstrap.Modal.getInstance(document.getElementById('Edit-qc5'));
-                editModal.hide();
+                //var editModal = bootstrap.Modal.getInstance(document.getElementById('Edit-qc5'));
+                //editModal.hide();
+                const clearButton = document.getElementById('clearAllButton');
+                clearButton.click();
 
                // window.location.reload();
             } else {
@@ -584,104 +586,11 @@ function onEditButtonClick() {
     });
 }
 
-
-
-
-//document.addEventListener("DOMContentLoaded", function () {
-
-//    var dropZone = document.getElementById("drop-zone-edit");
-//    var fileInput = document.getElementById("file-input-edit");
-//    var previewContainer = document.getElementById("preview-container-edit");
-//    var filesArray = [];
-
-//    // Set the max file count limit
-//    const MAX_FILE_COUNT = 99;
-
-//    dropZone.addEventListener("click", function (e) {
-//        if (e.target.classList.contains("remove-button")) {
-//            return;
-//        }
-//        fileInput.click();
-//    });
-
-//    fileInput.addEventListener("change", function () {
-//        if (fileInput.files.length) {
-//            addFilesToPreview(fileInput.files);
-//        }
-//    });
-
-//    dropZone.addEventListener("dragover", function (e) {
-//        e.preventDefault();
-//        dropZone.classList.add("drop-zone--over");
-//    });
-
-//    dropZone.addEventListener("dragleave", function () {
-//        dropZone.classList.remove("drop-zone--over");
-//    });
-
-//    dropZone.addEventListener("drop", function (e) {
-//        e.preventDefault();
-//        addFilesToPreview(e.dataTransfer.files);
-//    });
-
-//    function addFilesToPreview(files) {
-
-//        debugger
-
-//        Array.from(files).forEach(file => {
-//            if (filesArray.length < MAX_FILE_COUNT) {
-//                if (!filesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
-//                    filesArray.push(file);
-//                    const reader = new FileReader();
-//                    reader.readAsDataURL(file);
-//                    reader.onload = function (event) {
-//                        const img = document.createElement("img");
-//                        img.src = event.target.result;
-//                        const previewImage = document.createElement("div");
-//                        previewImage.className = "col-4 preview-image";
-
-//                        const removeButton = document.createElement("button");
-//                        removeButton.className = "remove-button";
-//                        removeButton.innerHTML = "&times;";
-//                        removeButton.addEventListener("click", function (e) {
-//                            e.stopPropagation();
-//                            filesArray = filesArray.filter(f => f !== file);
-//                            updateFileInput();
-//                            previewImage.remove();
-//                        });
-
-//                        previewImage.appendChild(img);
-//                        previewImage.appendChild(removeButton);
-//                        previewContainer.appendChild(previewImage);
-//                    };
-//                }
-//                debugger
-//            }
-//        });
-//        updateFileInput();
-//    }
-
-//    function updateFileInput() {
-
-//        debugger
-
-//        fileInput.value = '';
-
-//        const dataTransfer = new DataTransfer();
-//        filesArray.forEach(file => dataTransfer.items.add(file));
-//        fileInput.files = dataTransfer.files;
-
-//        debugger
-//    }
-//});
-
 document.addEventListener("DOMContentLoaded", function () {
     var dropZone = document.getElementById("drop-zone-edit");
     var fileInput = document.getElementById("file-input-edit");
     var previewContainer = document.getElementById("preview-container-edit");
     var filesArray = []; // Array to keep track of all files
-
-    // Set the max file count limit
     const MAX_FILE_COUNT = 5;
 
     // When the drop zone is clicked, trigger the file input
@@ -720,39 +629,33 @@ document.addEventListener("DOMContentLoaded", function () {
             if (filesArray.length < MAX_FILE_COUNT) {
                 if (!filesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
                     filesArray.push(file);
-
                     const reader = new FileReader();
                     reader.readAsDataURL(file);
                     reader.onload = function (event) {
-                        // Create a new image element
                         const img = document.createElement("img");
                         img.src = event.target.result;
 
-                        // Create a preview container for the image
                         const previewImage = document.createElement("div");
                         previewImage.className = "col-4 preview-image";
 
-                        // Create the remove button
                         const removeButton = document.createElement("button");
                         removeButton.className = "remove-button";
                         removeButton.innerHTML = "&times;";
                         removeButton.addEventListener("click", function (e) {
                             e.stopPropagation();
-                            // Remove the file from the filesArray
                             filesArray = filesArray.filter(f => f !== file);
-                            // Update the file input and the preview
                             updateFileInput();
-                            previewImage.remove(); // Remove the image preview
+                            previewImage.remove();
                         });
 
                         previewImage.appendChild(img);
                         previewImage.appendChild(removeButton);
-                        previewContainer.appendChild(previewImage); // Add the image preview to the container
+                        previewContainer.appendChild(previewImage);
                     };
                 }
             }
         });
-        updateFileInput(); // Update the file input with the new list of files
+        updateFileInput();
     }
 
     // Update the file input with the files in the filesArray
@@ -762,7 +665,22 @@ document.addEventListener("DOMContentLoaded", function () {
         filesArray.forEach(file => dataTransfer.items.add(file));
         fileInput.files = dataTransfer.files;
     }
+
+    // Add functionality to clear all images
+    document.getElementById('clearAllButton').addEventListener('click', function () {
+        // Clear all preview images
+        previewContainer.innerHTML = '';
+
+        // Clear the filesArray
+        filesArray = [];
+
+        // Clear the file input
+        updateFileInput();
+
+        console.log('All images cleared');
+    });
 });
+
 
 
 function RemoveImage(resourceID) {
