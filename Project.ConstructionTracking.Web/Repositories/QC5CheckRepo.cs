@@ -441,6 +441,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                           {
                               DefectID = t1.ID,
                               QCUnitCheckListID = t1.QCUnitCheckListID,
+                              RefSeq = t1.RefSeq,
                               Seq = t1.Seq,
                               DefectAreaID = t1.DefectAreaID,
                               DefectAreaName = t2.Name,

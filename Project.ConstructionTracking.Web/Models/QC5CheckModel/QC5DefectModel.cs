@@ -14,6 +14,7 @@
         public string? Remark { get; set; }
         public bool? IsMajorDefect { get; set; }
         public bool? FlagActive { get; set; }
+        public int? RefSeq { get; set; }
         public int? Seq { get; set; }
         public List<QC5DefactListImageNotPass>? listImageNotpass { get; set; }
     }

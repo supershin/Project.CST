@@ -141,15 +141,15 @@ function onSaveButtonClick() {
 
     // Validate required fields
     if (!defectAreaId) {
-        showErrorAlert('คำเตือน!', 'กรุณาเลือกตำแหน่ง');
+        showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาเลือกตำแหน่ง');
         return;
     }
     if (!defectTypeId) {
-        showErrorAlert('คำเตือน!', 'กรุณาเลือกหมวดงาน');
+        showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาเลือกหมวดงาน');
         return;
     }
     if (!defectDescriptionId) {
-        showErrorAlert('คำเตือน!', 'กรุณาเลือกรายการ defect');
+        showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาเลือกรายการ defect');
         return;
     }
 
@@ -194,7 +194,7 @@ function onSaveButtonClick() {
                 //    selectedRadioQC5Status = '';
                 //}
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
-                    window.location.reload();
+                    fetchUpdatedList();
                 });
             } else {
                 showErrorAlert('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -315,30 +315,32 @@ function openModalEditQC(defectID) {
     $.ajax({
         url: baseUrl + 'QC5Check/GetQC5DefactEdit',
         type: 'GET',
-        data: { DefectID: defectID }, // Pass the DefectID to the controller
+        data: { DefectID: defectID },
         success: function (response) {
             if (response) {
-                // Clear dropzone file input and preview container before binding new data
-                $('#file-input-edit').val('');
-                $('#preview-container-edit').empty();  // Clear preview container
+
                 // Hide the fixed button
                 var fixedButton = document.querySelector('.fixedButton');
-                fixedButton.style.display = 'none';  // Hide the button
+                if (fixedButton) {
+                    // Only try to hide the button if it exists
+                    fixedButton.style.display = 'none';
+                    clearFileInputAndPreview()
+                }
 
+                // Populate the dropdowns and other fields
                 $('#dropdown1Edit').val(response.DefectAreaID).trigger('change');
+
+                // AJAX call for defect type and description
                 $.ajax({
                     url: baseUrl + 'QC5Check/GetDDLDefectType',
                     data: { defectAreaId: response.DefectAreaID },
                     success: function (data) {
                         var ddlDefectType = $('#dropdown2Edit');
                         ddlDefectType.empty().append('<option value="">กรุณาเลือก</option>');
-
                         $.each(data, function (index, item) {
                             ddlDefectType.append($('<option>', { value: item.Value, text: item.Text }));
                         });
-
                         ddlDefectType.val(response.DefectTypeID).prop('disabled', false);
-
 
                         $.ajax({
                             url: baseUrl + 'QC5Check/GetDDLDefectDescription',
@@ -346,12 +348,10 @@ function openModalEditQC(defectID) {
                             success: function (data) {
                                 var ddlDefectDescription = $('#dropdown3Edit');
                                 ddlDefectDescription.empty().append('<option value="">กรุณาเลือก</option>');
-
                                 $.each(data, function (index, item) {
                                     ddlDefectDescription.append($('<option>', { value: item.Value, text: item.Text }));
                                 });
-
-                                ddlDefectDescription.val(response.DefectDescriptionID).prop('disabled', false); // Set the selected value and enable it
+                                ddlDefectDescription.val(response.DefectDescriptionID).prop('disabled', false);
                             },
                             error: function () {
                                 console.log('Error fetching defect descriptions.');
@@ -364,43 +364,32 @@ function openModalEditQC(defectID) {
                 });
 
                 // Populate other fields in the modal
-                $('#commentTextareaEdit').val(response.Remark).prop('disabled', actionTypeEn === "submit"); // Disable remark if "submit"
+                $('#commentTextareaEdit').val(response.Remark).prop('disabled', actionTypeEn === "submit");
                 $('#QC5DefectID').val(response.DefectID);
-                $('#majorDefectCheckboxEdit').prop('checked', response.IsMajorDefect).prop('disabled', actionTypeEn === "submit"); // Disable checkbox if "submit"
+                $('#majorDefectCheckboxEdit').prop('checked', response.IsMajorDefect).prop('disabled', actionTypeEn === "submit");
 
-                // Clear existing images in the modal
+                // Populate existing images in the modal
                 $('#imagePreview2').empty();
-
-                // If there are images, populate the image list
                 if (response.listImageNotpass && response.listImageNotpass.length > 0) {
                     response.listImageNotpass.forEach(function (image) {
-                        let removeButtonHTML = ''; // Initialize empty remove button
-
-                        // Only show the RemoveImage button if actionTypeEn is not "submit"
-                        if (actionTypeEn !== "submit") {
-                            removeButtonHTML = `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>`;
-                        }
-
+                        let removeButtonHTML = actionTypeEn !== "submit" ? `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>` : '';
                         $('#imagePreview2').append(`
-                                    <div class="position-relative d-inline-block mb-3">
-                                        <a data-fslightbox="gallery" href="${baseUrl+image.FilePath}">
-                                            <img src="${baseUrl+image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
-                                        </a>
-                                        ${removeButtonHTML}  <!-- Conditionally render remove button -->
-                                    </div>
-                                `);
+                            <div class="position-relative d-inline-block mb-3">
+                                <a data-fslightbox="gallery" href="${baseUrl + image.FilePath}">
+                                    <img src="${baseUrl + image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                </a>
+                                ${removeButtonHTML}
+                            </div>
+                        `);
                     });
-
-                    // Reinitialize the fslightbox after appending new content
                     refreshFsLightbox();
                 }
 
-                // Check if there are 5 or more images and hide the dropzone
-                
+                // Hide or show dropzone based on the number of images
                 if ($('#imagePreview2 .position-relative').length >= 5) {
-                    $('#drop-zone-edit').hide(); // Hide the dropzone if there are 5 or more images
+                    $('#drop-zone-edit').hide();
                 } else {
-                    $('#drop-zone-edit').show(); // Show the dropzone if less than 5 images
+                    $('#drop-zone-edit').show();
                 }
 
                 // Show the modal
@@ -413,6 +402,38 @@ function openModalEditQC(defectID) {
         }
     });
 }
+
+
+
+function clearFileInputAndPreview() {
+
+    // Reference the specific file input and preview container for the 'edit' modal
+    var fileInputEdit = document.getElementById("file-input-edit");
+    var previewContainerEdit = document.getElementById("preview-container-edit");
+
+    // Reset filesArray
+    filesArray = [];
+    // Clear the file input for the dropzone
+    fileInputEdit.value = '';
+    // Clear the preview container
+    previewContainerEdit.innerHTML = '';
+
+
+    //// Reset the files array
+    //filesArray = [];
+
+    //// Clear the file input field
+    //$('#file-input-edit').val('');  // This clears the input field
+
+    //// Clear the file input files list using DataTransfer
+    //var dataTransfer = new DataTransfer();
+    //$('#file-input-edit')[0].files = dataTransfer.files;  // Reset file input
+
+    //// Clear the preview container
+    //$('#preview-container-edit').empty();  // Clear any previewed images
+}
+
+
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -486,21 +507,35 @@ function onEditButtonClick() {
     var files = $('#file-input-edit')[0].files;
     var isMajorDefect = document.getElementById('majorDefectCheckboxEdit').checked;
 
-    // Get hidden input values
     var projectId = document.getElementById('hdProject').value;
     var unitId = document.getElementById('hdUnitId').value;
     var seq = document.getElementById('hdSeq').value;
 
+    // Check required fields
     if (!defectAreaId) {
-        showErrorAlert('คำเตือน!', 'กรุณาเลือกตำแหน่ง');
+        showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาเลือกตำแหน่ง');
         return;
     }
     if (!defectTypeId) {
-        showErrorAlert('คำเตือน!', 'กรุณาเลือกหมวดงาน');
+        showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาเลือกหมวดงาน');
         return;
     }
     if (!defectDescriptionId) {
-        showErrorAlert('คำเตือน!', 'กรุณาเลือกรายการ defect');
+        showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาเลือกรายการ defect');
+        return;
+    }
+
+/*    debugger*/
+
+    var oldImagesCount = $('#imagePreview2 .position-relative').length;
+    //var newImagesCount = $('#preview-container-edit .preview-image').length;
+    var newImagesCount = files.length;
+    var totalImagesCount = oldImagesCount + newImagesCount;
+
+/*    debugger*/
+
+    if (totalImagesCount > 5) {
+        showErrorAlertNotCloseModal('คำเตือน!', 'คุณสามารถอัปโหลดรูปภาพได้ไม่เกิน 5 รูปต่อรายการ');
         return;
     }
 
@@ -530,42 +565,140 @@ function onEditButtonClick() {
         success: function (response) {
             Swal.close();
             if (response.success) {
-                showFixedButton() 
+                showFixedButton();
+                fetchUpdatedList();
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
+                // Close the modal after success
+                var editModal = bootstrap.Modal.getInstance(document.getElementById('Edit-qc5'));
+                editModal.hide();
+
+               // window.location.reload();
             } else {
-                showErrorAlert('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+                showErrorAlertNotCloseModal('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
             }
         },
         error: function (xhr, status, error) {
             Swal.close();
-            showErrorAlert('เกิดข้อผิดพลาด!', error);
+            showErrorAlertNotCloseModal('เกิดข้อผิดพลาด!', error);
         }
     });
 }
 
 
+
+
+//document.addEventListener("DOMContentLoaded", function () {
+
+//    var dropZone = document.getElementById("drop-zone-edit");
+//    var fileInput = document.getElementById("file-input-edit");
+//    var previewContainer = document.getElementById("preview-container-edit");
+//    var filesArray = [];
+
+//    // Set the max file count limit
+//    const MAX_FILE_COUNT = 99;
+
+//    dropZone.addEventListener("click", function (e) {
+//        if (e.target.classList.contains("remove-button")) {
+//            return;
+//        }
+//        fileInput.click();
+//    });
+
+//    fileInput.addEventListener("change", function () {
+//        if (fileInput.files.length) {
+//            addFilesToPreview(fileInput.files);
+//        }
+//    });
+
+//    dropZone.addEventListener("dragover", function (e) {
+//        e.preventDefault();
+//        dropZone.classList.add("drop-zone--over");
+//    });
+
+//    dropZone.addEventListener("dragleave", function () {
+//        dropZone.classList.remove("drop-zone--over");
+//    });
+
+//    dropZone.addEventListener("drop", function (e) {
+//        e.preventDefault();
+//        addFilesToPreview(e.dataTransfer.files);
+//    });
+
+//    function addFilesToPreview(files) {
+
+//        debugger
+
+//        Array.from(files).forEach(file => {
+//            if (filesArray.length < MAX_FILE_COUNT) {
+//                if (!filesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
+//                    filesArray.push(file);
+//                    const reader = new FileReader();
+//                    reader.readAsDataURL(file);
+//                    reader.onload = function (event) {
+//                        const img = document.createElement("img");
+//                        img.src = event.target.result;
+//                        const previewImage = document.createElement("div");
+//                        previewImage.className = "col-4 preview-image";
+
+//                        const removeButton = document.createElement("button");
+//                        removeButton.className = "remove-button";
+//                        removeButton.innerHTML = "&times;";
+//                        removeButton.addEventListener("click", function (e) {
+//                            e.stopPropagation();
+//                            filesArray = filesArray.filter(f => f !== file);
+//                            updateFileInput();
+//                            previewImage.remove();
+//                        });
+
+//                        previewImage.appendChild(img);
+//                        previewImage.appendChild(removeButton);
+//                        previewContainer.appendChild(previewImage);
+//                    };
+//                }
+//                debugger
+//            }
+//        });
+//        updateFileInput();
+//    }
+
+//    function updateFileInput() {
+
+//        debugger
+
+//        fileInput.value = '';
+
+//        const dataTransfer = new DataTransfer();
+//        filesArray.forEach(file => dataTransfer.items.add(file));
+//        fileInput.files = dataTransfer.files;
+
+//        debugger
+//    }
+//});
+
 document.addEventListener("DOMContentLoaded", function () {
     var dropZone = document.getElementById("drop-zone-edit");
     var fileInput = document.getElementById("file-input-edit");
     var previewContainer = document.getElementById("preview-container-edit");
-    var filesArray = [];
+    var filesArray = []; // Array to keep track of all files
 
     // Set the max file count limit
     const MAX_FILE_COUNT = 5;
 
+    // When the drop zone is clicked, trigger the file input
     dropZone.addEventListener("click", function (e) {
-        if (e.target.classList.contains("remove-button")) {
-            return;
+        if (!e.target.classList.contains("remove-button")) {
+            fileInput.click();
         }
-        fileInput.click();
     });
 
+    // Handle file selection via file input
     fileInput.addEventListener("change", function () {
         if (fileInput.files.length) {
             addFilesToPreview(fileInput.files);
         }
     });
 
+    // Handle drag and drop
     dropZone.addEventListener("dragover", function (e) {
         e.preventDefault();
         dropZone.classList.add("drop-zone--over");
@@ -577,50 +710,60 @@ document.addEventListener("DOMContentLoaded", function () {
 
     dropZone.addEventListener("drop", function (e) {
         e.preventDefault();
+        dropZone.classList.remove("drop-zone--over");
         addFilesToPreview(e.dataTransfer.files);
     });
 
+    // Add files to the preview and handle file removal
     function addFilesToPreview(files) {
         Array.from(files).forEach(file => {
             if (filesArray.length < MAX_FILE_COUNT) {
                 if (!filesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
                     filesArray.push(file);
+
                     const reader = new FileReader();
                     reader.readAsDataURL(file);
                     reader.onload = function (event) {
+                        // Create a new image element
                         const img = document.createElement("img");
                         img.src = event.target.result;
+
+                        // Create a preview container for the image
                         const previewImage = document.createElement("div");
                         previewImage.className = "col-4 preview-image";
 
+                        // Create the remove button
                         const removeButton = document.createElement("button");
                         removeButton.className = "remove-button";
                         removeButton.innerHTML = "&times;";
                         removeButton.addEventListener("click", function (e) {
                             e.stopPropagation();
+                            // Remove the file from the filesArray
                             filesArray = filesArray.filter(f => f !== file);
+                            // Update the file input and the preview
                             updateFileInput();
-                            previewImage.remove();
+                            previewImage.remove(); // Remove the image preview
                         });
 
                         previewImage.appendChild(img);
                         previewImage.appendChild(removeButton);
-                        previewContainer.appendChild(previewImage);
+                        previewContainer.appendChild(previewImage); // Add the image preview to the container
                     };
                 }
             }
         });
-        updateFileInput();
+        updateFileInput(); // Update the file input with the new list of files
     }
 
+    // Update the file input with the files in the filesArray
     function updateFileInput() {
         fileInput.value = '';
-
         const dataTransfer = new DataTransfer();
         filesArray.forEach(file => dataTransfer.items.add(file));
         fileInput.files = dataTransfer.files;
     }
 });
+
 
 function RemoveImage(resourceID) {
     // Confirmation alert before proceeding
@@ -702,7 +845,7 @@ function onRemoveQC5ButtonClick() {
                     if (response.success) {
                         // Success alert and reload the page
                         showSuccessAlert('สำเร็จ!', 'ลบข้อมูลสำเร็จ', function () {
-                            window.location.reload();
+                            fetchUpdatedList();
                         });
                     } else {
                         showErrorAlert('ลบข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการลบข้อมูล');
@@ -832,19 +975,18 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function saveUnitQC5() {
-    showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
+    
     var QCUnitCheckListID = document.getElementById('hdQC5UnitChecklistID').value;
     var QCUnitCheckListActionID = document.getElementById('hdQC5UnitChecklistActionID').value;
-    var QCStatusID = selectedRadioQC5Status;  // Ensure this value is set
+    var QCStatusID = selectedRadioQC5Status;
     var ActionType = 'save';
     var QCRemark = document.getElementById('QC5Remark').value;
     var files = $('#file-input-save-submit')[0].files;
-    // var signData = unitEquipment.getSignatureData();  
 
     var formData = new FormData();
     formData.append('QCUnitCheckListID', QCUnitCheckListID);
     formData.append('QCUnitCheckListActionID', QCUnitCheckListActionID);
-    formData.append('QCStatusID', QCStatusID);  // Ensure this is the correct value
+    formData.append('QCStatusID', QCStatusID);
     formData.append('ActionType', ActionType);
     formData.append('QCRemark', QCRemark);
 
@@ -853,13 +995,7 @@ function saveUnitQC5() {
         formData.append('Images', files[i]);
     }
 
-    //if (signData) {
-    //    var signatureData = {
-    //        MimeType: signData.MimeType,
-    //        StorageBase64: signData.StorageBase64
-    //    };
-    //    formData.append('Sign', JSON.stringify(signatureData));
-    //}
+    showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
 
     $.ajax({
         url: baseUrl + 'QC5Check/SaveSubmitQC5UnitCheckList',
@@ -971,6 +1107,19 @@ function SubmitUnitQC5() {
         showErrorAlert('คำเตือน!', 'กรุณาระบุลายเซ็น');
         return;
     }
+
+    if (QCStatusID === "2" || QCStatusID === "3") {
+        // Access ImageQC5UnitList which was declared in the Razor view
+        if (ImageQC5UnitList.length + files.length === 0) {
+            showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุของการไม่ให้ผ่าน');
+            return;
+        }
+        else if (!QCRemark) {
+            showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุของการไม่ให้ผ่าน');
+            return;
+        }
+    }
+
 
     // Confirmation alert before proceeding
     showConfirmationAlert(
@@ -1097,7 +1246,6 @@ function radioChanged(id, value) {
                 toast: true  // Small popup in the corner
             });
 
-            // Fetch updated list
             fetchUpdatedList();  // Call the function to reload the list
             fetchUpdatedSummary();
         },
@@ -1164,8 +1312,8 @@ function fetchUpdatedSummary() {
 }
 
 
-
 function openModalUpdateDefectDetailQC(defectID) {
+
     $.ajax({
         url: baseUrl + 'QC5Check/GetQC5DefactEdit',
         type: 'GET',
@@ -1177,7 +1325,10 @@ function openModalUpdateDefectDetailQC(defectID) {
                 $('#preview-container-update').empty();  // Clear preview container
                 // Hide the fixed button
                 var fixedButton = document.querySelector('.fixedButton');
-                fixedButton.style.display = 'none';  // Hide the button
+                if (fixedButton) {
+                    // Only try to hide the button if it exists
+                    fixedButton.style.display = 'none';
+                } 
 
                 // Set the values for the text inputs
                 $('#UpQC5DefectID').val(response.DefectID);  // Set the DefectID
@@ -1186,9 +1337,43 @@ function openModalUpdateDefectDetailQC(defectID) {
                 $('#defectDescriptionText').val(response.DefectDescriptionName);  // Set the DefectDescription text
 
                 // Populate other fields in the modal
-                $('#commentTextareaupdate').val(response.Remark).prop('disabled', actionTypeEn === "submit");
+                if (actionTypeEn !== "submit") {
+                    if (response.Seq > response.RefSeq) {
+                        if (response.StatusID !== "27") {
+                            // Make the textarea editable (not disabled)
+                            $('#commentTextareaupdate').val(response.Remark).prop('disabled', false);
+                        } else {
+                            // Make the textarea disabled if StatusID is 27
+                            $('#commentTextareaupdate').val(response.Remark).prop('disabled', true);
+                        }
+                    } else {
+                        // Make the textarea disabled if Seq is not greater than RefSeq
+                        $('#commentTextareaupdate').val(response.Remark).prop('disabled', true);
+                    }
+                } else {
+                    // Disable the textarea if actionTypeEn is "submit"
+                    $('#commentTextareaupdate').val(response.Remark).prop('disabled', true);
+                }
+
                 $('#QC5DefectID').val(response.DefectID);
-                $('#majorDefectCheckboxupdate').prop('checked', response.IsMajorDefect).prop('disabled', actionTypeEn === "submit");
+                if (actionTypeEn !== "submit") {
+                    if (response.Seq > response.RefSeq) {
+                        if (response.StatusID !== "27") {
+                            // Enable and set the checkbox based on response.IsMajorDefect
+                            $('#majorDefectCheckboxupdate').prop('checked', response.IsMajorDefect).prop('disabled', false);
+                        } else {
+                            // Disable the checkbox if StatusID is 27
+                            $('#majorDefectCheckboxupdate').prop('checked', response.IsMajorDefect).prop('disabled', true);
+                        }
+                    } else {
+                        // Disable the checkbox if Seq is not greater than RefSeq
+                        $('#majorDefectCheckboxupdate').prop('checked', response.IsMajorDefect).prop('disabled', true);
+                    }
+                } else {
+                    // Disable the checkbox if actionTypeEn is "submit"
+                    $('#majorDefectCheckboxupdate').prop('checked', response.IsMajorDefect).prop('disabled', true);
+                }
+
 
                 // Clear existing images in the modal
                 $('#imagePreview3').empty();
@@ -1200,7 +1385,11 @@ function openModalUpdateDefectDetailQC(defectID) {
 
                         // Only show the RemoveImage button if actionTypeEn is not "submit"
                         if (actionTypeEn !== "submit") {
-                            removeButtonHTML = `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>`;
+                            if (response.Seq > response.RefSeq) {
+                                if (response.StatusID !== "27") {
+                                    removeButtonHTML = `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>`;
+                                }
+                            }
                         }
 
                         $('#imagePreview3').append(`
@@ -1212,17 +1401,25 @@ function openModalUpdateDefectDetailQC(defectID) {
                                     </div>
                                 `);
                     });
-
                     // Reinitialize the fslightbox after appending new content
                     refreshFsLightbox();
                 }
-
-                // Check if there are 5 or more images and hide the dropzone
-                //if ($('#imagePreview3 .position-relative').length >= 5) {
-                //    $('#drop-zone-update').hide(); 
-                //} else {
-                //    $('#drop-zone-update').show();
-                //}
+                debugger
+                if (response.Seq > response.RefSeq) {
+                    if (response.StatusID !== "27") {
+                        if ($('#imagePreview3 .position-relative').length >= 5) {
+                            $('#drop-zone-update').hide();
+                        } else {
+                            $('#drop-zone-update').show();
+                        }
+                    }
+                    else {
+                        $('#drop-zone-update').hide();
+                    }
+                }
+                else {
+                    $('#drop-zone-update').hide();
+                }
 
                 // Show the modal
                 var myModal = new bootstrap.Modal(document.getElementById('Update-detail-defect'));
