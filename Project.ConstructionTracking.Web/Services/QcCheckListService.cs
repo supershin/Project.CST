@@ -3,6 +3,9 @@ using Project.ConstructionTracking.Web.Models.MUserModel;
 using System.Transactions;
 using Project.ConstructionTracking.Web.Models.QCModel;
 using Project.ConstructionTracking.Web.Repositories;
+using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
+using Microsoft.CodeAnalysis;
+using System.Data;
 
 namespace Project.ConstructionTracking.Web.Services
 {
@@ -19,18 +22,21 @@ namespace Project.ConstructionTracking.Web.Services
 
 		dynamic SaveQcCheckList(SaveTransQCCheckListModel model, Guid userId, int roleID);
 		bool DeleteImage(Guid qcID, int? detailID, Guid resourceID, Guid userID);
-		bool SubmitQcCheckList(SubmitQcCheckListModel model, Guid userID, int roleID);
-
+        //string SubmitQcCheckList(SubmitQcCheckListModel model, Guid userID, int roleID);
+        SubmitQcCheckListModel SubmitQcCheckList(SaveTransQCCheckListModel model, Guid userID, int roleID);
     }
 	public class QcCheckListService : IQcCheckListService
     {
 		private readonly IQcCheckListRepo _qcCheckListRepo;
 		private readonly IMasterCommonRepo _masterCommonRepo;
+		private readonly IGeneratePDFRepo _generatePDFRepo;
         public QcCheckListService(IQcCheckListRepo qcCheckListRepo,
-            IMasterCommonRepo masterCommonRepo)
+            IMasterCommonRepo masterCommonRepo
+			, IGeneratePDFRepo generatePDFRepo)
 		{
 			_qcCheckListRepo = qcCheckListRepo;
 			_masterCommonRepo = masterCommonRepo;
+			_generatePDFRepo = generatePDFRepo;
 		}
 
         public MasterQcCheckListDetailResp GetMasterQcCheckList(Guid projectID, int qcTypeID)
@@ -178,7 +184,7 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
-        public bool SubmitQcCheckList(SubmitQcCheckListModel model, Guid userID, int roleID)
+        public SubmitQcCheckListModel SubmitQcCheckList(SaveTransQCCheckListModel model, Guid userID, int roleID)
         {
             TransactionOptions option = new TransactionOptions();
             option.Timeout = new TimeSpan(1, 0, 0);
@@ -186,11 +192,40 @@ namespace Project.ConstructionTracking.Web.Services
             {
                 try
                 {
-                    var resp = _qcCheckListRepo.SubmitQcCheckList(model, userID, roleID);
+                    var saveData = SaveQcCheckList(model, userID, roleID);
+
+                    SubmitQcCheckListModel submitModel = new SubmitQcCheckListModel()
+                    {
+                        QcID = saveData.QcID,
+                        ProjectID = saveData.ProjectID,
+                        UnitID = saveData.UnitID,
+                        CheckListID = saveData.CheckListID,
+                        QcTypeID = saveData.QcTypeID,
+                        Seq = saveData.Seq
+                    };
+
+                    var boolResp = _qcCheckListRepo.SubmitQcCheckList(submitModel, userID, roleID);
+
+					DataToGenerateModel data = new DataToGenerateModel()
+					{
+						ProjectID = submitModel.ProjectID,
+						UnitID = submitModel.UnitID,
+						QCUnitCheckListID = submitModel.QcID,
+						QCTypeID = submitModel.QcTypeID
+					};
+
+                    DataGenerateQCPDFResp getData = _generatePDFRepo.GetDataQC1To4ForGeneratePDF(data);
+
+					DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(model.ProjectID);
+
+					Guid guid = Guid.NewGuid();
+                    string pathUrl =  _generatePDFRepo.GenerateQCPDF2(guid, getData, genDocumentNo);
+
+					submitModel.DocumentUrl = pathUrl;
 
                     scope.Complete();
 
-                    return resp;
+					return submitModel;
                 }
                 catch (Exception ex)
                 {

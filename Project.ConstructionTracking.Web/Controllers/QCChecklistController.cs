@@ -176,22 +176,9 @@ namespace Project.ConstructionTracking.Web.Controllers
                 }
 
                 model.ApplicationPath = _hosting.ContentRootPath;
-                var saveData = _qcCheckListService.SaveQcCheckList(model, user, role);
-
-                SubmitQcCheckListModel submitModel = new SubmitQcCheckListModel()
-                {
-                    QcID = saveData.QcID,
-                    ProjectID = saveData.ProjectID,
-                    UnitID = saveData.UnitID,
-                    CheckListID = saveData.CheckListID,
-                    QcTypeID = saveData.QcTypeID,
-                    Seq = saveData.Seq
-                };
-
-                bool resultSubmit = _qcCheckListService.SubmitQcCheckList(submitModel, user, role);
+                SubmitQcCheckListModel resultSubmit = _qcCheckListService.SubmitQcCheckList(model, user, role);
                 var resultData = new SubmitQcCheckListModel();
-
-                if (resultSubmit) resultData = submitModel;
+                resultData = resultSubmit;
                     
                 return Json(
                           new

@@ -485,7 +485,7 @@
                 if (resp.success) {
                     Swal.fire({
                         title: 'Success!',
-                        text: 'ทำการลบข้อมูลสำเร็จ',
+                        text: 'ทำรายการสำเร็จ',
                         icon: 'success',
                         confirmButtonText: 'OK'
                     }).then((result) => {

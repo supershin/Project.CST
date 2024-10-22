@@ -28,6 +28,7 @@ namespace Project.ConstructionTracking.Web.Data
         [Column(TypeName = "datetime")]
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
+        public int? PassBySeq { get; set; }
 
         [ForeignKey("CheckListDetailID")]
         [InverseProperty("tr_QC_UnitCheckList_Detail")]
