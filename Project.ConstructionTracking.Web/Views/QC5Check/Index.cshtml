@@ -455,7 +455,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">แก้ไขข้อมูลรายการ</h5>
                     <input type="hidden" id="QC5DefectID" name="QC5DefectID">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="showFixedButton()"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="clearAllButton" onclick="showFixedButton()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-2 g-md-3">
@@ -529,7 +529,7 @@
                     @if (ViewBag.ActionTypeEn != "submit")
                     {
                         <button type="button" class="btn me-auto btn-danger" id="RemoveQC5Button" data-bs-dismiss="modal">ลบรายการนี้</button>
-                        <button type="button" class="btn btn-primary" id="EditButton" data-bs-dismiss="modal">บันทึก</button>
+                        <button type="button" class="btn btn-primary" id="EditButton">บันทึก</button>
                     }
                 </div>
             </div>
@@ -550,7 +550,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="modal fade" id="Update-detail-defect" tabindex="-1" aria-labelledby="Update-detail-defect-Label" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
         <div class="modal-dialog">
@@ -599,12 +598,6 @@
                             <div class="form-label">รายการ defect</div>
                             <input class="form-control" type="text" id="defectDescriptionText" placeholder="ความคิดเห็น" disabled>
                         </div>
-                        @*                         <div class="col-12">
-                        <h3>DefectArea: <small id="defectAreaText">text show</small></h3>
-                        <h3>DefectType: <small id="defectTypeText">text show</small></h3>
-                        <h3>DefectDescription: <small id="defectDescriptionText">text show</small></h3>
-                        </div> *@
-
                         <div class="col-12">
                             <div class="form-label">ความเห็น</div>
                             <textarea class="form-control" id="commentTextareaupdate" rows="2" placeholder="ความคิดเห็น"></textarea>
@@ -635,6 +628,9 @@
 @section scripts {
     <link href="~/lib/core-ui/signature-pad-master/css/signature-pad.css" />
     <script src="~/lib/core-ui/signature-pad-master/js/signature_pad.umd.js"></script>
+    <script type="text/javascript">
+        var ImageQC5UnitList = @Html.Raw(Json.Serialize(ViewBag.ImageQC5UnitList));
+    </script>
     <script src="~/js/pages/QC5Check.js?ver=@DateTime.Now.Ticks.ToString()"></script>
     <script>
 

@@ -166,6 +166,19 @@
                 });
             }
 
+            function showErrorAlertNotCloseModal(title, text) {
+                Swal.fire({
+                    title: title,
+                    text: text,
+                    icon: 'error',
+                    confirmButtonText: 'ตกลง',
+                    allowOutsideClick: false,  // Prevents clicking outside the modal to close it
+                    allowEscapeKey: false,     // Prevents closing the modal with the Escape key
+                    allowEnterKey: true        // Allows pressing Enter to confirm the alert
+                });
+            }
+
+
             function showSuccessAlert(title, text, callback) {
                 Swal.fire({
                     title: title,
