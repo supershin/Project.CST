@@ -192,7 +192,7 @@ namespace Project.ConstructionTracking.Web.Services
             {
                 try
                 {
-                    var saveData = SaveQcCheckList(model, userID, roleID);
+                    var saveData = _qcCheckListRepo.SaveQcCheckList(model, userID, roleID);
 
                     SubmitQcCheckListModel submitModel = new SubmitQcCheckListModel()
                     {
@@ -214,21 +214,21 @@ namespace Project.ConstructionTracking.Web.Services
 						QCTypeID = submitModel.QcTypeID
 					};
 
-                    DataGenerateQCPDFResp getData = _generatePDFRepo.GetDataQC1To4ForGeneratePDF(data);
+     //               DataGenerateQCPDFResp getData = _generatePDFRepo.GetDataQC1To4ForGeneratePDF(data);
 
-					DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(model.ProjectID);
+					//DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(model.ProjectID);
 
-					Guid guid = Guid.NewGuid();
-                    string pathUrl =  _generatePDFRepo.GenerateQCPDF2(guid, getData, genDocumentNo);
+					//Guid guid = Guid.NewGuid();
+     //               string pathUrl =  _generatePDFRepo.GenerateQCPDF2(guid, getData, genDocumentNo);
 
-					submitModel.DocumentUrl = pathUrl;
+					//submitModel.DocumentUrl = pathUrl;
 
                     scope.Complete();
 
 					return submitModel;
                 }
                 catch (Exception ex)
-                {
+                {					
                     throw ex;
                 }
                 finally
