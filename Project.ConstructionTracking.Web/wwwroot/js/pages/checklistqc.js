@@ -348,7 +348,9 @@ function validateCheckList() {
         var validDetail = validDetailElement.val().trim(); // Get the value
         var validImageElement = $(`#file-input-${id}`); // Get the input-file element
         var validImage = validImageElement.prop('files'); // Get the files
+        var hasImages = $(`img[id^="image-${id}-1"]`).attr('src') !== ''; // Loop through all images with IDs starting with 'image-'
 
+        debugger;
         if (result === 'notpass') {
             // Validate the description
             if (validDetail === "") {
@@ -359,12 +361,14 @@ function validateCheckList() {
             }
 
             // Validate the file input
-            if (validImage.length === 0) {
+            if (validImage.length === 0 && !hasImages) {
                 validImageElement.css('border-color', 'red');
                 isValid = false;
             } else {
                 validImageElement.css('border-color', ''); // Reset border color
             }
+
+
         } else {
             // Reset the border colors if 'notpass' is not selected
             validDetailElement.css('border-color', '');

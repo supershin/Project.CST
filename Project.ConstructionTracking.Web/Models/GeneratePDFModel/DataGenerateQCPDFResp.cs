@@ -5,6 +5,9 @@
         public HeaderQCPdfData? HeaderQCData { get; set; }
         public List<BodyQCPdfListDefectData>? BodyListDefectQCData { get; set; }
         public SummaryQCPdfData? SummaryQCData { get; set; }
+
+        //add model qc1-4
+        public BodyQCPdfData? BodyQCPdf { get; set; }
         public FooterQCPdfData? FooterQCData { get; set; }
     }
     public class HeaderQCPdfData
@@ -20,6 +23,8 @@
         public string? Seq { get; set; }
         public int? QCStatus { get; set; }
         public string? QCStatusText { get; set; }
+
+        public MainInfo? Info { get; set; } = new MainInfo();
     }
     public class BodyQCPdfListDefectData
     {
@@ -50,11 +55,57 @@
     }
     public class FooterQCPdfData
     {
-
         public string? QCSignaturePathImageUrl { get; set; }
         public string? PESignaturePathImageUrl { get; set; }
-        
     }
 
+    public class BodyQCPdfData
+    {
+        public List<QcCheckListDetailData> QcCheckListDetailDatas { get; set; } = new List<QcCheckListDetailData>();
+    }
 
+    public class QcCheckListDetailData
+    {
+        public int? DetailID { get; set; }
+        public string DetailName { get; set; }
+        public int? StatusID { get; set; }
+        public string? DetailRemark { get; set; }
+        public int? PassBySeq { get; set; }
+
+        public List<DetailImage> DetailImages { get; set; } = new List<DetailImage>();
+        public List<ParentDetailData> ParentDetailDatas { get; set; } = new List<ParentDetailData>();
+    }
+
+    public class DetailImage
+    {
+        public string FilePath { get; set; }
+    }
+
+    public class ParentDetailData
+    {
+        public int? ParentDetailID { get; set; }
+        public string ParentDetailName { get; set; }
+        public int? ParentStatusID { get; set; }
+        public string? ParentDetailRemark { get; set; }
+        public int? ParentPassBySeq { get; set; }
+
+        public List<ParentImage> ParentImages { get; set; }
+    }
+
+    public class ParentImage
+    {
+        public string FilePath { get; set; }
+    }
+
+    public class MainInfo
+    {
+        public string MainRemark { get; set; }
+        public List<MainImage> MainImages { get; set; } = new List<MainImage>();
+    }
+
+    public class MainImage
+    {
+        public string FilePath { get; set; }
+    }
 }
+

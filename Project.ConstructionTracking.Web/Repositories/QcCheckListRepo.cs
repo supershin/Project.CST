@@ -612,9 +612,15 @@ namespace Project.ConstructionTracking.Web.Repositories
                     createNewDetail.CheckListID = createNewQcCheckList.CheckListID;
                     createNewDetail.CheckListDetailID = dataList.CheckListDetailID;
                     if (dataList.ConditionPass)
+                    {
                         createNewDetail.StatusID = SystemConstant.Qc_CheckList_Status.PASS;
-                    else if(dataList.ConditionNotPass)
+                        createNewDetail.PassBySeq = createNewQcCheckList.Seq;
+                    }    
+                    else if (dataList.ConditionNotPass)
+                    {
                         createNewDetail.StatusID = SystemConstant.Qc_CheckList_Status.NOTPASS;
+                        createNewDetail.PassBySeq = 0;
+                    }
                     createNewDetail.Remark = dataList.DetailRemark;
                     createNewDetail.UpdateDate = DateTime.Now;
                     createNewDetail.UpdateBy = userID;
@@ -702,9 +708,15 @@ namespace Project.ConstructionTracking.Web.Repositories
                             createNewDetail.CheckListID = updateQcCheckList.CheckListID;
                             createNewDetail.CheckListDetailID = dataDetail.CheckListDetailID;
                             if (dataDetail.ConditionPass)
+                            {
                                 createNewDetail.StatusID = SystemConstant.Qc_CheckList_Status.PASS;
+                                createNewDetail.PassBySeq = updateQcCheckList.Seq;
+                            }                                
                             else if (dataDetail.ConditionNotPass)
+                            {
                                 createNewDetail.StatusID = SystemConstant.Qc_CheckList_Status.NOTPASS;
+                                createNewDetail.PassBySeq = 0;
+                            }
                             else
                                 createNewDetail.StatusID = null;
                             createNewDetail.Remark = dataDetail.DetailRemark;
@@ -722,11 +734,18 @@ namespace Project.ConstructionTracking.Web.Repositories
                         else
                         {
                             if (dataDetail.ConditionPass)
+                            {
                                 qcCheckListDetail.StatusID = SystemConstant.Qc_CheckList_Status.PASS;
+                                qcCheckListDetail.PassBySeq = updateQcCheckList.Seq;
+                            }
                             else if (dataDetail.ConditionNotPass)
+                            {
                                 qcCheckListDetail.StatusID = SystemConstant.Qc_CheckList_Status.NOTPASS;
+                                qcCheckListDetail.PassBySeq = 0;
+                            }
                             else
                                 qcCheckListDetail.StatusID = null;
+                                
                             qcCheckListDetail.Remark = dataDetail.DetailRemark;
                             qcCheckListDetail.UpdateDate = DateTime.Now;
                             qcCheckListDetail.UpdateBy = userID;

@@ -328,9 +328,10 @@
                                                         {
                                                             @foreach (var image in getQcDetail.Images)
                                                             {
+                                                                int i = 1;
                                                                 <div class="position-relative d-inline-block mb-3">
                                                                     <a data-fslightbox="gallery" href="@baseUrl@image.FilePath">
-                                                                        <img src="@baseUrl@image.FilePath" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                                                        <img id="image-@detail.CheckListDetailID-@i" src="@baseUrl@image.FilePath" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                                                     </a>
                                                                     @if (Model.QcCheckList.QcActionType == SystemConstant.ActionType.SAVE)
                                                                     {
@@ -402,11 +403,12 @@
                                                         <div class="col-12">
                                                             @if (getQcDetail2?.Images != null && getQcDetail2.Images.Any())
                                                             {
+                                                                int i = 1;
                                                                 @foreach (var image in getQcDetail2.Images)
                                                                 {
                                                                     <div class="position-relative d-inline-block mb-3">
                                                                         <a data-fslightbox="gallery" href="@baseUrl@image.FilePath">
-                                                                            <img src="@baseUrl@image.FilePath" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                                                            <img id="image-@parentDetail.CheckListDetailID-@i" src="@baseUrl@image.FilePath" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                                                         </a>
                                                                         @if (Model.QcCheckList.QcActionType == SystemConstant.ActionType.SAVE)
                                                                         {

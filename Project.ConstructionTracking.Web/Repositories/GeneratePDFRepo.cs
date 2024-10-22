@@ -18,6 +18,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
 using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
+using System.Collections.Generic;
+using System.Drawing;
+using Microsoft.EntityFrameworkCore;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -32,6 +35,10 @@ namespace Project.ConstructionTracking.Web.Repositories
         bool SaveFileDocument(DataSaveTableResource model);
 
         string GenerateQCPDF(Guid guid, DataGenerateQCPDFResp dataForGenPdf, DataDocumentModel genDocumentNo);
+
+        //qc1-4
+        DataGenerateQCPDFResp GetDataQC1To4ForGeneratePDF(DataToGenerateModel model);
+        string GenerateQCPDF2(Guid guid, DataGenerateQCPDFResp dataQCGenerate, DataDocumentModel genDocumentNo);
     }
 
 	public class GeneratePDFRepo : IGeneratePDFRepo
@@ -1042,6 +1049,667 @@ namespace Project.ConstructionTracking.Web.Repositories
                         if (System.IO.File.Exists(pathPe))
                         {
                             signPeStream = new FileStream(pathPe, FileMode.Open, FileAccess.Read);
+                        }
+
+                        // Define columns for signatures
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.RelativeColumn(6);
+                            columns.RelativeColumn(6);
+                        });
+
+                        // Engineer Signature
+                        if (signPeStream != null)
+                        {
+                            table.Cell().Row(1).Column(1).AlignCenter().Width(60).Image(signPeStream); // PE signature
+                        }
+                        else
+                        {
+                            table.Cell().Row(1).Column(1).AlignCenter().Text("PE Signature Missing");
+                        }
+                        table.Cell().Row(2).Column(1).AlignCenter().Text("วิศวกรผู้ควบคุมงาน");
+                        table.Cell().Row(3).Column(1).AlignCenter().Text("( " + dataQCGenerate.HeaderQCData?.PEInspectorName + " )");
+
+                        // QC Signature
+                        if (signQcStream != null)
+                        {
+                            table.Cell().Row(1).Column(2).AlignCenter().Width(60).Image(signQcStream); // QC signature
+                        }
+                        else
+                        {
+                            table.Cell().Row(1).Column(2).AlignCenter().Text("QC Signature Missing");
+                        }
+                        table.Cell().Row(2).Column(2).AlignCenter().Text("Quality Control (QC)");
+                        table.Cell().Row(3).Column(2).AlignCenter().Text("( " + dataQCGenerate.HeaderQCData?.QCInspectorName + " )");
+
+                        // Page number in column 2
+                        table.Cell().Row(4).Column(2).AlignRight().Text(text =>
+                        {
+                            text.Span("Page ");
+                            text.CurrentPageNumber();
+                            text.Span(" of ");
+                            text.TotalPages();
+                        });
+
+                        // Ensure to close the file streams after usage
+                        signQcStream?.Dispose();
+                        signPeStream?.Dispose();
+                    });
+                });
+            });
+
+            string returnPath = "Upload/temp/" + "QCDocumentNo" + "-" + guid + ".pdf";
+            document.GeneratePdf(returnPath);
+
+            return returnPath;
+        }
+
+        public DataGenerateQCPDFResp GetDataQC1To4ForGeneratePDF(DataToGenerateModel model)
+        {
+            var queryHeaderFooter = (from trQC in _context.tr_QC_UnitCheckList
+                                     join tmExQcType in _context.tm_Ext on trQC.QCTypeID equals tmExQcType.ID
+                                     join tmp in _context.tm_Project on trQC.ProjectID equals tmp.ProjectID
+                                     join tmu in _context.tm_Unit on trQC.UnitID equals tmu.UnitID
+                                     join tmpeunit in _context.tr_PE_Unit on tmu.UnitID equals tmpeunit.UnitID
+                                     join tmcv in _context.tm_CompanyVendor on tmu.CompanyVendorID equals tmcv.ID
+                                     join trfqc in _context.tr_Form_QCCheckList on trQC.CheckListID equals trfqc.CheckListID
+                                     join tmf in _context.tm_Form on trfqc.FormID equals tmf.ID
+                                     join tmuserqc in _context.tm_User on trQC.UpdateBy equals tmuserqc.ID
+                                     join tmuserpe in _context.tm_User on tmpeunit.UserID equals tmuserpe.ID
+                                     join truserresourc in _context.tr_UserResource.Where(ur => ur.FlagActive == true) on trQC.UpdateBy equals truserresourc.UserID into truserresourcJoin
+                                     from truserresourc in truserresourcJoin.DefaultIfEmpty()
+                                     join pesignpath in _context.tm_Resource on trQC.PESignResourceID equals pesignpath.ID
+                                     join qcsignpath in _context.tm_Resource on truserresourc.ResourceID equals qcsignpath.ID
+                                     where trQC.ProjectID == model.ProjectID
+                                        && trQC.UnitID == model.UnitID
+                                        && trQC.ID == model.QCUnitCheckListID
+                                     select new
+                                     {
+                                         QCName = tmExQcType.Name,
+                                         ProjectName = tmp.ProjectName,
+                                         UnitCode = tmu.UnitCode,
+                                         CompanyVenderName = tmcv.Name,
+                                         FormName = tmf.Name,
+                                         QCInspectorName = tmuserqc.FirstName + " " + tmuserqc.LastName,
+                                         PEInspectorName = tmuserpe.FirstName + " " + tmuserpe.LastName,
+                                         QCStatus = trQC.QCStatusID,
+                                         Seq = trQC.Seq,
+                                         UpdateDate = trQC.UpdateDate,
+                                         QCSignPath = qcsignpath.FilePath,
+                                         PESignPath = pesignpath.FilePath,
+                                         Info = (from trqcla in _context.tr_QC_UnitCheckList_Action
+                                                 where trqcla.QCUnitCheckListID == model.QCUnitCheckListID
+                                                 select new
+                                                 {
+                                                     Remark = trqcla.Remark,
+                                                     MainImage = (from trqclr in _context.tr_QC_UnitCheckList_Resource 
+                                                                  join tmr in _context.tm_Resource on trqclr.ResourceID equals tmr.ID
+                                                                  where trqclr.QCUnitCheckListID == trqcla.QCUnitCheckListID
+                                                                  && trqclr.QCUnitCheckListDetailID == null && trqclr.FlagActive == true
+                                                                  select new
+                                                                  {
+                                                                      FilePath = tmr.FilePath
+                                                                  }).ToList()
+                                                 }).FirstOrDefault()
+                                     }).FirstOrDefault();
+
+            List<MainImage> mainImages = new List<MainImage>();
+            MainInfo info = new MainInfo();
+            if (queryHeaderFooter.Info != null)
+            {
+                if(queryHeaderFooter.Info.MainImage != null)
+                {
+                    foreach (var i in queryHeaderFooter.Info.MainImage)
+                    {
+                        MainImage image = new MainImage()
+                        {
+                            FilePath = i.FilePath
+                        };
+
+                        mainImages.Add(image);
+                    };
+                }
+
+                info = new MainInfo()
+                {
+                    MainRemark = queryHeaderFooter.Info.Remark,
+                    MainImages = mainImages
+                };
+            }
+
+
+            DataGenerateQCPDFResp resp = new DataGenerateQCPDFResp()
+            {
+                HeaderQCData = new HeaderQCPdfData()
+                {
+                    QCName = queryHeaderFooter.QCName,
+                    ProjectName = queryHeaderFooter.ProjectName,
+                    UnitCode = queryHeaderFooter.UnitCode,
+                    CompanyVenderName = queryHeaderFooter.CompanyVenderName,
+                    FormName = queryHeaderFooter.FormName,
+                    QCInspectorName = queryHeaderFooter.QCInspectorName,
+                    PEInspectorName = queryHeaderFooter.PEInspectorName,
+                    Seq = FormatExtension.NullToString(queryHeaderFooter.Seq),
+                    UpdateDate = FormatExtension.FormatDateToDayMonthNameYearTime(queryHeaderFooter.UpdateDate),
+                    QCStatus = queryHeaderFooter.QCStatus,
+                    QCStatusText = queryHeaderFooter.QCStatus == SystemConstant.UnitQCStatus.Pass ? SystemConstant.UnitQCStatusText.Pass
+                                 : queryHeaderFooter.QCStatus == SystemConstant.UnitQCStatus.NotPass ? SystemConstant.UnitQCStatusText.NotPass
+                                 : queryHeaderFooter.QCStatus == SystemConstant.UnitQCStatus.IsNotReadyInspect ? SystemConstant.UnitQCStatusText.IsNotReadyInspect
+                                 : queryHeaderFooter.QCStatus == SystemConstant.UnitQCStatus.IsPassCondition ? SystemConstant.UnitQCStatusText.IsPassCondition
+                                 : queryHeaderFooter.QCStatus == SystemConstant.UnitQCStatus.InProgress ? SystemConstant.UnitQCStatusText.InProgress
+                                 : "ไม่พบสถานะ",
+                    Info = info
+                },
+                BodyQCPdf = new BodyQCPdfData(),
+                FooterQCData = new FooterQCPdfData()
+                {
+                    QCSignaturePathImageUrl = queryHeaderFooter.QCSignPath,
+                    PESignaturePathImageUrl = queryHeaderFooter.PESignPath
+                },
+            };
+            tm_Project? project = _context.tm_Project
+                .Where(o => o.ProjectID == model.ProjectID && o.FlagActive == true)
+                .FirstOrDefault();
+
+            // get data master
+            var qcCheckList = (from trqcl in _context.tr_QC_UnitCheckList
+                               join trqcla in _context.tr_QC_UnitCheckList_Action on trqcl.ID equals trqcla.QCUnitCheckListID
+                               join tmqcl in _context.tm_QC_CheckList on trqcl.QCTypeID equals tmqcl.QCTypeID
+                               where tmqcl.ProjectTypeID == project.ProjectTypeID
+                               && trqcl.QCTypeID == model.QCTypeID && trqcl.FlagActive == true
+                               && trqcla.ActionType == SystemConstant.ActionType.SUBMIT
+                               && trqcl.ID == model.QCUnitCheckListID
+                               select new
+                               {
+                                   QCCheckListID = trqcl.ID,
+                                   CheckListID = trqcl.CheckListID,
+                                   QCAction = trqcla.ActionType,
+                                   QCActionDate = trqcla.ActionDate
+                               }).FirstOrDefault();
+
+            var getDetailCheckList = (from tmqcld in _context.tm_QC_CheckListDetail
+                                      join trqcld in _context.tr_QC_UnitCheckList_Detail
+                                     .Where(o => o.QCUnitCheckListID == qcCheckList.QCCheckListID)
+                                          on tmqcld.ID equals trqcld.CheckListDetailID into transDetail
+                                      from trqcld in transDetail.DefaultIfEmpty() // Left join
+                                      where tmqcld.QCCheckListID == qcCheckList.CheckListID
+                                            && tmqcld.FlagActive == true
+                                            && tmqcld.ParentID == null
+                                      select new
+                                      {
+                                          TmCheckListDetail = tmqcld,
+                                          TrCheckListDetail = trqcld,
+                                      }).ToList();
+            List<QcCheckListDetailData> listDetail = new List<QcCheckListDetailData>();
+            foreach (var detail in getDetailCheckList)
+            {
+                var getParentDetail = (from tmcld in _context.tm_QC_CheckListDetail
+                                       join trqcld in _context.tr_QC_UnitCheckList_Detail
+                                       .Where(o => o.QCUnitCheckListID == qcCheckList.QCCheckListID)
+                                           on tmcld.ID equals trqcld.CheckListDetailID into transDetail
+                                       from trqcld in transDetail.DefaultIfEmpty() // Left Join 
+                                       where tmcld.ParentID == detail.TmCheckListDetail.ID
+                                       select new
+                                       {
+                                           TmCheckListParentDetail = tmcld,
+                                           TrCheckListParentDetail = trqcld
+                                       }).ToList();
+
+                var getListImageDetail = (from trqclr in _context.tr_QC_UnitCheckList_Resource
+                                          join tmr in _context.tm_Resource on trqclr.ResourceID equals tmr.ID
+                                          where trqclr.QCUnitCheckListDetailID == detail.TrCheckListDetail.ID
+                                          && trqclr.QCUnitCheckListID == qcCheckList.QCCheckListID
+                                          select new
+                                          {
+                                              DetailImageFilePath = tmr.FilePath
+                                          }).ToList();
+
+                List<DetailImage> listDetailImage = new List<DetailImage>();
+
+                foreach(var image in getListImageDetail)
+                {
+                    DetailImage img = new DetailImage()
+                    {
+                        FilePath = image.DetailImageFilePath
+                    };
+
+                    listDetailImage.Add(img);
+                }
+
+                QcCheckListDetailData detailData = new QcCheckListDetailData()
+                {
+                    DetailID = detail.TrCheckListDetail.ID,
+                    DetailName = detail.TmCheckListDetail.Name,
+                    StatusID = detail.TrCheckListDetail.StatusID,
+                    DetailRemark = detail.TrCheckListDetail.Remark,
+                    PassBySeq = detail.TrCheckListDetail.PassBySeq,
+                    DetailImages = listDetailImage,
+                    ParentDetailDatas = new List<ParentDetailData>()
+                };
+
+                foreach (var parent in getParentDetail)
+                {
+
+                    var getListImageParent = (from trqclr in _context.tr_QC_UnitCheckList_Resource
+                                              join tmr in _context.tm_Resource on trqclr.ResourceID equals tmr.ID
+                                              where trqclr.QCUnitCheckListDetailID == parent.TrCheckListParentDetail.ID
+                                              && trqclr.QCUnitCheckListID == qcCheckList.QCCheckListID
+                                              select new
+                                              {
+                                                  ParentImageFilePath = tmr.FilePath
+                                              }).ToList();
+
+                    List<ParentImage> listParentImage = new List<ParentImage>();
+                    foreach(var image in getListImageParent)
+                    {
+                        ParentImage img = new ParentImage()
+                        {
+                            FilePath = image.ParentImageFilePath,
+                        };
+
+                        listParentImage.Add(img);
+                    }
+
+                    ParentDetailData parentData = new ParentDetailData()
+                    {
+                        ParentDetailID = parent.TrCheckListParentDetail.ID,
+                        ParentDetailName = detail.TmCheckListDetail.Name,
+                        ParentStatusID = detail.TrCheckListDetail.StatusID,
+                        ParentDetailRemark = detail.TrCheckListDetail.Remark,
+                        ParentPassBySeq = detail.TrCheckListDetail.PassBySeq,
+                        ParentImages = listParentImage,
+                    };
+
+                    detailData.ParentDetailDatas.Add(parentData);
+                }
+
+                listDetail.Add(detailData);
+            }
+
+            resp.BodyQCPdf.QcCheckListDetailDatas = listDetail;
+
+            return resp;
+        }
+
+        public string GenerateQCPDF2(Guid guid, DataGenerateQCPDFResp dataQCGenerate, DataDocumentModel genDocumentNo)
+        {
+            QuestPDF.Settings.License = LicenseType.Community;
+            var fontPath = _hosting.ContentRootPath + "/wwwroot/lib/fonts/BrowalliaUPC.ttf";
+
+            FontManager.RegisterFont(System.IO.File.OpenRead(fontPath));
+
+            var imageHeader = Directory.GetCurrentDirectory() + "/wwwroot/img/img1.png";
+            var imageBox = Directory.GetCurrentDirectory() + "/wwwroot/img/box.png";
+            var imageCheckBox = Directory.GetCurrentDirectory() + "/wwwroot/img/checkbox.png";
+            var imageCheck = Directory.GetCurrentDirectory() + "/wwwroot/img/check.png";
+            var imageQCPass = Directory.GetCurrentDirectory() + "/wwwroot/img/QCpass.jpg";
+            var imageQCPassWithCondition = Directory.GetCurrentDirectory() + "/wwwroot/img/QCPWC.jpg";
+
+            var document = QuestPDF.Fluent.Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.MarginTop(1, Unit.Centimetre);
+                    page.MarginBottom(1, Unit.Centimetre);
+                    page.MarginLeft(1, Unit.Centimetre);
+                    page.MarginRight(1, Unit.Centimetre);
+
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(16));
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(TextStyle
+                               .Default
+                               .FontFamily("BrowalliaUPC")
+                               .FontSize(12));
+
+                    page.Header().Column(column =>
+                    {
+                        column.Item().Column(col1 =>
+                        {
+                            col1.Item().PaddingVertical(5).Width(150).Image(imageHeader);
+                        });
+
+                        column.Item().Border(1).Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(2);
+                            });
+
+
+                            table.Cell().Row(1).Column(1).ColumnSpan(4).AlignLeft().Text(" ผลการตรวจ " + dataQCGenerate.HeaderQCData?.QCName).FontSize(20).Bold();
+                            if (dataQCGenerate.HeaderQCData?.QCStatus == SystemConstant.UnitQCStatus.Pass)
+                            {
+                                table.Cell().Row(1).Column(4).RowSpan(4).AlignMiddle().Width(80).Image(imageQCPass);
+                            }
+
+                            table.Cell().Row(1).Column(6).ColumnSpan(1).AlignLeft().Text("ครั้งที่ " + dataQCGenerate.HeaderQCData?.Seq).FontSize(20).Bold();
+
+                            table.Cell().Row(2).Column(1).ColumnSpan(2).AlignLeft().Text(text =>
+                            {
+                                text.Span("  ตรวจใน ");
+                                text.Span(dataQCGenerate.HeaderQCData?.FormName).Underline();
+                            });
+                            table.Cell().Row(2).Column(3).ColumnSpan(1).AlignLeft().Text(text =>
+                            {
+                                string checkboxSymbol = dataQCGenerate.HeaderQCData?.QCStatus == SystemConstant.UnitQCStatus.IsNotReadyInspect ? "☑" : "☐";
+                                text.Span(checkboxSymbol + " ").FontColor("#FF0000").FontSize(12);
+                                text.Span("ไม่พร้อมให้ตรวจ").FontColor("#FF0000").FontSize(12);
+                            });
+                            table.Cell().Row(2).Column(5).ColumnSpan(2).AlignLeft().Text(text =>
+                            {
+                                text.Span("วันที่ตรวจ ");
+                                text.Span(dataQCGenerate.HeaderQCData?.UpdateDate).Underline();
+                            });
+
+                            table.Cell().Row(3).Column(1).ColumnSpan(2).AlignLeft().Text(text =>
+                            {
+                                text.Span("  โครงการ ");
+                                text.Span(dataQCGenerate.HeaderQCData?.ProjectName).Underline();
+                            });
+                            table.Cell().Row(3).Column(3).ColumnSpan(2).AlignLeft().Text(text =>
+                            {
+                                text.Span("แปลงที่ ");
+                                text.Span(dataQCGenerate.HeaderQCData?.UnitCode).Underline();
+                            });
+                            table.Cell().Row(3).Column(5).ColumnSpan(2).AlignLeft().Text(text =>
+                            {
+                                text.Span("บริษัทผู้รับเหมา ");
+                                text.Span(dataQCGenerate.HeaderQCData?.CompanyVenderName).Underline();
+                            });
+
+                            table.Cell().Row(4).Column(1).ColumnSpan(2).AlignLeft().Text(text =>
+                            {
+                                text.Span("  วิศวกรผู้ควบคุมงาน ");
+                                text.Span(dataQCGenerate.HeaderQCData?.PEInspectorName).Underline();
+                            });
+                            table.Cell().Row(4).Column(3).ColumnSpan(2).AlignLeft().Text(text =>
+                            {
+                                text.Span("QC ผู้ตรวจสอบ ");
+                                text.Span(dataQCGenerate.HeaderQCData?.QCInspectorName).Underline();
+                            });
+                            table.Cell().Row(4).Column(5).ColumnSpan(2).AlignLeft().Text("เลขที่ใบตรวจ: " + genDocumentNo.documentNo);
+                        });
+                    });
+
+                    page.Content().Column(col1 =>
+                    {
+                        IContainer DefaultCellStyle(IContainer container, string backgroundColor)
+                        {
+                            return container
+                                .Border(1)
+                                .BorderColor(Colors.Black)
+                                .Background(backgroundColor)
+                                .PaddingVertical(1)
+                                .PaddingHorizontal(3)
+                                .AlignCenter()
+                                .AlignTop();
+                        }
+
+                        col1.Item().Table(table2 =>
+                        {
+                            table2.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(1); 
+                                columns.RelativeColumn(3); 
+                                columns.RelativeColumn(1); 
+                                columns.RelativeColumn(1); 
+                                columns.RelativeColumn(2); 
+                                columns.RelativeColumn(4); 
+                            });
+
+                            // Header row
+                            table2.Header(header =>
+                            {
+                                header.Cell().Element(CellStyle).Text("").FontSize(12).Bold();
+                                header.Cell().Element(CellStyle).Text("รายการตรวจ").FontSize(12).Bold();
+                                header.Cell().Element(CellStyle).Text("ผ่าน").FontSize(12).Bold();
+                                header.Cell().Element(CellStyle).Text("ไม่ผ่าน").FontSize(12).Bold();
+                                header.Cell().Element(CellStyle).Text("จำนวนครั้งที่ตรวจผ่าน").FontSize(12).Bold();
+                                header.Cell().Element(CellStyle).Text("ความเห็นเพิ่มเติม").FontSize(12).Bold();
+                            });
+
+                            int index = 1;
+                            foreach (var data in dataQCGenerate?.BodyQCPdf.QcCheckListDetailDatas)
+                            {
+                                table2.Cell().Row((uint)index).Column(1).Element(CellStyle).Text(index.ToString());  // Index column
+                                table2.Cell().Row((uint)index).Column(2).Element(CellStyle).AlignLeft().Text(data.DetailName).WrapAnywhere();
+                                if (dataQCGenerate.HeaderQCData?.QCStatus != SystemConstant.UnitQCStatus.IsNotReadyInspect)
+                                {
+                                    if(data.ParentDetailDatas != null)
+                                    {
+                                        int indexParent = index + 1;
+                                        foreach(var data2 in data.ParentDetailDatas)
+                                        {
+                                            table2.Cell().Row((uint)indexParent).Column(1).Element(CellStyle).Text(indexParent.ToString());  // Index column
+                                            table2.Cell().Row((uint)indexParent).Column(2).Element(CellStyle).AlignLeft().Text(data2.ParentDetailName).WrapAnywhere();
+                                            if (data2.ParentStatusID == SystemConstant.Qc_CheckList_Status.PASS)
+                                            {
+                                                table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text("✓"); // "ผ่าน" column (checked)
+                                                table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                                table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text(data2.ParentPassBySeq.ToString());
+                                            }
+                                            else
+                                            {
+                                                table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
+                                                table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("✓"); // "ไม่ผ่าน" column (checked)
+                                                if (data2.ParentPassBySeq == 0)
+                                                {
+                                                    table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("N/A");
+                                                }
+                                                else
+                                                {
+                                                    table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("");
+                                                }
+                                            }
+                                            table2.Cell().Row((uint)indexParent).Column(6).Element(CellStyle).AlignLeft().Text(data2.ParentDetailRemark);// ความเห็นเพิ่มเติม
+                                            indexParent++;
+                                        }
+                                        index = indexParent + 1;
+                                    }
+                                    else
+                                    {
+                                        if (data.StatusID == SystemConstant.Qc_CheckList_Status.PASS)
+                                        {
+                                            table2.Cell().Row((uint)index).Column(3).Element(CellStyle).Text("✓"); // "ผ่าน" column (checked)
+                                            table2.Cell().Row((uint)index).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                            table2.Cell().Row((uint)index).Column(5).Element(CellStyle).Text(data.PassBySeq.ToString());
+                                        }
+                                        else
+                                        {
+                                            table2.Cell().Row((uint)index).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
+                                            table2.Cell().Row((uint)index).Column(4).Element(CellStyle).Text("✓"); // "ไม่ผ่าน" column (checked)
+                                            if (data.PassBySeq == 0)
+                                            {
+                                                table2.Cell().Row((uint)index).Column(5).Element(CellStyle).Text("N/A");
+                                            }
+                                            else
+                                            {
+                                                table2.Cell().Row((uint)index).Column(5).Element(CellStyle).Text("");
+                                            }
+                                        }
+                                        table2.Cell().Row((uint)index).Column(6).Element(CellStyle).AlignLeft().Text(data.DetailRemark);      // ความเห็นเพิ่มเติม
+                                    
+                                    }
+
+                                }
+                                else
+                                {
+                                    table2.Cell().Row((uint)index).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
+                                    table2.Cell().Row((uint)index).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                    table2.Cell().Row((uint)index).Column(5).Element(CellStyle).Text("");
+                                    table2.Cell().Row((uint)index).Column(6).Element(CellStyle).Text("");
+                                }
+                                index++;
+                            }
+
+                            IContainer CellStyle(IContainer container) => DefaultCellStyle(container, Colors.White);
+                        });
+
+                        col1.Item().Column(col1 =>
+                        {
+                            col1.Item().PaddingVertical(5).LineHorizontal(1).LineColor(Colors.Grey.Medium);
+                        });
+
+                        col1.Item().Border(1).Table(table3 =>
+                        {
+                            table3.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(8);
+                                columns.RelativeColumn(4);
+                            });
+
+                            table3.Cell().Row(1).Column(1).ColumnSpan(2).AlignLeft().Text(" แสดงรูปรายการที่ไม่ผ่าน").Bold();
+                           
+                            if (dataQCGenerate.HeaderQCData?.QCStatus == SystemConstant.UnitQCStatus.IsNotReadyInspect)
+                            {
+                                table3.Cell().Row(2).Column(1).AlignCenter().Text("สภาพไม่พร้อมให้ตรวจ").BackgroundColor("#6ce4ff");
+                                table3.Cell().Row(2).Column(2).Text("ความเห็นเพิ่มเติม");
+                                if (dataQCGenerate.HeaderQCData.Info != null)
+                                {
+                                    // add image 
+                                    table3.Cell().Row(3).Column(1).Grid(grid =>
+                                    {
+                                        grid.VerticalSpacing(15);
+                                        grid.HorizontalSpacing(15);
+                                        grid.AlignLeft();
+                                        grid.Columns(8);
+
+                                        if (dataQCGenerate.HeaderQCData.Info.MainImages != null)
+                                        {
+                                            foreach (var image in dataQCGenerate.HeaderQCData.Info.MainImages)
+                                            {
+                                                string pathImage = image.FilePath;
+                                                var imgPath = _hosting.ContentRootPath + "/" + pathImage;
+
+                                                if (System.IO.File.Exists(imgPath))
+                                                {
+                                                    using var img = new FileStream(imgPath, FileMode.Open);
+
+                                                    // Display each image and let QuestPDF handle the natural size
+                                                    grid.Item(4).AlignCenter().AlignMiddle()  // Center the image both horizontally and vertically
+                                                        .Border(0.5f)                        // Optional border for styling
+                                                        .Width(125)
+                                                        .Height(125)
+                                                        .Image(img);                         // Automatically adjust size based on image
+                                                }
+                                            }
+                                        }
+
+                                    });
+
+                                    table3.Cell().Row(3).Column(2).Text(dataQCGenerate.HeaderQCData.Info.MainRemark);
+                                }
+
+                            }
+                            else
+                            {
+                                int index2 = 1;
+                                int i = 2;
+                                foreach (var data in dataQCGenerate?.BodyQCPdf.QcCheckListDetailDatas)
+                                {
+                                    if(data.StatusID == SystemConstant.Qc_CheckList_Status.NOTPASS)
+                                    {
+                                        table3.Cell().Row((uint)i).Column(1).ColumnSpan(2).AlignLeft().Text(index2 + ". " + data.DetailName).Bold();
+                                        if (data.ParentDetailDatas != null)
+                                        {
+                                            int mainRow = i + 1;
+                                            int parentRow = mainRow + 1;
+                                            foreach (var data2 in data.ParentDetailDatas)
+                                            {
+                                                table3.Cell().Row((uint)mainRow).Column(1).AlignCenter().Text(data2.ParentDetailName).BackgroundColor("#6ce4ff"); ;
+                                                table3.Cell().Row(2).Column(2).Text("ความเห็นเพิ่มเติม");
+                                                table3.Cell().Row((uint)parentRow).Column(1).Grid(grid =>
+                                                {
+                                                    grid.VerticalSpacing(15);
+                                                    grid.HorizontalSpacing(15);
+                                                    grid.AlignLeft();
+                                                    grid.Columns(8);
+
+                                                    foreach (var image in data2.ParentImages)
+                                                    {
+                                                        string pathImage = image.FilePath;
+                                                        var imgPath = _hosting.ContentRootPath + "/wwwroot/" + pathImage;
+
+                                                        if (System.IO.File.Exists(imgPath))
+                                                        {
+                                                            using var img = new FileStream(imgPath, FileMode.Open, FileAccess.Read);
+
+                                                            // Display each image and let QuestPDF handle the natural size
+                                                            grid.Item(6).AlignCenter().AlignMiddle()  // Center the image both horizontally and vertically
+                                                                .Border(0.5f)                        // Optional border for styling
+                                                                .Width(125)
+                                                                .Height(125)
+                                                                .Image(img);                         // Automatically adjust size based on image
+                                                        }
+                                                    }
+                                                });
+                                                table3.Cell().Row((uint)parentRow).Column(2).AlignLeft().Text(data2.ParentDetailRemark);
+                                                parentRow++;
+                                            }
+
+                                            i = parentRow + 1;
+                                        }
+                                        else
+                                        {
+                                            int rowNum = i + 1;
+                                            table3.Cell().Row((uint)rowNum).Column(1).Grid(grid =>
+                                            {
+                                                grid.AlignLeft();  // Align the grid content to the left
+                                                grid.Columns(6);    // Create a 6-column grid to display images
+
+                                                foreach (var image2 in data.DetailImages)
+                                                {
+                                                    string pathImage = image2.FilePath;
+                                                    var imgPath = _hosting.ContentRootPath + "/wwwroot/" + pathImage;
+
+                                                    if (System.IO.File.Exists(imgPath))
+                                                    {
+                                                        using var img = new FileStream(imgPath, FileMode.Open, FileAccess.Read);
+
+                                                        // Display each image and let QuestPDF handle the natural size
+                                                        grid.Item(6).AlignCenter().AlignMiddle()  // Center the image both horizontally and vertically
+                                                            .Border(0.5f)                        // Optional border for styling
+                                                            .Width(125)
+                                                            .Height(100)
+                                                            .Image(img);                         // Automatically adjust size based on image
+                                                    }
+                                                }
+                                            });
+                                            table3.Cell().Row((uint)rowNum).Column(2).AlignLeft().Text(data.DetailRemark);
+                                            i = rowNum + 1;
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    });
+
+                    // Footer Setup
+                    page.Footer().Table(table =>
+                    {
+                        // Paths to the signature images
+                        string pathQc = _hosting.ContentRootPath + "/" + dataQCGenerate.FooterQCData?.QCSignaturePathImageUrl;
+                        string pathPe = _hosting.ContentRootPath + "/" +  dataQCGenerate.FooterQCData?.PESignaturePathImageUrl;
+
+                        // Load images using FileStream
+                        FileStream? signQcStream = null;
+                        FileStream? signPeStream = null;
+
+                        if (System.IO.File.Exists(pathQc))
+                        {
+                            signQcStream = new FileStream(pathQc, FileMode.Open);
+                        }
+
+                        if (System.IO.File.Exists(pathPe))
+                        {
+                            signPeStream = new FileStream(pathPe, FileMode.Open);
                         }
 
                         // Define columns for signatures
