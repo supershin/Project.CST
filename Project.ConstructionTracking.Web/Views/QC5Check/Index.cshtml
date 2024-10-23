@@ -353,7 +353,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="insert-new-qc5-Label">เพิ่มข้อมูลรายการ</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="showFixedButton()"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="clearnewinsertdefect" onclick="showFixedButton()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-2 g-md-3">
@@ -557,7 +557,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">เพิ่มรูปภาพและหมายเหตุของรายการ Defect </h5>
                     <input type="hidden" id="UpQC5DefectID" name="UpQC5DefectID">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="showFixedButton()"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closemodalupdatedefect" onclick="showFixedButton()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-2 g-md-3">
@@ -615,7 +615,7 @@
                     @if (ViewBag.ActionTypeEn != "submit")
                     {
                         @*             <button type="button" class="btn me-auto btn-danger" id="RemoveQC5Button" data-bs-dismiss="modal">ลบรายการนี้</button> *@
-                        <button type="button" class="btn btn-primary" id="UpdateDefectButton" data-bs-dismiss="modal">บันทึก</button>
+                        <button type="button" class="btn btn-primary" id="UpdateDefectButton">บันทึก</button>
                     }
                 </div>
             </div>

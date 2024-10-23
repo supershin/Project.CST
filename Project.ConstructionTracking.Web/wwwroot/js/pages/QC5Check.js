@@ -113,7 +113,6 @@ function openModalDataQC(action, data = null) {
         $('#defectAreaId, #defectTypeId, #defectDescriptionId').val('');
         $('#otherDefectInput, #commentTextarea').val('');
         $('#majorDefectCheckbox').prop('checked', false);
-        // Clear dropzone file input and preview container before binding new data
         $('#file-input').val('');
         $('#preview-container').empty();  // Clear preview container
     }
@@ -194,7 +193,9 @@ function onSaveButtonClick() {
                 //    selectedRadioQC5Status = '';
                 //}
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                    showFixedButton();
                     fetchUpdatedList();
+                    fetchUpdatedSummary();
                 });
             } else {
                 showErrorAlert('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -279,11 +280,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateFileInput() {
         fileInput.value = '';
-
         const dataTransfer = new DataTransfer();
         filesArray.forEach(file => dataTransfer.items.add(file));
         fileInput.files = dataTransfer.files;
     }
+
+    document.getElementById('clearnewinsertdefect').addEventListener('click', function () {
+        previewContainer.innerHTML = '';
+        filesArray = [];
+        updateFileInput();
+    });
+
 });
 
 function filterCards() {
@@ -404,7 +411,6 @@ function openModalEditQC(defectID) {
 }
 
 
-
 function clearFileInputAndPreview() {
 
     // Reference the specific file input and preview container for the 'edit' modal
@@ -432,8 +438,6 @@ function clearFileInputAndPreview() {
     //// Clear the preview container
     //$('#preview-container-edit').empty();  // Clear any previewed images
 }
-
-
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -511,7 +515,7 @@ function onEditButtonClick() {
     var unitId = document.getElementById('hdUnitId').value;
     var seq = document.getElementById('hdSeq').value;
 
-    // Check required fields
+
     if (!defectAreaId) {
         showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาเลือกตำแหน่ง');
         return;
@@ -525,14 +529,11 @@ function onEditButtonClick() {
         return;
     }
 
-/*    debugger*/
 
     var oldImagesCount = $('#imagePreview2 .position-relative').length;
-    //var newImagesCount = $('#preview-container-edit .preview-image').length;
     var newImagesCount = files.length;
     var totalImagesCount = oldImagesCount + newImagesCount;
 
-/*    debugger*/
 
     if (totalImagesCount > 5) {
         showErrorAlertNotCloseModal('คำเตือน!', 'คุณสามารถอัปโหลดรูปภาพได้ไม่เกิน 5 รูปต่อรายการ');
@@ -568,13 +569,8 @@ function onEditButtonClick() {
                 showFixedButton();
                 fetchUpdatedList();
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
-                // Close the modal after success
-                //var editModal = bootstrap.Modal.getInstance(document.getElementById('Edit-qc5'));
-                //editModal.hide();
                 const clearButton = document.getElementById('clearAllButton');
                 clearButton.click();
-
-               // window.location.reload();
             } else {
                 showErrorAlertNotCloseModal('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
             }
@@ -658,7 +654,6 @@ document.addEventListener("DOMContentLoaded", function () {
         updateFileInput();
     }
 
-    // Update the file input with the files in the filesArray
     function updateFileInput() {
         fileInput.value = '';
         const dataTransfer = new DataTransfer();
@@ -666,22 +661,13 @@ document.addEventListener("DOMContentLoaded", function () {
         fileInput.files = dataTransfer.files;
     }
 
-    // Add functionality to clear all images
     document.getElementById('clearAllButton').addEventListener('click', function () {
-        // Clear all preview images
         previewContainer.innerHTML = '';
-
-        // Clear the filesArray
         filesArray = [];
-
-        // Clear the file input
         updateFileInput();
-
-        console.log('All images cleared');
     });
+
 });
-
-
 
 function RemoveImage(resourceID) {
     // Confirmation alert before proceeding
@@ -1087,30 +1073,6 @@ function SubmitUnitQC5() {
 }
 
 
-//function toggleRadioForRadioCheck(radio, id) {
-//    if (radio.checked && radio.dataset.wasChecked) {
-//        // Uncheck the radio if clicked while already checked
-//        radio.checked = false;
-//        radio.dataset.wasChecked = "";
-
-//        // Send null to the radioChanged function to indicate uncheck
-//        radioChanged(id, null);
-//    } else {
-//        // Uncheck all radios in the same group
-//        var radios = document.getElementsByName(radio.name);
-//        for (var i = 0; i < radios.length; i++) {
-//            radios[i].dataset.wasChecked = "";
-//        }
-
-//        // Mark the clicked radio as checked
-//        radio.dataset.wasChecked = "true";
-
-//        // Send the checked value to the radioChanged function
-//        radioChanged(id, radio.value);
-//    }
-//}
-
-
 function toggleRadioForRadioCheck(radio, id, majordefect) {
     if (radio.checked && radio.dataset.wasChecked) {
         radio.checked = false;
@@ -1322,7 +1284,7 @@ function openModalUpdateDefectDetailQC(defectID) {
                     // Reinitialize the fslightbox after appending new content
                     refreshFsLightbox();
                 }
-                debugger
+
                 if (response.Seq > response.RefSeq) {
                     if (response.StatusID !== "27") {
                         if ($('#imagePreview3 .position-relative').length >= 5) {
@@ -1379,7 +1341,6 @@ function validateMainStatus(mainRadio) {
         }
     }
 }
-
 
 function validateConditionalPass(mainRadio) {
     // Get all list items with data-is-major-defect and data-status attributes
@@ -1457,7 +1418,6 @@ function ClickNotPass(mainRadio) {
 }
 
 
-
 document.getElementById('UpdateDefectButton').addEventListener('click', function () {
     onUpdateDefectButtonClick();
 });
@@ -1485,6 +1445,18 @@ function onUpdateDefectButtonClick() {
         formData.append('Images', files[i]);
     }
 
+
+    var oldImagesCount = $('#imagePreview3 .position-relative').length;
+    var newImagesCount = files.length;
+    var totalImagesCount = oldImagesCount + newImagesCount;
+
+
+    if (totalImagesCount > 5) {
+        showErrorAlertNotCloseModal('คำเตือน!', 'คุณสามารถอัปโหลดรูปภาพได้ไม่เกิน 5 รูปต่อรายการ');
+        return;
+    }
+
+
     showLoadingAlert();
 
     $.ajax({
@@ -1498,6 +1470,8 @@ function onUpdateDefectButtonClick() {
             if (response.success) {
                 showFixedButton() 
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
+                const clearButton = document.getElementById('closemodalupdatedefect');
+                clearButton.click();
             } else {
                 showErrorAlert('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
             }
@@ -1581,11 +1555,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateFileInput() {
         fileInput.value = '';
-
         const dataTransfer = new DataTransfer();
         filesArray.forEach(file => dataTransfer.items.add(file));
         fileInput.files = dataTransfer.files;
     }
+
+    document.getElementById('closemodalupdatedefect').addEventListener('click', function () {
+        previewContainer.innerHTML = '';
+        filesArray = [];
+        updateFileInput();
+    });
+
 });
 
 
