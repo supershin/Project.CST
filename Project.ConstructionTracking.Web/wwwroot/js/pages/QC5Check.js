@@ -1001,6 +1001,14 @@ function SubmitUnitQC5() {
     var QCRemark = document.getElementById('QC5Remark').value;
     var files = $('#file-input-save-submit')[0].files;
     var SigNatureData = document.getElementById('hdSigNatureData').value;
+    var ChkPEUnit = document.getElementById('hdPEUnit').value;
+
+    if (!ChkPEUnit) {
+        showErrorAlert('คำเตือน!', 'Unit นี้ยังไม่ได้ระบุวิศกรควบคุมงาน');
+        return;
+    }
+
+    debugger
 
     if (!QCStatusID) {
         showErrorAlert('คำเตือน!', 'กรุณาเลือกสถานะของ QC รอบนี้');

@@ -34,59 +34,6 @@ namespace Project.ConstructionTracking.Web.Repositories
         }
 
 
-
-        //public void InsertSelectFromQCUnitCheckList(Guid qcUnitCheckListID_where, Guid qcUnitCheckListID_IUD, int? Seq)
-        //{
-
-        //    var defectsToInsert = _context.tr_QC_UnitCheckList_Defect
-        //                        .Where(d => d.QCUnitCheckListID == qcUnitCheckListID_where && d.FlagActive == true)
-        //                        .Select(d => new tr_QC_UnitCheckList_Defect
-        //                        {
-        //                            QCUnitCheckListID = qcUnitCheckListID_IUD,
-        //                            Seq = Seq,
-        //                            SeqPass = null,
-        //                            DefectAreaID = d.DefectAreaID,
-        //                            DefectTypeID = d.DefectTypeID,
-        //                            DefectDescriptionID = d.DefectDescriptionID,
-        //                            StatusID = d.StatusID,
-        //                            Remark = d.Remark,
-        //                            IsMajorDefect = d.IsMajorDefect,
-        //                            FlagActive = d.FlagActive,
-        //                            CreateDate = DateTime.Now,
-        //                            CreateBy = d.CreateBy,
-        //                            UpdateDate = DateTime.Now,
-        //                            UpdateBy = d.UpdateBy
-        //                        }).ToList();
-
-        //    _context.tr_QC_UnitCheckList_Defect.AddRange(defectsToInsert);
-        //    _context.SaveChanges();
-        //}
-
-
-
-        //public void InsertSelectFromQCUnitCheckList_Resource(Guid qcUnitCheckListID_where, Guid qcUnitCheckListID_IUD)
-        //{
-        //    var QCUnitCheckListResourceToInsert = _context.tr_QC_UnitCheckList_Resource
-        //                        .Where(d => d.QCUnitCheckListID == qcUnitCheckListID_where && d.FlagActive == true)
-        //                        .Select(d => new tr_QC_UnitCheckList_Resource
-        //                        {
-        //                            QCUnitCheckListID = qcUnitCheckListID_IUD,
-        //                            QCUnitCheckListDetailID = d.QCUnitCheckListDetailID,
-        //                            DefectID = d.DefectID,
-        //                            ResourceID = d.ResourceID,
-        //                            IsSign = d.IsSign,
-        //                            FlagActive = d.FlagActive,
-        //                            CreateDate = DateTime.Now,
-        //                            CreateBy = d.CreateBy,
-        //                            UpdateDate = DateTime.Now,
-        //                            UpdateBy = d.UpdateBy
-        //                        }).ToList();
-
-        //    _context.tr_QC_UnitCheckList_Resource.AddRange(QCUnitCheckListResourceToInsert);
-        //    _context.SaveChanges();
-        //}
-
-
         public QC5MaxSeqStatusChecklistModel CheckQC5MaxSeqStatusChecklist(QC5MaxSeqStatusChecklistModel filterData)
         {
             var result = (from t1 in _context.tr_QC_UnitCheckList
@@ -179,10 +126,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                     InsertSelectFromQCUnitCheckList_ResourceDefect(Chk_QC5_Previous.ID, QCUnitCheckListID, defectIDMapping, filterData.Seq - 1);
                     InsertSelectFromQCUnitCheckList_Resource(Chk_QC5_Previous.ID, QCUnitCheckListID);
 
-                    //InsertSelectFromQCUnitCheckList(Chk_QC5_Previous.ID, QCUnitCheckListID, filterData.Seq);
-
-                    //InsertSelectFromQCUnitCheckList_Resource(Chk_QC5_Previous.ID, QCUnitCheckListID);
-
                     _context.SaveChanges();
                 }
                 else if (Chk_QC5 == null && Chk_QC5_Previous == null)
@@ -246,7 +189,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                              from t9 in DocumentGroup.DefaultIfEmpty()
                              join t10 in _context.tm_Resource on t9.ResourceID equals t10.ID into ResourcePDFGroups
                              from t10 in ResourcePDFGroups.DefaultIfEmpty()
-
+                             join t11 in _context.tr_PE_Unit on t2.UnitID equals t11.UnitID into PEUNITGroup
+                             from t11 in PEUNITGroup.DefaultIfEmpty()
                              where t1.ProjectID == filterData.ProjectID
                                    && t2.UnitID == filterData.UnitID
                                    //&& t4.QCTypeID == SystemConstant.QcTypeID.QC5
@@ -269,7 +213,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                                  QC5UpdateByName = t6.FirstName + ' ' + t6.LastName,
                                  Seq = t4.Seq,
                                  ActionType = t5.ActionType,
-                                 FilePathQCPDF = t10.FilePath
+                                 FilePathQCPDF = t10.FilePath,
+                                 PEUnit = t11.UserID
                              }).FirstOrDefault();
 
                 scope.Complete();  // Commit transaction if everything is successful
@@ -1147,30 +1092,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-
-        //public string SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
-        //{
-        //    var resource = new ResourcesSignatureQC5
-        //    {
-        //        MimeType = signData.MimeType,
-        //        ResourceStorageBase64 = signData.StorageBase64
-        //    };
-
-        //    Guid guidId = Guid.NewGuid();
-        //    string fileName = guidId + ".jpg";
-        //    var folder = DateTime.Now.ToString("yyyyMM");
-        //    var dirPath = Path.Combine(appPath, "wwwroot", "Upload", "document", folder, "signQC5");
-        //    var filePath = Path.Combine(dirPath, fileName);
-
-        //    resource.PhysicalPathServer = dirPath;
-        //    resource.ResourceStoragePath = Path.Combine("Upload", "document", folder, "signQC5", fileName).Replace("\\", "/");
-
-        //    ConvertByteToImage(resource);
-        //    InsertResource(guidId, fileName, resource.ResourceStoragePath, "image/jpeg", userID);
-        //    InsertOrUpdateQCUnitCheckListResource(guidId, QCUnitCheckListID, userID);
-
-        //    return filePath;
-        //}
 
         public (string filePath, string currentDate) SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
         {
