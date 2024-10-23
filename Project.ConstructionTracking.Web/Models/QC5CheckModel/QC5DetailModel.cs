@@ -30,5 +30,6 @@ namespace Project.ConstructionTracking.Web.Models.QC5CheckModel
         public string? QC5UpdateByName { get; set; }
         public string? ActionType { get; set; }
         public string? FilePathQCPDF { get; set; }
+        public Guid? PEUnit { get; set; }
     }
 }
