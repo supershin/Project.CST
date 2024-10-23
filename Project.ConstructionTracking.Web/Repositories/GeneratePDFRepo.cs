@@ -153,132 +153,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             return query;
 		}
 
-
-        //public DataGenerateQCPDFResp GetDataQCToGeneratePDF(DataToGenerateModel model)
-        //{
-
-        //    var queryHeader = (from trQC in _context.tr_QC_UnitCheckList
-        //                       join tmExQcType in _context.tm_Ext on trQC.QCTypeID equals tmExQcType.ID
-        //                       join tmp in _context.tm_Project on trQC.ProjectID equals tmp.ProjectID
-        //                       join tmu in _context.tm_Unit on trQC.UnitID equals tmu.UnitID
-        //                       join tmpeunit in _context.tr_PE_Unit on tmu.UnitID equals tmpeunit.UnitID
-        //                       join tmcv in _context.tm_CompanyVendor on tmu.CompanyVendorID equals tmcv.ID
-        //                       join trfqc in _context.tr_Form_QCCheckList on trQC.CheckListID equals trfqc.CheckListID
-        //                       join tmf in _context.tm_Form on trfqc.FormID equals tmf.ID
-        //                       join tmuserqc in _context.tm_User on trQC.UpdateBy equals tmuserqc.ID
-        //                       join tmuserpe in _context.tm_User on tmpeunit.UserID equals tmuserpe.ID
-        //                       where trQC.ProjectID == model.ProjectID
-        //                          && trQC.UnitID == model.UnitID
-        //                          && trQC.ID == model.QCUnitCheckListID
-        //                       select new
-        //                       {
-        //                           QCName = tmExQcType.Name,
-        //                           ProjectName = tmp.ProjectName,
-        //                           UnitCode = tmu.UnitCode,
-        //                           CompanyVenderName = tmcv.Name,
-        //                           FormName = tmf.Name,
-        //                           QCInspectorName = tmuserqc.FirstName + " " + tmuserqc.LastName,
-        //                           PEInspectorName = tmuserpe.FirstName + " " + tmuserpe.LastName,
-        //                           QCStatus = trQC.QCStatusID
-        //                       }).FirstOrDefault();
-
-
-        //    var queryBody = (from t1 in _context.tr_QC_UnitCheckList_Defect
-        //                     join t2 in _context.tm_DefectArea on t1.DefectAreaID equals t2.ID into defectAreaGroup
-        //                     from t2 in defectAreaGroup.DefaultIfEmpty()
-        //                     join t3 in _context.tm_DefectType on t1.DefectTypeID equals t3.ID into defectTypeGroup
-        //                     from t3 in defectTypeGroup.DefaultIfEmpty()
-        //                     join t4 in _context.tm_DefectDescription on t1.DefectDescriptionID equals t4.ID into defectDescriptionGroup
-        //                     from t4 in defectDescriptionGroup.DefaultIfEmpty()
-        //                     where t1.QCUnitCheckListID == model.QCUnitCheckListID
-        //                     select new BodyQCPdfListDefectData
-        //                     {
-        //                         RefSeqDefectText = t1.Seq.ToString(),
-        //                         DefectAreaText = t2.Name,
-        //                         DefectTypeText = t3.Name,
-        //                         DefectDescriptionText = t4.Name,
-        //                         IsMajorDefectText = t1.IsMajorDefect == true ? "Y" : "",
-        //                         DefectRemark = t1.Remark,
-        //                         DefectStatus = t1.StatusID,
-        //                         ListImageDefact = (from t5 in _context.tr_QC_UnitCheckList_Resource
-        //                                            join t6 in _context.tm_Resource on t5.ResourceID equals t6.ID
-        //                                            where t5.QCUnitCheckListID == model.QCUnitCheckListID && t5.DefectID == t1.ID
-        //                                            select new ListImageDefact
-        //                                            {
-        //                                                PathImageUrl = t6.FilePath
-        //                                            }).ToList()
-        //                     }).ToList();
-
-        //    var refSeqCounts = _context.tr_QC_UnitCheckList_Defect
-        //                    .Where(t1 => t1.QCUnitCheckListID == model.QCUnitCheckListID && t1.FlagActive == true)
-        //                    .GroupBy(t1 => t1.RefSeq)
-        //                    .Select(g => new
-        //                    {
-        //                        RefSeq = g.Key,            // The grouped RefSeq value
-        //                        RefSeqCnt = g.Count()      // Count of occurrences per RefSeq
-        //                    })
-        //                    .ToList();
-
-        //    var statusCounts = _context.tr_QC_UnitCheckList_Defect
-        //                    .Where(t1 => t1.QCUnitCheckListID == model.QCUnitCheckListID && t1.FlagActive == true)
-        //                    .GroupBy(t1 => 1)  // Group by constant to avoid grouping by status
-        //                    .Select(g => new
-        //                    {
-        //                        Cnt_Pass = g.Count(t1 => t1.StatusID == 27),  // Count where StatusID = 27
-        //                        Cnt_NotPass = g.Count(t1 => t1.StatusID == 28) // Count where StatusID = 28
-        //                    })
-        //                    .FirstOrDefault();
-
-        //    var cntAll = _context.tr_QC_UnitCheckList_Defect
-        //              .Where(t1 => t1.QCUnitCheckListID == model.QCUnitCheckListID && t1.FlagActive == true)
-        //              .Count();
-
-
-
-
-
-        //    if (queryHeader != null)
-        //    {
-
-        //        var resultHeader = new HeaderQCPdfData
-        //        {
-        //            QCName = queryHeader.QCName,
-        //            ProjectName = queryHeader.ProjectName,
-        //            UnitCode = queryHeader.UnitCode,
-        //            CompanyVenderName = queryHeader.CompanyVenderName,
-        //            FormName = queryHeader.FormName,
-        //            QCInspectorName = queryHeader.QCInspectorName,
-        //            PEInspectorName = queryHeader.PEInspectorName,
-        //            QCStatusText = queryHeader.QCStatus == SystemConstant.UnitQCStatus.Pass ? SystemConstant.UnitQCStatusText.Pass
-        //                         : queryHeader.QCStatus == SystemConstant.UnitQCStatus.NotPass ? SystemConstant.UnitQCStatusText.NotPass
-        //                         : queryHeader.QCStatus == SystemConstant.UnitQCStatus.IsNotReadyInspect ? SystemConstant.UnitQCStatusText.IsNotReadyInspect
-        //                         : queryHeader.QCStatus == SystemConstant.UnitQCStatus.IsPassCondition ? SystemConstant.UnitQCStatusText.IsPassCondition
-        //                         : queryHeader.QCStatus == SystemConstant.UnitQCStatus.InProgress ? SystemConstant.UnitQCStatusText.InProgress
-        //                         : "ไม่พบสถานะ"
-        //        };
-
-        //        if (refSeqCounts != null && statusCounts != null && cntAll > 0)
-        //        {
-        //            var resultSummary = new SummaryQCPdfData
-        //                SumAllDefect = cntAll,
-        //                SumPassDefect = statusCounts.Cnt_Pass,
-        //                SumNotPassDefect = statusCounts.Cnt_NotPass
-        //                //make list refSeqCounts use ListCalDefectBySeq here please
-        //        }
-
-        //        return new DataGenerateQCPDFResp
-        //        {
-        //            HeaderQCData = resultHeader,
-        //            BodyListDefectQCData = queryBody
-        //        };
-        //    }
-        //    else 
-        //    {
-        //        return null;
-        //    }
-        //}
-
-
         public DataGenerateQCPDFResp GetDataQCToGeneratePDF(DataToGenerateModel model)
         {
             var queryHeaderFooter = (from trQC in _context.tr_QC_UnitCheckList
@@ -369,7 +243,11 @@ namespace Project.ConstructionTracking.Web.Repositories
                 .Count();
 
 
-            if (queryHeaderFooter != null && refSeqCounts != null && statusCounts != null && cntAll > 0)
+            if (    queryHeaderFooter != null 
+                 //&& refSeqCounts != null 
+                 //&& statusCounts != null
+                 //&& cntAll > 0
+               )
             {
 
                 var resultHeader = new HeaderQCPdfData
@@ -393,18 +271,37 @@ namespace Project.ConstructionTracking.Web.Repositories
                 };
 
                 // Prepare the summary data
+                //var resultSummary = new SummaryQCPdfData
+                //{
+                //    SumAllDefect = FormatExtension.Nulltoint(cntAll),
+                //    SumPassDefect = FormatExtension.Nulltoint(statusCounts.Cnt_Pass),
+                //    SumNotPassDefect = FormatExtension.Nulltoint(statusCounts.Cnt_NotPass),
+                //    CalDefectBySeq = refSeqCounts != null ? refSeqCounts : new List<ListCalDefectBySeq>(), // List of RefSeq counts
+                //};
+
                 var resultSummary = new SummaryQCPdfData
                 {
-                    SumAllDefect = cntAll,
-                    SumPassDefect = statusCounts.Cnt_Pass,
-                    SumNotPassDefect = statusCounts.Cnt_NotPass,
-                    CalDefectBySeq = refSeqCounts // List of RefSeq counts
+                    SumAllDefect = FormatExtension.Nulltoint(cntAll),
+                    CalDefectBySeq = refSeqCounts != null ? refSeqCounts : new List<ListCalDefectBySeq>(), // List of RefSeq counts
                 };
+
+                // Conditionally assign SumPassDefect and SumNotPassDefect if statusCounts is not null
+                if (statusCounts != null)
+                {
+                    resultSummary.SumPassDefect = FormatExtension.Nulltoint(statusCounts.Cnt_Pass);
+                    resultSummary.SumNotPassDefect = FormatExtension.Nulltoint(statusCounts.Cnt_NotPass);
+                }
+                else
+                {
+                    resultSummary.SumPassDefect = 0;  // Default value if statusCounts is null
+                    resultSummary.SumNotPassDefect = 0;  // Default value if statusCounts is null
+                }
+
 
                 var resultFooter = new FooterQCPdfData
                 {
-                    PESignaturePathImageUrl = queryHeaderFooter.PESignPath,
-                    QCSignaturePathImageUrl = queryHeaderFooter.QCSignPath
+                    PESignaturePathImageUrl = FormatExtension.NullToString(queryHeaderFooter.PESignPath),
+                    QCSignaturePathImageUrl = FormatExtension.NullToString(queryHeaderFooter.QCSignPath)
                 };
 
                 // Return the final response with header, body, and summary data
@@ -505,286 +402,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             _context.SaveChanges();
             return true;
         }
-
-
-        //public string GenerateQCPDF(Guid guid, DataGenerateQCPDFResp dataQCGenerate, DataDocumentModel genDocumentNo)
-        //{
-        //    QuestPDF.Settings.License = LicenseType.Community;
-        //    var fontPath = _hosting.ContentRootPath + "/wwwroot/lib/fonts/BrowalliaUPC.ttf";
-
-        //    FontManager.RegisterFont(System.IO.File.OpenRead(fontPath));
-
-        //    var imageHeader = Directory.GetCurrentDirectory() + "/wwwroot/img/img1.png";
-        //    var imageBox = Directory.GetCurrentDirectory() + "/wwwroot/img/box.png";
-        //    var imageCheckBox = Directory.GetCurrentDirectory() + "/wwwroot/img/checkbox.png";
-        //    var imageCheck = Directory.GetCurrentDirectory() + "/wwwroot/img/check.png";
-
-        //    var document = QuestPDF.Fluent.Document.Create(container =>
-        //    {
-        //        container.Page(page =>
-        //        {
-        //            page.Size(PageSizes.A4);
-        //            page.MarginTop(1, Unit.Centimetre);
-        //            page.MarginBottom(1, Unit.Centimetre);
-        //            page.MarginLeft(1, Unit.Centimetre);
-        //            page.MarginRight(1, Unit.Centimetre);
-
-        //            page.PageColor(Colors.White);
-        //            page.DefaultTextStyle(x => x.FontSize(16));
-        //            page.PageColor(Colors.White);
-        //            page.DefaultTextStyle(TextStyle
-        //                       .Default
-        //                       .FontFamily("BrowalliaUPC")
-        //                       .FontSize(12));
-
-        //            page.Header().Column(column =>
-        //            {
-        //                column.Item().Column(col1 =>
-        //                {
-        //                    col1.Item().PaddingVertical(5).Width(150).Image(imageHeader);
-        //                });
-
-        //                column.Item().Border(1).Table(table =>
-        //                {
-        //                    table.ColumnsDefinition(columns =>
-        //                    {
-        //                        columns.RelativeColumn(2);
-        //                        columns.RelativeColumn(2);
-        //                        columns.RelativeColumn(2);
-        //                        columns.RelativeColumn(2);
-        //                        columns.RelativeColumn(2);
-        //                        columns.RelativeColumn(2);
-        //                    });
-
-
-        //                    table.Cell().Row(1).Column(1).ColumnSpan(4).AlignLeft().Text(" ผลการตรวจ " + dataQCGenerate.HeaderQCData?.QCName).FontSize(20).Bold();
-        //                    table.Cell().Row(1).Column(5).ColumnSpan(2).AlignLeft().Text("ครั้งที่ " + dataQCGenerate.HeaderQCData?.Seq).FontSize(20).Bold();
-
-        //                    table.Cell().Row(2).Column(1).ColumnSpan(2).AlignLeft().Text(text =>
-        //                    {
-        //                        text.Span("  ตรวจใน ");
-        //                        text.Span(dataQCGenerate.HeaderQCData?.FormName).Underline();
-        //                    });
-        //                    table.Cell().Row(2).Column(3).ColumnSpan(2).AlignLeft().Text(text =>
-        //                    {
-        //                        string checkboxSymbol = dataQCGenerate.HeaderQCData?.QCStatus == 4 ? "☑" : "☐";
-        //                        text.Span(checkboxSymbol + " ").FontColor("#FF0000").FontSize(12);
-        //                        text.Span("ไม่พร้อมให้ตรวจ").FontColor("#FF0000").FontSize(12);
-        //                    });
-        //                    table.Cell().Row(2).Column(5).ColumnSpan(2).AlignLeft().Text(text =>
-        //                    {
-        //                        text.Span("วันที่ตรวจ ");
-        //                        text.Span(dataQCGenerate.HeaderQCData?.UpdateDate).Underline();
-        //                    });
-
-        //                    table.Cell().Row(3).Column(1).ColumnSpan(2).AlignLeft().Text(text =>
-        //                    {
-        //                        text.Span("  โครงการ ");
-        //                        text.Span(dataQCGenerate.HeaderQCData?.ProjectName).Underline();
-        //                    });
-        //                    table.Cell().Row(3).Column(3).ColumnSpan(2).AlignLeft().Text(text =>
-        //                    {
-        //                        text.Span("แปลงที่ ");
-        //                        text.Span(dataQCGenerate.HeaderQCData?.UnitCode).Underline();
-        //                    });
-        //                    table.Cell().Row(3).Column(5).ColumnSpan(2).AlignLeft().Text(text =>
-        //                    {
-        //                        text.Span("บริษัทผู้รับเหมา ");
-        //                        text.Span(dataQCGenerate.HeaderQCData?.CompanyVenderName).Underline();
-        //                    });
-
-        //                    table.Cell().Row(4).Column(1).ColumnSpan(2).AlignLeft().Text(text =>
-        //                    {
-        //                        text.Span("  วิศวกรผู้ควบคุมงาน ");
-        //                        text.Span(dataQCGenerate.HeaderQCData?.PEInspectorName).Underline();
-        //                    });
-        //                    table.Cell().Row(4).Column(3).ColumnSpan(2).AlignLeft().Text(text =>
-        //                    {
-        //                        text.Span("QC ผู้ตรวจสอบ ");
-        //                        text.Span(dataQCGenerate.HeaderQCData?.QCInspectorName).Underline();
-        //                    });
-
-        //                });
-        //            });
-
-        //            page.Content()
-        //                //.PaddingVertical(4)
-        //                .Column(col1 =>
-        //            {
-        //                IContainer DefaultCellStyle(IContainer container, string backgroundColor)
-        //                {
-        //                    return container
-        //                        .Border(1)
-        //                        .BorderColor(Colors.Black)
-        //                        .Background(backgroundColor)
-        //                        .PaddingVertical(1)
-        //                        .PaddingHorizontal(3)
-        //                        .AlignCenter()
-        //                        .AlignTop();
-        //                }
-
-        //                col1.Item().Table(table2 =>
-        //                {
-        //                    table2.ColumnsDefinition(columns =>
-        //                    {
-        //                        columns.RelativeColumn(1); // Column for index
-        //                        columns.RelativeColumn(3); // Column for "รายการ"
-        //                        columns.RelativeColumn(3); // Column for "รูปรายการ"
-        //                        columns.RelativeColumn(2); // Column for "ความเห็นเพิ่มเติม"
-        //                        columns.RelativeColumn(1); // Column for "Major Defect"
-        //                        columns.RelativeColumn(1); // Column for "ผ่าน"
-        //                        columns.RelativeColumn(1); // Column for "ไม่ผ่าน"
-        //                    });
-
-        //                    // Header row
-        //                    table2.Header(header =>
-        //                    {
-        //                        header.Cell().Element(CellStyle).Text("ลำดับ").FontSize(15).Bold();
-        //                        header.Cell().Element(CellStyle).Text("รายการ").FontSize(15).Bold();
-        //                        header.Cell().Element(CellStyle).Text("รูปรายการ").FontSize(15).Bold();
-        //                        header.Cell().Element(CellStyle).Text("ความเห็นเพิ่มเติม").FontSize(15).Bold();
-        //                        header.Cell().Element(CellStyle).Text("Major Defect").FontSize(15).Bold();
-        //                        header.Cell().Element(CellStyle).Text("ผ่าน").FontSize(15).Bold();
-        //                        header.Cell().Element(CellStyle).Text("ไม่ผ่าน").FontSize(15).Bold();
-        //                    });
-
-        //                    int index = 1;
-        //                    foreach (var data in dataQCGenerate?.BodyListDefectQCData)
-        //                    {
-        //                        table2.Cell().Element(CellStyle).Text(index.ToString());  // Index column
-
-        //                        // Multi-line "รายการ" column
-        //                        table2.Cell().Element(CellStyle).Text(text =>
-        //                        {
-        //                            text.Line("ตำแหน่ง: " + data.RefSeqDefectText);
-        //                            text.Line("หมวดงาน: " + data.DefectAreaText);
-        //                            text.Line("รายการแก้ไข: " + data.DefectTypeText);
-        //                        });
-
-        //                        // Display image URLs in "รูปรายการ" column
-        //                        table2.Cell().Element(CellStyle).Grid(grid =>
-        //                        {
-        //                            grid.AlignLeft();  // Align the grid content to the left
-        //                            grid.Columns(6);    // Create a 6-column grid to display images
-
-        //                            foreach (var image in data.ListImageDefact)
-        //                            {
-        //                                string pathImage = image.PathImageUrl;
-        //                                var imgPath = _hosting.ContentRootPath + "/wwwroot/" + pathImage;
-
-        //                                if (System.IO.File.Exists(imgPath))
-        //                                {
-        //                                    using var img = new FileStream(imgPath, FileMode.Open, FileAccess.Read);
-
-        //                                    // Display each image and let QuestPDF handle the natural size
-        //                                    grid.Item(6).AlignCenter().AlignMiddle()  // Center the image both horizontally and vertically
-        //                                        .Border(0.5f)                        // Optional border for styling
-        //                                        .Width(125)
-        //                                        .Height(100)
-        //                                        .Image(img);                         // Automatically adjust size based on image
-        //                                }
-        //                            }
-        //                        });
-
-        //                        table2.Cell().Element(CellStyle).Text(data.DefectRemark);      // ความเห็นเพิ่มเติม
-        //                        table2.Cell().Element(CellStyle).Text(data.IsMajorDefectText); // Major Defect
-
-        //                        // Handle "ผ่าน" and "ไม่ผ่าน" columns based on DefectStatus
-        //                        if (data.DefectStatus == 27)
-        //                        {
-        //                            table2.Cell().Element(CellStyle).Text("✓"); // "ผ่าน" column (checked)
-        //                            table2.Cell().Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
-        //                        }
-        //                        else
-        //                        {
-        //                            table2.Cell().Element(CellStyle).Text("");  // "ผ่าน" column (empty)
-        //                            table2.Cell().Element(CellStyle).Text("✗"); // "ไม่ผ่าน" column (checked)
-        //                        }
-
-        //                        index++;
-        //                    }
-
-
-        //                    IContainer CellStyle(IContainer container) => DefaultCellStyle(container, Colors.White);
-        //                });
-
-        //                col1.Item().Border(1).Table(table3 =>
-        //                {
-        //                    table3.ColumnsDefinition(columns =>
-        //                    {
-        //                        columns.RelativeColumn(2);
-        //                        columns.RelativeColumn(2);
-        //                        columns.RelativeColumn(2);
-        //                        columns.RelativeColumn(2);
-        //                        columns.RelativeColumn(2);
-        //                        columns.RelativeColumn(2);
-        //                    });
-
-        //                    table3.Cell().Row(1).Column(1).ColumnSpan(6).AlignLeft().Text(" สรุปจำนวน").Bold();
-        //                    table3.Cell().Row(1).Column(3).ColumnSpan(3).AlignLeft().Text(text =>
-        //                    {
-        //                        text.Span("  รายการทั้งหมด : ").Bold();
-        //                        text.Span(dataQCGenerate.SummaryQCData?.SumAllDefect.ToString());
-        //                    });
-        //                    table3.Cell().Row(2).Column(1).ColumnSpan(6).Text(text =>
-        //                    {
-        //                        foreach (var data in dataQCGenerate?.SummaryQCData.CalDefectBySeq)
-        //                        {
-        //                            // Instead of writing to a new row, combine the content into a single cell using `text.Line()`
-        //                            text.Line(" จำนวนรายการครั้งที่ " + data.RefSeq + " : " + data.RefSeqCnt + " รายการ");
-        //                        }
-        //                    });
-        //                    table3.Cell().Row(2).Column(3).ColumnSpan(3).Text(text =>
-        //                    {
-        //                        text.Line(" ผ่าน : " + dataQCGenerate.SummaryQCData?.SumPassDefect.ToString());
-        //                        text.Line(" ไม่ผ่าน : " + dataQCGenerate.SummaryQCData?.SumNotPassDefect.ToString());
-        //                    });
-
-        //                });
-        //            });
-
-        //            page.Footer().Table(table2 =>
-        //            {
-        //                string pathQc = _hosting.ContentRootPath + "/" + dataQCGenerate.FooterQCData?.QCSignaturePathImageUrl;
-        //                var signQc = new FileStream(pathQc, FileMode.Open);
-
-        //                string pathPe = _hosting.ContentRootPath + "/wwwroot/" + dataQCGenerate.FooterQCData?.PESignaturePathImageUrl;
-        //                var signPe = new FileStream(pathPe, FileMode.Open);
-
-        //                table2.ColumnsDefinition(columns =>
-        //                {
-        //                    columns.RelativeColumn(6);
-        //                    columns.RelativeColumn(6);
-        //                });
-
-        //                // Engineer signature
-        //                table2.Cell().Row(1).Column(1).AlignCenter().Width(60).Image(signPe);
-        //                table2.Cell().Row(2).Column(1).AlignCenter().Text("วิศวกรผู้ควบคุมงาน");
-        //                table2.Cell().Row(3).Column(1).AlignCenter().Text("( " + dataQCGenerate.HeaderQCData?.PEInspectorName + " )");
-
-        //                // QC signature
-        //                table2.Cell().Row(1).Column(2).AlignCenter().Width(60).Image(signQc);
-        //                table2.Cell().Row(2).Column(2).AlignCenter().Text("Quality Control (QC)");
-        //                table2.Cell().Row(3).Column(2).AlignCenter().Text("( " + dataQCGenerate.HeaderQCData?.QCInspectorName + " )");
-
-        //                // Page number in column 2
-        //                table2.Cell().Row(4).Column(2).AlignRight().Text(text =>
-        //                {
-        //                    text.Span("Page ");
-        //                    text.CurrentPageNumber();
-        //                    text.Span(" of ");
-        //                    text.TotalPages();
-        //                });
-        //            });
-        //        });
-        //    });
-
-        //    string returnPath = "Upload/temp/" + "QCDocumentNo" + "-" + guid + ".pdf";
-        //    document.GeneratePdf(returnPath);
-        //    //document.ShowInPreviewer();
-
-        //    return returnPath;
-        //}
 
         public string GenerateQCPDF(Guid guid, DataGenerateQCPDFResp dataQCGenerate, DataDocumentModel genDocumentNo)
         {
