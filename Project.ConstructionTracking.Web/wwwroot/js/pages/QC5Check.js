@@ -180,18 +180,18 @@ function onSaveButtonClick() {
         success: function (response) {
             Swal.close();
             if (response.success) {
-                //var mainPassRadio = document.getElementById('radio3');
-                //if (mainPassRadio && mainPassRadio.checked) {
-                //    mainPassRadio.checked = false;
-                //    mainPassRadio.dataset.wasChecked = "";
-                //    selectedRadioQC5Status = '';
-                //}
-                //if (isMajorDefect == "True") { 
-                //    var mainPassWithConditionRadio = document.getElementById('radio2');
-                //    mainPassWithConditionRadio.checked = false;
-                //    mainPassWithConditionRadio.dataset.wasChecked = "";
-                //    selectedRadioQC5Status = '';
-                //}
+                var mainPassRadio = document.getElementById('radio3');
+                if (mainPassRadio && mainPassRadio.checked) {
+                    mainPassRadio.checked = false;
+                    mainPassRadio.dataset.wasChecked = "";
+                    selectedRadioQC5Status = '';
+                }
+                if (isMajorDefect == "True") { 
+                    var mainPassWithConditionRadio = document.getElementById('radio2');
+                    mainPassWithConditionRadio.checked = false;
+                    mainPassWithConditionRadio.dataset.wasChecked = "";
+                    selectedRadioQC5Status = '';
+                }
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
                     showFixedButton();
                     fetchUpdatedList();
@@ -286,6 +286,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     document.getElementById('clearnewinsertdefect').addEventListener('click', function () {
+        previewContainer.innerHTML = '';
+        filesArray = [];
+        updateFileInput();
+    });
+
+    document.getElementById('clearcancelnewinsertdefect').addEventListener('click', function () {
         previewContainer.innerHTML = '';
         filesArray = [];
         updateFileInput();
@@ -976,6 +982,8 @@ function saveSignature() {
                     </div>
                 `);
 
+                $('#hdSigNatureData').val(res.filePath);
+
                 // Close the signature modal
                 $('#ClosesignatureModal').click();
 
@@ -1008,7 +1016,7 @@ function SubmitUnitQC5() {
         return;
     }
 
-    debugger
+/*    debugger*/
 
     if (!QCStatusID) {
         showErrorAlert('คำเตือน!', 'กรุณาเลือกสถานะของ QC รอบนี้');
@@ -1023,11 +1031,11 @@ function SubmitUnitQC5() {
     if (QCStatusID === "2" || QCStatusID === "3") {
         // Access ImageQC5UnitList which was declared in the Razor view
         if (ImageQC5UnitList.length + files.length === 0) {
-            showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุของการไม่ให้ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุผลที่ไม่ให้ผ่าน');
             return;
         }
         else if (!QCRemark) {
-            showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุของการไม่ให้ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุผลที่ไม่ให้ผ่าน');
             return;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient.Server;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
@@ -175,6 +176,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from PJMUnitFormAction in PJMUnitFormActions.DefaultIfEmpty()
                           join t13 in _context.tm_User on new { PMUnitFormAction.UpdateBy } equals new { UpdateBy = (Guid?)t13.ID } into PMUserActions
                           from PMUserAction in PMUserActions.DefaultIfEmpty()
+
+                          //join t14 in _context.tr_Form_QCCheckList.Where(f => f.FlagActive == true) on t1.FormID equals t14.FormID into QCCheckLists
+                          //from QCCheckList in QCCheckLists.DefaultIfEmpty()
+
                           where t1.UnitID == model.UnitID && t1.FormID == model.FormID
                           select new ApproveFormcheckModel
                           {
