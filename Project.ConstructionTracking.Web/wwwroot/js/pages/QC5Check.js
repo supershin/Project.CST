@@ -109,8 +109,11 @@ function openModalDataQC(action, data = null) {
     var modalTitle = document.getElementById('insert-new-qc5-Label');
     if (action === 'add') {
         modalTitle.textContent = 'เพิ่มข้อมูลรายการ';
-        $('#autocomplete1, #autocomplete2, #autocomplete3').val('').prop('disabled', false);
-        $('#defectAreaId, #defectTypeId, #defectDescriptionId').val('');
+        //$('#autocomplete1, #autocomplete2, #autocomplete3').val('').prop('disabled', false);
+        // Clear and reset dropdowns dynamically
+        $('#dropdown1').val('').trigger('change');  // Reset first dropdown to default and trigger change event
+        $('#dropdown2').empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);  // Reset second dropdown
+        $('#dropdown3').empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);  // Reset third dropdown
         $('#otherDefectInput, #commentTextarea').val('');
         $('#majorDefectCheckbox').prop('checked', false);
         $('#file-input').val('');
