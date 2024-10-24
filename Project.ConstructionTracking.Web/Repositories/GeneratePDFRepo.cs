@@ -386,7 +386,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             var newFormResource = new tr_Document
             {
                 ID = Guid.NewGuid(),
-                UnitFormID = model.UnitFormID,
+                QCUnitCheckListID = model.QCUnitCheckListID,
                 ResourceID = newResource.ID,
                 DocumentNo = model.documentNo,
                 DocumentPrefix = model.documentPrefix,
@@ -772,9 +772,10 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             List<MainImage> mainImages = new List<MainImage>();
             MainInfo info = new MainInfo();
+
             if (queryHeaderFooter.Info != null)
             {
-                if(queryHeaderFooter.Info.MainImage != null)
+                if (queryHeaderFooter.Info.MainImage != null && queryHeaderFooter.Info.MainImage.Count > 0)
                 {
                     foreach (var i in queryHeaderFooter.Info.MainImage)
                     {
@@ -793,7 +794,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                     MainImages = mainImages
                 };
             }
-
 
             DataGenerateQCPDFResp resp = new DataGenerateQCPDFResp()
             {
@@ -857,6 +857,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                           TmCheckListDetail = tmqcld,
                                           TrCheckListDetail = trqcld,
                                       }).ToList();
+
             List<QcCheckListDetailData> listDetail = new List<QcCheckListDetailData>();
             foreach (var detail in getDetailCheckList)
             {
@@ -872,72 +873,79 @@ namespace Project.ConstructionTracking.Web.Repositories
                                            TrCheckListParentDetail = trqcld
                                        }).ToList();
 
-                var getListImageDetail = (from trqclr in _context.tr_QC_UnitCheckList_Resource
-                                          join tmr in _context.tm_Resource on trqclr.ResourceID equals tmr.ID
-                                          where trqclr.QCUnitCheckListDetailID == detail.TrCheckListDetail.ID
-                                          && trqclr.QCUnitCheckListID == qcCheckList.QCCheckListID
-                                          select new
-                                          {
-                                              DetailImageFilePath = tmr.FilePath
-                                          }).ToList();
-
                 List<DetailImage> listDetailImage = new List<DetailImage>();
-
-                foreach(var image in getListImageDetail)
+                if (detail.TrCheckListDetail != null)
                 {
-                    DetailImage img = new DetailImage()
-                    {
-                        FilePath = image.DetailImageFilePath
-                    };
+                    var query = from trqclr in _context.tr_QC_UnitCheckList_Resource
+                                join tmr in _context.tm_Resource on trqclr.ResourceID equals tmr.ID into deTm
+                                from tmr in deTm.DefaultIfEmpty()  // Left join
+                                where trqclr.QCUnitCheckListDetailID == detail.TrCheckListDetail.ID
+                                && trqclr.QCUnitCheckListID == qcCheckList.QCCheckListID
+                                select new { tmr.FilePath };
 
-                    listDetailImage.Add(img);
+                    var getListImageDetail = query.AsEnumerable().Select(e => e.FilePath).ToList();  // Convert the result to a list
+  
+                    if (getListImageDetail != null && getListImageDetail.Count > 0)
+                    {
+                        foreach (var path in getListImageDetail)
+                        {
+                            DetailImage img = new DetailImage()
+                            {
+                                FilePath = path
+                            };
+
+                            listDetailImage.Add(img);
+                        }
+                    }
                 }
 
                 QcCheckListDetailData detailData = new QcCheckListDetailData()
                 {
-                    DetailID = detail.TrCheckListDetail.ID,
+                    DetailID = detail.TrCheckListDetail != null ? detail.TrCheckListDetail.ID : null,
                     DetailName = detail.TmCheckListDetail.Name,
-                    StatusID = detail.TrCheckListDetail.StatusID,
-                    DetailRemark = detail.TrCheckListDetail.Remark,
-                    PassBySeq = detail.TrCheckListDetail.PassBySeq,
+                    StatusID = detail.TrCheckListDetail != null ? detail.TrCheckListDetail.StatusID : null ,
+                    DetailRemark = detail.TrCheckListDetail != null ? detail.TrCheckListDetail.Remark : null,
+                    PassBySeq = detail.TrCheckListDetail != null ? detail.TrCheckListDetail.PassBySeq : null,
                     DetailImages = listDetailImage,
                     ParentDetailDatas = new List<ParentDetailData>()
                 };
 
-                foreach (var parent in getParentDetail)
+                if(getParentDetail != null)
                 {
-
-                    var getListImageParent = (from trqclr in _context.tr_QC_UnitCheckList_Resource
-                                              join tmr in _context.tm_Resource on trqclr.ResourceID equals tmr.ID
-                                              where trqclr.QCUnitCheckListDetailID == parent.TrCheckListParentDetail.ID
-                                              && trqclr.QCUnitCheckListID == qcCheckList.QCCheckListID
-                                              select new
-                                              {
-                                                  ParentImageFilePath = tmr.FilePath
-                                              }).ToList();
-
-                    List<ParentImage> listParentImage = new List<ParentImage>();
-                    foreach(var image in getListImageParent)
+                    foreach (var parent in getParentDetail)
                     {
-                        ParentImage img = new ParentImage()
+                        List<ParentImage> listParentImage = new List<ParentImage>();
+                        if (parent.TrCheckListParentDetail != null)
                         {
-                            FilePath = image.ParentImageFilePath,
+                            var getListImageParent = (from trqclr in _context.tr_QC_UnitCheckList_Resource
+                                                      join tmr in _context.tm_Resource on trqclr.ResourceID equals tmr.ID
+                                                      where trqclr.QCUnitCheckListDetailID == parent.TrCheckListParentDetail.ID
+                                                      && trqclr.QCUnitCheckListID == qcCheckList.QCCheckListID
+                                                      select tmr.FilePath);
+
+                            if (getListImageParent != null && getListImageParent.Count() > 0)
+                                foreach (var image in getListImageParent)
+                                {
+                                    ParentImage img = new ParentImage()
+                                    {
+                                        FilePath = image
+                                    };
+
+                                    listParentImage.Add(img);
+                                }
+                        }
+                        ParentDetailData parentData = new ParentDetailData()
+                        {
+                            ParentDetailID = parent.TrCheckListParentDetail != null ? parent.TrCheckListParentDetail.ID : null,
+                            ParentDetailName = parent.TmCheckListParentDetail.Name,
+                            ParentStatusID = parent.TrCheckListParentDetail != null ? parent.TrCheckListParentDetail.StatusID : null,
+                            ParentDetailRemark = parent.TrCheckListParentDetail != null ? parent.TrCheckListParentDetail.Remark : null,
+                            ParentPassBySeq = parent.TrCheckListParentDetail != null ? parent.TrCheckListParentDetail.PassBySeq : null,
+                            ParentImages = listParentImage,
                         };
 
-                        listParentImage.Add(img);
+                        detailData.ParentDetailDatas.Add(parentData);
                     }
-
-                    ParentDetailData parentData = new ParentDetailData()
-                    {
-                        ParentDetailID = parent.TrCheckListParentDetail.ID,
-                        ParentDetailName = detail.TmCheckListDetail.Name,
-                        ParentStatusID = detail.TrCheckListDetail.StatusID,
-                        ParentDetailRemark = detail.TrCheckListDetail.Remark,
-                        ParentPassBySeq = detail.TrCheckListDetail.PassBySeq,
-                        ParentImages = listParentImage,
-                    };
-
-                    detailData.ParentDetailDatas.Add(parentData);
                 }
 
                 listDetail.Add(detailData);
@@ -1093,18 +1101,25 @@ namespace Project.ConstructionTracking.Web.Repositories
                             });
 
                             int index = 1;
+                            int index2 = 1;
                             foreach (var data in dataQCGenerate?.BodyQCPdf.QcCheckListDetailDatas)
                             {
-                                table2.Cell().Row((uint)index).Column(1).Element(CellStyle).Text(index.ToString());  // Index column
-                                table2.Cell().Row((uint)index).Column(2).Element(CellStyle).AlignLeft().Text(data.DetailName).WrapAnywhere();
+                                table2.Cell().Row((uint)index2).Column(1).Element(CellStyle).Text(index.ToString());  // Index column
+                                table2.Cell().Row((uint)index2).Column(2).Element(CellStyle).AlignLeft().Text(data.DetailName).WrapAnywhere();
                                 if (dataQCGenerate.HeaderQCData?.QCStatus != SystemConstant.UnitQCStatus.IsNotReadyInspect)
                                 {
-                                    if(data.ParentDetailDatas != null)
+                                    
+                                    if (data.ParentDetailDatas != null && data.ParentDetailDatas.Count > 0)
                                     {
-                                        int indexParent = index + 1;
+                                        table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
+                                        table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                        table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
+                                        table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).Text("");
+
+                                        int indexParent = index2 + 1;
                                         foreach(var data2 in data.ParentDetailDatas)
                                         {
-                                            table2.Cell().Row((uint)indexParent).Column(1).Element(CellStyle).Text(indexParent.ToString());  // Index column
+                                            table2.Cell().Row((uint)indexParent).Column(1).Element(CellStyle).Text("");  // Index column
                                             table2.Cell().Row((uint)indexParent).Column(2).Element(CellStyle).AlignLeft().Text(data2.ParentDetailName).WrapAnywhere();
                                             if (data2.ParentStatusID == SystemConstant.Qc_CheckList_Status.PASS)
                                             {
@@ -1128,40 +1143,41 @@ namespace Project.ConstructionTracking.Web.Repositories
                                             table2.Cell().Row((uint)indexParent).Column(6).Element(CellStyle).AlignLeft().Text(data2.ParentDetailRemark);// ความเห็นเพิ่มเติม
                                             indexParent++;
                                         }
-                                        index = indexParent + 1;
+                                        index2 = indexParent;
                                     }
                                     else
                                     {
                                         if (data.StatusID == SystemConstant.Qc_CheckList_Status.PASS)
                                         {
-                                            table2.Cell().Row((uint)index).Column(3).Element(CellStyle).Text("✓"); // "ผ่าน" column (checked)
-                                            table2.Cell().Row((uint)index).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
-                                            table2.Cell().Row((uint)index).Column(5).Element(CellStyle).Text(data.PassBySeq.ToString());
+                                            table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text("✓"); // "ผ่าน" column (checked)
+                                            table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                            table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text(data.PassBySeq.ToString());
                                         }
                                         else
                                         {
-                                            table2.Cell().Row((uint)index).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
-                                            table2.Cell().Row((uint)index).Column(4).Element(CellStyle).Text("✓"); // "ไม่ผ่าน" column (checked)
+                                            table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
+                                            table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("✓"); // "ไม่ผ่าน" column (checked)
                                             if (data.PassBySeq == 0)
                                             {
-                                                table2.Cell().Row((uint)index).Column(5).Element(CellStyle).Text("N/A");
+                                                table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("N/A");
                                             }
                                             else
                                             {
-                                                table2.Cell().Row((uint)index).Column(5).Element(CellStyle).Text("");
+                                                table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
                                             }
                                         }
-                                        table2.Cell().Row((uint)index).Column(6).Element(CellStyle).AlignLeft().Text(data.DetailRemark);      // ความเห็นเพิ่มเติม
-                                    
+                                        table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).AlignLeft().Text(data.DetailRemark);      // ความเห็นเพิ่มเติม
+                                        index2++;
                                     }
 
                                 }
                                 else
                                 {
-                                    table2.Cell().Row((uint)index).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
-                                    table2.Cell().Row((uint)index).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
-                                    table2.Cell().Row((uint)index).Column(5).Element(CellStyle).Text("");
-                                    table2.Cell().Row((uint)index).Column(6).Element(CellStyle).Text("");
+                                    table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
+                                    table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                    table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
+                                    table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).Text("");
+                                    index2++;
                                 }
                                 index++;
                             }
@@ -1186,7 +1202,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                            
                             if (dataQCGenerate.HeaderQCData?.QCStatus == SystemConstant.UnitQCStatus.IsNotReadyInspect)
                             {
-                                table3.Cell().Row(2).Column(1).AlignCenter().Text("สภาพไม่พร้อมให้ตรวจ").BackgroundColor("#6ce4ff");
+                                table3.Cell().Row(2).Column(1).AlignLeft().Text("สภาพไม่พร้อมให้ตรวจ").Bold();
                                 table3.Cell().Row(2).Column(2).Text("ความเห็นเพิ่มเติม");
                                 if (dataQCGenerate.HeaderQCData.Info != null)
                                 {
@@ -1212,8 +1228,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                     // Display each image and let QuestPDF handle the natural size
                                                     grid.Item(4).AlignCenter().AlignMiddle()  // Center the image both horizontally and vertically
                                                         .Border(0.5f)                        // Optional border for styling
-                                                        .Width(125)
-                                                        .Height(125)
+                                                        .Width(100)
+                                                        .Height(100)
                                                         .Image(img);                         // Automatically adjust size based on image
                                                 }
                                             }
@@ -1231,17 +1247,20 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 int i = 2;
                                 foreach (var data in dataQCGenerate?.BodyQCPdf.QcCheckListDetailDatas)
                                 {
-                                    if(data.StatusID == SystemConstant.Qc_CheckList_Status.NOTPASS)
+                                    if (data.ParentDetailDatas != null && data.ParentDetailDatas.Count > 0)
                                     {
-                                        table3.Cell().Row((uint)i).Column(1).ColumnSpan(2).AlignLeft().Text(index2 + ". " + data.DetailName).Bold();
-                                        if (data.ParentDetailDatas != null)
+                                        if(data.ParentDetailDatas.Any(o => o.ParentStatusID == SystemConstant.Qc_CheckList_Status.NOTPASS))
                                         {
-                                            int mainRow = i + 1;
-                                            int parentRow = mainRow + 1;
-                                            foreach (var data2 in data.ParentDetailDatas)
+                                            table3.Cell().Row((uint)i).Column(1).AlignLeft().Text(index2 + ". " + data.DetailName).Bold();
+                                            table3.Cell().Row((uint)i).Column(2).Text("ความเห็นเพิ่มเติม");
+                                        }
+                                        int mainRow = i + 1;
+                                        int parentRow = mainRow + 1;
+                                        foreach (var data2 in data.ParentDetailDatas)
+                                        {
+                                            if (data2.ParentStatusID == SystemConstant.Qc_CheckList_Status.NOTPASS)
                                             {
-                                                table3.Cell().Row((uint)mainRow).Column(1).AlignCenter().Text(data2.ParentDetailName).BackgroundColor("#6ce4ff"); ;
-                                                table3.Cell().Row(2).Column(2).Text("ความเห็นเพิ่มเติม");
+                                                table3.Cell().Row((uint)mainRow).Column(1).AlignLeft().Text(data2.ParentDetailName);
                                                 table3.Cell().Row((uint)parentRow).Column(1).Grid(grid =>
                                                 {
                                                     grid.VerticalSpacing(15);
@@ -1252,48 +1271,57 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                     foreach (var image in data2.ParentImages)
                                                     {
                                                         string pathImage = image.FilePath;
-                                                        var imgPath = _hosting.ContentRootPath + "/wwwroot/" + pathImage;
+                                                        var imgPath = _hosting.ContentRootPath + "/" + pathImage;
 
                                                         if (System.IO.File.Exists(imgPath))
                                                         {
-                                                            using var img = new FileStream(imgPath, FileMode.Open, FileAccess.Read);
+                                                            using var img = new FileStream(imgPath, FileMode.Open);
 
                                                             // Display each image and let QuestPDF handle the natural size
-                                                            grid.Item(6).AlignCenter().AlignMiddle()  // Center the image both horizontally and vertically
+                                                            grid.Item(4).AlignCenter().AlignMiddle()  // Center the image both horizontally and vertically
                                                                 .Border(0.5f)                        // Optional border for styling
-                                                                .Width(125)
-                                                                .Height(125)
+                                                                .Width(100)
+                                                                .Height(100)
                                                                 .Image(img);                         // Automatically adjust size based on image
                                                         }
                                                     }
                                                 });
                                                 table3.Cell().Row((uint)parentRow).Column(2).AlignLeft().Text(data2.ParentDetailRemark);
-                                                parentRow++;
+                                                mainRow = parentRow + 1;
+                                                parentRow = mainRow + 1;
                                             }
-
-                                            i = parentRow + 1;
                                         }
-                                        else
+
+                                        i = parentRow;
+                                    }
+                                    else
+                                    {
+                                        int rowNum = i + 1;
+                                        if(data.StatusID == SystemConstant.Qc_CheckList_Status.NOTPASS)
                                         {
-                                            int rowNum = i + 1;
+                                            table3.Cell().Row((uint)i).Column(1).AlignLeft().Text(index2 + ". " + data.DetailName).Bold();
+                                            table3.Cell().Row((uint)i).Column(2).Text("ความเห็นเพิ่มเติม");
+
                                             table3.Cell().Row((uint)rowNum).Column(1).Grid(grid =>
                                             {
-                                                grid.AlignLeft();  // Align the grid content to the left
-                                                grid.Columns(6);    // Create a 6-column grid to display images
+                                                grid.VerticalSpacing(15);
+                                                grid.HorizontalSpacing(15);
+                                                grid.AlignLeft();
+                                                grid.Columns(8);
 
                                                 foreach (var image2 in data.DetailImages)
                                                 {
                                                     string pathImage = image2.FilePath;
-                                                    var imgPath = _hosting.ContentRootPath + "/wwwroot/" + pathImage;
+                                                    var imgPath = _hosting.ContentRootPath + "/" + pathImage;
 
                                                     if (System.IO.File.Exists(imgPath))
                                                     {
-                                                        using var img = new FileStream(imgPath, FileMode.Open, FileAccess.Read);
+                                                        using var img = new FileStream(imgPath, FileMode.Open);
 
                                                         // Display each image and let QuestPDF handle the natural size
-                                                        grid.Item(6).AlignCenter().AlignMiddle()  // Center the image both horizontally and vertically
+                                                        grid.Item(4).AlignCenter().AlignMiddle()  // Center the image both horizontally and vertically
                                                             .Border(0.5f)                        // Optional border for styling
-                                                            .Width(125)
+                                                            .Width(100)
                                                             .Height(100)
                                                             .Image(img);                         // Automatically adjust size based on image
                                                     }
@@ -1303,6 +1331,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                             i = rowNum + 1;
                                         }
                                     }
+                                    index2++;
                                 }
                             }
                         });
