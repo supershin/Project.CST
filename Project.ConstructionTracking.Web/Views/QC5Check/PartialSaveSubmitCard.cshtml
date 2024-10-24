@@ -14,9 +14,10 @@
                            name="radios-QC5-status"
                            id="radio3"
                            value="1"
-                           onclick="validateMainStatus(this)"
+                           onclick="toggleRadio(this)"
                     @(ViewBag.QC5UnitStatusID == 1 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
+                    >
                     <span class="form-check-label">ผ่าน</span>
                 </label>
                 <label class="form-check form-check-inline">
@@ -25,9 +26,10 @@
                            name="radios-QC5-status"
                            id="radio2"
                            value="4"
-                           onclick="validateConditionalPass(this)"
+                           onclick="toggleRadio(this)"
                     @(ViewBag.QC5UnitStatusID == 4 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
+                    >
                     <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
                 </label>
                 <label class="form-check form-check-inline">
@@ -36,9 +38,10 @@
                            name="radios-QC5-status"
                            id="radio1"
                            value="2"
-                           onclick="ClickNotPass(this)"
+                           onclick="toggleRadio(this)"
                     @(ViewBag.QC5UnitStatusID == 2 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
+                    >
                     <span class="form-check-label">ไม่ผ่าน</span>
                 </label>
                 <label class="form-check form-check-inline">
@@ -47,9 +50,10 @@
                            name="radios-QC5-status"
                            id="radio4"
                            value="3"
-                           onclick="ClickNotReadyInspect(this)"
+                           onclick="toggleRadio(this)"
                     @(ViewBag.QC5UnitStatusID == 3 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
+                    >
                     <span class="form-check-label">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
                 </label>
             </div>

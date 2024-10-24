@@ -155,6 +155,11 @@ function onSaveButtonClick() {
         return;
     }
 
+    if (files.length === 0) {
+        showErrorAlertNotCloseModal('คำเตือน!', 'กรุณารูปภาพอย่างน้อย 1 รูป');
+        return;
+    }
+
     // Create FormData object and append data
     var formData = new FormData();
     formData.append('ProjectID', projectId); // Use hidden input value
@@ -185,23 +190,23 @@ function onSaveButtonClick() {
         success: function (response) {
             Swal.close();
             if (response.success) {
-                var mainPassRadio = document.getElementById('radio3');
-                if (mainPassRadio && mainPassRadio.checked) {
-                    mainPassRadio.checked = false;
-                    mainPassRadio.dataset.wasChecked = "";
-                    selectedRadioQC5Status = '';
-                }
+                //var mainPassRadio = document.getElementById('radio3');
+                //if (mainPassRadio && mainPassRadio.checked) {
+                //    mainPassRadio.checked = false;
+                //    mainPassRadio.dataset.wasChecked = "";
+                //    selectedRadioQC5Status = '';
+                //}
                 //debugger
                 //console.log(isMajorDefect);
-                if (isMajorDefect === true) {
-                    var mainPassWithConditionRadio = document.getElementById('radio2');
-                    mainPassWithConditionRadio.checked = false;
-                    mainPassWithConditionRadio.dataset.wasChecked = "";
-                    selectedRadioQC5Status = '';
-                }
+                //if (isMajorDefect === true) {
+                //    var mainPassWithConditionRadio = document.getElementById('radio2');
+                //    mainPassWithConditionRadio.checked = false;
+                //    mainPassWithConditionRadio.dataset.wasChecked = "";
+                //    selectedRadioQC5Status = '';
+                //}
 
-                var mainNotpassRadio = document.getElementById('radio1');
-                mainNotpassRadio.checked = true;
+                //var mainNotpassRadio = document.getElementById('radio1');
+                //mainNotpassRadio.checked = true;
                 //mainNotpassRadio.dataset.wasChecked = "check";
 
                 //debugger
@@ -587,12 +592,12 @@ function onEditButtonClick() {
         success: function (response) {
             Swal.close();
             if (response.success) {
-                if (isMajorDefect === true) {
-                    var mainPassWithConditionRadio = document.getElementById('radio2');
-                    mainPassWithConditionRadio.checked = false;
-                    mainPassWithConditionRadio.dataset.wasChecked = "";
-                    selectedRadioQC5Status = '';
-                }
+                //if (isMajorDefect === true) {
+                //    var mainPassWithConditionRadio = document.getElementById('radio2');
+                //    mainPassWithConditionRadio.checked = false;
+                //    mainPassWithConditionRadio.dataset.wasChecked = "";
+                //    selectedRadioQC5Status = '';
+                //}
                 showFixedButton();
                 fetchUpdatedList();
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
@@ -776,7 +781,9 @@ function onRemoveQC5ButtonClick() {
                     if (response.success) {
                         // Success alert and reload the page
                         showSuccessAlert('สำเร็จ!', 'ลบข้อมูลสำเร็จ', function () {
+                            showFixedButton();
                             fetchUpdatedList();
+                            fetchUpdatedSummary();
                         });
                     } else {
                         showErrorAlert('ลบข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการลบข้อมูล');
@@ -914,6 +921,82 @@ function saveUnitQC5() {
     var QCRemark = document.getElementById('QC5Remark').value;
     var files = $('#file-input-save-submit')[0].files;
 
+    if (QCStatusID === "1") {
+        let allItems = document.querySelectorAll('.card-item[data-status]');
+        let hasNotPass = false;
+        allItems.forEach(function (item) {
+            let status = item.getAttribute('data-status');
+            if (status === '28') {
+                hasNotPass = true;
+            }
+        });
+
+        if (hasNotPass === true) {
+            showErrorAlert('คำเตือน!', 'ยังมีรายการ Defect ที่ไม่ผ่าน');
+            mainRadio.checked = false;
+        }
+    }
+
+    else if (QCStatusID === "2") {
+        let allItems = document.querySelectorAll('.card-item[data-status]');
+        let hasNotPass = false;
+        allItems.forEach(function (item) {
+            let status = item.getAttribute('data-status');
+            if (status === '28') {
+                hasNotPass = true;
+            }
+        });
+
+        if (hasNotPass === false) {
+            showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+            mainRadio.checked = false;
+        }
+    }
+
+    else if (QCStatusID === "3") {
+        let allItems = document.querySelectorAll('.card-item[data-status]');
+        let hasNotPass = false;
+        allItems.forEach(function (item) {
+            let status = item.getAttribute('data-status');
+            if (status === '28') {
+                hasNotPass = true;
+            }
+        });
+
+        if (hasNotPass === false && allItems.length !== 0) {
+            showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+            mainRadio.checked = false;
+        }
+    }
+
+    else if (QCStatusID === "4") {
+        let allItems = document.querySelectorAll('.card-item[data-is-major-defect][data-status]');
+        let hasMajorDefect = false;
+        let hasNotPass = false;
+
+        allItems.forEach(function (item) {
+            let isMajorDefect = item.getAttribute('data-is-major-defect') === 'True';
+            let statusID = item.getAttribute('data-status');
+
+            if (isMajorDefect && statusID == "28") {
+                hasMajorDefect = true;
+            }
+            else if (statusID == "28") {
+                hasNotPass = true;
+            }
+        });
+
+        if (hasMajorDefect === true) {
+            showErrorAlert('คำเตือน!', 'ยังมีรายการ Major Defect ที่ไม่ผ่าน');
+            mainRadio.checked = false;
+        }
+        if (hasNotPass === false) {
+            showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+            mainRadio.checked = false;
+        }
+    }
+
+
     var formData = new FormData();
     formData.append('QCUnitCheckListID', QCUnitCheckListID);
     formData.append('QCUnitCheckListActionID', QCUnitCheckListActionID);
@@ -1049,15 +1132,86 @@ function SubmitUnitQC5() {
         return;
     }
 
-    if (QCStatusID === "3") {
-        // Access ImageQC5UnitList which was declared in the Razor view
+    if (QCStatusID === "1") {
+        let allItems = document.querySelectorAll('.card-item[data-status]');
+        let hasNotPass = false;
+        allItems.forEach(function (item) {
+            let status = item.getAttribute('data-status');
+            if (status === '28') {
+                hasNotPass = true;
+            }
+        });
+
+        if (hasNotPass === true) {
+            showErrorAlert('คำเตือน!', 'ยังมีรายการ Defect ที่ไม่ผ่าน');
+            mainRadio.checked = false;
+        }
+    }
+
+    else if (QCStatusID === "2") {
+        let allItems = document.querySelectorAll('.card-item[data-status]');
+        let hasNotPass = false;
+        allItems.forEach(function (item) {
+            let status = item.getAttribute('data-status');
+            if (status === '28') {
+                hasNotPass = true;
+            }
+        });
+
+        if (hasNotPass === false) {
+            showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+            mainRadio.checked = false;
+        }
+    }
+
+    else if (QCStatusID === "3") {
+        let allItems = document.querySelectorAll('.card-item[data-status]');
+        let hasNotPass = false;
+        allItems.forEach(function (item) {
+            let status = item.getAttribute('data-status');
+            if (status === '28') {
+                hasNotPass = true;
+            }
+        });
+
+        if (hasNotPass === false && allItems.length !== 0) {
+            showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+            mainRadio.checked = false;
+        }
         if (ImageQC5UnitList.length + files.length === 0) {
             showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุผลที่ไม่ให้ผ่าน');
             return;
         }
-        else if (!QCRemark) {
+        if (!QCRemark) {
             showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุผลที่ไม่ให้ผ่าน');
             return;
+        }
+    }
+
+    else if (QCStatusID === "4") {
+        let allItems = document.querySelectorAll('.card-item[data-is-major-defect][data-status]');
+        let hasMajorDefect = false;
+        let hasNotPass = false;
+
+        allItems.forEach(function (item) {
+            let isMajorDefect = item.getAttribute('data-is-major-defect') === 'True';
+            let statusID = item.getAttribute('data-status');
+
+            if (isMajorDefect && statusID == "28") {
+                hasMajorDefect = true;
+            }
+            else if (statusID == "28") {
+                hasNotPass = true;
+            }
+        });
+
+        if (hasMajorDefect === true) {
+            showErrorAlert('คำเตือน!', 'ยังมีรายการ Major Defect ที่ไม่ผ่าน');
+            mainRadio.checked = false;
+        }
+        if (hasNotPass === false) {
+            showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+            mainRadio.checked = false;
         }
     }
 
@@ -1126,20 +1280,38 @@ function toggleRadioForRadioCheck(radio, id, majordefect) {
 
         radioChanged(id, radio.value);
 
-        if (radio.value == 28) {
-            var mainPassRadio = document.getElementById('radio3');
-            if (mainPassRadio && mainPassRadio.checked) {
-                mainPassRadio.checked = false;
-                mainPassRadio.dataset.wasChecked = "";
-                selectedRadioQC5Status = '';
-            }
-            if (majordefect == "True") {
-                var mainPassWithConditionRadio = document.getElementById('radio2');
-                mainPassWithConditionRadio.checked = false;
-                mainPassWithConditionRadio.dataset.wasChecked = "";
-                selectedRadioQC5Status = '';
-            }
-        }
+        //if (radio.value == 28) {
+        //    var mainPassRadio = document.getElementById('radio3');
+        //    if (mainPassRadio && mainPassRadio.checked) {
+        //        mainPassRadio.checked = false;
+        //        mainPassRadio.dataset.wasChecked = "";
+        //        selectedRadioQC5Status = '';
+        //    }
+        //    if (majordefect == "True") {
+        //        var mainPassWithConditionRadio = document.getElementById('radio2');
+        //        mainPassWithConditionRadio.checked = false;
+        //        mainPassWithConditionRadio.dataset.wasChecked = "";
+        //        selectedRadioQC5Status = '';
+        //    }
+        //}
+        //else
+        //{
+        //    let allItems = document.querySelectorAll('.card-item[data-status]');
+        //    let hasNotPass = false;
+        //    allItems.forEach(function (item) {
+        //        debugger
+        //        let status = item.getAttribute('data-status');
+        //        if (status === '28') {
+        //            hasNotPass = true;
+        //        }
+        //    });
+
+        //    if (hasNotPass === false) {
+        //        showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+        //        mainRadio.checked = false;
+        //    }
+
+        //}
     }
 }
 
@@ -1425,6 +1597,37 @@ function validateConditionalPass(mainRadio) {
         }
     }
 }
+
+
+function validateNotPass(mainRadio) {
+    let allItems = document.querySelectorAll('.card-item[data-status]');
+    let hasNotPass = false;
+    allItems.forEach(function (item) {
+        let status = item.getAttribute('data-status');
+        if (status === '28') {
+            hasNotPass = true;
+        }
+    });
+
+    if (hasNotPass === false) {
+        showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+        mainRadio.checked = false;
+    } else {
+        if (mainRadio.checked && mainRadio.dataset.wasChecked) {
+            mainRadio.checked = false;
+            mainRadio.dataset.wasChecked = "";
+            selectedRadioQC5Status = null;
+        } else {
+            let radios = document.getElementsByName(mainRadio.name);
+            for (let i = 0; i < radios.length; i++) {
+                radios[i].dataset.wasChecked = "";
+            }
+            mainRadio.dataset.wasChecked = "true"; // Mark the current one as checked
+            selectedRadioQC5Status = mainRadio.value;
+        }
+    }
+}
+
 
 function ClickNotReadyInspect(mainRadio) {
     // Check if the radio is already checked and has been clicked again

@@ -463,10 +463,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                         //{
                         //    UnitCheckList.QCStatusID = null;
                         //}
-                        UnitCheckList.QCStatusID = 2;
-                        UnitCheckList.UpdateDate = DateTime.Now;
-                        UnitCheckList.UpdateBy = model.UserID;
-                        _context.tr_QC_UnitCheckList.Update(UnitCheckList);
+                        //UnitCheckList.QCStatusID = 2;
+                        //UnitCheckList.UpdateDate = DateTime.Now;
+                        //UnitCheckList.UpdateBy = model.UserID;
+                        //_context.tr_QC_UnitCheckList.Update(UnitCheckList);
 
                         QCUnitCheckListID = UnitCheckList.ID;
                     }
@@ -707,18 +707,18 @@ namespace Project.ConstructionTracking.Web.Repositories
                         _context.SaveChanges();
                     }
 
-                    var UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(x => x.ProjectID == model.ProjectID && x.UnitID == model.UnitID && x.QCTypeID == SystemConstant.QcTypeID.QC5 && x.Seq == model.Seq.ToInt());
-                    if (UnitCheckList != null)
-                    {
+                    //var UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(x => x.ProjectID == model.ProjectID && x.UnitID == model.UnitID && x.QCTypeID == SystemConstant.QcTypeID.QC5 && x.Seq == model.Seq.ToInt());
+                    //if (UnitCheckList != null)
+                    //{
 
-                        if (UnitCheckList.QCStatusID == 4 && model.isMajorDefect == true)
-                        {
-                            UnitCheckList.QCStatusID = null;
-                        }
-                        UnitCheckList.UpdateDate = DateTime.Now;
-                        UnitCheckList.UpdateBy = model.UserID;
-                        _context.tr_QC_UnitCheckList.Update(UnitCheckList);
-                    }
+                    //    if (UnitCheckList.QCStatusID == 4 && model.isMajorDefect == true)
+                    //    {
+                    //        UnitCheckList.QCStatusID = null;
+                    //    }
+                    //    UnitCheckList.UpdateDate = DateTime.Now;
+                    //    UnitCheckList.UpdateBy = model.UserID;
+                    //    _context.tr_QC_UnitCheckList.Update(UnitCheckList);
+                    //}
 
                     scope.Complete(); // Commit the transaction
                 }
@@ -1333,21 +1333,21 @@ namespace Project.ConstructionTracking.Web.Repositories
                         _context.SaveChanges();
                     }
 
-                    var UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(x => x.ProjectID == model.ProjectID && x.UnitID == model.UnitID && x.QCTypeID == SystemConstant.QcTypeID.QC5 && x.Seq == model.Seq.ToInt());
-                    if (UnitCheckList != null && existingDefect != null)
-                    {
-                        if (UnitCheckList.QCStatusID == 1)
-                        {
-                            UnitCheckList.QCStatusID = null;
-                        }
-                        else if (UnitCheckList.QCStatusID == 4 && existingDefect.IsMajorDefect == true)
-                        {
-                            UnitCheckList.QCStatusID = null;
-                        }
-                        UnitCheckList.UpdateDate = DateTime.Now;
-                        UnitCheckList.UpdateBy = model.UserID;
-                        _context.tr_QC_UnitCheckList.Update(UnitCheckList);
-                    }
+                    //var UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(x => x.ProjectID == model.ProjectID && x.UnitID == model.UnitID && x.QCTypeID == SystemConstant.QcTypeID.QC5 && x.Seq == model.Seq.ToInt());
+                    //if (UnitCheckList != null && existingDefect != null)
+                    //{
+                    //    if (UnitCheckList.QCStatusID == 1)
+                    //    {
+                    //        UnitCheckList.QCStatusID = null;
+                    //    }
+                    //    else if (UnitCheckList.QCStatusID == 4 && existingDefect.IsMajorDefect == true)
+                    //    {
+                    //        UnitCheckList.QCStatusID = null;
+                    //    }
+                    //    UnitCheckList.UpdateDate = DateTime.Now;
+                    //    UnitCheckList.UpdateBy = model.UserID;
+                    //    _context.tr_QC_UnitCheckList.Update(UnitCheckList);
+                    //}
 
                     scope.Complete(); // Commit the transaction
                 }
