@@ -1045,7 +1045,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             else
             {
                 tr_QC_UnitCheckList_Resource? qcResource = _context.tr_QC_UnitCheckList_Resource
-                    .Where(o => o.QCUnitCheckListID == qcID && o.QCUnitCheckListDetailID == detailID
+                    .Where(o => o.QCUnitCheckListID == qcID
                     && o.ResourceID == resourceID && o.FlagActive == true)
                     .FirstOrDefault();
                 if (qcResource == null) throw new Exception("ไม่พบข้อมูลรูปภาพที่เกี่ยวข้องกับ QC");
