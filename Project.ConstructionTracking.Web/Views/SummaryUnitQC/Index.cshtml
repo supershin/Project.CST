@@ -21,7 +21,26 @@
         color: white;
         border: none;
         outline: none;
+        position: relative; /* Enables absolute positioning of the badge */
+        background-color: green; /* Add background color if needed */
     }
+
+    .status-dot .badge {
+        position: absolute;
+        top: -5px; /* Adjust to position the badge higher */
+        right: -5px; /* Adjust to position the badge to the right */
+        background-color: red; /* Background color of the badge */
+        color: white; /* Text color inside the badge */
+        border-radius: 50%; /* Makes the badge circular */
+        width: 18px; /* Adjust width of the badge */
+        height: 18px; /* Adjust height of the badge */
+        font-size: 12px; /* Font size for the text/number */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+    }
+
 
     .status-text {
         font-size: 1em;
@@ -34,6 +53,7 @@
     .custom-heading {
         line-height: 1.2;
     }
+
 </style>
 @model Project.ConstructionTracking.Web.Models.QCModel.QcSummaryResp
 
@@ -127,9 +147,15 @@
                                                                     <input type="hidden" name="ProjectID" value="@Model.ProjectID" />
                                                                     <input type="hidden" name="UnitID" value="@Model.UnitID" />
                                                                     <input type="hidden" name="Seq" value="@data.Seq" />
-                                                                    <button 
-                                                                          class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH ? "green" : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2">
+                                                                    <button class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH  ? "green"
+                                                                                                 : data.QcStatusID == SystemConstant.QcSummaryStatus.PASSWITHCONDITION  ? "green"
+                                                                                                 : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2">
+                                                                        @if (data.QcStatusID == SystemConstant.QcSummaryStatus.PASSWITHCONDITION)
+                                                                        {
+                                                                            <span class="badge">?</span>
+                                                                        }
                                                                     </button>
+
                                                                 </form>
                                                             }
                                                             else
@@ -142,7 +168,9 @@
                                                                         data-form-id="@listQc.FormID"
                                                                         data-qc-unit-checklist-id="@data.QcUnitCheckListID"
                                                                         data-seq="@data.Seq"
-                                                                        class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH ? "green" : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2">
+                                                                        class="status-dot bg-@(data.QcStatusID == SystemConstant.QcSummaryStatus.FINISH ? "green" 
+                                                                                             : data.QcStatusID == SystemConstant.QcSummaryStatus.PASSWITHCONDITION  ? "green"
+                                                                                             : data.QcStatusID == SystemConstant.QcSummaryStatus.SUSPEND ? "danger" : "yellow") mx-1 mb-2">
                                                                 </button>
 
                                                             }
