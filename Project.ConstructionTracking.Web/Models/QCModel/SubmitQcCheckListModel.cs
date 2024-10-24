@@ -9,6 +9,8 @@ namespace Project.ConstructionTracking.Web.Models.QCModel
         public int CheckListID { get; set; }
         public int QcTypeID { get; set; }
         public int Seq { get; set; }
+
+        public string? DocumentUrl { get; set; }
     }
 }
 

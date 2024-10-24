@@ -176,22 +176,9 @@ namespace Project.ConstructionTracking.Web.Controllers
                 }
 
                 model.ApplicationPath = _hosting.ContentRootPath;
-                var saveData = _qcCheckListService.SaveQcCheckList(model, user, role);
-
-                SubmitQcCheckListModel submitModel = new SubmitQcCheckListModel()
-                {
-                    QcID = saveData.QcID,
-                    ProjectID = saveData.ProjectID,
-                    UnitID = saveData.UnitID,
-                    CheckListID = saveData.CheckListID,
-                    QcTypeID = saveData.QcTypeID,
-                    Seq = saveData.Seq
-                };
-
-                bool resultSubmit = _qcCheckListService.SubmitQcCheckList(submitModel, user, role);
+                SubmitQcCheckListModel resultSubmit = _qcCheckListService.SubmitQcCheckList(model, user, role);
                 var resultData = new SubmitQcCheckListModel();
-
-                if (resultSubmit) resultData = submitModel;
+                resultData = resultSubmit;
                     
                 return Json(
                           new
@@ -200,6 +187,38 @@ namespace Project.ConstructionTracking.Web.Controllers
                               data = resultData,
                           }
                 );
+            }
+            catch (Exception ex)
+            {
+                return Json(
+                            new
+                            {
+                                success = false,
+                                message = ex.Message, //InnerException(ex),
+                                data = new[] { ex.Message },
+                            }
+               );
+            }
+        }
+
+        [HttpPost]
+        public JsonResult OpenFilePDF(Guid QcCheckListID)
+        {
+            try
+            {
+                var resultData = _qcCheckListService.OpenFilePDF(QcCheckListID);
+                if (!String.IsNullOrWhiteSpace(resultData))
+                {
+                    return Json(
+                          new
+                          {
+                              success = true,
+                              data = resultData,
+                          }
+                    );
+                }
+                else { throw new Exception("ไม่พบข้อมูลเอกสาร PDF"); }
+                
             }
             catch (Exception ex)
             {

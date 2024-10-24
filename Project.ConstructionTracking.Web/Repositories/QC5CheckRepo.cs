@@ -500,7 +500,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                         DefectTypeID = model.DefectTypeID,
                         DefectDescriptionID = model.DefectDescriptionID,
                         StatusID = 28,
-                        Remark = string.IsNullOrEmpty(model.Remark) ? "" : model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
+                        Remark = model.Remark,
+                        //Remark = string.IsNullOrEmpty(model.Remark) ? "" : model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
                         IsMajorDefect = model.isMajorDefect,
                         FlagActive = true,
                         CreateDate = DateTime.Now,
@@ -625,17 +626,18 @@ namespace Project.ConstructionTracking.Web.Repositories
                         existingDefect.DefectAreaID = model.DefectAreaID;
                         existingDefect.DefectTypeID = model.DefectTypeID;
                         existingDefect.DefectDescriptionID = model.DefectDescriptionID;
-                        if (!string.IsNullOrEmpty(model.Remark))
-                        {
-                            if (existingDefect.Remark != model.Remark)
-                            {
-                                existingDefect.Remark = model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
-                            }
-                        }
-                        else
-                        {
-                            existingDefect.Remark = "";
-                        }
+                        existingDefect.Remark = model.Remark;
+                        //if (!string.IsNullOrEmpty(model.Remark))
+                        //{
+                        //    if (existingDefect.Remark != model.Remark)
+                        //    {
+                        //        existingDefect.Remark = model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    existingDefect.Remark = "";
+                        //}
                         existingDefect.IsMajorDefect = model.isMajorDefect;
                         existingDefect.UpdateDate = DateTime.Now;
                         existingDefect.UpdateBy = model.UserID;
@@ -1151,9 +1153,10 @@ namespace Project.ConstructionTracking.Web.Repositories
             if (QC_UnitCheckList_Action != null)
             {
                 QC_UnitCheckList_Action.ActionType = model.ActionType;
-                QC_UnitCheckList_Action.Remark = !string.IsNullOrEmpty(model.QCRemark)
-                    ? model.QCRemark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now)
-                    : "";
+                QC_UnitCheckList_Action.Remark = model.QCRemark;
+                //QC_UnitCheckList_Action.Remark = !string.IsNullOrEmpty(model.QCRemark)
+                //    ? model.QCRemark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now)
+                //    : "";
                 QC_UnitCheckList_Action.ActionDate = DateTime.Now;
                 QC_UnitCheckList_Action.UpdateDate = DateTime.Now;
                 QC_UnitCheckList_Action.UpdateBy = model.UserID;
