@@ -455,7 +455,14 @@ namespace Project.ConstructionTracking.Web.Repositories
                     }
                     else
                     {
-                        UnitCheckList.QCStatusID = null;
+                        if (UnitCheckList.QCStatusID == 1)
+                        {
+                            UnitCheckList.QCStatusID = null;
+                        }
+                        else if (UnitCheckList.QCStatusID == 4 && model.isMajorDefect == true)
+                        {
+                            UnitCheckList.QCStatusID = null;
+                        }
                         UnitCheckList.UpdateDate = DateTime.Now;
                         UnitCheckList.UpdateBy = model.UserID;
                         _context.tr_QC_UnitCheckList.Update(UnitCheckList);
@@ -697,7 +704,18 @@ namespace Project.ConstructionTracking.Web.Repositories
                         _context.SaveChanges();
                     }
 
+                    var UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(x => x.ProjectID == model.ProjectID && x.UnitID == model.UnitID && x.QCTypeID == SystemConstant.QcTypeID.QC5 && x.Seq == model.Seq.ToInt());
+                    if (UnitCheckList != null)
+                    {
 
+                        if(UnitCheckList.QCStatusID == 4 && model.isMajorDefect == true)
+                        {
+                            UnitCheckList.QCStatusID = null;
+                        }
+                        UnitCheckList.UpdateDate = DateTime.Now;
+                        UnitCheckList.UpdateBy = model.UserID;
+                        _context.tr_QC_UnitCheckList.Update(UnitCheckList);
+                    }
 
                     scope.Complete(); // Commit the transaction
                 }
@@ -1310,6 +1328,23 @@ namespace Project.ConstructionTracking.Web.Repositories
                         existingDefect.UpdateBy = model.UserID;
                         _context.SaveChanges();
                     }
+
+                    var UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(x => x.ProjectID == model.ProjectID && x.UnitID == model.UnitID && x.QCTypeID == SystemConstant.QcTypeID.QC5 && x.Seq == model.Seq.ToInt());
+                    if(UnitCheckList!= null && existingDefect != null)
+                    {
+                        if (UnitCheckList.QCStatusID == 1)
+                        {
+                            UnitCheckList.QCStatusID = null;
+                        }
+                        else if (UnitCheckList.QCStatusID == 4 && existingDefect.IsMajorDefect == true)
+                        {
+                            UnitCheckList.QCStatusID = null;
+                        }
+                        UnitCheckList.UpdateDate = DateTime.Now;
+                        UnitCheckList.UpdateBy = model.UserID;
+                        _context.tr_QC_UnitCheckList.Update(UnitCheckList);
+                    }
+
                     scope.Complete(); // Commit the transaction
                 }
                 catch (Exception ex)
