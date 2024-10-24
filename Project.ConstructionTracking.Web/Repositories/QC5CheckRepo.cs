@@ -34,59 +34,6 @@ namespace Project.ConstructionTracking.Web.Repositories
         }
 
 
-
-        //public void InsertSelectFromQCUnitCheckList(Guid qcUnitCheckListID_where, Guid qcUnitCheckListID_IUD, int? Seq)
-        //{
-
-        //    var defectsToInsert = _context.tr_QC_UnitCheckList_Defect
-        //                        .Where(d => d.QCUnitCheckListID == qcUnitCheckListID_where && d.FlagActive == true)
-        //                        .Select(d => new tr_QC_UnitCheckList_Defect
-        //                        {
-        //                            QCUnitCheckListID = qcUnitCheckListID_IUD,
-        //                            Seq = Seq,
-        //                            SeqPass = null,
-        //                            DefectAreaID = d.DefectAreaID,
-        //                            DefectTypeID = d.DefectTypeID,
-        //                            DefectDescriptionID = d.DefectDescriptionID,
-        //                            StatusID = d.StatusID,
-        //                            Remark = d.Remark,
-        //                            IsMajorDefect = d.IsMajorDefect,
-        //                            FlagActive = d.FlagActive,
-        //                            CreateDate = DateTime.Now,
-        //                            CreateBy = d.CreateBy,
-        //                            UpdateDate = DateTime.Now,
-        //                            UpdateBy = d.UpdateBy
-        //                        }).ToList();
-
-        //    _context.tr_QC_UnitCheckList_Defect.AddRange(defectsToInsert);
-        //    _context.SaveChanges();
-        //}
-
-
-
-        //public void InsertSelectFromQCUnitCheckList_Resource(Guid qcUnitCheckListID_where, Guid qcUnitCheckListID_IUD)
-        //{
-        //    var QCUnitCheckListResourceToInsert = _context.tr_QC_UnitCheckList_Resource
-        //                        .Where(d => d.QCUnitCheckListID == qcUnitCheckListID_where && d.FlagActive == true)
-        //                        .Select(d => new tr_QC_UnitCheckList_Resource
-        //                        {
-        //                            QCUnitCheckListID = qcUnitCheckListID_IUD,
-        //                            QCUnitCheckListDetailID = d.QCUnitCheckListDetailID,
-        //                            DefectID = d.DefectID,
-        //                            ResourceID = d.ResourceID,
-        //                            IsSign = d.IsSign,
-        //                            FlagActive = d.FlagActive,
-        //                            CreateDate = DateTime.Now,
-        //                            CreateBy = d.CreateBy,
-        //                            UpdateDate = DateTime.Now,
-        //                            UpdateBy = d.UpdateBy
-        //                        }).ToList();
-
-        //    _context.tr_QC_UnitCheckList_Resource.AddRange(QCUnitCheckListResourceToInsert);
-        //    _context.SaveChanges();
-        //}
-
-
         public QC5MaxSeqStatusChecklistModel CheckQC5MaxSeqStatusChecklist(QC5MaxSeqStatusChecklistModel filterData)
         {
             var result = (from t1 in _context.tr_QC_UnitCheckList
@@ -179,10 +126,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                     InsertSelectFromQCUnitCheckList_ResourceDefect(Chk_QC5_Previous.ID, QCUnitCheckListID, defectIDMapping, filterData.Seq - 1);
                     InsertSelectFromQCUnitCheckList_Resource(Chk_QC5_Previous.ID, QCUnitCheckListID);
 
-                    //InsertSelectFromQCUnitCheckList(Chk_QC5_Previous.ID, QCUnitCheckListID, filterData.Seq);
-
-                    //InsertSelectFromQCUnitCheckList_Resource(Chk_QC5_Previous.ID, QCUnitCheckListID);
-
                     _context.SaveChanges();
                 }
                 else if (Chk_QC5 == null && Chk_QC5_Previous == null)
@@ -246,7 +189,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                              from t9 in DocumentGroup.DefaultIfEmpty()
                              join t10 in _context.tm_Resource on t9.ResourceID equals t10.ID into ResourcePDFGroups
                              from t10 in ResourcePDFGroups.DefaultIfEmpty()
-
+                             join t11 in _context.tr_PE_Unit on t2.UnitID equals t11.UnitID into PEUNITGroup
+                             from t11 in PEUNITGroup.DefaultIfEmpty()
                              where t1.ProjectID == filterData.ProjectID
                                    && t2.UnitID == filterData.UnitID
                                    //&& t4.QCTypeID == SystemConstant.QcTypeID.QC5
@@ -269,7 +213,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                                  QC5UpdateByName = t6.FirstName + ' ' + t6.LastName,
                                  Seq = t4.Seq,
                                  ActionType = t5.ActionType,
-                                 FilePathQCPDF = t10.FilePath
+                                 FilePathQCPDF = t10.FilePath,
+                                 PEUnit = t11.UserID
                              }).FirstOrDefault();
 
                 scope.Complete();  // Commit transaction if everything is successful
@@ -510,6 +455,11 @@ namespace Project.ConstructionTracking.Web.Repositories
                     }
                     else
                     {
+                        UnitCheckList.QCStatusID = null;
+                        UnitCheckList.UpdateDate = DateTime.Now;
+                        UnitCheckList.UpdateBy = model.UserID;
+                        _context.tr_QC_UnitCheckList.Update(UnitCheckList);
+
                         QCUnitCheckListID = UnitCheckList.ID;
                     }
 
@@ -962,6 +912,167 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
+        //public void SaveSubmitQC5UnitCheckList(QC5SaveSubmitModel model)
+        //{
+        //    var transactionOptions = new TransactionOptions
+        //    {
+        //        IsolationLevel = IsolationLevel.ReadCommitted,
+        //        Timeout = TimeSpan.FromMinutes(10)
+        //    };
+
+        //    using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+        //    {
+        //        try
+        //        {
+        //            var QC_UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(d => d.ID == model.QCUnitCheckListID);
+
+        //            if (QC_UnitCheckList != null)
+        //            {
+        //                QC_UnitCheckList.QCStatusID = model.QCStatusID;
+        //                QC_UnitCheckList.UpdateDate = DateTime.Now;
+        //                QC_UnitCheckList.UpdateBy = model.UserID;
+
+        //                _context.tr_QC_UnitCheckList.Update(QC_UnitCheckList);
+
+        //                var QC_UnitCheckList_Action = _context.tr_QC_UnitCheckList_Action.FirstOrDefault(d => d.ID == model.QCUnitCheckListActionID);
+
+        //                if (QC_UnitCheckList_Action != null)
+        //                {
+        //                    QC_UnitCheckList_Action.ActionType = model.ActionType;
+        //                    if (!string.IsNullOrEmpty(model.QCRemark))
+        //                    {
+        //                        if (QC_UnitCheckList_Action.Remark != model.QCRemark)
+        //                        {
+        //                            QC_UnitCheckList_Action.Remark = model.QCRemark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        QC_UnitCheckList_Action.Remark = "";
+        //                    }
+        //                    QC_UnitCheckList_Action.ActionDate = DateTime.Now;
+        //                    QC_UnitCheckList_Action.UpdateDate = DateTime.Now;
+        //                    QC_UnitCheckList_Action.UpdateBy = model.UserID;
+        //                    _context.tr_QC_UnitCheckList_Action.Update(QC_UnitCheckList_Action);
+        //                }
+
+        //                if (model.Images != null && model.Images.Count > 0)
+        //                {
+        //                    var folder = DateTime.Now.ToString("yyyyMM");
+        //                    var dirPath = Path.Combine(model.ApplicationPath, "wwwroot", "Upload", "document", folder, "QC5Image");
+        //                    if (!Directory.Exists(dirPath))
+        //                    {
+        //                        Directory.CreateDirectory(dirPath);
+        //                    }
+
+        //                    foreach (var image in model.Images)
+        //                    {
+        //                        if (image.Length > 0)
+        //                        {
+        //                            Guid guidId = Guid.NewGuid();
+        //                            string fileName = guidId + ".jpg";
+        //                            var filePath = Path.Combine(dirPath, fileName);
+
+        //                            // Resize and save the image
+        //                            using (var imageStream = image.OpenReadStream())
+        //                            {
+        //                                using (var resizedImageStream = ResizeImage(imageStream, 0.7)) // Resize to 50%
+        //                                {
+        //                                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+        //                                    {
+        //                                        resizedImageStream.CopyTo(fileStream); // Save resized image
+        //                                    }
+        //                                }
+        //                            }
+
+        //                            string relativeFilePath = Path.Combine("Upload", "document", folder, "QC5Image", fileName).Replace("\\", "/");
+
+        //                            var newResource = new tm_Resource
+        //                            {
+        //                                ID = Guid.NewGuid(),
+        //                                FileName = fileName,
+        //                                FilePath = relativeFilePath,
+        //                                MimeType = "image/jpeg",
+        //                                FlagActive = true,
+        //                                CreateDate = DateTime.Now,
+        //                                CreateBy = model.UserID,
+        //                                UpdateDate = DateTime.Now,
+        //                                UpdateBy = model.UserID
+        //                            };
+        //                            _context.tm_Resource.Add(newResource);
+
+        //                            var newQCUnitCheckListResource = new tr_QC_UnitCheckList_Resource
+        //                            {
+        //                                QCUnitCheckListID = QC_UnitCheckList.ID,
+        //                                DefectID = null,
+        //                                ResourceID = newResource.ID,
+        //                                IsSign = false,
+        //                                FlagActive = true,
+        //                                CreateDate = DateTime.Now,
+        //                                CreateBy = model.UserID,
+        //                                UpdateDate = DateTime.Now,
+        //                                UpdateBy = model.UserID
+        //                            };
+        //                            _context.tr_QC_UnitCheckList_Resource.Add(newQCUnitCheckListResource);
+        //                        }
+        //                    }
+        //                }
+
+
+
+
+        //                var filterModel = new DataToGenerateModel { ProjectID = FormatExtension.ConvertStringToGuid(QC_UnitCheckList.ProjectID) 
+        //                                                          , UnitID = FormatExtension.ConvertStringToGuid(QC_UnitCheckList.UnitID), 
+        //                                                            QCUnitCheckListID = FormatExtension.ConvertStringToGuid(model.QCUnitCheckListID) };
+
+        //                if (model.ActionType == "submit")
+        //                {
+        //                    DataGenerateQCPDFResp dataForGenQCPdf = _generatePDFRepo.GetDataQCToGeneratePDF(filterModel);
+        //                    DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(FormatExtension.ConvertStringToGuid(QC_UnitCheckList.ProjectID));
+        //                    Guid NewGuid = Guid.NewGuid();
+        //                    string result = _generatePDFRepo.GenerateQCPDF(NewGuid, dataForGenQCPdf, genDocumentNo);
+        //                    var newResourcePDF = new tm_Resource
+        //                    {
+        //                        ID = Guid.NewGuid(),
+        //                        FileName = FormatExtension.NullToString(NewGuid),
+        //                        FilePath = result,
+        //                        MimeType = "file/pdf",
+        //                        FlagActive = true,
+        //                        CreateDate = DateTime.Now,
+        //                        CreateBy = model.UserID,
+        //                        UpdateDate = DateTime.Now,
+        //                        UpdateBy = model.UserID
+        //                    };
+        //                    _context.tm_Resource.Add(newResourcePDF);
+        //                    var newFormResource = new tr_Document
+        //                    {
+        //                        ID = Guid.NewGuid(),
+        //                        QCUnitCheckListID = model.QCUnitCheckListID,
+        //                        ResourceID = newResourcePDF.ID,
+        //                        DocumentNo = genDocumentNo.documentNo,
+        //                        DocumentPrefix = genDocumentNo.documentPrefix,
+        //                        DocuementRunning = genDocumentNo.documentRunning,
+        //                        FlagActive = true,
+        //                        CreateDate = DateTime.Now,
+        //                        CreateBy = model.UserID,
+        //                        UpdateDate = DateTime.Now,
+        //                        UpdateBy = model.UserID
+        //                    };
+        //                    _context.tr_Document.Add(newFormResource);
+        //                }
+
+        //                _context.SaveChanges();
+
+        //            }
+        //            scope.Complete(); // Commit the transaction
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            throw new Exception("แก้ไขข้อมูลลง tr_QC_UnitCheckList_Defect ไม่สำเร็จ", ex);
+        //        }
+        //    }
+        //}
+
         public void SaveSubmitQC5UnitCheckList(QC5SaveSubmitModel model)
         {
             var transactionOptions = new TransactionOptions
@@ -974,148 +1085,209 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 try
                 {
+                    // Step 1: Update the QC Unit CheckList and related entities
                     var QC_UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(d => d.ID == model.QCUnitCheckListID);
 
                     if (QC_UnitCheckList != null)
                     {
-                        QC_UnitCheckList.QCStatusID = model.QCStatusID;
-                        QC_UnitCheckList.UpdateDate = DateTime.Now;
-                        QC_UnitCheckList.UpdateBy = model.UserID;
-
-                        var QC_UnitCheckList_Action = _context.tr_QC_UnitCheckList_Action.FirstOrDefault(d => d.ID == model.QCUnitCheckListActionID);
-
-                        if (QC_UnitCheckList_Action != null)
-                        {
-                            QC_UnitCheckList_Action.ActionType = model.ActionType;
-                            if (!string.IsNullOrEmpty(model.QCRemark))
-                            {
-                                if (QC_UnitCheckList_Action.Remark != model.QCRemark)
-                                {
-                                    QC_UnitCheckList_Action.Remark = model.QCRemark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
-                                }
-                            }
-                            else
-                            {
-                                QC_UnitCheckList_Action.Remark = "";
-                            }
-                            QC_UnitCheckList_Action.ActionDate = DateTime.Now;
-                            QC_UnitCheckList_Action.UpdateDate = DateTime.Now;
-                            QC_UnitCheckList_Action.UpdateBy = model.UserID;
-                        }
+                        UpdateQCUnitCheckList(QC_UnitCheckList, model);
+                        UpdateQCAction(QC_UnitCheckList, model);
 
                         if (model.Images != null && model.Images.Count > 0)
                         {
-                            var folder = DateTime.Now.ToString("yyyyMM");
-                            var dirPath = Path.Combine(model.ApplicationPath, "wwwroot", "Upload", "document", folder, "QC5Image");
-                            if (!Directory.Exists(dirPath))
-                            {
-                                Directory.CreateDirectory(dirPath);
-                            }
-
-                            foreach (var image in model.Images)
-                            {
-                                if (image.Length > 0)
-                                {
-                                    Guid guidId = Guid.NewGuid();
-                                    string fileName = guidId + ".jpg";
-                                    var filePath = Path.Combine(dirPath, fileName);
-
-                                    // Resize and save the image
-                                    using (var imageStream = image.OpenReadStream())
-                                    {
-                                        using (var resizedImageStream = ResizeImage(imageStream, 0.7)) // Resize to 50%
-                                        {
-                                            using (var fileStream = new FileStream(filePath, FileMode.Create))
-                                            {
-                                                resizedImageStream.CopyTo(fileStream); // Save resized image
-                                            }
-                                        }
-                                    }
-
-                                    string relativeFilePath = Path.Combine("Upload", "document", folder, "QC5Image", fileName).Replace("\\", "/");
-
-                                    var newResource = new tm_Resource
-                                    {
-                                        ID = Guid.NewGuid(),
-                                        FileName = fileName,
-                                        FilePath = relativeFilePath,
-                                        MimeType = "image/jpeg",
-                                        FlagActive = true,
-                                        CreateDate = DateTime.Now,
-                                        CreateBy = model.UserID,
-                                        UpdateDate = DateTime.Now,
-                                        UpdateBy = model.UserID
-                                    };
-                                    _context.tm_Resource.Add(newResource);
-
-                                    var newQCUnitCheckListResource = new tr_QC_UnitCheckList_Resource
-                                    {
-                                        QCUnitCheckListID = QC_UnitCheckList.ID,
-                                        DefectID = null,
-                                        ResourceID = newResource.ID,
-                                        IsSign = false,
-                                        FlagActive = true,
-                                        CreateDate = DateTime.Now,
-                                        CreateBy = model.UserID,
-                                        UpdateDate = DateTime.Now,
-                                        UpdateBy = model.UserID
-                                    };
-                                    _context.tr_QC_UnitCheckList_Resource.Add(newQCUnitCheckListResource);
-                                }
-                            }
+                            SaveImages(model, QC_UnitCheckList);
                         }
 
+                        _context.SaveChanges();  // Commit the updates to the database before moving on
 
-                        var filterModel = new DataToGenerateModel { ProjectID = FormatExtension.ConvertStringToGuid(QC_UnitCheckList.ProjectID) 
-                                                                  , UnitID = FormatExtension.ConvertStringToGuid(QC_UnitCheckList.UnitID), 
-                                                                    QCUnitCheckListID = FormatExtension.ConvertStringToGuid(model.QCUnitCheckListID) };
-
+                        // Step 2: Generate the PDF after the database updates are successful
                         if (model.ActionType == "submit")
                         {
-                            DataGenerateQCPDFResp dataForGenQCPdf = _generatePDFRepo.GetDataQCToGeneratePDF(filterModel);
-                            DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(FormatExtension.ConvertStringToGuid(QC_UnitCheckList.ProjectID));
-                            Guid NewGuid = Guid.NewGuid();
-                            string result = _generatePDFRepo.GenerateQCPDF(NewGuid, dataForGenQCPdf, genDocumentNo);
-                            var newResourcePDF = new tm_Resource
-                            {
-                                ID = Guid.NewGuid(),
-                                FileName = FormatExtension.NullToString(NewGuid),
-                                FilePath = result,
-                                MimeType = "file/pdf",
-                                FlagActive = true,
-                                CreateDate = DateTime.Now,
-                                CreateBy = model.UserID,
-                                UpdateDate = DateTime.Now,
-                                UpdateBy = model.UserID
-                            };
-                            _context.tm_Resource.Add(newResourcePDF);
-                            var newFormResource = new tr_Document
-                            {
-                                ID = Guid.NewGuid(),
-                                QCUnitCheckListID = model.QCUnitCheckListID,
-                                ResourceID = newResourcePDF.ID,
-                                DocumentNo = genDocumentNo.documentNo,
-                                DocumentPrefix = genDocumentNo.documentPrefix,
-                                DocuementRunning = genDocumentNo.documentRunning,
-                                FlagActive = true,
-                                CreateDate = DateTime.Now,
-                                CreateBy = model.UserID,
-                                UpdateDate = DateTime.Now,
-                                UpdateBy = model.UserID
-                            };
-                            _context.tr_Document.Add(newFormResource);
+                            GenerateAndSaveQCPDF(model, QC_UnitCheckList);  // This must succeed or else roll back
                         }
-
-                        _context.SaveChanges();
                     }
-                    scope.Complete(); // Commit the transaction
+
+                    scope.Complete();  // Commit the transaction if all is successful
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("แก้ไขข้อมูลลง tr_QC_UnitCheckList_Defect ไม่สำเร็จ", ex);
+                    // Rollback everything if an error occurs
+                    throw new Exception("Failed to update QC Unit CheckList or generate the PDF", ex);
                 }
             }
         }
+
+        private void UpdateQCUnitCheckList(tr_QC_UnitCheckList QC_UnitCheckList, QC5SaveSubmitModel model)
+        {
+            QC_UnitCheckList.QCStatusID = model.QCStatusID;
+            QC_UnitCheckList.UpdateDate = DateTime.Now;
+            QC_UnitCheckList.UpdateBy = model.UserID;
+            _context.tr_QC_UnitCheckList.Update(QC_UnitCheckList);
+        }
+
+        private void UpdateQCAction(tr_QC_UnitCheckList QC_UnitCheckList, QC5SaveSubmitModel model)
+        {
+            var QC_UnitCheckList_Action = _context.tr_QC_UnitCheckList_Action.FirstOrDefault(d => d.ID == model.QCUnitCheckListActionID);
+
+            if (QC_UnitCheckList_Action != null)
+            {
+                QC_UnitCheckList_Action.ActionType = model.ActionType;
+                QC_UnitCheckList_Action.Remark = !string.IsNullOrEmpty(model.QCRemark)
+                    ? model.QCRemark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now)
+                    : "";
+                QC_UnitCheckList_Action.ActionDate = DateTime.Now;
+                QC_UnitCheckList_Action.UpdateDate = DateTime.Now;
+                QC_UnitCheckList_Action.UpdateBy = model.UserID;
+                _context.tr_QC_UnitCheckList_Action.Update(QC_UnitCheckList_Action);
+            }
+        }
+
+        private void SaveImages(QC5SaveSubmitModel model, tr_QC_UnitCheckList QC_UnitCheckList)
+        {
+            var folder = DateTime.Now.ToString("yyyyMM");
+            var dirPath = Path.Combine(model.ApplicationPath, "wwwroot", "Upload", "document", folder, "QC5Image");
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+
+            foreach (var image in model.Images)
+            {
+                if (image.Length > 0)
+                {
+                    var newResource = SaveImageAndGetResource(image, model, dirPath, folder);
+                    _context.tm_Resource.Add(newResource);
+
+                    var newQCUnitCheckListResource = new tr_QC_UnitCheckList_Resource
+                    {
+                        QCUnitCheckListID = QC_UnitCheckList.ID,
+                        DefectID = null,
+                        ResourceID = newResource.ID,
+                        IsSign = false,
+                        FlagActive = true,
+                        CreateDate = DateTime.Now,
+                        CreateBy = model.UserID,
+                        UpdateDate = DateTime.Now,
+                        UpdateBy = model.UserID
+                    };
+                    _context.tr_QC_UnitCheckList_Resource.Add(newQCUnitCheckListResource);
+                }
+            }
+        }
+
+        private tm_Resource SaveImageAndGetResource(IFormFile image, QC5SaveSubmitModel model, string dirPath, string folder)
+        {
+            Guid guidId = Guid.NewGuid();
+            string fileName = guidId + ".jpg";
+            var filePath = Path.Combine(dirPath, fileName);
+
+            // Resize and save the image
+            using (var imageStream = image.OpenReadStream())
+            {
+                using (var resizedImageStream = ResizeImage(imageStream, 0.7)) // Resize to 70%
+                {
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        resizedImageStream.CopyTo(fileStream); // Save resized image
+                    }
+                }
+            }
+
+            string relativeFilePath = Path.Combine("Upload", "document", folder, "QC5Image", fileName).Replace("\\", "/");
+
+            return new tm_Resource
+            {
+                ID = Guid.NewGuid(),
+                FileName = fileName,
+                FilePath = relativeFilePath,
+                MimeType = "image/jpeg",
+                FlagActive = true,
+                CreateDate = DateTime.Now,
+                CreateBy = model.UserID,
+                UpdateDate = DateTime.Now,
+                UpdateBy = model.UserID
+            };
+        }
+
+        private void GenerateAndSaveQCPDF(QC5SaveSubmitModel model, tr_QC_UnitCheckList QC_UnitCheckList)
+        {
+            try
+            {
+                var filterModel = new DataToGenerateModel
+                {
+                    ProjectID = FormatExtension.ConvertStringToGuid(QC_UnitCheckList.ProjectID),
+                    UnitID = FormatExtension.ConvertStringToGuid(QC_UnitCheckList.UnitID),
+                    QCUnitCheckListID = FormatExtension.ConvertStringToGuid(model.QCUnitCheckListID)
+                };
+
+                DataGenerateQCPDFResp dataForGenQCPdf = _generatePDFRepo.GetDataQCToGeneratePDF(filterModel);
+                DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(FormatExtension.ConvertStringToGuid(QC_UnitCheckList.ProjectID));
+                Guid NewGuid = Guid.NewGuid();
+                string result = _generatePDFRepo.GenerateQCPDF(NewGuid, dataForGenQCPdf, genDocumentNo);
+
+                var newResourcePDF = new tm_Resource
+                {
+                    ID = Guid.NewGuid(),
+                    FileName = FormatExtension.NullToString(NewGuid),
+                    FilePath = result,
+                    MimeType = "file/pdf",
+                    FlagActive = true,
+                    CreateDate = DateTime.Now,
+                    CreateBy = model.UserID,
+                    UpdateDate = DateTime.Now,
+                    UpdateBy = model.UserID
+                };
+                _context.tm_Resource.Add(newResourcePDF);
+
+                // Find the existing tr_Document where QCUnitCheckListID matches and FlagActive is true
+                var existingDocument = _context.tr_Document.FirstOrDefault(d => d.QCUnitCheckListID == model.QCUnitCheckListID && d.FlagActive == true);
+
+                if (existingDocument != null)
+                {
+                    // Update the existing document
+                    existingDocument.ResourceID = newResourcePDF.ID;
+                    existingDocument.DocumentNo = genDocumentNo.documentNo;
+                    existingDocument.DocumentPrefix = genDocumentNo.documentPrefix;
+                    existingDocument.DocuementRunning = genDocumentNo.documentRunning;
+                    existingDocument.FlagActive = true;
+                    existingDocument.UpdateDate = DateTime.Now;
+                    existingDocument.UpdateBy = model.UserID;
+
+                    // Update the document in the context
+                    _context.tr_Document.Update(existingDocument);
+                }
+                else
+                {
+                    // If no existing document, insert a new one
+                    var newFormResource = new tr_Document
+                    {
+                        ID = Guid.NewGuid(),
+                        QCUnitCheckListID = model.QCUnitCheckListID,
+                        ResourceID = newResourcePDF.ID,
+                        DocumentNo = genDocumentNo.documentNo,
+                        DocumentPrefix = genDocumentNo.documentPrefix,
+                        DocuementRunning = genDocumentNo.documentRunning,
+                        FlagActive = true,
+                        CreateDate = DateTime.Now,
+                        CreateBy = model.UserID,
+                        UpdateDate = DateTime.Now,
+                        UpdateBy = model.UserID
+                    };
+
+                    // Add the new document to the context
+                    _context.tr_Document.Add(newFormResource);
+                }
+
+
+                _context.SaveChanges();  // Commit after generating the PDF
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to generate the PDF, rolling back transaction", ex);
+            }
+        }
+
+
 
         public void SelectedQCUnitCheckListDefectStatus(QC5IUDModel model)
         {
@@ -1147,30 +1319,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-
-        //public string SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
-        //{
-        //    var resource = new ResourcesSignatureQC5
-        //    {
-        //        MimeType = signData.MimeType,
-        //        ResourceStorageBase64 = signData.StorageBase64
-        //    };
-
-        //    Guid guidId = Guid.NewGuid();
-        //    string fileName = guidId + ".jpg";
-        //    var folder = DateTime.Now.ToString("yyyyMM");
-        //    var dirPath = Path.Combine(appPath, "wwwroot", "Upload", "document", folder, "signQC5");
-        //    var filePath = Path.Combine(dirPath, fileName);
-
-        //    resource.PhysicalPathServer = dirPath;
-        //    resource.ResourceStoragePath = Path.Combine("Upload", "document", folder, "signQC5", fileName).Replace("\\", "/");
-
-        //    ConvertByteToImage(resource);
-        //    InsertResource(guidId, fileName, resource.ResourceStoragePath, "image/jpeg", userID);
-        //    InsertOrUpdateQCUnitCheckListResource(guidId, QCUnitCheckListID, userID);
-
-        //    return filePath;
-        //}
 
         public (string filePath, string currentDate) SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
         {

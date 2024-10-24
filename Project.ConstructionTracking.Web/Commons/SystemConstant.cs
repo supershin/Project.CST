@@ -62,12 +62,14 @@
             public const int FINISH = 1;
             public const int SUSPEND = 2;
             public const int WORKING = 5;
+            public const int PASSWITHCONDITION = 4;
 
             public class Desc
             {
                 public const string FINISH = "F";
                 public const string SUSPEND = "S";
                 public const string WORKING = "W";
+                public const string PASSWITHCONDITION = "?";
             }
 
         }

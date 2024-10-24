@@ -105,6 +105,14 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                                 resp.QcStatusLists.Add(qcStatus);
                             }
+                            else if (listData.QCStatusID == SystemConstant.UnitQCStatus.IsPassCondition)
+                            {
+                                //set status = pass
+                                qcStatus.QcResultStatus = SystemConstant.QcSummaryStatus.PASSWITHCONDITION;
+                                qcStatus.QcResultStatusDesc = SystemConstant.QcSummaryStatus.Desc.PASSWITHCONDITION;
+
+                                resp.QcStatusLists.Add(qcStatus);
+                            }
                             else if (listData.QCStatusID == SystemConstant.UnitQCStatus.Pass)
                             {
                                 //set status = pass

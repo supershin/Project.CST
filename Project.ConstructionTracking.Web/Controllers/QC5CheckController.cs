@@ -54,6 +54,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.ActionType = QC5CheckDetail?.ActionType == "save" ? "บันทึกร่าง" : QC5CheckDetail?.ActionType == "submit" ? "ยืนยันแล้ว" : "ยังไม่เริ่มตรวจ";
             ViewBag.ActionTypeEn = QC5CheckDetail?.ActionType;
             ViewBag.FilePathQCPDF = QC5CheckDetail?.FilePathQCPDF;
+            ViewBag.PEUnit = QC5CheckDetail?.PEUnit;
             // Autocomplete 1
             var filterModel = new GetDDL { Act = "DefectArea", ID = QC5CheckDetail?.ProjectTypeID, searchTerm = "" };
             List<GetDDL> ListDefectArea = _getDDLService.GetDDLList(filterModel);

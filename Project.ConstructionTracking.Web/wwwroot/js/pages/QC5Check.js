@@ -109,11 +109,13 @@ function openModalDataQC(action, data = null) {
     var modalTitle = document.getElementById('insert-new-qc5-Label');
     if (action === 'add') {
         modalTitle.textContent = 'เพิ่มข้อมูลรายการ';
-        $('#autocomplete1, #autocomplete2, #autocomplete3').val('').prop('disabled', false);
-        $('#defectAreaId, #defectTypeId, #defectDescriptionId').val('');
+        //$('#autocomplete1, #autocomplete2, #autocomplete3').val('').prop('disabled', false);
+        // Clear and reset dropdowns dynamically
+        $('#dropdown1').val('').trigger('change');  // Reset first dropdown to default and trigger change event
+        $('#dropdown2').empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);  // Reset second dropdown
+        $('#dropdown3').empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);  // Reset third dropdown
         $('#otherDefectInput, #commentTextarea').val('');
         $('#majorDefectCheckbox').prop('checked', false);
-        // Clear dropzone file input and preview container before binding new data
         $('#file-input').val('');
         $('#preview-container').empty();  // Clear preview container
     }
@@ -181,20 +183,22 @@ function onSaveButtonClick() {
         success: function (response) {
             Swal.close();
             if (response.success) {
-                //var mainPassRadio = document.getElementById('radio3');
-                //if (mainPassRadio && mainPassRadio.checked) {
-                //    mainPassRadio.checked = false;
-                //    mainPassRadio.dataset.wasChecked = "";
-                //    selectedRadioQC5Status = '';
-                //}
-                //if (isMajorDefect == "True") { 
-                //    var mainPassWithConditionRadio = document.getElementById('radio2');
-                //    mainPassWithConditionRadio.checked = false;
-                //    mainPassWithConditionRadio.dataset.wasChecked = "";
-                //    selectedRadioQC5Status = '';
-                //}
+                var mainPassRadio = document.getElementById('radio3');
+                if (mainPassRadio && mainPassRadio.checked) {
+                    mainPassRadio.checked = false;
+                    mainPassRadio.dataset.wasChecked = "";
+                    selectedRadioQC5Status = '';
+                }
+                if (isMajorDefect == "True") { 
+                    var mainPassWithConditionRadio = document.getElementById('radio2');
+                    mainPassWithConditionRadio.checked = false;
+                    mainPassWithConditionRadio.dataset.wasChecked = "";
+                    selectedRadioQC5Status = '';
+                }
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                    showFixedButton();
                     fetchUpdatedList();
+                    fetchUpdatedSummary();
                 });
             } else {
                 showErrorAlert('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -279,11 +283,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateFileInput() {
         fileInput.value = '';
-
         const dataTransfer = new DataTransfer();
         filesArray.forEach(file => dataTransfer.items.add(file));
         fileInput.files = dataTransfer.files;
     }
+
+    document.getElementById('clearnewinsertdefect').addEventListener('click', function () {
+        previewContainer.innerHTML = '';
+        filesArray = [];
+        updateFileInput();
+    });
+
+    document.getElementById('clearcancelnewinsertdefect').addEventListener('click', function () {
+        previewContainer.innerHTML = '';
+        filesArray = [];
+        updateFileInput();
+    });
+
 });
 
 function filterCards() {
@@ -404,7 +420,6 @@ function openModalEditQC(defectID) {
 }
 
 
-
 function clearFileInputAndPreview() {
 
     // Reference the specific file input and preview container for the 'edit' modal
@@ -432,8 +447,6 @@ function clearFileInputAndPreview() {
     //// Clear the preview container
     //$('#preview-container-edit').empty();  // Clear any previewed images
 }
-
-
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -511,7 +524,7 @@ function onEditButtonClick() {
     var unitId = document.getElementById('hdUnitId').value;
     var seq = document.getElementById('hdSeq').value;
 
-    // Check required fields
+
     if (!defectAreaId) {
         showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาเลือกตำแหน่ง');
         return;
@@ -525,14 +538,11 @@ function onEditButtonClick() {
         return;
     }
 
-/*    debugger*/
 
     var oldImagesCount = $('#imagePreview2 .position-relative').length;
-    //var newImagesCount = $('#preview-container-edit .preview-image').length;
     var newImagesCount = files.length;
     var totalImagesCount = oldImagesCount + newImagesCount;
 
-/*    debugger*/
 
     if (totalImagesCount > 5) {
         showErrorAlertNotCloseModal('คำเตือน!', 'คุณสามารถอัปโหลดรูปภาพได้ไม่เกิน 5 รูปต่อรายการ');
@@ -568,13 +578,8 @@ function onEditButtonClick() {
                 showFixedButton();
                 fetchUpdatedList();
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
-                // Close the modal after success
-                //var editModal = bootstrap.Modal.getInstance(document.getElementById('Edit-qc5'));
-                //editModal.hide();
                 const clearButton = document.getElementById('clearAllButton');
                 clearButton.click();
-
-               // window.location.reload();
             } else {
                 showErrorAlertNotCloseModal('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
             }
@@ -658,7 +663,6 @@ document.addEventListener("DOMContentLoaded", function () {
         updateFileInput();
     }
 
-    // Update the file input with the files in the filesArray
     function updateFileInput() {
         fileInput.value = '';
         const dataTransfer = new DataTransfer();
@@ -666,22 +670,13 @@ document.addEventListener("DOMContentLoaded", function () {
         fileInput.files = dataTransfer.files;
     }
 
-    // Add functionality to clear all images
     document.getElementById('clearAllButton').addEventListener('click', function () {
-        // Clear all preview images
         previewContainer.innerHTML = '';
-
-        // Clear the filesArray
         filesArray = [];
-
-        // Clear the file input
         updateFileInput();
-
-        console.log('All images cleared');
     });
+
 });
-
-
 
 function RemoveImage(resourceID) {
     // Confirmation alert before proceeding
@@ -990,6 +985,8 @@ function saveSignature() {
                     </div>
                 `);
 
+                $('#hdSigNatureData').val(res.filePath);
+
                 // Close the signature modal
                 $('#ClosesignatureModal').click();
 
@@ -1015,6 +1012,14 @@ function SubmitUnitQC5() {
     var QCRemark = document.getElementById('QC5Remark').value;
     var files = $('#file-input-save-submit')[0].files;
     var SigNatureData = document.getElementById('hdSigNatureData').value;
+    var ChkPEUnit = document.getElementById('hdPEUnit').value;
+
+    if (!ChkPEUnit) {
+        showErrorAlert('คำเตือน!', 'Unit นี้ยังไม่ได้ระบุวิศกรควบคุมงาน');
+        return;
+    }
+
+/*    debugger*/
 
     if (!QCStatusID) {
         showErrorAlert('คำเตือน!', 'กรุณาเลือกสถานะของ QC รอบนี้');
@@ -1029,11 +1034,11 @@ function SubmitUnitQC5() {
     if (QCStatusID === "2" || QCStatusID === "3") {
         // Access ImageQC5UnitList which was declared in the Razor view
         if (ImageQC5UnitList.length + files.length === 0) {
-            showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุของการไม่ให้ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุผลที่ไม่ให้ผ่าน');
             return;
         }
         else if (!QCRemark) {
-            showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุของการไม่ให้ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุผลที่ไม่ให้ผ่าน');
             return;
         }
     }
@@ -1085,30 +1090,6 @@ function SubmitUnitQC5() {
         }
     );
 }
-
-
-//function toggleRadioForRadioCheck(radio, id) {
-//    if (radio.checked && radio.dataset.wasChecked) {
-//        // Uncheck the radio if clicked while already checked
-//        radio.checked = false;
-//        radio.dataset.wasChecked = "";
-
-//        // Send null to the radioChanged function to indicate uncheck
-//        radioChanged(id, null);
-//    } else {
-//        // Uncheck all radios in the same group
-//        var radios = document.getElementsByName(radio.name);
-//        for (var i = 0; i < radios.length; i++) {
-//            radios[i].dataset.wasChecked = "";
-//        }
-
-//        // Mark the clicked radio as checked
-//        radio.dataset.wasChecked = "true";
-
-//        // Send the checked value to the radioChanged function
-//        radioChanged(id, radio.value);
-//    }
-//}
 
 
 function toggleRadioForRadioCheck(radio, id, majordefect) {
@@ -1322,7 +1303,7 @@ function openModalUpdateDefectDetailQC(defectID) {
                     // Reinitialize the fslightbox after appending new content
                     refreshFsLightbox();
                 }
-                debugger
+
                 if (response.Seq > response.RefSeq) {
                     if (response.StatusID !== "27") {
                         if ($('#imagePreview3 .position-relative').length >= 5) {
@@ -1379,7 +1360,6 @@ function validateMainStatus(mainRadio) {
         }
     }
 }
-
 
 function validateConditionalPass(mainRadio) {
     // Get all list items with data-is-major-defect and data-status attributes
@@ -1457,7 +1437,6 @@ function ClickNotPass(mainRadio) {
 }
 
 
-
 document.getElementById('UpdateDefectButton').addEventListener('click', function () {
     onUpdateDefectButtonClick();
 });
@@ -1485,6 +1464,18 @@ function onUpdateDefectButtonClick() {
         formData.append('Images', files[i]);
     }
 
+
+    var oldImagesCount = $('#imagePreview3 .position-relative').length;
+    var newImagesCount = files.length;
+    var totalImagesCount = oldImagesCount + newImagesCount;
+
+
+    if (totalImagesCount > 5) {
+        showErrorAlertNotCloseModal('คำเตือน!', 'คุณสามารถอัปโหลดรูปภาพได้ไม่เกิน 5 รูปต่อรายการ');
+        return;
+    }
+
+
     showLoadingAlert();
 
     $.ajax({
@@ -1498,6 +1489,8 @@ function onUpdateDefectButtonClick() {
             if (response.success) {
                 showFixedButton() 
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
+                const clearButton = document.getElementById('closemodalupdatedefect');
+                clearButton.click();
             } else {
                 showErrorAlert('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
             }
@@ -1581,11 +1574,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateFileInput() {
         fileInput.value = '';
-
         const dataTransfer = new DataTransfer();
         filesArray.forEach(file => dataTransfer.items.add(file));
         fileInput.files = dataTransfer.files;
     }
+
+    document.getElementById('closemodalupdatedefect').addEventListener('click', function () {
+        previewContainer.innerHTML = '';
+        filesArray = [];
+        updateFileInput();
+    });
+
 });
 
 
