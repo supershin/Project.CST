@@ -216,6 +216,21 @@ namespace Project.ConstructionTracking.Web.Repositories
                              }).OrderByDescending(e=>e.DefectStatus).ToList();
 
 
+            var queryImageQC5 = (from t1 in _context.tr_QC_UnitCheckList_Action
+                                where t1.QCUnitCheckListID == model.QCUnitCheckListID 
+                                select new IsNotReadyQCPdfData
+                                {
+                                    Remark = t1.Remark,
+                                    ListImageQC5 = (from t2 in _context.tr_QC_UnitCheckList_Resource
+                                                    join t3 in _context.tm_Resource on t2.ResourceID equals t3.ID 
+                                                    where t2.QCUnitCheckListID == model.QCUnitCheckListID && t2.DefectID == null && t2.IsSign == false && t2.FlagActive == true && t2.FlagActive == true
+                                                    select new ListImageQC5
+                                                    {
+                                                        FileImageUrl = t3.FilePath
+                                                    }).ToList()
+                                }).FirstOrDefault();
+
+
             // RefSeq counts
             var refSeqCounts = _context.tr_QC_UnitCheckList_Defect
                 .Where(t1 => t1.QCUnitCheckListID == model.QCUnitCheckListID && t1.FlagActive == true)
@@ -270,15 +285,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                                  : "ไม่พบสถานะ"
                 };
 
-                // Prepare the summary data
-                //var resultSummary = new SummaryQCPdfData
-                //{
-                //    SumAllDefect = FormatExtension.Nulltoint(cntAll),
-                //    SumPassDefect = FormatExtension.Nulltoint(statusCounts.Cnt_Pass),
-                //    SumNotPassDefect = FormatExtension.Nulltoint(statusCounts.Cnt_NotPass),
-                //    CalDefectBySeq = refSeqCounts != null ? refSeqCounts : new List<ListCalDefectBySeq>(), // List of RefSeq counts
-                //};
-
                 var resultSummary = new SummaryQCPdfData
                 {
                     SumAllDefect = FormatExtension.Nulltoint(cntAll),
@@ -308,8 +314,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                 return new DataGenerateQCPDFResp
                 {
                     HeaderQCData = resultHeader,
-                    BodyListDefectQCData = queryBody,
+                    BodyListDefectQCData = queryBody,                    
                     SummaryQCData = resultSummary,
+                    IsNotReadyQCData = queryImageQC5,
                     FooterQCData = resultFooter
                 };
             }
@@ -645,6 +652,53 @@ namespace Project.ConstructionTracking.Web.Repositories
                             });
 
                         });
+                        if (dataQCGenerate.HeaderQCData?.QCStatus == SystemConstant.UnitQCStatus.IsNotReadyInspect)
+                        {
+                            col1.Item().Border(1).Table(table3 =>
+                            {
+                                table3.ColumnsDefinition(columns =>
+                                {
+                                    columns.RelativeColumn(8);
+                                    columns.RelativeColumn(4);
+                                });
+
+                                table3.Cell().Row(1).Column(1).ColumnSpan(2).AlignLeft().Text(" แสดงรูปภาพผู้รับเหมาไม่พร้อม").Bold();
+                                //table3.Cell().Row(2).Column(1).AlignLeft().Text("ภาพไม่พร้อมให้ตรวจ").Bold();
+                                table3.Cell().Row(2).Column(2).Text("ความเห็นเพิ่มเติม");
+                                if (dataQCGenerate.IsNotReadyQCData != null)
+                                {
+                                    // add image 
+                                    table3.Cell().Row(3).Column(1).Grid(grid =>
+                                    {
+                                            grid.VerticalSpacing(15);
+                                            grid.HorizontalSpacing(15);
+                                            grid.AlignLeft();
+                                            grid.Columns(8);
+
+                                            foreach (var image in dataQCGenerate.IsNotReadyQCData.ListImageQC5)
+                                            {
+                                                string pathImage = image.FileImageUrl;
+                                                var imgPath = _hosting.ContentRootPath + "/wwwroot/" + pathImage;
+
+                                                if (System.IO.File.Exists(imgPath))
+                                                {
+                                                    using var img = new FileStream(imgPath, FileMode.Open);
+
+                                                    grid.Item(4).AlignCenter().AlignMiddle()  // Center the image both horizontally and vertically
+                                                        .Border(0.5f)                        // Optional border for styling
+                                                        .Width(125)
+                                                        .Height(100)
+                                                        .Image(img);                         // Automatically adjust size based on image
+                                                }
+                                            }
+
+                                    });
+
+                                    table3.Cell().Row(3).Column(2).Text(dataQCGenerate.IsNotReadyQCData.Remark);
+                                }
+                            });
+                        }
+
                     });
 
                     // Footer Setup
