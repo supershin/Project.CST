@@ -200,5 +200,37 @@ namespace Project.ConstructionTracking.Web.Controllers
                );
             }
         }
+
+        [HttpPost]
+        public JsonResult OpenFilePDF(Guid QcCheckListID)
+        {
+            try
+            {
+                var resultData = _qcCheckListService.OpenFilePDF(QcCheckListID);
+                if (!String.IsNullOrWhiteSpace(resultData))
+                {
+                    return Json(
+                          new
+                          {
+                              success = true,
+                              data = resultData,
+                          }
+                    );
+                }
+                else { throw new Exception("ไม่พบข้อมูลเอกสาร PDF"); }
+                
+            }
+            catch (Exception ex)
+            {
+                return Json(
+                            new
+                            {
+                                success = false,
+                                message = ex.Message, //InnerException(ex),
+                                data = new[] { ex.Message },
+                            }
+               );
+            }
+        }
     }
 }

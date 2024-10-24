@@ -24,14 +24,16 @@ namespace Project.ConstructionTracking.Web.Services
 		bool DeleteImage(Guid qcID, int? detailID, Guid resourceID, Guid userID);
         //string SubmitQcCheckList(SubmitQcCheckListModel model, Guid userID, int roleID);
         SubmitQcCheckListModel SubmitQcCheckList(SaveTransQCCheckListModel model, Guid userID, int roleID);
+
+		string OpenFilePDF(Guid QCCheckListID);
     }
 	public class QcCheckListService : IQcCheckListService
-    {
+	{
 		private readonly IQcCheckListRepo _qcCheckListRepo;
 		private readonly IMasterCommonRepo _masterCommonRepo;
 		private readonly IGeneratePDFRepo _generatePDFRepo;
-        public QcCheckListService(IQcCheckListRepo qcCheckListRepo,
-            IMasterCommonRepo masterCommonRepo
+		public QcCheckListService(IQcCheckListRepo qcCheckListRepo,
+			IMasterCommonRepo masterCommonRepo
 			, IGeneratePDFRepo generatePDFRepo)
 		{
 			_qcCheckListRepo = qcCheckListRepo;
@@ -39,26 +41,26 @@ namespace Project.ConstructionTracking.Web.Services
 			_generatePDFRepo = generatePDFRepo;
 		}
 
-        public MasterQcCheckListDetailResp GetMasterQcCheckList(Guid projectID, int qcTypeID)
+		public MasterQcCheckListDetailResp GetMasterQcCheckList(Guid projectID, int qcTypeID)
 		{
 			MasterQcCheckListDetailResp resp = _qcCheckListRepo.GetMasterQcCheckList(projectID, qcTypeID);
 
 			return resp;
-        }
+		}
 
 		public QcCheckListResp ValidateQcCheckList(QcActionModel model)
 		{
 			QcCheckListResp resp = _qcCheckListRepo.ValidateQcCheckList(model);
 
 			return resp;
-        }
+		}
 
 		public VerifyQcCheckList VerifyQcCheckList(QcActionModel model)
 		{
 			VerifyQcCheckList resp = _qcCheckListRepo.VerifyQcCheckList(model);
 
 			return resp;
-        }
+		}
 
 		private dynamic GetProjectAndUnit(Guid projectId, Guid unitId)
 		{
@@ -71,7 +73,7 @@ namespace Project.ConstructionTracking.Web.Services
 			QcCheckListDetailResp resp = new QcCheckListDetailResp();
 			resp = _qcCheckListRepo.GetQcCheckListDetail(model);
 
-			if(model.ID == null)
+			if (model.ID == null)
 			{
 				model.ID = Guid.Empty;
 			}
@@ -97,31 +99,31 @@ namespace Project.ConstructionTracking.Web.Services
 
 		public DuplicateModelResp CreateDuplicateQcCheckList(Guid qcCheckListID, int seq, Guid userID)
 		{
-            TransactionOptions option = new TransactionOptions();
-            option.Timeout = new TimeSpan(1, 0, 0);
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew, option))
-            {
-                try
-                {
-                    DuplicateModelResp resp = _qcCheckListRepo.CreateDuplicateQcCheckList(qcCheckListID, seq, userID);
-					
-                    scope.Complete();
+			TransactionOptions option = new TransactionOptions();
+			option.Timeout = new TimeSpan(1, 0, 0);
+			using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew, option))
+			{
+				try
+				{
+					DuplicateModelResp resp = _qcCheckListRepo.CreateDuplicateQcCheckList(qcCheckListID, seq, userID);
+
+					scope.Complete();
 
 					if (resp != null)
 						return resp;
 					else
 						throw new Exception("ไม่พบข้อมูลรายการตรวจสอบ QC");
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-                finally
-                {
-                    scope.Dispose();
-                }
-            }
-        }
+				}
+				catch (Exception ex)
+				{
+					throw ex;
+				}
+				finally
+				{
+					scope.Dispose();
+				}
+			}
+		}
 
 		public dynamic SaveQcCheckList(SaveTransQCCheckListModel model, Guid userId, int roleID)
 		{
@@ -132,11 +134,11 @@ namespace Project.ConstructionTracking.Web.Services
 				try
 				{
 					Guid imageID = Guid.Empty;
-                    //user sign resource
-                    if (!string.IsNullOrEmpty(model.PeSignResource))
-                    {
-                        imageID = _qcCheckListRepo.UploadSignResource(model.QcID ,model.PeSignResource, model.ApplicationPath, userId);
-                    }
+					//user sign resource
+					if (!string.IsNullOrEmpty(model.PeSignResource))
+					{
+						imageID = _qcCheckListRepo.UploadSignResource(model.QcID, model.PeSignResource, model.ApplicationPath, userId);
+					}
 					if (imageID != Guid.Empty)
 					{
 						model.PeSignResourceID = imageID;
@@ -160,51 +162,62 @@ namespace Project.ConstructionTracking.Web.Services
 		}
 
 		public bool DeleteImage(Guid qcID, int? detailID, Guid resourceID, Guid userID)
-        {
-            TransactionOptions option = new TransactionOptions();
-            option.Timeout = new TimeSpan(1, 0, 0);
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew, option))
+		{
+			TransactionOptions option = new TransactionOptions();
+			option.Timeout = new TimeSpan(1, 0, 0);
+			using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew, option))
 			{
 				try
 				{
 					var resp = _qcCheckListRepo.DeleteImage(qcID, detailID, resourceID, userID);
 
-                    scope.Complete();
+					scope.Complete();
 
 					return resp;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-                finally
-                {
-                    scope.Dispose();
-                }
-            }
-        }
+				}
+				catch (Exception ex)
+				{
+					throw ex;
+				}
+				finally
+				{
+					scope.Dispose();
+				}
+			}
+		}
 
-        public SubmitQcCheckListModel SubmitQcCheckList(SaveTransQCCheckListModel model, Guid userID, int roleID)
-        {
-            TransactionOptions option = new TransactionOptions();
-            option.Timeout = new TimeSpan(1, 0, 0);
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew, option))
-            {
-                try
-                {
-                    var saveData = _qcCheckListRepo.SaveQcCheckList(model, userID, roleID);
+		public SubmitQcCheckListModel SubmitQcCheckList(SaveTransQCCheckListModel model, Guid userID, int roleID)
+		{
+			TransactionOptions option = new TransactionOptions();
+			option.Timeout = new TimeSpan(1, 0, 0);
+			using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew, option))
+			{
+				try
+				{
+					Guid imageID = Guid.Empty;
+					//user sign resource
+					if (!string.IsNullOrEmpty(model.PeSignResource))
+					{
+						imageID = _qcCheckListRepo.UploadSignResource(model.QcID, model.PeSignResource, model.ApplicationPath, userID);
+					}
+					if (imageID != Guid.Empty)
+					{
+						model.PeSignResourceID = imageID;
+					}
 
-                    SubmitQcCheckListModel submitModel = new SubmitQcCheckListModel()
-                    {
-                        QcID = saveData.QcID,
-                        ProjectID = saveData.ProjectID,
-                        UnitID = saveData.UnitID,
-                        CheckListID = saveData.CheckListID,
-                        QcTypeID = saveData.QcTypeID,
-                        Seq = saveData.Seq
-                    };
+					var saveData = _qcCheckListRepo.SaveQcCheckList(model, userID, roleID);
 
-                    var boolResp = _qcCheckListRepo.SubmitQcCheckList(submitModel, userID, roleID);
+					SubmitQcCheckListModel submitModel = new SubmitQcCheckListModel()
+					{
+						QcID = saveData.QcID,
+						ProjectID = saveData.ProjectID,
+						UnitID = saveData.UnitID,
+						CheckListID = saveData.CheckListID,
+						QcTypeID = saveData.QcTypeID,
+						Seq = saveData.Seq
+					};
+
+					var boolResp = _qcCheckListRepo.SubmitQcCheckList(submitModel, userID, roleID);
 
 					DataToGenerateModel data = new DataToGenerateModel()
 					{
@@ -214,28 +227,50 @@ namespace Project.ConstructionTracking.Web.Services
 						QCTypeID = submitModel.QcTypeID
 					};
 
-     //               DataGenerateQCPDFResp getData = _generatePDFRepo.GetDataQC1To4ForGeneratePDF(data);
+					DataGenerateQCPDFResp getData = _generatePDFRepo.GetDataQC1To4ForGeneratePDF(data);
 
-					//DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(model.ProjectID);
+					DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(model.ProjectID);
 
-					//Guid guid = Guid.NewGuid();
-     //               string pathUrl =  _generatePDFRepo.GenerateQCPDF2(guid, getData, genDocumentNo);
+					Guid guid = Guid.NewGuid();
+					string pathUrl = _generatePDFRepo.GenerateQCPDF2(guid, getData, genDocumentNo);
 
-					//submitModel.DocumentUrl = pathUrl;
+					if (!String.IsNullOrWhiteSpace(pathUrl))
+					{
+						DataSaveTableResource saveDocument = new DataSaveTableResource()
+						{
+							QCUnitCheckListID = submitModel.QcID,
+							documentRunning = genDocumentNo.documentRunning,
+							documentPrefix = genDocumentNo.documentPrefix,
+							documentNo = genDocumentNo.documentNo,
+							FileName = guid.ToString(),
+							FilePath = pathUrl,
+							UserID = userID
+						};
 
-                    scope.Complete();
+						_generatePDFRepo.SaveFileDocument(saveDocument);
+					}
+
+					submitModel.DocumentUrl = pathUrl;
+
+					scope.Complete();
 
 					return submitModel;
-                }
-                catch (Exception ex)
-                {					
-                    throw ex;
-                }
-                finally
-                {
-                    scope.Dispose();
-                }
-            }
+				}
+				catch (Exception ex)
+				{
+					throw ex;
+				}
+				finally
+				{
+					scope.Dispose();
+				}
+			}
+		}
+
+		public string OpenFilePDF(Guid QCCheckListID)
+		{
+			string result = _qcCheckListRepo.OpenFilePDF(QCCheckListID);
+			return result;
         }
     }
 }

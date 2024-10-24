@@ -30,6 +30,8 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         bool DeleteImage(Guid qcID, int? detailID, Guid resourceID, Guid userID);
         bool SubmitQcCheckList(SubmitQcCheckListModel model, Guid userID, int roleID);
+
+        string OpenFilePDF(Guid QCCheckListID);
     }
 
 	public class QcCheckListRepo : IQcCheckListRepo
@@ -426,15 +428,19 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 foreach (var resource in selectMainResource)
                 {
-                    resource.ID = 0;
-                    resource.QCUnitCheckListID = createNew.ID;
-                    resource.QCUnitCheckListDetailID = null;
-                    resource.UpdateDate = DateTime.Now;
-                    resource.UpdateBy = userID;
-                    resource.CreateDate = DateTime.Now;
-                    resource.CreateBy = userID;
+                    tr_QC_UnitCheckList_Resource newMainResource = new tr_QC_UnitCheckList_Resource();
+                    newMainResource.QCUnitCheckListID = createNew.ID;
+                    newMainResource.QCUnitCheckListDetailID = null;
+                    newMainResource.ResourceID = resource.ResourceID;
+                    newMainResource.FlagActive = true;
+                    newMainResource.UpdateDate = DateTime.Now;
+                    newMainResource.UpdateBy = userID;
+                    newMainResource.CreateDate = DateTime.Now;
+                    newMainResource.CreateBy = userID;
+
+                    _context.tr_QC_UnitCheckList_Resource.Add(newMainResource);
+                    _context.SaveChanges();
                 }
-                _context.tr_QC_UnitCheckList_Resource.AddRange(selectMainResource);
 
                 // create draft new qc checklist action
                 tr_QC_UnitCheckList_Action createNewAction = new tr_QC_UnitCheckList_Action()
@@ -455,53 +461,47 @@ namespace Project.ConstructionTracking.Web.Repositories
                 _context.SaveChanges();
 
                 // create draft new qc checklist list detail
-                List<tr_QC_UnitCheckList_Detail> createNewListDetail = new List<tr_QC_UnitCheckList_Detail>(qcCheckListDetail);
 
-                foreach(var list in createNewListDetail)
+                foreach(var list in qcCheckListDetail)
                 {
-                    list.ID = 0;
-                    list.QCUnitCheckListID = createNew.ID;
-                    list.UpdateDate = DateTime.Now;
-                    list.UpdateBy = userID;
-                    list.CreateDate = DateTime.Now;
-                    list.CreateBy = userID;
+                    tr_QC_UnitCheckList_Detail newDetail = new tr_QC_UnitCheckList_Detail();
+                    newDetail.QCUnitCheckListID = createNew.ID;
+                    newDetail.CheckListID = list.CheckListID;
+                    newDetail.CheckListDetailID = list.CheckListDetailID;
+                    newDetail.StatusID = list.StatusID;
+                    newDetail.Remark = list.Remark;
+                    newDetail.PassBySeq = list.PassBySeq;
+                    newDetail.FlagActive = list.FlagActive;
+                    newDetail.CreateDate = DateTime.Now;
+                    newDetail.CreateBy = userID;
+                    newDetail.UpdateDate = DateTime.Now;
+                    newDetail.UpdateBy = userID;
 
-                    _context.tr_QC_UnitCheckList_Detail.Add(list);
+                    _context.tr_QC_UnitCheckList_Detail.Add(newDetail);
                     _context.SaveChanges();
 
                     List<tr_QC_UnitCheckList_Resource> selectDetailResource = qcCheckListResource
                         .Where(o => o.QCUnitCheckListDetailID == list.ID && o.FlagActive == true)
                         .ToList();
-
-                    List<tr_QC_UnitCheckList_Resource> createNewResource = new List<tr_QC_UnitCheckList_Resource>(selectDetailResource);
-                    foreach(var resource in createNewResource)
+                    
+                    foreach(var resource in selectDetailResource)
                     {
-                        resource.ID = 0;
-                        resource.QCUnitCheckListID = createNew.ID;
-                        resource.QCUnitCheckListDetailID = list.ID;
-                        resource.UpdateDate = DateTime.Now;
-                        resource.UpdateBy = userID;
-                        resource.CreateDate = DateTime.Now;
-                        resource.CreateBy = userID;
-                    }
+                        tr_QC_UnitCheckList_Resource newDetailResource = new tr_QC_UnitCheckList_Resource();
+                        newDetailResource.QCUnitCheckListID = createNew.ID;
+                        newDetailResource.QCUnitCheckListDetailID = newDetail.ID;
+                        newDetailResource.ResourceID = resource.ResourceID;
+                        newDetailResource.FlagActive = true;
+                        newDetailResource.UpdateDate = DateTime.Now;
+                        newDetailResource.UpdateBy = userID;
+                        newDetailResource.CreateDate = DateTime.Now;
+                        newDetailResource.CreateBy = userID;
 
-                    _context.tr_QC_UnitCheckList_Resource.AddRange(createNewResource);
+                        _context.tr_QC_UnitCheckList_Resource.Add(newDetailResource);
+                        _context.SaveChanges();
+                    }
 
                     _context.SaveChanges();
                 }
-
-                //foreach( var detail in qcCheckListDetail)
-                //{
-                //    tr_QC_UnitCheckList_Detail createNewDetail = new tr_QC_UnitCheckList_Detail()
-                //    {
-
-                //    };
-
-                //    _context.tr_QC_UnitCheckList_Detail.Add(createNewDetail);
-                //    _context.SaveChanges();
-
-                //    int id = createNewDetail.ID;
-                //}
 
                 resp = new DuplicateModelResp()
                 {
@@ -735,13 +735,20 @@ namespace Project.ConstructionTracking.Web.Repositories
                         {
                             if (dataDetail.ConditionPass)
                             {
-                                qcCheckListDetail.StatusID = SystemConstant.Qc_CheckList_Status.PASS;
-                                qcCheckListDetail.PassBySeq = updateQcCheckList.Seq;
+                                if(qcCheckListDetail.StatusID != SystemConstant.Qc_CheckList_Status.PASS)
+                                {
+                                    qcCheckListDetail.StatusID = SystemConstant.Qc_CheckList_Status.PASS;
+                                    qcCheckListDetail.PassBySeq = updateQcCheckList.Seq;
+                                }
+                                
                             }
                             else if (dataDetail.ConditionNotPass)
                             {
-                                qcCheckListDetail.StatusID = SystemConstant.Qc_CheckList_Status.NOTPASS;
-                                qcCheckListDetail.PassBySeq = 0;
+                                if (qcCheckListDetail.StatusID != SystemConstant.Qc_CheckList_Status.NOTPASS)
+                                {
+                                    qcCheckListDetail.StatusID = SystemConstant.Qc_CheckList_Status.NOTPASS;
+                                    qcCheckListDetail.PassBySeq = 0;
+                                }
                             }
                             else
                                 qcCheckListDetail.StatusID = null;
@@ -988,6 +995,22 @@ namespace Project.ConstructionTracking.Web.Repositories
                     resource.UpdateBy = userID;
 
                     _context.tm_Resource.Update(resource);
+
+                    tm_Resource createResource = new tm_Resource();
+                    createResource.ID = Guid.NewGuid();
+                    createResource.FileName = fileName;
+                    createResource.FilePath = filePath;
+                    createResource.MimeType = "image/jpg";
+                    createResource.FlagActive = true;
+                    createResource.CreateDate = DateTime.Now;
+                    createResource.UpdateDate = DateTime.Now;
+                    createResource.CreateBy = userID;
+                    createResource.UpdateBy = userID;
+
+                    _context.tm_Resource.Add(createResource);
+                    _context.SaveChanges();
+
+                    newGuid = createResource.ID;
                 }
                 else
                 {
@@ -1127,6 +1150,18 @@ namespace Project.ConstructionTracking.Web.Repositories
                 }
             }
             return statusResp;
+        }
+        public string OpenFilePDF(Guid QCCheckListID)
+        {
+            tr_Document? document = _context.tr_Document.Where(o => o.QCUnitCheckListID == QCCheckListID && o.FlagActive == true).FirstOrDefault();
+            if (document == null) throw new Exception("ไม่พบข้อมูลเอกสาร PDF");
+            else
+            {
+                tm_Resource? resourec = _context.tm_Resource
+                    .Where(o => o.ID == document.ResourceID && o.FlagActive == true).FirstOrDefault();
+                if (resourec == null) throw new Exception("แสดงข้อมูลเอกสาร PDF ผิดพลาด");
+                else return resourec.FilePath;
+            }
         }
     }
 }

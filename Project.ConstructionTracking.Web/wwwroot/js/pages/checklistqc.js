@@ -106,6 +106,11 @@ const checklistqc = {
                 showErrorAlert('ผิดพลาด!', 'กรุณากรอกข้อมูลรายละเอียดและอัพโหลดรูปภาพอย่างน้อย 1 รูป ในแต่ละรายการตรวจสอบ QC ที่ไม่ผ่าน');
             } else {
                 // Confirm submission for normal case
+                var hasSignature = checklistqc.getSignatureData() || signImage.trim() !== "";
+                if (!hasSignature) {
+                    showErrorAlert('ผิดพลาด!', 'กรุณาเซ็นต์ลายเซ็นต์ผู้ควบคุมงาน');
+                    return; // Exit early
+                }
                 var data = gatherAllValues();
                 showConfirmationAlert(
                     '',
@@ -119,7 +124,14 @@ const checklistqc = {
                 );
             }
         });
-                   
+
+        $("#open-pdf").click(() => {
+            var data = {
+                QcCheckListID: qcId
+            }
+            checklistqc.openFilePDF(data)
+            return false;
+        });        
     },
     initSignaturePad: () => {
         $('#modal-sign').on('shown.bs.modal', function (e) {
@@ -210,6 +222,7 @@ const checklistqc = {
                             var controller = 'QCCheckList/CheckListDetail?';
                             var params = `id=${resp.data.QcID}&projectid=${resp.data.ProjectID}&unitid=${resp.data.UnitID}&qcchecklistid=${resp.data.CheckListID}&seq=${resp.data.Seq}&qctypeid=${resp.data.QcTypeID}`;  // Use backticks for template literals
                             window.location.href = baseUrl + controller + params
+                            window.open(baseUrl + resp.data.DocumentUrl)
                         }
                     });
                 } else {
@@ -219,6 +232,43 @@ const checklistqc = {
                         icon: 'error',
                         confirmButtonText: 'OK'
                     });
+                }
+            },
+            error: function (xhr, status, error) {
+                // do something
+                alert(" Coding Error ")
+            },
+        });
+        return false;
+    },
+    openFilePDF: (data) => {
+        $.ajax({
+            url: baseUrl + 'QCCheckList/OpenFilePDF',
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: function (resp) {
+                if (resp.success) {
+                    window.open(baseUrl + resp.data)
+                //    Swal.fire({
+                //        title: 'Success!',
+                //        text: 'ทำการบันทึกข้อมูลสำเร็จ',
+                //        icon: 'success',
+                //        confirmButtonText: 'OK'
+                //    }).then((result) => {
+                //        if (result.isConfirmed) {
+                //            var controller = 'QCCheckList/CheckListDetail?';
+                //            var params = `id=${resp.data.QcID}&projectid=${resp.data.ProjectID}&unitid=${resp.data.UnitID}&qcchecklistid=${resp.data.CheckListID}&seq=${resp.data.Seq}&qctypeid=${resp.data.QcTypeID}`;  // Use backticks for template literals
+                //            window.location.href = baseUrl + controller + params
+                //        }
+                //    });
+                //} else {
+                //    Swal.fire({
+                //        title: 'Error!',
+                //        text: "ทำการแก้ไขข้อมูลไม่สำเร็จ",
+                //        icon: 'error',
+                //        confirmButtonText: 'OK'
+                //    });
                 }
             },
             error: function (xhr, status, error) {
@@ -348,9 +398,15 @@ function validateCheckList() {
         var validDetail = validDetailElement.val().trim(); // Get the value
         var validImageElement = $(`#file-input-${id}`); // Get the input-file element
         var validImage = validImageElement.prop('files'); // Get the files
-        var hasImages = $(`img[id^="image-${id}-1"]`).attr('src') !== ''; // Loop through all images with IDs starting with 'image-'
+        var hasImages = false;
 
-        debugger;
+        // Loop through all images with IDs starting with 'image-'
+        $(`img[id^="image-${id}"]`).each(function () {
+            if ($(this).attr('src') !== '') {
+                hasImages = true; // At least one image exists
+            }
+        });
+
         if (result === 'notpass') {
             // Validate the description
             if (validDetail === "") {
