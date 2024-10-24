@@ -1108,7 +1108,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 table2.Cell().Row((uint)index2).Column(2).Element(CellStyle).AlignLeft().Text(data.DetailName).WrapAnywhere();
                                 if (dataQCGenerate.HeaderQCData?.QCStatus != SystemConstant.UnitQCStatus.IsNotReadyInspect)
                                 {
-                                    
                                     if (data.ParentDetailDatas != null && data.ParentDetailDatas.Count > 0)
                                     {
                                         table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
@@ -1120,7 +1119,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                         foreach(var data2 in data.ParentDetailDatas)
                                         {
                                             table2.Cell().Row((uint)indexParent).Column(1).Element(CellStyle).Text("");  // Index column
-                                            table2.Cell().Row((uint)indexParent).Column(2).Element(CellStyle).AlignLeft().Text(data2.ParentDetailName).WrapAnywhere();
+                                            table2.Cell().Row((uint)indexParent).Column(2).Element(CellStyle).AlignLeft().Text("- " + data2.ParentDetailName).WrapAnywhere();
                                             if (data2.ParentStatusID == SystemConstant.Qc_CheckList_Status.PASS)
                                             {
                                                 table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text("✓"); // "ผ่าน" column (checked)
@@ -1173,11 +1172,34 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 }
                                 else
                                 {
-                                    table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
-                                    table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
-                                    table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
-                                    table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).Text("");
-                                    index2++;
+                                    if (data.ParentDetailDatas != null && data.ParentDetailDatas.Count > 0)
+                                    {
+                                        table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
+                                        table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                        table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
+                                        table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).Text("");
+
+                                        int indexParent = index2 + 1;
+                                        foreach (var data2 in data.ParentDetailDatas)
+                                        {
+                                            table2.Cell().Row((uint)indexParent).Column(1).Element(CellStyle).Text("");  // Index column
+                                            table2.Cell().Row((uint)indexParent).Column(2).Element(CellStyle).AlignLeft().Text("- " + data2.ParentDetailName).WrapAnywhere();
+                                            table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
+                                            table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                            table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("");
+                                            table2.Cell().Row((uint)indexParent).Column(6).Element(CellStyle).AlignLeft().Text("");// ความเห็นเพิ่มเติม
+                                            indexParent++;
+                                        }
+                                        index2 = indexParent;
+                                    }
+                                    else
+                                    {
+                                        table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
+                                        table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                        table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
+                                        table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).Text("");
+                                        index2++;
+                                    }
                                 }
                                 index++;
                             }
