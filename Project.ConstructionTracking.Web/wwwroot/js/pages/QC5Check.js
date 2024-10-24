@@ -166,6 +166,8 @@ function onSaveButtonClick() {
     formData.append('IsMajorDefect', isMajorDefect);
     formData.append('Seq', seq); // Use hidden input value
 
+    //debugger
+
     // Append images to FormData
     for (var i = 0; i < files.length; i++) {
         formData.append('Images', files[i]);
@@ -189,13 +191,18 @@ function onSaveButtonClick() {
                     mainPassRadio.dataset.wasChecked = "";
                     selectedRadioQC5Status = '';
                 }
-                if (isMajorDefect == "True") { 
+                //debugger
+                //console.log(isMajorDefect);
+                if (isMajorDefect === true) { 
                     var mainPassWithConditionRadio = document.getElementById('radio2');
                     mainPassWithConditionRadio.checked = false;
                     mainPassWithConditionRadio.dataset.wasChecked = "";
                     selectedRadioQC5Status = '';
                 }
+                //debugger
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                    const clearButton = document.getElementById('clearnewinsertdefect');
+                    clearButton.click();
                     showFixedButton();
                     fetchUpdatedList();
                     fetchUpdatedSummary();
@@ -575,6 +582,12 @@ function onEditButtonClick() {
         success: function (response) {
             Swal.close();
             if (response.success) {
+                if (isMajorDefect === true) {
+                    var mainPassWithConditionRadio = document.getElementById('radio2');
+                    mainPassWithConditionRadio.checked = false;
+                    mainPassWithConditionRadio.dataset.wasChecked = "";
+                    selectedRadioQC5Status = '';
+                }
                 showFixedButton();
                 fetchUpdatedList();
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
@@ -979,7 +992,7 @@ function saveSignature() {
                     </div>
                     <div style="position: relative; display: inline-block;">
                         <a href="javascript:void(0);" onclick="openSignatureModal('${res.filePath}', '${res.signatureDate}');">
-                            <img src="${baseUrl+res.filePath}" alt="Gallery Image 1" class="rounded" style="width:340px;height:260px;">
+                            <img src="${baseUrl+res.filePath}" alt="Gallery Image 1" class="rounded" style="width:500px;height:360px;">
                             <span class="image-text">ลงลายเซ็นวันที่ : ${res.signatureDate}</span>
                         </a>
                     </div>
