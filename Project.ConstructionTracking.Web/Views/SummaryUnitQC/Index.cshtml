@@ -74,9 +74,16 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-baseline">
-                        <button class="status-dot bg-transparent" onclick="javascript:history.back();">
+@*                         <button class="status-dot bg-transparent" onclick="javascript:history.back();">
                             <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
-                        </button>
+                        </button> *@
+                        <form id="form-@Model.ProjectID" method="post" asp-controller="Unitlist" asp-action="Index">
+                            <input type="hidden" name="projectId" value="@Model.ProjectID" />
+                            <input type="hidden" name="projectName" value="@Model.ProjectName" />
+                            <button class="status-dot bg-transparent">
+                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                            </button>
+                        </form>
                     </div>
                     <div class="d-block d-sm-flex align-items-baseline custom-heading">
                         <h3 class="mb-0 header-text">Unit : @Model.UnitCode</h3>
