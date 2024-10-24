@@ -5,7 +5,7 @@
             textarea.setAttribute('rows', 3);
         } else {
             ++
-            textarea.setAttribute('rows', 2);
+                textarea.setAttribute('rows', 2);
         }
     });
 }
@@ -193,12 +193,17 @@ function onSaveButtonClick() {
                 }
                 //debugger
                 //console.log(isMajorDefect);
-                if (isMajorDefect === true) { 
+                if (isMajorDefect === true) {
                     var mainPassWithConditionRadio = document.getElementById('radio2');
                     mainPassWithConditionRadio.checked = false;
                     mainPassWithConditionRadio.dataset.wasChecked = "";
                     selectedRadioQC5Status = '';
                 }
+
+                var mainNotpassRadio = document.getElementById('radio1');
+                mainNotpassRadio.checked = true;
+                //mainNotpassRadio.dataset.wasChecked = "check";
+
                 //debugger
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
                     const clearButton = document.getElementById('clearnewinsertdefect');
@@ -470,7 +475,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (selectedDefectAreaId) {
             // Fetch Defect Types based on selected Defect Area (Dropdown1Edit)
             $.ajax({
-                url: '/QC5Check/GetDDLDefectType', // The controller action for fetching defect types
+                url: baseUrl + 'QC5Check/GetDDLDefectType', // The controller action for fetching defect types
                 data: { defectAreaId: selectedDefectAreaId, searchTerm: searchTerm },
                 success: function (data) {
                     $.each(data, function (index, item) {
@@ -497,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (selectedDefectTypeId) {
             // Fetch Defect Descriptions based on selected Defect Type (Dropdown2Edit)
             $.ajax({
-                url: '/QC5Check/GetDDLDefectDescription', // The controller action for fetching defect descriptions
+                url: baseUrl + 'QC5Check/GetDDLDefectDescription', // The controller action for fetching defect descriptions
                 data: { defectTypeId: selectedDefectTypeId, searchTerm: searchTerm },
                 success: function (data) {
                     $.each(data, function (index, item) {
@@ -901,7 +906,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function saveUnitQC5() {
-    
+
     var QCUnitCheckListID = document.getElementById('hdQC5UnitChecklistID').value;
     var QCUnitCheckListActionID = document.getElementById('hdQC5UnitChecklistActionID').value;
     var QCStatusID = selectedRadioQC5Status;
@@ -948,7 +953,7 @@ function saveUnitQC5() {
 
 function openSignatureModal(signatureImagePath, signatureDate) {
     // Update the image source and signature date dynamically
-    document.getElementById('signatureImage').src = baseUrl+signatureImagePath;
+    document.getElementById('signatureImage').src = baseUrl + signatureImagePath;
     document.getElementById('signatureDate').textContent = 'ลงลายเซ็นวันที่ : ' + signatureDate;
 
     // Show the modal
@@ -992,7 +997,7 @@ function saveSignature() {
                     </div>
                     <div style="position: relative; display: inline-block;">
                         <a href="javascript:void(0);" onclick="openSignatureModal('${res.filePath}', '${res.signatureDate}');">
-                            <img src="${baseUrl+res.filePath}" alt="Gallery Image 1" class="rounded" style="width:500px;height:360px;">
+                            <img src="${baseUrl + res.filePath}" alt="Gallery Image 1" class="rounded" style="width:500px;height:360px;">
                             <span class="image-text">ลงลายเซ็นวันที่ : ${res.signatureDate}</span>
                         </a>
                     </div>
@@ -1032,7 +1037,7 @@ function SubmitUnitQC5() {
         return;
     }
 
-/*    debugger*/
+    /*    debugger*/
 
     if (!QCStatusID) {
         showErrorAlert('คำเตือน!', 'กรุณาเลือกสถานะของ QC รอบนี้');
@@ -1044,7 +1049,7 @@ function SubmitUnitQC5() {
         return;
     }
 
-    if (QCStatusID === "2" || QCStatusID === "3") {
+    if (QCStatusID === "3") {
         // Access ImageQC5UnitList which was declared in the Razor view
         if (ImageQC5UnitList.length + files.length === 0) {
             showErrorAlert('คำเตือน!', 'กรุณาเลือกเพิ่มรูปภาพและเหตุผลที่ไม่ให้ผ่าน');
@@ -1140,12 +1145,20 @@ function toggleRadioForRadioCheck(radio, id, majordefect) {
 
 
 function radioChanged(id, value) {
+    // Get hidden input values
+    var projectId = document.getElementById('hdProject').value;
+    var unitId = document.getElementById('hdUnitId').value;
+    var seq = document.getElementById('hdSeq').value;
+
     $.ajax({
         url: baseUrl + 'QC5Check/SelectedQCUnitCheckListDefectStatus',
         type: 'POST',
         data: {
             ID: id,
-            StatusID: value
+            StatusID: value,
+            ProjectID: projectId,
+            UnitID: unitId,
+            Seq: seq
         },
         success: function (response) {
             // Show SweetAlert for success
@@ -1240,7 +1253,7 @@ function openModalUpdateDefectDetailQC(defectID) {
                 if (fixedButton) {
                     // Only try to hide the button if it exists
                     fixedButton.style.display = 'none';
-                } 
+                }
 
                 // Set the values for the text inputs
                 $('#UpQC5DefectID').val(response.DefectID);  // Set the DefectID
@@ -1306,8 +1319,8 @@ function openModalUpdateDefectDetailQC(defectID) {
 
                         $('#imagePreview3').append(`
                                     <div class="position-relative d-inline-block mb-3">
-                                        <a data-fslightbox="gallery" href="${baseUrl+image.FilePath}">
-                                            <img src="${baseUrl+image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                        <a data-fslightbox="gallery" href="${baseUrl + image.FilePath}">
+                                            <img src="${baseUrl + image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                         </a>
                                         ${removeButtonHTML}
                                     </div>
@@ -1500,7 +1513,7 @@ function onUpdateDefectButtonClick() {
         success: function (response) {
             Swal.close();
             if (response.success) {
-                showFixedButton() 
+                showFixedButton()
                 showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
                 const clearButton = document.getElementById('closemodalupdatedefect');
                 clearButton.click();

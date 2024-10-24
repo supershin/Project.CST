@@ -16,8 +16,7 @@
                            value="1"
                            onclick="validateMainStatus(this)"
                     @(ViewBag.QC5UnitStatusID == 1 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
-                    >
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
                     <span class="form-check-label">ผ่าน</span>
                 </label>
                 <label class="form-check form-check-inline">
@@ -28,8 +27,7 @@
                            value="4"
                            onclick="validateConditionalPass(this)"
                     @(ViewBag.QC5UnitStatusID == 4 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
-                    >
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
                     <span class="form-check-label">ผ่านแบบมีเงื่อนไข</span>
                 </label>
                 <label class="form-check form-check-inline">
@@ -40,20 +38,18 @@
                            value="2"
                            onclick="ClickNotPass(this)"
                     @(ViewBag.QC5UnitStatusID == 2 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
-                    >
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
                     <span class="form-check-label">ไม่ผ่าน</span>
                 </label>
                 <label class="form-check form-check-inline">
                     <input class="form-check-input allow-deselect"
                            type="radio"
                            name="radios-QC5-status"
-                           id="radio1"
+                           id="radio4"
                            value="3"
                            onclick="ClickNotReadyInspect(this)"
                     @(ViewBag.QC5UnitStatusID == 3 ? "checked" : "")
-                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
-                    >
+                    @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")>
                     <span class="form-check-label">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
                 </label>
             </div>

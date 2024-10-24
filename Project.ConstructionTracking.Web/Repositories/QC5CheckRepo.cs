@@ -39,9 +39,9 @@ namespace Project.ConstructionTracking.Web.Repositories
             var result = (from t1 in _context.tr_QC_UnitCheckList
                           join t2 in _context.tr_QC_UnitCheckList_Action on t1.ID equals t2.QCUnitCheckListID into UnitCheckListAction
                           from t2 in UnitCheckListAction.DefaultIfEmpty()
-                          where t1.ProjectID == filterData.ProjectID 
-                             && t1.UnitID == filterData.UnitID 
-                             && t1.FlagActive == true 
+                          where t1.ProjectID == filterData.ProjectID
+                             && t1.UnitID == filterData.UnitID
+                             && t1.FlagActive == true
                              && t1.QCTypeID == SystemConstant.QcTypeID.QC5
                           orderby t1.Seq descending
                           select new QC5MaxSeqStatusChecklistModel
@@ -78,7 +78,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 if (Chk_QC5 == null && Chk_QC5_Previous != null)
                 {
-                   
+
                     Chk_QC5 = new tr_QC_UnitCheckList
                     {
                         ID = QCUnitCheckListID,
@@ -147,7 +147,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     };
 
                     _context.tr_QC_UnitCheckList.Add(Chk_QC5);
-                   
+
                     var existingAction = _context.tr_QC_UnitCheckList_Action.FirstOrDefault(x => x.QCUnitCheckListID == QCUnitCheckListID);
 
                     if (existingAction == null)
@@ -175,7 +175,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                              from t2 in unitGroup.DefaultIfEmpty()
                              join t3 in _context.tm_Ext on t2.UnitStatusID equals t3.ID into extGroup
                              from t3 in extGroup.DefaultIfEmpty()
-                             join t4 in _context.tr_QC_UnitCheckList on new { ProjectID = (Guid?)t1.ProjectID, UnitID = (Guid?)t2.UnitID, filterData.Seq , QCTypeID = (int?)SystemConstant.QcTypeID.QC5 } equals new { t4.ProjectID, t4.UnitID, t4.Seq , t4.QCTypeID } into unitCheckListGroup
+                             join t4 in _context.tr_QC_UnitCheckList on new { ProjectID = (Guid?)t1.ProjectID, UnitID = (Guid?)t2.UnitID, filterData.Seq, QCTypeID = (int?)SystemConstant.QcTypeID.QC5 } equals new { t4.ProjectID, t4.UnitID, t4.Seq, t4.QCTypeID } into unitCheckListGroup
                              from t4 in unitCheckListGroup.DefaultIfEmpty()
                              join t5 in _context.tr_QC_UnitCheckList_Action on t4.ID equals t5.QCUnitCheckListID into actionGroup
                              from t5 in actionGroup.DefaultIfEmpty()
@@ -185,7 +185,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                              from t7 in QC5UnitResourceGroup.DefaultIfEmpty()
                              join t8 in _context.tm_Resource on t7.ResourceID equals t8.ID into ResourceGroups
                              from t8 in ResourceGroups.DefaultIfEmpty()
-                             join t9 in _context.tr_Document on new { QCUnitCheckListID = (Guid?)t4.ID, FlagActive = (bool?)true} equals new { t9.QCUnitCheckListID, t9.FlagActive } into DocumentGroup
+                             join t9 in _context.tr_Document on new { QCUnitCheckListID = (Guid?)t4.ID, FlagActive = (bool?)true } equals new { t9.QCUnitCheckListID, t9.FlagActive } into DocumentGroup
                              from t9 in DocumentGroup.DefaultIfEmpty()
                              join t10 in _context.tm_Resource on t9.ResourceID equals t10.ID into ResourcePDFGroups
                              from t10 in ResourcePDFGroups.DefaultIfEmpty()
@@ -193,7 +193,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                              from t11 in PEUNITGroup.DefaultIfEmpty()
                              where t1.ProjectID == filterData.ProjectID
                                    && t2.UnitID == filterData.UnitID
-                                   //&& t4.QCTypeID == SystemConstant.QcTypeID.QC5
+                             //&& t4.QCTypeID == SystemConstant.QcTypeID.QC5
                              select new QC5DetailModel
                              {
                                  ProjectID = t1.ProjectID,
@@ -426,7 +426,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 try
                 {
                     // Try to find the existing UnitCheckList
-                    var UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(x => x.ProjectID == model.ProjectID && x.UnitID == model.UnitID &&x.QCTypeID == SystemConstant.QcTypeID.QC5 && x.Seq == model.Seq.ToInt());
+                    var UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(x => x.ProjectID == model.ProjectID && x.UnitID == model.UnitID && x.QCTypeID == SystemConstant.QcTypeID.QC5 && x.Seq == model.Seq.ToInt());
 
                     Guid QCUnitCheckListID;
 
@@ -455,14 +455,15 @@ namespace Project.ConstructionTracking.Web.Repositories
                     }
                     else
                     {
-                        if (UnitCheckList.QCStatusID == 1)
-                        {
-                            UnitCheckList.QCStatusID = null;
-                        }
-                        else if (UnitCheckList.QCStatusID == 4 && model.isMajorDefect == true)
-                        {
-                            UnitCheckList.QCStatusID = null;
-                        }
+                        //if (UnitCheckList.QCStatusID == 1)
+                        //{
+                        //    UnitCheckList.QCStatusID = null;
+                        //}
+                        //else if (UnitCheckList.QCStatusID == 4 && model.isMajorDefect == true)
+                        //{
+                        //    UnitCheckList.QCStatusID = null;
+                        //}
+                        UnitCheckList.QCStatusID = 2;
                         UnitCheckList.UpdateDate = DateTime.Now;
                         UnitCheckList.UpdateBy = model.UserID;
                         _context.tr_QC_UnitCheckList.Update(UnitCheckList);
@@ -708,7 +709,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     if (UnitCheckList != null)
                     {
 
-                        if(UnitCheckList.QCStatusID == 4 && model.isMajorDefect == true)
+                        if (UnitCheckList.QCStatusID == 4 && model.isMajorDefect == true)
                         {
                             UnitCheckList.QCStatusID = null;
                         }
@@ -1330,7 +1331,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     }
 
                     var UnitCheckList = _context.tr_QC_UnitCheckList.FirstOrDefault(x => x.ProjectID == model.ProjectID && x.UnitID == model.UnitID && x.QCTypeID == SystemConstant.QcTypeID.QC5 && x.Seq == model.Seq.ToInt());
-                    if(UnitCheckList!= null && existingDefect != null)
+                    if (UnitCheckList != null && existingDefect != null)
                     {
                         if (UnitCheckList.QCStatusID == 1)
                         {
