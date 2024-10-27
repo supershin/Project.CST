@@ -46,59 +46,100 @@ function toggleRadio(radio) {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Initialize the first dropdown
-    $('#dropdown1').on('change', function () {
-        var selectedDefectAreaId = $(this).val();
-        var ddlDefectType = $('#dropdown2'); // Reference to the second dropdown
-        var searchTerm = ''; // Optional search term, empty by default
+    // Initialize Selectize for Dropdown 1 (Position)
+    var dropdown1 = $('#dropdown1').selectize({
+        create: false,
+        maxItems: 1,
+        placeholder: 'กรุณาเลือก', // Placeholder for Dropdown 1
+        //options: [{ value: '', text: 'กรุณาเลือก' }], // Add default "กรุณาเลือก"
+        onChange: function (value) {
+            console.log("Dropdown 1 (Position) changed. Selected value: ", value); // Debug log
 
-        // Clear existing options in the second and third dropdowns
-        ddlDefectType.empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);
-        $('#dropdown3').empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);
+            var dropdown2 = $('#dropdown2')[0].selectize;
+            var dropdown3 = $('#dropdown3')[0].selectize;
 
-        if (selectedDefectAreaId) {
+            // Clear Dropdown 2 and 3 when Dropdown 1 is cleared (empty)
+            dropdown2.clear();
+            dropdown2.clearOptions();
+            dropdown2.addOption({ value: '', text: 'กรุณาเลือก' }); // Default option for Dropdown 2
+            dropdown2.setValue('');
+            dropdown2.disable();
+
+            dropdown3.clear();
+            dropdown3.clearOptions();
+            dropdown3.addOption({ value: '', text: 'กรุณาเลือก' }); // Default option for Dropdown 3
+            dropdown3.setValue('');
+            dropdown3.disable();
+
+            if (!value) return; // Exit if no value selected in Dropdown 1
+
+            // Fetch Defect Types based on selected value in Dropdown 1
             $.ajax({
                 url: baseUrl + 'QC5Check/GetDDLDefectType',
-                data: { defectAreaId: selectedDefectAreaId, searchTerm: searchTerm },
+                data: { defectAreaId: value },
                 success: function (data) {
+                    console.log("AJAX response for Dropdown 2 (Defect Type):", data); // Debug log
+                    // Add the new options from the response to Dropdown 2
                     $.each(data, function (index, item) {
-                        ddlDefectType.append($('<option>', { value: item.Value, text: item.Text }));
+                        dropdown2.addOption({ value: item.Value, text: item.Text });
                     });
-                    ddlDefectType.prop('disabled', false); // Enable the second dropdown after loading data
+                    dropdown2.enable();
                 },
                 error: function () {
-                    console.log("Error fetching defect types.");
+                    console.log('Error fetching defect types.');
                 }
             });
         }
     });
 
-    // When the second dropdown changes
-    $('#dropdown2').on('change', function () {
-        var selectedDefectTypeId = $(this).val();
-        var ddlDefectDescription = $('#dropdown3'); // Reference to the third dropdown
-        var searchTerm = ''; // Optional search term, empty by default
+    // Initialize Selectize for Dropdown 2 (Defect Type)
+    var dropdown2 = $('#dropdown2').selectize({
+        create: false,
+        maxItems: 1,
+        placeholder: 'กรุณาเลือก', // Placeholder for Dropdown 2
+        options: [{ value: '', text: 'กรุณาเลือก' }], // Add default "กรุณาเลือก"
+        onChange: function (value) {
+            console.log("Dropdown 2 (Defect Type) changed. Selected value: ", value); // Debug log
 
-        // Clear existing options in the third dropdown
-        ddlDefectDescription.empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);
+            var dropdown3 = $('#dropdown3')[0].selectize;
 
-        if (selectedDefectTypeId) {
+            // Clear Dropdown 3 when Dropdown 2 is cleared (empty)
+            dropdown3.clear();
+            dropdown3.clearOptions();
+            dropdown3.addOption({ value: '', text: 'กรุณาเลือก' }); // Default option for Dropdown 3
+            dropdown3.setValue('');
+            dropdown3.disable();
+
+            if (!value) return; // Exit if no value selected in Dropdown 2
+
+            // Fetch Defect Descriptions based on selected value in Dropdown 2
             $.ajax({
                 url: baseUrl + 'QC5Check/GetDDLDefectDescription',
-                data: { defectTypeId: selectedDefectTypeId, searchTerm: searchTerm },
+                data: { defectTypeId: value },
                 success: function (data) {
+                    console.log("AJAX response for Dropdown 3 (Defect Description):", data); // Debug log
+                    // Add the new options from the response to Dropdown 3
                     $.each(data, function (index, item) {
-                        ddlDefectDescription.append($('<option>', { value: item.Value, text: item.Text }));
+                        dropdown3.addOption({ value: item.Value, text: item.Text });
                     });
-                    ddlDefectDescription.prop('disabled', false); // Enable the third dropdown after loading data
+                    dropdown3.enable();
                 },
                 error: function () {
-                    console.log("Error fetching defect descriptions.");
+                    console.log('Error fetching defect descriptions.');
                 }
             });
         }
     });
+
+    // Initialize Selectize for Dropdown 3 (Defect Description)
+    var dropdown3 = $('#dropdown3').selectize({
+        create: false,
+        maxItems: 1,
+        placeholder: 'กรุณาเลือกรายการ defect', // Placeholder for Dropdown 3
+        options: [{ value: '', text: 'กรุณาเลือก' }] // Add default "กรุณาเลือก"
+    });
 });
+
 
 function openModalDataQC(action, data = null) {
     var myModal = new bootstrap.Modal(document.getElementById('insert-new-qc5'));
@@ -109,19 +150,32 @@ function openModalDataQC(action, data = null) {
     var modalTitle = document.getElementById('insert-new-qc5-Label');
     if (action === 'add') {
         modalTitle.textContent = 'เพิ่มข้อมูลรายการ';
-        //$('#autocomplete1, #autocomplete2, #autocomplete3').val('').prop('disabled', false);
-        // Clear and reset dropdowns dynamically
-        $('#dropdown1').val('').trigger('change');  // Reset first dropdown to default and trigger change event
-        $('#dropdown2').empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);  // Reset second dropdown
-        $('#dropdown3').empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);  // Reset third dropdown
-        $('#otherDefectInput, #commentTextarea').val('');
-        $('#majorDefectCheckbox').prop('checked', false);
-        $('#file-input').val('');
+
+        // Reset Dropdown 1 (clear selected value but keep options)
+        var dropdown1 = $('#dropdown1')[0].selectize;
+        dropdown1.clear();  // Clear selected value only, keep the options
+
+        // Reset Dropdown 2 (clear selected value and disable, but keep options)
+        var dropdown2 = $('#dropdown2')[0].selectize;
+        dropdown2.clear();  // Clear selected value
+        dropdown2.disable(); // Disable dropdown 2 until Dropdown 1 is selected
+
+        // Reset Dropdown 3 (clear selected value and disable, but keep options)
+        var dropdown3 = $('#dropdown3')[0].selectize;
+        dropdown3.clear();  // Clear selected value
+        dropdown3.disable(); // Disable dropdown 3 until Dropdown 2 is selected
+
+        // Reset other form fields
+        $('#otherDefectInput, #commentTextarea').val('');  // Clear input and textarea fields
+        $('#majorDefectCheckbox').prop('checked', false);  // Uncheck the checkbox
+        $('#file-input').val('');  // Clear file input
         $('#preview-container').empty();  // Clear preview container
     }
 
     myModal.show();
 }
+
+
 
 
 document.getElementById('saveButton').addEventListener('click', function () {
@@ -344,97 +398,97 @@ function filterCards() {
     });
 }
 
-function openModalEditQC(defectID) {
-    $.ajax({
-        url: baseUrl + 'QC5Check/GetQC5DefactEdit',
-        type: 'GET',
-        data: { DefectID: defectID },
-        success: function (response) {
-            if (response) {
+//function openModalEditQC(defectID) {
+//    $.ajax({
+//        url: baseUrl + 'QC5Check/GetQC5DefactEdit',
+//        type: 'GET',
+//        data: { DefectID: defectID },
+//        success: function (response) {
+//            if (response) {
 
-                // Hide the fixed button
-                var fixedButton = document.querySelector('.fixedButton');
-                if (fixedButton) {
-                    // Only try to hide the button if it exists
-                    fixedButton.style.display = 'none';
-                    clearFileInputAndPreview()
-                }
+//                // Hide the fixed button
+//                var fixedButton = document.querySelector('.fixedButton');
+//                if (fixedButton) {
+//                    // Only try to hide the button if it exists
+//                    fixedButton.style.display = 'none';
+//                    clearFileInputAndPreview()
+//                }
 
-                // Populate the dropdowns and other fields
-                $('#dropdown1Edit').val(response.DefectAreaID).trigger('change');
+//                // Populate the dropdowns and other fields
+//                $('#dropdown1Edit').val(response.DefectAreaID).trigger('change');
 
-                // AJAX call for defect type and description
-                $.ajax({
-                    url: baseUrl + 'QC5Check/GetDDLDefectType',
-                    data: { defectAreaId: response.DefectAreaID },
-                    success: function (data) {
-                        var ddlDefectType = $('#dropdown2Edit');
-                        ddlDefectType.empty().append('<option value="">กรุณาเลือก</option>');
-                        $.each(data, function (index, item) {
-                            ddlDefectType.append($('<option>', { value: item.Value, text: item.Text }));
-                        });
-                        ddlDefectType.val(response.DefectTypeID).prop('disabled', false);
+//                // AJAX call for defect type and description
+//                $.ajax({
+//                    url: baseUrl + 'QC5Check/GetDDLDefectType',
+//                    data: { defectAreaId: response.DefectAreaID },
+//                    success: function (data) {
+//                        var ddlDefectType = $('#dropdown2Edit');
+//                        ddlDefectType.empty().append('<option value="">กรุณาเลือก</option>');
+//                        $.each(data, function (index, item) {
+//                            ddlDefectType.append($('<option>', { value: item.Value, text: item.Text }));
+//                        });
+//                        ddlDefectType.val(response.DefectTypeID).prop('disabled', false);
 
-                        $.ajax({
-                            url: baseUrl + 'QC5Check/GetDDLDefectDescription',
-                            data: { defectTypeId: response.DefectTypeID },
-                            success: function (data) {
-                                var ddlDefectDescription = $('#dropdown3Edit');
-                                ddlDefectDescription.empty().append('<option value="">กรุณาเลือก</option>');
-                                $.each(data, function (index, item) {
-                                    ddlDefectDescription.append($('<option>', { value: item.Value, text: item.Text }));
-                                });
-                                ddlDefectDescription.val(response.DefectDescriptionID).prop('disabled', false);
-                            },
-                            error: function () {
-                                console.log('Error fetching defect descriptions.');
-                            }
-                        });
-                    },
-                    error: function () {
-                        console.log('Error fetching defect types.');
-                    }
-                });
+//                        $.ajax({
+//                            url: baseUrl + 'QC5Check/GetDDLDefectDescription',
+//                            data: { defectTypeId: response.DefectTypeID },
+//                            success: function (data) {
+//                                var ddlDefectDescription = $('#dropdown3Edit');
+//                                ddlDefectDescription.empty().append('<option value="">กรุณาเลือก</option>');
+//                                $.each(data, function (index, item) {
+//                                    ddlDefectDescription.append($('<option>', { value: item.Value, text: item.Text }));
+//                                });
+//                                ddlDefectDescription.val(response.DefectDescriptionID).prop('disabled', false);
+//                            },
+//                            error: function () {
+//                                console.log('Error fetching defect descriptions.');
+//                            }
+//                        });
+//                    },
+//                    error: function () {
+//                        console.log('Error fetching defect types.');
+//                    }
+//                });
 
-                // Populate other fields in the modal
-                $('#commentTextareaEdit').val(response.Remark).prop('disabled', actionTypeEn === "submit");
-                $('#QC5DefectID').val(response.DefectID);
-                $('#majorDefectCheckboxEdit').prop('checked', response.IsMajorDefect).prop('disabled', actionTypeEn === "submit");
+//                // Populate other fields in the modal
+//                $('#commentTextareaEdit').val(response.Remark).prop('disabled', actionTypeEn === "submit");
+//                $('#QC5DefectID').val(response.DefectID);
+//                $('#majorDefectCheckboxEdit').prop('checked', response.IsMajorDefect).prop('disabled', actionTypeEn === "submit");
 
-                // Populate existing images in the modal
-                $('#imagePreview2').empty();
-                if (response.listImageNotpass && response.listImageNotpass.length > 0) {
-                    response.listImageNotpass.forEach(function (image) {
-                        let removeButtonHTML = actionTypeEn !== "submit" ? `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>` : '';
-                        $('#imagePreview2').append(`
-                            <div class="position-relative d-inline-block mb-3">
-                                <a data-fslightbox="gallery" href="${baseUrl + image.FilePath}">
-                                    <img src="${baseUrl + image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
-                                </a>
-                                ${removeButtonHTML}
-                            </div>
-                        `);
-                    });
-                    refreshFsLightbox();
-                }
+//                // Populate existing images in the modal
+//                $('#imagePreview2').empty();
+//                if (response.listImageNotpass && response.listImageNotpass.length > 0) {
+//                    response.listImageNotpass.forEach(function (image) {
+//                        let removeButtonHTML = actionTypeEn !== "submit" ? `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>` : '';
+//                        $('#imagePreview2').append(`
+//                            <div class="position-relative d-inline-block mb-3">
+//                                <a data-fslightbox="gallery" href="${baseUrl + image.FilePath}">
+//                                    <img src="${baseUrl + image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+//                                </a>
+//                                ${removeButtonHTML}
+//                            </div>
+//                        `);
+//                    });
+//                    refreshFsLightbox();
+//                }
 
-                // Hide or show dropzone based on the number of images
-                if ($('#imagePreview2 .position-relative').length >= 5) {
-                    $('#drop-zone-edit').hide();
-                } else {
-                    $('#drop-zone-edit').show();
-                }
+//                // Hide or show dropzone based on the number of images
+//                if ($('#imagePreview2 .position-relative').length >= 5) {
+//                    $('#drop-zone-edit').hide();
+//                } else {
+//                    $('#drop-zone-edit').show();
+//                }
 
-                // Show the modal
-                var myModal = new bootstrap.Modal(document.getElementById('Edit-qc5'));
-                myModal.show();
-            }
-        },
-        error: function () {
-            alert('Error fetching data. Please try again.');
-        }
-    });
-}
+//                // Show the modal
+//                var myModal = new bootstrap.Modal(document.getElementById('Edit-qc5'));
+//                myModal.show();
+//            }
+//        },
+//        error: function () {
+//            alert('Error fetching data. Please try again.');
+//        }
+//    });
+//}
 
 
 function clearFileInputAndPreview() {
@@ -466,62 +520,62 @@ function clearFileInputAndPreview() {
 }
 
 
-document.addEventListener('DOMContentLoaded', function () {
-    // Initialize the first dropdown (Dropdown1Edit)
-    $('#dropdown1Edit').on('change', function () {
-        var selectedDefectAreaId = $(this).val();
-        var ddlDefectType = $('#dropdown2Edit'); // Reference to the second dropdown (Dropdown2Edit)
-        var searchTerm = ''; // Optional search term, empty by default
+//document.addEventListener('DOMContentLoaded', function () {
+//    // Initialize the first dropdown (Dropdown1Edit)
+//    $('#dropdown1Edit').on('change', function () {
+//        var selectedDefectAreaId = $(this).val();
+//        var ddlDefectType = $('#dropdown2Edit'); // Reference to the second dropdown (Dropdown2Edit)
+//        var searchTerm = ''; // Optional search term, empty by default
 
-        // Clear existing options in the second and third dropdowns
-        ddlDefectType.empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);
-        $('#dropdown3Edit').empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);
+//        // Clear existing options in the second and third dropdowns
+//        ddlDefectType.empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);
+//        $('#dropdown3Edit').empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);
 
-        if (selectedDefectAreaId) {
-            // Fetch Defect Types based on selected Defect Area (Dropdown1Edit)
-            $.ajax({
-                url: baseUrl + 'QC5Check/GetDDLDefectType', // The controller action for fetching defect types
-                data: { defectAreaId: selectedDefectAreaId, searchTerm: searchTerm },
-                success: function (data) {
-                    $.each(data, function (index, item) {
-                        ddlDefectType.append($('<option>', { value: item.Value, text: item.Text }));
-                    });
-                    ddlDefectType.prop('disabled', false); // Enable the second dropdown after loading data
-                },
-                error: function () {
-                    console.log("Error fetching defect types.");
-                }
-            });
-        }
-    });
+//        if (selectedDefectAreaId) {
+//            // Fetch Defect Types based on selected Defect Area (Dropdown1Edit)
+//            $.ajax({
+//                url: baseUrl + 'QC5Check/GetDDLDefectType', // The controller action for fetching defect types
+//                data: { defectAreaId: selectedDefectAreaId, searchTerm: searchTerm },
+//                success: function (data) {
+//                    $.each(data, function (index, item) {
+//                        ddlDefectType.append($('<option>', { value: item.Value, text: item.Text }));
+//                    });
+//                    ddlDefectType.prop('disabled', false); // Enable the second dropdown after loading data
+//                },
+//                error: function () {
+//                    console.log("Error fetching defect types.");
+//                }
+//            });
+//        }
+//    });
 
-    // Initialize the second dropdown (Dropdown2Edit)
-    $('#dropdown2Edit').on('change', function () {
-        var selectedDefectTypeId = $(this).val();
-        var ddlDefectDescription = $('#dropdown3Edit'); // Reference to the third dropdown (Dropdown3Edit)
-        var searchTerm = ''; // Optional search term, empty by default
+//    // Initialize the second dropdown (Dropdown2Edit)
+//    $('#dropdown2Edit').on('change', function () {
+//        var selectedDefectTypeId = $(this).val();
+//        var ddlDefectDescription = $('#dropdown3Edit'); // Reference to the third dropdown (Dropdown3Edit)
+//        var searchTerm = ''; // Optional search term, empty by default
 
-        // Clear existing options in the third dropdown
-        ddlDefectDescription.empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);
+//        // Clear existing options in the third dropdown
+//        ddlDefectDescription.empty().append('<option value="">กรุณาเลือก</option>').prop('disabled', true);
 
-        if (selectedDefectTypeId) {
-            // Fetch Defect Descriptions based on selected Defect Type (Dropdown2Edit)
-            $.ajax({
-                url: baseUrl + 'QC5Check/GetDDLDefectDescription', // The controller action for fetching defect descriptions
-                data: { defectTypeId: selectedDefectTypeId, searchTerm: searchTerm },
-                success: function (data) {
-                    $.each(data, function (index, item) {
-                        ddlDefectDescription.append($('<option>', { value: item.Value, text: item.Text }));
-                    });
-                    ddlDefectDescription.prop('disabled', false); // Enable the third dropdown after loading data
-                },
-                error: function () {
-                    console.log("Error fetching defect descriptions.");
-                }
-            });
-        }
-    });
-});
+//        if (selectedDefectTypeId) {
+//            // Fetch Defect Descriptions based on selected Defect Type (Dropdown2Edit)
+//            $.ajax({
+//                url: baseUrl + 'QC5Check/GetDDLDefectDescription', // The controller action for fetching defect descriptions
+//                data: { defectTypeId: selectedDefectTypeId, searchTerm: searchTerm },
+//                success: function (data) {
+//                    $.each(data, function (index, item) {
+//                        ddlDefectDescription.append($('<option>', { value: item.Value, text: item.Text }));
+//                    });
+//                    ddlDefectDescription.prop('disabled', false); // Enable the third dropdown after loading data
+//                },
+//                error: function () {
+//                    console.log("Error fetching defect descriptions.");
+//                }
+//            });
+//        }
+//    });
+//});
 
 
 document.getElementById('EditButton').addEventListener('click', function () {
@@ -1854,6 +1908,425 @@ function genPDF() {
         }
     });
 }
+
+
+
+//document.addEventListener('DOMContentLoaded', function () {
+//    // Initialize Selectize for all dropdowns
+//    var dropdown1 = $('#dropdown1Edit').selectize({
+//        create: false,
+//        maxItems: 1,
+//        placeholder: 'กรุณาเลือกตำแหน่ง',
+//        onChange: function (value) {
+//            console.log("Dropdown 1 (Position) changed. Selected value: ", value); // Debug log
+//            if (!value) return;
+
+//            var dropdown2 = $('#dropdown2Edit')[0].selectize;
+//            var dropdown3 = $('#dropdown3Edit')[0].selectize;
+
+//            // Clear and disable dropdown2 and dropdown3
+//            dropdown2.clearOptions();
+//            dropdown2.disable();
+//            dropdown3.clearOptions();
+//            dropdown3.disable();
+
+//            // Fetch Defect Types based on selected Defect Area (Dropdown 1)
+//            $.ajax({
+//                url: baseUrl + 'QC5Check/GetDDLDefectType',
+//                data: { defectAreaId: value },
+//                success: function (data) {
+//                    console.log("AJAX response for Dropdown 2 (Defect Type):", data); // Debug log
+//                    // Add options to dropdown2, mapping the correct Text and Value fields
+//                    $.each(data, function (index, item) {
+//                        dropdown2.addOption({ value: item.Value, text: item.Text });
+//                    });
+//                    dropdown2.enable();
+//                },
+//                error: function () {
+//                    console.log('Error fetching defect types.');
+//                }
+//            });
+//        }
+//    });
+
+//    var dropdown2 = $('#dropdown2Edit').selectize({
+//        create: false,
+//        maxItems: 1,
+//        placeholder: 'กรุณาเลือกหมวดงาน',
+//        onChange: function (value) {
+//            console.log("Dropdown 2 (Defect Type) changed. Selected value: ", value); // Debug log
+//            if (!value) return;
+
+//            var dropdown3 = $('#dropdown3Edit')[0].selectize;
+
+//            // Clear and disable dropdown3
+//            dropdown3.clearOptions();
+//            dropdown3.disable();
+
+//            // Fetch Defect Descriptions based on selected Defect Type (Dropdown 2)
+//            $.ajax({
+//                url: baseUrl + 'QC5Check/GetDDLDefectDescription',
+//                data: { defectTypeId: value },
+//                success: function (data) {
+//                    console.log("AJAX response for Dropdown 3 (Defect Description):", data); // Debug log
+//                    // Add options to dropdown3, mapping the correct Text and Value fields
+//                    $.each(data, function (index, item) {
+//                        dropdown3.addOption({ value: item.Value, text: item.Text });
+//                    });
+//                    dropdown3.enable();
+//                },
+//                error: function () {
+//                    console.log('Error fetching defect descriptions.');
+//                }
+//            });
+//        }
+//    });
+
+//    var dropdown3 = $('#dropdown3Edit').selectize({
+//        create: false,
+//        maxItems: 1,
+//        placeholder: 'กรุณาเลือกรายการ defect'
+//    });
+//});
+
+//document.addEventListener('DOMContentLoaded', function () {
+//    // Initialize Selectize for Dropdown 1 (Position)
+//    var dropdown1 = $('#dropdown1Edit').selectize({
+//        create: false,
+//        maxItems: 1,
+//        placeholder: 'กรุณาเลือก', // Placeholder for Dropdown 1
+//        options: [{ value: '', text: 'กรุณาเลือก' }], // Add default "กรุณาเลือก"
+//        onChange: function (value) {
+//            console.log("Dropdown 1 (Position) changed. Selected value: ", value); // Debug log
+
+//            var dropdown2 = $('#dropdown2Edit')[0].selectize;
+//            var dropdown3 = $('#dropdown3Edit')[0].selectize;
+
+//            // Clear Dropdown 2 and 3 when Dropdown 1 is cleared (empty)
+//            if (!value) {
+//                dropdown2.clearOptions();
+//                dropdown2.addOption({ value: '', text: 'กรุณาเลือก' }); // Default option for Dropdown 2
+//                dropdown2.setValue('');
+//                dropdown2.disable();
+
+//                dropdown3.clearOptions();
+//                dropdown3.addOption({ value: '', text: 'กรุณาเลือก' }); // Default option for Dropdown 3
+//                dropdown3.setValue('');
+//                dropdown3.disable();
+
+//                return; // Stop further execution
+//            }
+
+//            // Clear and reset Dropdown 2 and 3
+//            dropdown2.clearOptions();
+//            dropdown2.addOption({ value: '', text: 'กรุณาเลือก' }); // Default option for Dropdown 2
+//            dropdown2.setValue('');
+//            dropdown2.disable();
+
+//            dropdown3.clearOptions();
+//            dropdown3.addOption({ value: '', text: 'กรุณาเลือก' }); // Default option for Dropdown 3
+//            dropdown3.setValue('');
+//            dropdown3.disable();
+
+//            // Fetch Defect Types based on selected value in Dropdown 1
+//            $.ajax({
+//                url: baseUrl + 'QC5Check/GetDDLDefectType',
+//                data: { defectAreaId: value },
+//                success: function (data) {
+//                    console.log("AJAX response for Dropdown 2 (Defect Type):", data); // Debug log
+//                    // Add the new options from the response to Dropdown 2
+//                    $.each(data, function (index, item) {
+//                        dropdown2.addOption({ value: item.Value, text: item.Text });
+//                    });
+//                    dropdown2.enable();
+//                },
+//                error: function () {
+//                    console.log('Error fetching defect types.');
+//                }
+//            });
+//        }
+//    });
+
+//    // Initialize Selectize for Dropdown 2 (Defect Type)
+//    var dropdown2 = $('#dropdown2Edit').selectize({
+//        create: false,
+//        maxItems: 1,
+//        placeholder: 'กรุณาเลือก', // Placeholder for Dropdown 2
+//        options: [{ value: '', text: 'กรุณาเลือก' }], // Add default "กรุณาเลือก"
+//        onChange: function (value) {
+//            console.log("Dropdown 2 (Defect Type) changed. Selected value: ", value); // Debug log
+//            if (!value) return;
+
+//            var dropdown3 = $('#dropdown3Edit')[0].selectize;
+
+//            // Clear and reset Dropdown 3
+//            dropdown3.clearOptions();
+//            dropdown3.addOption({ value: '', text: 'กรุณาเลือก' }); // Default option for Dropdown 3
+//            dropdown3.setValue('');
+//            dropdown3.disable();
+
+//            // Fetch Defect Descriptions based on selected value in Dropdown 2
+//            $.ajax({
+//                url: baseUrl + 'QC5Check/GetDDLDefectDescription',
+//                data: { defectTypeId: value },
+//                success: function (data) {
+//                    console.log("AJAX response for Dropdown 3 (Defect Description):", data); // Debug log
+//                    // Add the new options from the response to Dropdown 3
+//                    $.each(data, function (index, item) {
+//                        dropdown3.addOption({ value: item.Value, text: item.Text });
+//                    });
+//                    dropdown3.enable();
+//                },
+//                error: function () {
+//                    console.log('Error fetching defect descriptions.');
+//                }
+//            });
+//        }
+//    });
+
+//    // Initialize Selectize for Dropdown 3 (Defect Description)
+//    var dropdown3 = $('#dropdown3Edit').selectize({
+//        create: false,
+//        maxItems: 1,
+//        placeholder: 'กรุณาเลือกรายการ defect', // Placeholder for Dropdown 3
+//        options: [{ value: '', text: 'กรุณาเลือก' }] // Add default "กรุณาเลือก"
+//    });
+//});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize Selectize for Dropdown 1 (Position)
+    var dropdown1 = $('#dropdown1Edit').selectize({
+        create: false,
+        maxItems: 1,
+        placeholder: 'กรุณาเลือก', // Placeholder for Dropdown 1
+/*        options: [{ value: '', text: 'กรุณาเลือก' }], // Add default "กรุณาเลือก"*/
+        onChange: function (value) {
+            //console.log("Dropdown 1 (Position) changed. Selected value: ", value); // Debug log
+
+            var dropdown2 = $('#dropdown2Edit')[0].selectize;
+            var dropdown3 = $('#dropdown3Edit')[0].selectize;
+
+            // Clear Dropdown 2 and 3 when Dropdown 1 is cleared (empty)
+            dropdown2.clear();  // This will clear the selected value of Dropdown 2
+            dropdown2.clearOptions(); // This will clear the list of options in Dropdown 2
+            dropdown2.addOption({ value: '', text: 'กรุณาเลือก' }); // Default option for Dropdown 2
+            dropdown2.setValue('');  // Explicitly set Dropdown 2 to the default option
+            dropdown2.disable();  // Disable Dropdown 2 after clearing
+
+            dropdown3.clear();  // This will clear the selected value of Dropdown 3
+            dropdown3.clearOptions(); // This will clear the list of options in Dropdown 3
+            dropdown3.addOption({ value: '', text: 'กรุณาเลือก' }); // Default option for Dropdown 3
+            dropdown3.setValue('');  // Explicitly set Dropdown 3 to the default option
+            dropdown3.disable();  // Disable Dropdown 3 after clearing
+
+            if (!value) {
+                // Trigger AJAX for Dropdown 2 even when Dropdown 1 is cleared
+                $.ajax({
+                    url: baseUrl + 'QC5Check/GetDDLDefectType',
+                    data: { defectAreaId: value },  // Empty value passed
+                    success: function (data) {
+                        //console.log("AJAX response for Dropdown 2 (Defect Type) after clearing Dropdown 1: ", data); // Debug log
+                        // Add the default and any other options returned by the server
+                        $.each(data, function (index, item) {
+                            dropdown2.addOption({ value: item.Value, text: item.Text });
+                        });
+                        dropdown2.enable(); // Enable Dropdown 2 after receiving new options
+                    },
+                    error: function () {
+                        console.log('Error fetching default defect types for cleared Dropdown 1.');
+                    }
+                });
+                return; // Stop further execution after clearing Dropdown 1
+            }
+
+            // Fetch Defect Types based on selected value in Dropdown 1
+            $.ajax({
+                url: baseUrl + 'QC5Check/GetDDLDefectType',
+                data: { defectAreaId: value },
+                success: function (data) {
+                    //console.log("AJAX response for Dropdown 2 (Defect Type):", data); // Debug log
+                    // Add the new options from the response to Dropdown 2
+                    $.each(data, function (index, item) {
+                        dropdown2.addOption({ value: item.Value, text: item.Text });
+                    });
+                    dropdown2.enable();
+                },
+                error: function () {
+                    console.log('Error fetching defect types.');
+                }
+            });
+        }
+    });
+
+    // Initialize Selectize for Dropdown 2 (Defect Type)
+    var dropdown2 = $('#dropdown2Edit').selectize({
+        create: false,
+        maxItems: 1,
+        placeholder: 'กรุณาเลือก', // Placeholder for Dropdown 2
+        options: [{ value: '', text: 'กรุณาเลือก' }], // Add default "กรุณาเลือก"
+        onChange: function (value) {
+            //console.log("Dropdown 2 (Defect Type) changed. Selected value: ", value); // Debug log
+
+            var dropdown3 = $('#dropdown3Edit')[0].selectize;
+
+            // Clear Dropdown 3 when Dropdown 2 is cleared (empty)
+            dropdown3.clear();  // This will clear the selected value of Dropdown 3
+            dropdown3.clearOptions(); // This will clear the list of options in Dropdown 3
+            dropdown3.addOption({ value: '', text: 'กรุณาเลือก' }); // Default option for Dropdown 3
+            dropdown3.setValue('');  // Explicitly set Dropdown 3 to the default option
+            dropdown3.disable();  // Disable Dropdown 3 after clearing
+
+            if (!value) {
+                // Trigger AJAX for Dropdown 3 even when Dropdown 2 is cleared
+                $.ajax({
+                    url: baseUrl + 'QC5Check/GetDDLDefectDescription',
+                    data: { defectTypeId: value },  // Empty value passed
+                    success: function (data) {
+                        //console.log("AJAX response for Dropdown 3 (Defect Description) after clearing Dropdown 2: ", data); // Debug log
+                        // Add the default and any other options returned by the server
+                        $.each(data, function (index, item) {
+                            dropdown3.addOption({ value: item.Value, text: item.Text });
+                        });
+                        dropdown3.enable(); // Enable Dropdown 3 after receiving new options
+                    },
+                    error: function () {
+                        console.log('Error fetching default defect descriptions for cleared Dropdown 2.');
+                    }
+                });
+                return; // Stop further execution after clearing Dropdown 2
+            }
+
+            // Fetch Defect Descriptions based on selected value in Dropdown 2
+            $.ajax({
+                url: baseUrl + 'QC5Check/GetDDLDefectDescription',
+                data: { defectTypeId: value },
+                success: function (data) {
+                    //console.log("AJAX response for Dropdown 3 (Defect Description):", data); // Debug log
+                    // Add the new options from the response to Dropdown 3
+                    $.each(data, function (index, item) {
+                        dropdown3.addOption({ value: item.Value, text: item.Text });
+                    });
+                    dropdown3.enable();
+                },
+                error: function () {
+                    console.log('Error fetching defect descriptions.');
+                }
+            });
+        }
+    });
+
+    // Initialize Selectize for Dropdown 3 (Defect Description)
+    var dropdown3 = $('#dropdown3Edit').selectize({
+        create: false,
+        maxItems: 1,
+        placeholder: 'กรุณาเลือกรายการ defect', // Placeholder for Dropdown 3
+        options: [{ value: '', text: 'กรุณาเลือก' }] // Add default "กรุณาเลือก"
+    });
+});
+
+
+function openModalEditQC(defectID) {
+    //console.log("Opening modal for Defect ID: ", defectID); // Debug log
+    $.ajax({
+        url: baseUrl + 'QC5Check/GetQC5DefactEdit',
+        type: 'GET',
+        data: { DefectID: defectID },
+        success: function (response) {
+            //console.log("AJAX response for Defect Edit: ", response); // Debug log
+            if (response) {
+
+                // Hide the fixed button
+                var fixedButton = document.querySelector('.fixedButton');
+                if (fixedButton) {
+                    // Only try to hide the button if it exists
+                    fixedButton.style.display = 'none';
+                    clearFileInputAndPreview()
+                }
+
+                // Populate the dropdowns with existing data
+                var dropdown1 = $('#dropdown1Edit')[0].selectize;
+                var dropdown2 = $('#dropdown2Edit')[0].selectize;
+                var dropdown3 = $('#dropdown3Edit')[0].selectize;
+
+                dropdown1.setValue(response.DefectAreaID);
+                //console.log("Dropdown 1 (Position) set value: ", response.DefectAreaID); // Debug log
+
+                $.ajax({
+                    url: baseUrl + 'QC5Check/GetDDLDefectType',
+                    data: { defectAreaId: response.DefectAreaID },
+                    success: function (data) {
+                        //console.log("AJAX response for Dropdown 2 (Defect Type) in Edit Mode: ", data); // Debug log
+                        $.each(data, function (index, item) {
+                            dropdown2.addOption({ value: item.Value, text: item.Text });
+                        });
+                        dropdown2.setValue(response.DefectTypeID);
+                        //console.log("Dropdown 2 (Defect Type) set value: ", response.DefectTypeID); // Debug log
+                        dropdown2.enable();
+
+                        $.ajax({
+                            url: baseUrl + 'QC5Check/GetDDLDefectDescription',
+                            data: { defectTypeId: response.DefectTypeID },
+                            success: function (data) {
+                                //console.log("AJAX response for Dropdown 3 (Defect Description) in Edit Mode: ", data); // Debug log
+                                $.each(data, function (index, item) {
+                                    dropdown3.addOption({ value: item.Value, text: item.Text });
+                                });
+                                dropdown3.setValue(response.DefectDescriptionID);
+                                //console.log("Dropdown 3 (Defect Description) set value: ", response.DefectDescriptionID); // Debug log
+                                dropdown3.enable();
+                            },
+                            error: function () {
+                                console.log('Error fetching defect descriptions in Edit Mode.');
+                            }
+                        });
+                    },
+                    error: function () {
+                        console.log('Error fetching defect types in Edit Mode.');
+                    }
+                });
+
+                // Populate other fields in the modal
+                $('#commentTextareaEdit').val(response.Remark);
+                $('#QC5DefectID').val(response.DefectID);
+                $('#majorDefectCheckboxEdit').prop('checked', response.IsMajorDefect);
+
+                $('#imagePreview2').empty();
+                if (response.listImageNotpass && response.listImageNotpass.length > 0) {
+                    response.listImageNotpass.forEach(function (image) {
+                        let removeButtonHTML = actionTypeEn !== "submit" ? `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>` : '';
+                        $('#imagePreview2').append(`
+                            <div class="position-relative d-inline-block mb-3">
+                                <a data-fslightbox="gallery" href="${baseUrl + image.FilePath}">
+                                    <img src="${baseUrl + image.FilePath}" alt="รูปภาพ Defact" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
+                                </a>
+                                ${removeButtonHTML}
+                            </div>
+                        `);
+                    });
+                    refreshFsLightbox();
+                }
+
+                // Hide or show dropzone based on the number of images
+                if ($('#imagePreview2 .position-relative').length >= 5) {
+                    $('#drop-zone-edit').hide();
+                } else {
+                    $('#drop-zone-edit').show();
+                }
+
+                // Show the modal
+                var myModal = new bootstrap.Modal(document.getElementById('Edit-qc5'));
+                myModal.show();
+            }
+        },
+        error: function () {
+            alert('Error fetching data. Please try again.');
+        }
+    });
+}
+
+
+
 
 
 

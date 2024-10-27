@@ -372,7 +372,7 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="form-label">ตำแหน่ง</div>
-                            <select id="dropdown1" class="form-control">
+                            <select id="dropdown1">
                                 <option value="">กรุณาเลือก</option>
                                 @foreach (var item in ViewBag.ListDefectArea)
                                 {
@@ -383,14 +383,14 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="form-label">หมวดงาน</div>
-                            <select id="dropdown2" class="form-control" disabled>
+                            <select id="dropdown2" disabled>
                                 <option value="">กรุณาเลือก</option>
                             </select>
                             <input type="hidden" id="defectTypeId">
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="form-label">รายการ defect</div>
-                            <select id="dropdown3" class="form-control" disabled>
+                            <select id="dropdown3" disabled>
                                 <option value="">กรุณาเลือก</option>
                             </select>
                             <input type="hidden" id="defectDescriptionId">
@@ -487,7 +487,7 @@
                         <!-- Form Fields -->
                         <div class="col-12 col-sm-6">
                             <div class="form-label">ตำแหน่ง</div>
-                            <select id="dropdown1Edit" class="form-control">
+                            <select id="dropdown1Edit">
                                 <option value="">กรุณาเลือก</option>
                                 @foreach (var item in ViewBag.ListDefectArea)
                                 {
@@ -499,7 +499,7 @@
 
                         <div class="col-12 col-sm-6">
                             <div class="form-label">หมวดงาน</div>
-                            <select id="dropdown2Edit" class="form-control" disabled>
+                            <select id="dropdown2Edit">
                                 <option value="">กรุณาเลือก</option>
                             </select>
                             <input type="hidden" id="defectTypeId">
@@ -507,7 +507,7 @@
 
                         <div class="col-12 col-sm-6">
                             <div class="form-label">รายการ defect</div>
-                            <select id="dropdown3Edit" class="form-control" disabled>
+                            <select id="dropdown3Edit">
                                 <option value="">กรุณาเลือก</option>
                             </select>
                             <input type="hidden" id="defectDescriptionId">
@@ -628,11 +628,15 @@
 
 @section scripts {
     <link href="~/lib/core-ui/signature-pad-master/css/signature-pad.css" />
+    <link href="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.default.css" rel="stylesheet">
     <script src="~/lib/core-ui/signature-pad-master/js/signature_pad.umd.js"></script>
     <script type="text/javascript">
         var ImageQC5UnitList = @Html.Raw(Json.Serialize(ViewBag.ImageQC5UnitList));
     </script>
     <script src="~/js/pages/QC5Check.js?ver=@DateTime.Now.Ticks.ToString()"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js"></script>
+
     <script>
 
         $(document).ready(function () {
