@@ -1572,6 +1572,18 @@ function openModalUpdateDefectDetailQC(defectID) {
                     $('#drop-zone-update').hide();
                 }
 
+                if (response.Seq > response.RefSeq) {
+                    if (response.StatusID !== "27") {
+                        $('#UpdateDefectButton').show();
+                    }
+                    else {
+                        $('#UpdateDefectButton').hide();
+                    }
+                }
+                else {
+                    $('#UpdateDefectButton').hide();
+                }
+
                 // Show the modal
                 var myModal = new bootstrap.Modal(document.getElementById('Update-detail-defect'));
                 myModal.show();

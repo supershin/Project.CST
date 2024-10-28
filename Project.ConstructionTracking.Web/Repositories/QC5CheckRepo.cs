@@ -213,6 +213,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                  QC5UpdateByName = t6.FirstName + ' ' + t6.LastName,
                                  Seq = t4.Seq,
                                  ActionType = t5.ActionType,
+                                 CreateDate = FormatExtension.FormatDateToDayMonthNameYearTime(t4.CreateDate),
                                  FilePathQCPDF = t10.FilePath,
                                  PEUnit = t11.UserID
                              }).FirstOrDefault();
@@ -1485,14 +1486,18 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public SummaryQCPdfData GetSummaryQC5(Guid QCUnitCheckListID)
         {
+            var QC5Detail = _context.tr_QC_UnitCheckList
+                .Where(t1 => t1.ID == QCUnitCheckListID && t1.FlagActive == true)
+                .FirstOrDefault();
+
             var refSeqCounts = _context.tr_QC_UnitCheckList_Defect
-                      .Where(t1 => t1.QCUnitCheckListID == QCUnitCheckListID && t1.FlagActive == true)
-                      .GroupBy(t1 => t1.RefSeq)
-                      .Select(g => new ListCalDefectBySeq
-                      {
-                          RefSeq = g.Key,
-                          RefSeqCnt = g.Count()
-                      }).ToList();
+                .Where(t1 => t1.QCUnitCheckListID == QCUnitCheckListID && t1.FlagActive == true)
+                .GroupBy(t1 => t1.RefSeq)
+                .Select(g => new ListCalDefectBySeq
+                {
+                    RefSeq = g.Key,
+                    RefSeqCnt = g.Count()
+                }).ToList();
 
             // Status counts (Pass and NotPass)
             var statusCounts = _context.tr_QC_UnitCheckList_Defect
@@ -1510,23 +1515,125 @@ namespace Project.ConstructionTracking.Web.Repositories
                 .Where(t1 => t1.QCUnitCheckListID == QCUnitCheckListID && t1.FlagActive == true)
                 .Count();
 
-            if (refSeqCounts != null && statusCounts != null && cntAll > 0)
+            // Returning default values if necessary
+            var resultSummary = new SummaryQCPdfData
             {
-                var resultSummary = new SummaryQCPdfData
-                {
-                    SumAllDefect = cntAll,
-                    SumPassDefect = statusCounts.Cnt_Pass,
-                    SumNotPassDefect = statusCounts.Cnt_NotPass,
-                    CalDefectBySeq = refSeqCounts // List of RefSeq counts
-                };
+                SumAllDefect = cntAll,  // If there are no records, this will be 0
+                SumPassDefect = statusCounts?.Cnt_Pass ?? 0,  // Default to 0 if no records
+                SumNotPassDefect = statusCounts?.Cnt_NotPass ?? 0,  // Default to 0 if no records
+                CalDefectBySeq = refSeqCounts.Any() ? refSeqCounts : null,  // Null if no values
+                CreateDate = QC5Detail != null ? FormatExtension.FormatDateToDayMonthNameYearTime(QC5Detail.CreateDate) : "",
+                SubmitDate = QC5Detail != null ? FormatExtension.FormatDateToDayMonthNameYearTime(QC5Detail.UpdateDate) : ""
+            };
 
-                return resultSummary;
-            }
-            else
-            {
-                return null;
-            }
+            return resultSummary;
         }
+
+
+        public UnitFormDetailModel GetUnitFormDetail(UnitFormDetailModel filter)
+        {
+            var query = (from t1 in _context.tr_UnitForm
+                         where t1.ProjectID == filter.ProjectID && t1.UnitID == filter.UnitID
+                         join t2 in _context.tr_Form_QCCheckList on t1.FormID equals t2.FormID into t2Group
+                         from t2Joined in t2Group.DefaultIfEmpty()
+                         join t3 in _context.tr_QC_UnitCheckList on new { t2Joined.CheckListID, t1.ProjectID, t1.UnitID } equals new { t3.CheckListID, t3.ProjectID, t3.UnitID } into t3Group
+                         from t3Joined in t3Group.DefaultIfEmpty() 
+                         join t4 in _context.tm_UnitFormStatus on t1.StatusID equals t4.ID into t4Group
+                         from t4Joined in t4Group.DefaultIfEmpty()
+                         join t5 in _context.tm_Form on t1.FormID equals t5.ID into t5Group
+                         from t5Joined in t5Group.DefaultIfEmpty()
+                         where t3Joined.CheckListID == SystemConstant.Qc_CheckList_ID.QC5
+                         select new UnitFormDetailModel
+                         {
+                             FormName = t5Joined.Name,
+                             StatusName = t4Joined.Name
+                         }).FirstOrDefault();  
+
+            return query;  
+        }
+
+
+        //public SummaryQCPdfData GetSummaryQC5(Guid QCUnitCheckListID)
+        //{
+        //    // Fetch QC5Detail
+        //    var QC5Detail = _context.tr_QC_UnitCheckList
+        //        .Where(t1 => t1.ID == QCUnitCheckListID && t1.FlagActive == true)
+        //        .FirstOrDefault();
+
+        //    // Check if QC5Detail or its ProjectID or UnitID is null, and provide default values
+        //    Guid? projectID = QC5Detail?.ProjectID;
+        //    Guid? unitID = QC5Detail?.UnitID;
+
+        //    // If ProjectID or UnitID is null, return a default SummaryQCPdfData
+        //    if (projectID == null || unitID == null)
+        //    {
+        //        return new SummaryQCPdfData
+        //        {
+        //            SumAllDefect = 0,
+        //            SumPassDefect = 0,
+        //            SumNotPassDefect = 0,
+        //            CalDefectBySeq = null,
+        //            CreateDate = "",
+        //            SubmitDate = ""
+        //        };
+        //    }
+
+        //    var queryUnit = (from t1 in _context.tr_UnitForm
+        //                    where t1.ProjectID == projectID && t1.UnitID == unitID
+        //                    join t2 in _context.tr_Form_QCCheckList on t1.FormID equals t2.FormID into t2Group
+        //                    from t2Joined in t2Group.DefaultIfEmpty()
+        //                    join t3 in _context.tr_QC_UnitCheckList on new { t2Joined.CheckListID, t1.ProjectID, t1.UnitID } equals new { t3.CheckListID, t3.ProjectID, t3.UnitID } into t3Group
+        //                    from t3Joined in t3Group.DefaultIfEmpty()
+        //                    join t4 in _context.tm_UnitFormStatus on t1.StatusID equals t4.ID into t4Group
+        //                    from t4Joined in t4Group.DefaultIfEmpty()
+        //                    join t5 in _context.tm_Form on t1.FormID equals t5.ID into t5Group
+        //                    from t5Joined in t5Group.DefaultIfEmpty()
+        //                    where t3Joined.CheckListID == SystemConstant.Qc_CheckList_ID.QC5
+        //                    select new
+        //                    {
+        //                        FormName = t5Joined.Name,
+        //                        StatusName = t4Joined.Name
+        //                    }).FirstOrDefault();
+
+        //    // Fetching RefSeq Counts
+        //    var refSeqCounts = _context.tr_QC_UnitCheckList_Defect
+        //        .Where(t1 => t1.QCUnitCheckListID == QCUnitCheckListID && t1.FlagActive == true)
+        //        .GroupBy(t1 => t1.RefSeq)
+        //        .Select(g => new ListCalDefectBySeq
+        //        {
+        //            RefSeq = g.Key,
+        //            RefSeqCnt = g.Count()
+        //        }).ToList();
+
+        //    // Status counts (Pass and NotPass)
+        //    var statusCounts = _context.tr_QC_UnitCheckList_Defect
+        //        .Where(t1 => t1.QCUnitCheckListID == QCUnitCheckListID && t1.FlagActive == true)
+        //        .GroupBy(t1 => 1) // Single group to calculate total counts
+        //        .Select(g => new
+        //        {
+        //            Cnt_Pass = g.Count(t1 => t1.StatusID == 27),  // StatusID = 27 is Pass
+        //            Cnt_NotPass = g.Count(t1 => t1.StatusID == 28) // StatusID = 28 is Not Pass
+        //        })
+        //        .FirstOrDefault();
+
+        //    // Total defect count
+        //    var cntAll = _context.tr_QC_UnitCheckList_Defect
+        //        .Where(t1 => t1.QCUnitCheckListID == QCUnitCheckListID && t1.FlagActive == true)
+        //        .Count();
+
+        //    // Returning default values if necessary
+        //    var resultSummary = new SummaryQCPdfData
+        //    {
+        //        SumAllDefect = cntAll,  // If there are no records, this will be 0
+        //        SumPassDefect = statusCounts?.Cnt_Pass ?? 0,  // Default to 0 if no records
+        //        SumNotPassDefect = statusCounts?.Cnt_NotPass ?? 0,  // Default to 0 if no records
+        //        CalDefectBySeq = refSeqCounts.Any() ? refSeqCounts : null,  // Null if no values
+        //        CreateDate = QC5Detail != null ? FormatExtension.FormatDateToDayMonthNameYearTime(QC5Detail.CreateDate) : "",
+        //        SubmitDate = QC5Detail != null ? FormatExtension.FormatDateToDayMonthNameYearTime(QC5Detail.UpdateDate) : ""
+        //    };
+
+        //    return resultSummary;
+        //}
 
     }
 }

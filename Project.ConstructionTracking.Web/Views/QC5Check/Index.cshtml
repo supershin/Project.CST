@@ -21,6 +21,9 @@
 
     var PEID = ViewBag.PEID;
     var PEName = ViewBag.PEName;
+
+    var FormName = ViewBag.FormName;
+    var FormStatusName = ViewBag.FormStatusName;
 }
 
 @model List<Project.ConstructionTracking.Web.Models.QC5CheckModel.QC5ChecklistModel>
@@ -277,12 +280,20 @@
                                         สถานะ : <span class="badge bg-danger rounded-pill text-white">ผู้รับเหมาไม่พร้อมให้ตรวจ</span>
                                     </li>
                                 }
-                                else if (@QC5UnitStatusID == SystemConstant.UnitQCStatus.IsNotReadyInspect)
+                                else if (@QC5UnitStatusID == SystemConstant.UnitQCStatus.IsPassCondition)
                                 {
                                     <li class="breadcrumb-item" aria-current="page">
                                         สถานะ : <span class="badge bg-primary rounded-pill text-white">ผ่านแบบมีเงื่อนไข</span>
                                     </li>
                                 }
+                                <li class="breadcrumb-item" aria-current="page">
+                                    สถานะงวดงาน :
+                                    <a href="#!" class="badge bg-success rounded-pill text-white">
+                                        <i class="fa-solid fa-magnifying-glass"></i> @FormName - @FormStatusName
+                                    </a>
+                                </li>
+
+
                             </ol>
                         </div>
                         <div class="card-body">

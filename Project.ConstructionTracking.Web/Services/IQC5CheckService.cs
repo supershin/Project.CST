@@ -18,5 +18,6 @@ namespace Project.ConstructionTracking.Web.Services
         void SelectedQCUnitCheckListDefectStatus(QC5IUDModel model);
         (string filePath, string currentDate) SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID);
         SummaryQCPdfData GetSummaryQC5(Guid QCUnitCheckListID);
+        UnitFormDetailModel GetUnitFormDetail(UnitFormDetailModel filter);
     }
 }

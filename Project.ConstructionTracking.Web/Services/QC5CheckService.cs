@@ -141,5 +141,11 @@ namespace Project.ConstructionTracking.Web.Services
             return DataSummaryQC5;
         }
 
+        public UnitFormDetailModel GetUnitFormDetail(UnitFormDetailModel filter)
+        {
+            var UnitFormDetail = _IQC5CheckRepo.GetUnitFormDetail(filter);
+            return UnitFormDetail;
+        }
+
     }
 }
