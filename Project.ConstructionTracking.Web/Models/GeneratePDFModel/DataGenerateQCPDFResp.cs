@@ -5,7 +5,7 @@
         public HeaderQCPdfData? HeaderQCData { get; set; }
         public List<BodyQCPdfListDefectData>? BodyListDefectQCData { get; set; }
         public SummaryQCPdfData? SummaryQCData { get; set; }
-
+        public IsNotReadyQCPdfData? IsNotReadyQCData{ get; set; }
         //add model qc1-4
         public BodyQCPdfData? BodyQCPdf { get; set; }
         public FooterQCPdfData? FooterQCData { get; set; }
@@ -58,6 +58,17 @@
         public string? QCSignaturePathImageUrl { get; set; }
         public string? PESignaturePathImageUrl { get; set; }
     }
+    public class IsNotReadyQCPdfData
+    {
+        public string? Remark { get; set; }
+
+        public List<ListImageQC5>? ListImageQC5 { get; set; }
+    }
+    public class ListImageQC5
+    {
+        public string? FileImageUrl { get; set; }
+    }
+
 
     public class BodyQCPdfData
     {

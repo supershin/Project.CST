@@ -14,7 +14,7 @@
                            name="radios-QC5-status"
                            id="radio3"
                            value="1"
-                           onclick="validateMainStatus(this)"
+                           onclick="toggleRadio(this)"
                     @(ViewBag.QC5UnitStatusID == 1 ? "checked" : "")
                     @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
                     >
@@ -26,7 +26,7 @@
                            name="radios-QC5-status"
                            id="radio2"
                            value="4"
-                           onclick="validateConditionalPass(this)"
+                           onclick="toggleRadio(this)"
                     @(ViewBag.QC5UnitStatusID == 4 ? "checked" : "")
                     @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
                     >
@@ -38,7 +38,7 @@
                            name="radios-QC5-status"
                            id="radio1"
                            value="2"
-                           onclick="ClickNotPass(this)"
+                           onclick="toggleRadio(this)"
                     @(ViewBag.QC5UnitStatusID == 2 ? "checked" : "")
                     @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
                     >
@@ -48,9 +48,9 @@
                     <input class="form-check-input allow-deselect"
                            type="radio"
                            name="radios-QC5-status"
-                           id="radio1"
+                           id="radio4"
                            value="3"
-                           onclick="ClickNotReadyInspect(this)"
+                           onclick="toggleRadio(this)"
                     @(ViewBag.QC5UnitStatusID == 3 ? "checked" : "")
                     @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "")
                     >
