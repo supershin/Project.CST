@@ -21,6 +21,9 @@ namespace Project.ConstructionTracking.Web.Models.QCModel
 		public string? QcActionType { get; set; }
 
 		public List<MainImage> MainImages { get; set; } = new List<MainImage>();
+
+		public string? StartDate { get; set; }
+		public string? EndDate { get; set; }
 	}
 
 	public class MainImage

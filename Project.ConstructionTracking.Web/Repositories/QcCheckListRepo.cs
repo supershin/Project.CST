@@ -289,6 +289,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                                  QcActionType = qcla.ActionType,
                                  UserQcResourceUrl = r.FilePath,
                                  MainRemark = qcla.Remark,
+                                 StartDate = qcla.CreateDate,
+                                 EndDate = qcla.UpdateDate,
                                  MainImages = (from qcclr in _context.tr_QC_UnitCheckList_Resource
                                                join mr in _context.tm_Resource on qcclr.ResourceID equals mr.ID
                                                where qcclr.QCUnitCheckListID == qcl.ID && qcclr.FlagActive == true
@@ -333,6 +335,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                         UserQcResourceUrl = query.UserQcResourceUrl,
                         QcActionType = query.QcActionType,
                         Remark = query.MainRemark,
+                        StartDate = query.QcActionType == SystemConstant.ActionType.SAVE ? query.StartDate.ToStringDateTime() : query.StartDate.ToStringDateTime(),
+                        EndDate = query.QcActionType == SystemConstant.ActionType.SUBMIT ? query.EndDate.ToStringDateTime() : null,
                         MainImages = new List<MainImage>()
                     };
 
