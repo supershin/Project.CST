@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
+using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Models.QCModel;
 using Project.ConstructionTracking.Web.Services;
 using QuestPDF.Infrastructure;
@@ -10,12 +12,16 @@ namespace Project.ConstructionTracking.Web.Controllers
     {
         private readonly IQcCheckListService _qcCheckListService;
         private readonly IHostEnvironment _hosting;
+        private readonly IQC5CheckService _QC5CheckService;
 
         public QCChecklistController(IQcCheckListService qcCheckListService
-            , IHostEnvironment hosting)
+            , IHostEnvironment hosting,
+              IQC5CheckService qC5CheckService)
         {
             _qcCheckListService = qcCheckListService;
             _hosting = hosting;
+            _QC5CheckService = qC5CheckService;
+
         }
 
         public IActionResult Index(QcActionModel model)
@@ -62,6 +68,14 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             QcCheckListDetailResp dataModel = _qcCheckListService.GetQcCheckListDetail(model);
             ViewBag.QcID = dataModel.QcCheckList != null ? dataModel.QcCheckList.ID : Guid.Empty;
+
+            var filterData = new UnitFormDetailModel { ID = id, ProjectID = projectid, UnitID = unitid };
+            UnitFormDetailModel UnitFormDetai = _QC5CheckService.GetUnitFormDetail(filterData);
+            ViewBag.FormID = UnitFormDetai?.FormID;
+            ViewBag.FormName = UnitFormDetai?.FormName;
+            ViewBag.FormStatusID = UnitFormDetai?.StatusID;
+            ViewBag.FormStatusName = UnitFormDetai?.StatusName;
+            ViewBag.UnitId = unitid;
 
             return View(dataModel); 
         }

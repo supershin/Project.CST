@@ -2338,6 +2338,14 @@ function openModalEditQC(defectID) {
 }
 
 
+function goToFormGroup(formID, unitId) {
+    // Open in a new tab
+    window.open(baseUrl + `FormGroup/Index?FormID=${formID}&unitId=${unitId}&comeFrom=QCPage`, '_blank');
+}
+
+
+
+
 
 
 

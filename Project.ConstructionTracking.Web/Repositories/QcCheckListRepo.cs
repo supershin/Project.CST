@@ -335,8 +335,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                         UserQcResourceUrl = query.UserQcResourceUrl,
                         QcActionType = query.QcActionType,
                         Remark = query.MainRemark,
-                        StartDate = query.QcActionType == SystemConstant.ActionType.SAVE ? query.StartDate.ToStringDateTime() : query.StartDate.ToStringDateTime(),
-                        EndDate = query.QcActionType == SystemConstant.ActionType.SUBMIT ? query.EndDate.ToStringDateTime() : null,
+                        StartDate = query.QcActionType == SystemConstant.ActionType.SAVE ? FormatExtension.FormatDateToDayMonthNameYearTime(query.StartDate) : FormatExtension.FormatDateToDayMonthNameYearTime(query.StartDate),
+                        EndDate = query.QcActionType == SystemConstant.ActionType.SUBMIT ? FormatExtension.FormatDateToDayMonthNameYearTime(query.EndDate) : null,
                         MainImages = new List<MainImage>()
                     };
 
