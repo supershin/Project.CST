@@ -3,6 +3,11 @@
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
     var baseUrl = @ViewBag.baseUrl;
     var backUrl = baseUrl + "SummaryUnitQC?projectId=" + @Model.QcCheckList.ProjectID + "&projectName=" + @Html.Raw(Uri.EscapeDataString(Model.ProjectUnit.ProjectName)) + "&unitId=" + @Model.QcCheckList.UnitID;
+    var FormID = ViewBag.FormID;
+    var FormName = ViewBag.FormName;
+    var FormStatusID = ViewBag.FormStatusID;
+    var FormStatusName = ViewBag.FormStatusName;
+    var UnitId = ViewBag.UnitId;
 }
 <style>
     .fixed-size-btn {
@@ -196,6 +201,38 @@
                                         <li class="breadcrumb-item" aria-current="page">
                                             ผู้ตรวจ : @(Model.AnotherValue.QCName != null ? Model.AnotherValue.QCName : ViewBag.Name)
                                         </li>
+                                        @{
+                                            string bgColorClass;
+
+                                            if (FormStatusID == 1 || FormStatusID == 2 || FormStatusID == 3)
+                                            {
+                                                bgColorClass = "warning";
+                                            }
+                                            else if (FormStatusID == 4 || FormStatusID == 7 || FormStatusID == 11)
+                                            {
+                                                bgColorClass = "success";
+                                            }
+                                            else if (FormStatusID == 5 || FormStatusID == 8 || FormStatusID == 12)
+                                            {
+                                                bgColorClass = "danger";
+                                            }
+                                            else if (FormStatusID == 5 || FormStatusID == 10)
+                                            {
+                                                bgColorClass = "primary";
+                                            }
+                                            else
+                                            {
+                                                bgColorClass = "secondary";
+                                            }
+                                        }
+                                        <li class="breadcrumb-item" aria-current="page">
+                                            สถานะงวดงาน :
+                                            <a href="#!" class="badge bg-@bgColorClass rounded-pill text-white"
+                                               onclick="goToFormGroup('@FormID','@UnitId',)">
+                                                <i class="fa-solid fa-magnifying-glass"></i> @FormName - @FormStatusName
+                                            </a>
+                                        </li>
+
                                     </ol>
                                     @if (Model.QcCheckList.QcActionType == SystemConstant.ActionType.SUBMIT || Model.QcCheckList.QcActionType == SystemConstant.ActionType.SAVE)
                                     {

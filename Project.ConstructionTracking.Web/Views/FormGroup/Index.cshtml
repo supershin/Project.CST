@@ -302,9 +302,12 @@
 
 </style>
 
-<button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@UnitFormName','@UnitCode')">
-    <i id="chatIcon" class="fa-solid fa-message fa-xl"></i>
-</button>
+@if (Convert.ToInt32(RoleID) != SystemConstant.UserRole.QC)
+{
+    <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@UnitFormName','@UnitCode')">
+        <i id="chatIcon" class="fa-solid fa-message fa-xl"></i>
+    </button>
+}
 
 
 <div class="page-wrapper">
@@ -333,6 +336,10 @@
                                     <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
                                 </button>
                             </form>
+                        }
+                        else if (comeFrom == "QCPage")
+                        {
+
                         }
                         else
                         {

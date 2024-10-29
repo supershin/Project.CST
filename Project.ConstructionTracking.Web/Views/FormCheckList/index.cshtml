@@ -136,9 +136,14 @@
 </style>
 
 <div class="page-wrapper">
-    <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@UnitFormName','@UnitCode')">
-        <i id="chatIcon" class="fa-solid fa-message fa-xl"></i>
-    </button>
+    @if (Convert.ToInt32(UserRole) != (int)SystemConstant.UserRole.QC)
+    {
+        <button class="fixedButton" onclick="openModalChat('@UnitFormID','@FormID','@UnitFormName','@UnitCode')">
+            <i id="chatIcon" class="fa-solid fa-message fa-xl"></i>
+        </button>
+    }
+
+
     <!-- Page header -->
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
