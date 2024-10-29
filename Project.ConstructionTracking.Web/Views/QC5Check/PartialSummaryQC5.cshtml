@@ -1,26 +1,43 @@
 ﻿@model Project.ConstructionTracking.Web.Models.GeneratePDFModel.SummaryQCPdfData
-
-
-    <div class="col-12">
-        <ul>
-            @if (Model?.CalDefectBySeq != null && Model.CalDefectBySeq.Any())
-            {
-                foreach (var item in Model.CalDefectBySeq)
-                {
-                    <li>จำนวนรายการจากครั้งที่ @item.RefSeq : @item.RefSeqCnt รายการ</li>
-                }
-            }
-            else
-            {
-                <li>ไม่พบข้อมูลรายการ</li>
-            }
-        </ul>
-    </div>
-    <div class="col-12">
-        <div class="row">
-            <div class="col-12 text-yellow">รายการทั้งหมด  : @Model?.SumAllDefect รายการ</div>
-            <div class="col-12 text-green">ผ่าน : @Model?.SumPassDefect รายการ</div>
-            <div class="col-12 text-red">ไม่ผ่าน : @Model?.SumNotPassDefect รายการ</div>
+<div class="col-12">
+    <form class="row g-2">
+        <!-- Column 1 (col-6) -->
+        <div class="col-6">
+            <label for="floatingInputValue" class="form-label">วันที่เริ่มตรวจ</label>
+            <li>@Model?.CreateDate</li>
+          @*   <input type="text" class="form-control" id="floatingInputValue" placeholder="name@example.com" value="12/Sep/2024 12:00" readonly> *@
         </div>
+        <!-- Column 2 (col-6) -->
+        @if (ViewBag.ActionTypeEn == "submit")
+        {
+            <div class="col-6">
+                <label for="floatingInputValue2" class="form-label">วันที่ยืนยัน</label>
+                <li>@Model?.SubmitDate</li>
+                @* <input type="text" class="form-control" id="floatingInputValue2" placeholder="name@example.com" value="12/Sep/2024 12:00" readonly> *@
+            </div>
+        }
+    </form>
+</div>
+<div class="col-12" style="padding-top : 1rem;">
+    <ul>
+        @if (Model?.CalDefectBySeq != null && Model.CalDefectBySeq.Any())
+        {
+            foreach (var item in Model.CalDefectBySeq)
+            {
+                <li>จำนวนรายการจากครั้งที่ @item.RefSeq : @item.RefSeqCnt รายการ</li>
+            }
+        }
+        else
+        {
+            <li>ไม่พบข้อมูลรายการ</li>
+        }
+    </ul>
+</div>
+<div class="col-12">
+    <div class="row">
+        <div class="col-12 text-yellow">รายการทั้งหมด  : @Model?.SumAllDefect รายการ</div>
+        <div class="col-12 text-green">ผ่าน : @Model?.SumPassDefect รายการ</div>
+        <div class="col-12 text-red">ไม่ผ่าน : @Model?.SumNotPassDefect รายการ</div>
     </div>
+</div>
 

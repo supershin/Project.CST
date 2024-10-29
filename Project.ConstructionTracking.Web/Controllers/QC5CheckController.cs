@@ -50,6 +50,8 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.QC5UnitStatusID = QC5CheckDetail?.QC5UnitStatusID;
             ViewBag.QC5UnitChecklistRemark = QC5CheckDetail?.QC5UnitChecklistRemark;
             ViewBag.Seq = Seq;
+            ViewBag.QC5UpdateDate = QC5CheckDetail?.QC5UpdateDate;
+            ViewBag.CreateDate = QC5CheckDetail?.CreateDate;
             ViewBag.QC5UpdateByName = QC5CheckDetail?.QC5UpdateByName;
             ViewBag.ActionType = QC5CheckDetail?.ActionType == "save" ? "บันทึกร่าง" : QC5CheckDetail?.ActionType == "submit" ? "ยืนยันแล้ว" : "ยังไม่เริ่มตรวจ";
             ViewBag.ActionTypeEn = QC5CheckDetail?.ActionType;
@@ -73,6 +75,15 @@ namespace Project.ConstructionTracking.Web.Controllers
             Guid QCID = FormatExtension.AsGuid(QC5CheckDetail?.QC5UnitChecklistID);
             SummaryQCPdfData DataSummaryQC5 = _QC5CheckService.GetSummaryQC5(QCID);
             ViewData["DataSummaryQC5"] = DataSummaryQC5;
+
+            var filterData = new UnitFormDetailModel {ID = QC5CheckDetail?.QC5UnitChecklistID, ProjectID = projectId, UnitID = unitId };
+            UnitFormDetailModel UnitFormDetai = _QC5CheckService.GetUnitFormDetail(filterData);
+            ViewBag.FormID = UnitFormDetai?.FormID;
+            ViewBag.FormName = UnitFormDetai?.FormName;
+            ViewBag.FormStatusID = UnitFormDetai?.StatusID;
+            ViewBag.FormStatusName = UnitFormDetai?.StatusName;
+
+            //ViewBag.ListDefectArea = ListDefectArea;
 
             var FilterData = new QC5ChecklistModel
             {

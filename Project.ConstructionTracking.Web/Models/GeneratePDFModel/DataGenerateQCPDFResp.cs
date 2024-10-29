@@ -46,6 +46,9 @@
         public int? SumAllDefect { get; set; }
         public int? SumPassDefect { get; set; }
         public int? SumNotPassDefect { get; set; }
+        public string? CreateDate { get; set; }
+        public string? SubmitDate { get; set; }
+
         public List<ListCalDefectBySeq>? CalDefectBySeq { get; set; }
     }
     public class ListCalDefectBySeq

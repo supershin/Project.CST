@@ -124,9 +124,9 @@
                         <button class="btn btn-primary w-100" id="btn-submit-QC5" onclick="SubmitUnitQC5()">ยืนยัน</button>
                     </div>
                 }
-                @if (ViewBag.FilePathQCPDF != null)
+                @if (ViewBag.FilePathQCPDF != null && ViewBag.ActionTypeEn == "submit")
                 {
-                    <div class="col-4">
+                    <div class="col-12">
                         <a href="~/@ViewBag.FilePathQCPDF" target="_blank" class="btn btn-secondary w-100">
                             ดูเอกสารตรวจ
                         </a>

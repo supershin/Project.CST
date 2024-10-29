@@ -140,6 +140,15 @@
             public const int PASS = 29;
             public const int NOTPASS = 30;
         }
+        public static class Qc_CheckList_ID
+        {
+            public const int QC1 = 1;
+            public const int QC2 = 2;
+            public const int QC3 = 3;
+            public const int QC4_1 = 4;
+            public const int QC4_2 = 5;
+            public const int QC5 = 6;
+        }
 
     }
 
