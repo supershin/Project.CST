@@ -19,6 +19,7 @@ using static Project.ConstructionTracking.Web.Commons.SystemConstant;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using QuestPDF.Drawing;
 using QuestPDF.Fluent;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -1532,25 +1533,50 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public UnitFormDetailModel GetUnitFormDetail(UnitFormDetailModel filter)
         {
-            var query = (from t1 in _context.tr_UnitForm
-                         where t1.ProjectID == filter.ProjectID && t1.UnitID == filter.UnitID
-                         join t2 in _context.tr_Form_QCCheckList on t1.FormID equals t2.FormID into t2Group
-                         from t2Joined in t2Group.DefaultIfEmpty()
-                         join t3 in _context.tr_QC_UnitCheckList on new { t2Joined.CheckListID, t1.ProjectID, t1.UnitID } equals new { t3.CheckListID, t3.ProjectID, t3.UnitID } into t3Group
-                         from t3Joined in t3Group.DefaultIfEmpty() 
-                         join t4 in _context.tm_UnitFormStatus on t1.StatusID equals t4.ID into t4Group
-                         from t4Joined in t4Group.DefaultIfEmpty()
-                         join t5 in _context.tm_Form on t1.FormID equals t5.ID into t5Group
-                         from t5Joined in t5Group.DefaultIfEmpty()
-                         where t3Joined.CheckListID == SystemConstant.Qc_CheckList_ID.QC5
-                         select new UnitFormDetailModel
-                         {
-                             FormName = t5Joined.Name,
-                             StatusName = t4Joined.Name
-                         }).FirstOrDefault();  
+            // Query to get FormName
+            var formNameQuery = (from t1 in _context.tr_QC_UnitCheckList
+                                 join t2 in _context.tr_Form_QCCheckList
+                                    on t1.CheckListID equals t2.CheckListID into t2Group
+                                 from t2Joined in t2Group.DefaultIfEmpty()
+                                 join t3 in _context.tm_Form
+                                    on t2Joined.FormID equals t3.ID into t3Group
+                                 from t3Joined in t3Group.DefaultIfEmpty()
+                                 where t1.ID == filter.ID
+                                 select t3Joined.Name)
+                                .FirstOrDefault(); 
 
-            return query;  
+            // Query to get StatusName (returning an object with Name property)
+            var statusNameQuery = (from t1 in _context.tr_QC_UnitCheckList
+                                   join t2 in _context.tr_Form_QCCheckList
+                                      on t1.CheckListID equals t2.CheckListID into t2Group
+                                   from t2Joined in t2Group.DefaultIfEmpty()
+                                   join t3 in _context.tr_UnitForm
+                                      on new { t2Joined.FormID, t1.ProjectID, t1.UnitID }
+                                      equals new { t3.FormID, t3.ProjectID, t3.UnitID } into t3Group
+                                   from t3Joined in t3Group.DefaultIfEmpty()
+                                   join t4 in _context.tm_UnitFormStatus
+                                      on t3Joined.StatusID equals t4.ID into t4Group
+                                   from t4Joined in t4Group.DefaultIfEmpty()
+                                   where t1.ID == filter.ID
+                                      && t3Joined.ProjectID == filter.ProjectID
+                                      && t3Joined.UnitID == filter.UnitID
+                                   select new { StatusName = t4Joined.Name 
+                                               ,FormID = t3Joined.FormID
+                                               ,StatusID = t3Joined.StatusID
+                                   }).FirstOrDefault(); 
+
+            // Combine results into UnitFormDetailModel
+            var result = new UnitFormDetailModel
+            {
+                FormName = formNameQuery, 
+                FormID = statusNameQuery?.FormID ?? -99,
+                StatusID = statusNameQuery?.StatusID ?? -99,
+                StatusName = statusNameQuery?.StatusName ?? "ยังไม่มีการตรวจ"  
+            };
+
+            return result;  
         }
+
 
 
         //public SummaryQCPdfData GetSummaryQC5(Guid QCUnitCheckListID)

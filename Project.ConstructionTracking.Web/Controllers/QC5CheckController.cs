@@ -76,9 +76,11 @@ namespace Project.ConstructionTracking.Web.Controllers
             SummaryQCPdfData DataSummaryQC5 = _QC5CheckService.GetSummaryQC5(QCID);
             ViewData["DataSummaryQC5"] = DataSummaryQC5;
 
-            var filterData = new UnitFormDetailModel { ProjectID = projectId, UnitID = unitId };
+            var filterData = new UnitFormDetailModel {ID = QC5CheckDetail?.QC5UnitChecklistID, ProjectID = projectId, UnitID = unitId };
             UnitFormDetailModel UnitFormDetai = _QC5CheckService.GetUnitFormDetail(filterData);
+            ViewBag.FormID = UnitFormDetai?.FormID;
             ViewBag.FormName = UnitFormDetai?.FormName;
+            ViewBag.FormStatusID = UnitFormDetai?.StatusID;
             ViewBag.FormStatusName = UnitFormDetai?.StatusName;
 
             //ViewBag.ListDefectArea = ListDefectArea;

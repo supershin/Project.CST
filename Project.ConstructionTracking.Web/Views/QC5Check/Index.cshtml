@@ -22,7 +22,9 @@
     var PEID = ViewBag.PEID;
     var PEName = ViewBag.PEName;
 
+    var FormID = ViewBag.FormID;
     var FormName = ViewBag.FormName;
+    var FormStatusID = ViewBag.FormStatusID;
     var FormStatusName = ViewBag.FormStatusName;
 }
 
@@ -286,9 +288,34 @@
                                         สถานะ : <span class="badge bg-primary rounded-pill text-white">ผ่านแบบมีเงื่อนไข</span>
                                     </li>
                                 }
+
+                               @{
+                                    string bgColorClass;
+
+                                    if (FormStatusID == 1 || FormStatusID == 2 || FormStatusID == 3)
+                                    {
+                                        bgColorClass = "warning";
+                                    }
+                                    else if (FormStatusID == 4 || FormStatusID == 7 ||  FormStatusID == 11 )
+                                    {
+                                        bgColorClass = "success";
+                                    }
+                                    else if (FormStatusID == 5 || FormStatusID == 8 ||  FormStatusID == 12 )
+                                    {
+                                        bgColorClass = "danger";
+                                    }
+                                    else if (FormStatusID == 5 || FormStatusID == 10)
+                                    {
+                                        bgColorClass = "primary";
+                                    }
+                                    else
+                                    {
+                                        bgColorClass = "secondary";
+                                    }
+                                }
                                 <li class="breadcrumb-item" aria-current="page">
                                     สถานะงวดงาน :
-                                    <a href="#!" class="badge bg-success rounded-pill text-white">
+                                    <a href="#!" class="badge bg-@bgColorClass rounded-pill text-white">
                                         <i class="fa-solid fa-magnifying-glass"></i> @FormName - @FormStatusName
                                     </a>
                                 </li>
