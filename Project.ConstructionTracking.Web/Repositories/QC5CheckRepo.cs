@@ -204,6 +204,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                  UnitCode = t2.UnitCode,
                                  UnitStatusName = t3.Name,
                                  QC5UnitChecklistID = t4.ID,
+                                 ChecklistID = t4.CheckListID,
                                  QC5UnitChecklistActionID = t5.ID,
                                  QC5UnitStatusID = t4.QCStatusID,
                                  QC5UnitChecklistRemark = t5.Remark,
@@ -1245,7 +1246,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 };
 
                 DataGenerateQCPDFResp dataForGenQCPdf = _generatePDFRepo.GetDataQCToGeneratePDF(filterModel);
-                DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(FormatExtension.ConvertStringToGuid(QC_UnitCheckList.ProjectID));
+                DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(FormatExtension.ConvertStringToGuid(QC_UnitCheckList.ProjectID) ,"QC");
                 Guid NewGuid = Guid.NewGuid();
                 string result = _generatePDFRepo.GenerateQCPDF(NewGuid, dataForGenQCPdf, genDocumentNo);
 
@@ -1534,44 +1535,75 @@ namespace Project.ConstructionTracking.Web.Repositories
         public UnitFormDetailModel GetUnitFormDetail(UnitFormDetailModel filter)
         {
             // Query to get FormName
-            var formNameQuery = (from t1 in _context.tr_QC_UnitCheckList
-                                 join t2 in _context.tr_Form_QCCheckList
-                                    on t1.CheckListID equals t2.CheckListID into t2Group
-                                 from t2Joined in t2Group.DefaultIfEmpty()
-                                 join t3 in _context.tm_Form
-                                    on t2Joined.FormID equals t3.ID into t3Group
-                                 from t3Joined in t3Group.DefaultIfEmpty()
-                                 where t1.ID == filter.ID
-                                 select t3Joined.Name)
-                                .FirstOrDefault(); 
+            //var formNameQuery = (from t1 in _context.tr_QC_UnitCheckList
+            //                     join t2 in _context.tr_Form_QCCheckList
+            //                        on t1.CheckListID equals t2.CheckListID into t2Group
+            //                     from t2Joined in t2Group.DefaultIfEmpty()
+            //                     join t3 in _context.tm_Form
+            //                        on t2Joined.FormID equals t3.ID into t3Group
+            //                     from t3Joined in t3Group.DefaultIfEmpty()
+            //                     where t1.ID == filter.ID
+            //                     select t3Joined.Name)
+            //                    .FirstOrDefault(); 
 
             // Query to get StatusName (returning an object with Name property)
-            var statusNameQuery = (from t1 in _context.tr_QC_UnitCheckList
-                                   join t2 in _context.tr_Form_QCCheckList
-                                      on t1.CheckListID equals t2.CheckListID into t2Group
-                                   from t2Joined in t2Group.DefaultIfEmpty()
-                                   join t3 in _context.tr_UnitForm
-                                      on new { t2Joined.FormID, t1.ProjectID, t1.UnitID }
-                                      equals new { t3.FormID, t3.ProjectID, t3.UnitID } into t3Group
-                                   from t3Joined in t3Group.DefaultIfEmpty()
-                                   join t4 in _context.tm_UnitFormStatus
-                                      on t3Joined.StatusID equals t4.ID into t4Group
-                                   from t4Joined in t4Group.DefaultIfEmpty()
-                                   where t1.ID == filter.ID
-                                      && t3Joined.ProjectID == filter.ProjectID
-                                      && t3Joined.UnitID == filter.UnitID
-                                   select new { StatusName = t4Joined.Name 
-                                               ,FormID = t3Joined.FormID
-                                               ,StatusID = t3Joined.StatusID
-                                   }).FirstOrDefault(); 
+            //var statusNameQuery = (from t1 in _context.tr_QC_UnitCheckList
+            //                       join t2 in _context.tr_Form_QCCheckList
+            //                          on t1.CheckListID equals t2.CheckListID into t2Group
+            //                       from t2Joined in t2Group.DefaultIfEmpty()
+            //                       join t3 in _context.tr_UnitForm on new { t2Joined.FormID, t1.ProjectID, t1.UnitID } equals new { t3.FormID, t3.ProjectID, t3.UnitID } into t3Group
+            //                       from t3Joined in t3Group.DefaultIfEmpty()
+            //                       join t4 in _context.tm_UnitFormStatus
+            //                          on t3Joined.StatusID equals t4.ID into t4Group
+            //                       from t4Joined in t4Group.DefaultIfEmpty()
+            //                       where t1.ID == filter.ID
+            //                          && t3Joined.ProjectID == filter.ProjectID
+            //                          && t3Joined.UnitID == filter.UnitID
+            //                       select new { StatusName = t4Joined.Name 
+            //                                   ,FormID = t3Joined.FormID
+            //                                   ,StatusID = t3Joined.StatusID
+            //                       }).FirstOrDefault(); 
+
+            //var projectID = new Guid("0cc60da9-9ac5-4df6-871e-b10fb0257b4b");
+            //var unitID = new Guid("00fc3828-dc71-4cd2-9041-9f4bc8eec06d");
+
+
+            var query = (from t1 in _context.tm_Unit
+                        join t2 in _context.tm_Project
+                            on t1.ProjectID equals t2.ProjectID into t2Group
+                        from t2Joined in t2Group.DefaultIfEmpty() // LEFT JOIN
+                        join t3 in _context.tr_ProjectModelForm
+                            on new { t1.ModelTypeID, t1.ProjectID } equals new { t3.ModelTypeID, t3.ProjectID } into t3Group
+                        from t3Joined in t3Group.DefaultIfEmpty() // LEFT JOIN
+                        join t4 in _context.tm_Form
+                            on t3Joined.FormTypeID equals t4.FormTypeID into t4Group
+                        from t4Joined in t4Group.DefaultIfEmpty() // LEFT JOIN
+                        join t5 in _context.tr_UnitForm on new { FormID = (int?)t4Joined.ID, UnitID = (Guid?)t1.UnitID } equals new {t5.FormID, t5.UnitID } into t5Group
+                        from t5Joined in t5Group.DefaultIfEmpty() // LEFT JOIN
+                        join t6 in _context.tr_Form_QCCheckList
+                            on t4Joined.ID equals t6.FormID into t6Group
+                        from t6Joined in t6Group.DefaultIfEmpty() // LEFT JOIN
+                        join t7 in _context.tm_UnitFormStatus
+                            on t5Joined.StatusID equals t7.ID into t7Group
+                        from t7Joined in t7Group.DefaultIfEmpty() // LEFT JOIN
+                        where t1.ProjectID == filter.ProjectID
+                           && t1.UnitID == filter.UnitID
+                           && t6Joined.CheckListID == filter.ChecklistID
+                         select new
+                        {
+                            FormID = t4Joined.ID,
+                            FormName = t4Joined.Name,
+                            StatusID = t5Joined.StatusID,
+                            StatusName = t7Joined.Name
+                        }).FirstOrDefault();
 
             // Combine results into UnitFormDetailModel
             var result = new UnitFormDetailModel
             {
-                FormName = formNameQuery, 
-                FormID = statusNameQuery?.FormID ?? -99,
-                StatusID = statusNameQuery?.StatusID ?? -99,
-                StatusName = statusNameQuery?.StatusName ?? "ยังไม่มีการตรวจ"  
+                FormName = query?.FormName, 
+                FormID = query?.FormID,
+                StatusID = query?.StatusID ?? -99,
+                StatusName = query?.StatusName ?? "ยังไม่มีการตรวจ"  
             };
 
             return result;  

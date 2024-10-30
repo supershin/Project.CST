@@ -229,7 +229,7 @@ namespace Project.ConstructionTracking.Web.Services
 
 					DataGenerateQCPDFResp getData = _generatePDFRepo.GetDataQC1To4ForGeneratePDF(data);
 
-					DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(model.ProjectID);
+					DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(model.ProjectID ,"QC");
 
 					Guid guid = Guid.NewGuid();
 					string pathUrl = _generatePDFRepo.GenerateQCPDF2(guid, getData, genDocumentNo);

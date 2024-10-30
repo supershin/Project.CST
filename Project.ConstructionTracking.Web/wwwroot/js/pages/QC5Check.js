@@ -577,10 +577,15 @@ function clearFileInputAndPreview() {
 //    });
 //});
 
+//$("#EditButton").unbind('click').click(() => {
+//    onEditButtonClick();
+//});
+if (document.getElementById('EditButton') != undefined) {
+    document.getElementById('EditButton').addEventListener('click', function () {
+        onEditButtonClick();
+    });
+}
 
-document.getElementById('EditButton').addEventListener('click', function () {
-    onEditButtonClick();
-});
 
 function onEditButtonClick() {
     var DefectID = document.getElementById('QC5DefectID').value;
@@ -797,9 +802,9 @@ function RemoveImage(resourceID) {
 }
 
 
-document.getElementById('RemoveQC5Button').addEventListener('click', function () {
-    onRemoveQC5ButtonClick();
-});
+//document.getElementById('RemoveQC5Button').addEventListener('click', function () {
+//    onRemoveQC5ButtonClick();
+//});
 
 function onRemoveQC5ButtonClick() {
     var DefectID = document.getElementById('QC5DefectID').value;
@@ -2239,7 +2244,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function openModalEditQC(defectID) {
-    //console.log("Opening modal for Defect ID: ", defectID); // Debug log
+    console.log("Opening modal for Defect ID: ", defectID); // Debug log
     $.ajax({
         url: baseUrl + 'QC5Check/GetQC5DefactEdit',
         type: 'GET',
@@ -2251,15 +2256,19 @@ function openModalEditQC(defectID) {
                 // Hide the fixed button
                 var fixedButton = document.querySelector('.fixedButton');
                 if (fixedButton) {
-                    // Only try to hide the button if it exists
                     fixedButton.style.display = 'none';
-                    clearFileInputAndPreview()
+                    //clearFileInputAndPreview();
+                    console.log("Fixed button found and hidden.");
+                } else {
+                    console.log("No fixed button found.");
                 }
 
                 // Populate the dropdowns with existing data
                 var dropdown1 = $('#dropdown1Edit')[0].selectize;
                 var dropdown2 = $('#dropdown2Edit')[0].selectize;
                 var dropdown3 = $('#dropdown3Edit')[0].selectize;
+                console.log(dropdown1);
+                console.log(response.DefectAreaID);
 
                 dropdown1.setValue(response.DefectAreaID);
                 //console.log("Dropdown 1 (Position) set value: ", response.DefectAreaID); // Debug log

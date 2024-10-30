@@ -32,6 +32,8 @@ namespace Project.ConstructionTracking.Web.Controllers
         public IActionResult Index(Guid projectId, Guid unitId, int Seq)
         {
             Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+            var userRole = Request.Cookies["CST.Role"];
+            ViewBag.RoleID = userRole;
 
             var filterunitData = new QC5DetailModel { ProjectID = projectId, UnitID = unitId, Seq = Seq ,UserID = userid };
 
@@ -76,7 +78,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             SummaryQCPdfData DataSummaryQC5 = _QC5CheckService.GetSummaryQC5(QCID);
             ViewData["DataSummaryQC5"] = DataSummaryQC5;
 
-            var filterData = new UnitFormDetailModel {ID = QC5CheckDetail?.QC5UnitChecklistID, ProjectID = projectId, UnitID = unitId };
+            var filterData = new UnitFormDetailModel {ID = QC5CheckDetail?.QC5UnitChecklistID, ProjectID = projectId, UnitID = unitId , ChecklistID = QC5CheckDetail?.ChecklistID};
             UnitFormDetailModel UnitFormDetai = _QC5CheckService.GetUnitFormDetail(filterData);
             ViewBag.FormID = UnitFormDetai?.FormID;
             ViewBag.FormName = UnitFormDetai?.FormName;
@@ -327,12 +329,12 @@ namespace Project.ConstructionTracking.Web.Controllers
                 DataGenerateQCPDFResp QC5PDFData = _generatePDFService.GetDataQCToGeneratePDF(filterModel);
                 var guid = Guid.NewGuid();
 
-                DataDocumentModel genDocumentNo = _generatePDFService.GenerateDocumentNO(projectID);
+                DataDocumentModel genDocumentNo = _generatePDFService.GenerateDocumentNO(projectID, "QC");
 
                 string pathUrl = _generatePDFService.GenerateQCPDF(guid, QC5PDFData, genDocumentNo);
 
                 // Return success response
-                return Json(new { success = true, message = "ลบรูปภาพสำเร็จ" });
+                return Json(new { success = true, message = "บันทึกสำเร็จ" });
             }
             catch (Exception ex)
             {

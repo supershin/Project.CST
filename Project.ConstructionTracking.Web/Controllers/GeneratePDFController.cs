@@ -69,7 +69,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 {
                     DataGenerateCheckListResp dataForGenPdf = _generatePDFService.GetDataToGeneratePDF(model);
 
-                    DataDocumentModel genDocumentNo = _generatePDFService.GenerateDocumentNO(model.ProjectID);
+                    DataDocumentModel genDocumentNo = _generatePDFService.GenerateDocumentNO(model.ProjectID , "PE");
 
                     string pathUrl = GeneratePDF(guid, dataForGenPdf, genDocumentNo);
 

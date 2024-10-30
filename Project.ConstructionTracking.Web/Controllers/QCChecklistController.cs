@@ -69,7 +69,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             QcCheckListDetailResp dataModel = _qcCheckListService.GetQcCheckListDetail(model);
             ViewBag.QcID = dataModel.QcCheckList != null ? dataModel.QcCheckList.ID : Guid.Empty;
 
-            var filterData = new UnitFormDetailModel { ID = id, ProjectID = projectid, UnitID = unitid };
+            var filterData = new UnitFormDetailModel { ID = id, ProjectID = projectid, UnitID = unitid , ChecklistID = qcchecklistid };
             UnitFormDetailModel UnitFormDetai = _QC5CheckService.GetUnitFormDetail(filterData);
             ViewBag.FormID = UnitFormDetai?.FormID;
             ViewBag.FormName = UnitFormDetai?.FormName;

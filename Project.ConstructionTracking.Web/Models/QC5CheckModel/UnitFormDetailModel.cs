@@ -7,6 +7,7 @@
         public Guid UnitID { get; set; }
         public int? FormID { get; set; }
         public int StatusID { get; set; }
+        public int? ChecklistID { get; set; }
         public string? FormName { get; set; }
         public string? StatusName { get; set; }
     }

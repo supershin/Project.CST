@@ -30,7 +30,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         DataGenerateQCPDFResp GetDataQCToGeneratePDF(DataToGenerateModel model);
 
-        DataDocumentModel GenerateDocumentNO(Guid projectID);
+        DataDocumentModel GenerateDocumentNO(Guid projectID, string type);
 
         bool SaveFileDocument(DataSaveTableResource model);
 
@@ -326,7 +326,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-        public DataDocumentModel GenerateDocumentNO(Guid projectID)
+        public DataDocumentModel GenerateDocumentNO(Guid projectID, string type)
         {
 
             DataDocumentModel dataDocumentModel = new DataDocumentModel();
@@ -342,7 +342,14 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             if (project != null)
             {
-                documentPrefix = "QC" + project.ProjectCode + formatYear + DateTime.Now.ToString("MM");
+                if(type == "QC")
+                {
+                    documentPrefix = "QC" + project.ProjectCode + formatYear + DateTime.Now.ToString("MM");
+                }
+                else
+                {
+                    documentPrefix = project.ProjectCode + formatYear + DateTime.Now.ToString("MM");
+                }
             }
 
             tr_Document? document = _context.tr_Document
@@ -1180,7 +1187,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                 table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
                                                 table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text(data2.ParentPassBySeq.ToString());
                                             }
-                                            else
+                                            else if (data2.ParentStatusID == SystemConstant.Qc_CheckList_Status.NOTPASS)
                                             {
                                                 table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
                                                 table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("✓"); // "ไม่ผ่าน" column (checked)
@@ -1192,6 +1199,12 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                 {
                                                     table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("");
                                                 }
+                                            }
+                                            else
+                                            {
+                                                table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
+                                                table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text(""); // "ไม่ผ่าน" column (checked)
+                                                table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("");
                                             }
                                             table2.Cell().Row((uint)indexParent).Column(6).Element(CellStyle).AlignLeft().Text(data2.ParentDetailRemark);// ความเห็นเพิ่มเติม
                                             indexParent++;
@@ -1206,7 +1219,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                             table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
                                             table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text(data.PassBySeq.ToString());
                                         }
-                                        else
+                                        else if (data.StatusID == SystemConstant.Qc_CheckList_Status.NOTPASS)
                                         {
                                             table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
                                             table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("✓"); // "ไม่ผ่าน" column (checked)
@@ -1219,6 +1232,12 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                 table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
                                             }
                                         }
+                                        else
+                                        {
+                                            table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
+                                            table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text(""); // "ไม่ผ่าน" column (checked)
+                                            table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
+                                        }
                                         table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).AlignLeft().Text(data.DetailRemark);      // ความเห็นเพิ่มเติม
                                         index2++;
                                     }
@@ -1226,6 +1245,87 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 }
                                 else
                                 {
+                                    //if (data.ParentDetailDatas != null && data.ParentDetailDatas.Count > 0)
+                                    //{
+                                    //    if(data.StatusID != null) 
+                                    //    {
+                                    //        if (data.StatusID == SystemConstant.Qc_CheckList_Status.PASS)
+                                    //        {
+                                    //            table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text("✓"); // "ผ่าน" column (checked)
+                                    //            table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                    //            table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text(data.PassBySeq.ToString());
+                                    //        }
+                                    //        else
+                                    //        {
+                                    //            table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
+                                    //            table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("✓"); // "ไม่ผ่าน" column (checked)
+                                    //            if (data.PassBySeq == 0)
+                                    //            {
+                                    //                table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("N/A");
+                                    //            }
+                                    //            else
+                                    //            {
+                                    //                table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
+                                    //            }
+                                    //        }
+                                    //        table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).AlignLeft().Text(data.DetailRemark);      // ความเห็นเพิ่มเติม
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
+                                    //        table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                    //        table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
+                                    //        table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).Text("");
+                                    //    }
+
+                                    //    int indexParent = index2 + 1;
+                                    //    foreach (var data2 in data.ParentDetailDatas)
+                                    //    {
+                                    //        if (data.StatusID != null)
+                                    //        {
+                                    //            if (data.StatusID == SystemConstant.Qc_CheckList_Status.PASS)
+                                    //            {
+                                    //                table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text("✓"); // "ผ่าน" column (checked)
+                                    //                table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                    //                table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text(data.PassBySeq.ToString());
+                                    //            }
+                                    //            else
+                                    //            {
+                                    //                table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
+                                    //                table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("✓"); // "ไม่ผ่าน" column (checked)
+                                    //                if (data.PassBySeq == 0)
+                                    //                {
+                                    //                    table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("N/A");
+                                    //                }
+                                    //                else
+                                    //                {
+                                    //                    table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("");
+                                    //                }
+                                    //            }
+                                    //            table2.Cell().Row((uint)indexParent).Column(6).Element(CellStyle).AlignLeft().Text(data.DetailRemark);      // ความเห็นเพิ่มเติม
+                                    //        }
+                                    //        else
+                                    //        {
+
+                                    //            table2.Cell().Row((uint)indexParent).Column(1).Element(CellStyle).Text("");  // Index column
+                                    //            table2.Cell().Row((uint)indexParent).Column(2).Element(CellStyle).AlignLeft().Text("- " + data2.ParentDetailName).WrapAnywhere();
+                                    //            table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
+                                    //            table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                    //            table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("");
+                                    //            table2.Cell().Row((uint)indexParent).Column(6).Element(CellStyle).AlignLeft().Text("");// ความเห็นเพิ่มเติม
+                                    //        }
+                                    //        indexParent++;
+                                    //    }
+                                    //    index2 = indexParent;
+                                    //}
+                                    //else
+                                    //{
+                                    //    table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
+                                    //    table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                    //    table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
+                                    //    table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).Text("");
+                                    //    index2++;
+                                    //}
                                     if (data.ParentDetailDatas != null && data.ParentDetailDatas.Count > 0)
                                     {
                                         table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
@@ -1238,15 +1338,67 @@ namespace Project.ConstructionTracking.Web.Repositories
                                         {
                                             table2.Cell().Row((uint)indexParent).Column(1).Element(CellStyle).Text("");  // Index column
                                             table2.Cell().Row((uint)indexParent).Column(2).Element(CellStyle).AlignLeft().Text("- " + data2.ParentDetailName).WrapAnywhere();
-                                            table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
-                                            table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
-                                            table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("");
-                                            table2.Cell().Row((uint)indexParent).Column(6).Element(CellStyle).AlignLeft().Text("");// ความเห็นเพิ่มเติม
+                                            if (data2.ParentStatusID == SystemConstant.Qc_CheckList_Status.PASS)
+                                            {
+                                                table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text("✓"); // "ผ่าน" column (checked)
+                                                table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                                table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text(data2.ParentPassBySeq.ToString());
+                                            }
+                                            else if (data2.ParentStatusID == SystemConstant.Qc_CheckList_Status.NOTPASS)
+                                            {
+                                                table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
+                                                table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("✓"); // "ไม่ผ่าน" column (checked)
+                                                if (data2.ParentPassBySeq == 0)
+                                                {
+                                                    table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("N/A");
+                                                }
+                                                else
+                                                {
+                                                    table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
+                                                table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text(""); // "ไม่ผ่าน" column (checked)
+                                                table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("");
+                                            }
+                                            table2.Cell().Row((uint)indexParent).Column(6).Element(CellStyle).AlignLeft().Text(data2.ParentDetailRemark);// ความเห็นเพิ่มเติม
                                             indexParent++;
                                         }
                                         index2 = indexParent;
                                     }
-                                    else
+                                    else if (data.ParentDetailDatas.Count == 0)
+                                    {
+                                        if (data.StatusID == SystemConstant.Qc_CheckList_Status.PASS)
+                                        {
+                                            table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text("✓"); // "ผ่าน" column (checked)
+                                            table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
+                                            table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text(data.PassBySeq.ToString());
+                                        }
+                                        else if (data.StatusID == SystemConstant.Qc_CheckList_Status.NOTPASS)
+                                        {
+                                            table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
+                                            table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("✓"); // "ไม่ผ่าน" column (checked)
+                                            if (data.PassBySeq == 0)
+                                            {
+                                                table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("N/A");
+                                            }
+                                            else
+                                            {
+                                                table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
+                                            table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text(""); // "ไม่ผ่าน" column (checked)
+                                            table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
+                                        }
+                                        table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).AlignLeft().Text(data.DetailRemark);      // ความเห็นเพิ่มเติม
+                                        index2++;
+                                    }
+                                    else 
                                     {
                                         table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
                                         table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)

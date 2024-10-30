@@ -11,7 +11,7 @@ namespace Project.ConstructionTracking.Web.Services
 	{
 		DataGenerateCheckListResp GetDataToGeneratePDF(DataToGenerateModel model);
         DataGenerateQCPDFResp GetDataQCToGeneratePDF(DataToGenerateModel model);
-        DataDocumentModel GenerateDocumentNO(Guid projectID);
+        DataDocumentModel GenerateDocumentNO(Guid projectID , string type);
         bool SaveFileDocument(DataSaveTableResource model);
         string GenerateQCPDF(Guid guid, DataGenerateQCPDFResp dataForGenPdf, DataDocumentModel genDocumentNo);
     }
@@ -144,9 +144,9 @@ namespace Project.ConstructionTracking.Web.Services
             return DataQCToGeneratePDF;
         }
 
-        public DataDocumentModel GenerateDocumentNO(Guid projectID)
+        public DataDocumentModel GenerateDocumentNO(Guid projectID, string type)
         {
-            DataDocumentModel resp = _generatePDFRepo.GenerateDocumentNO(projectID);
+            DataDocumentModel resp = _generatePDFRepo.GenerateDocumentNO(projectID,type);
             return resp;
         }
 

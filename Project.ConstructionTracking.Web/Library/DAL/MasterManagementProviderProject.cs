@@ -294,6 +294,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.QC1 = Commons.FormatExtension.NullToString(reader["QC1"]);
             Entity.QC2 = Commons.FormatExtension.NullToString(reader["QC2"]);
             Entity.QC3 = Commons.FormatExtension.NullToString(reader["QC3"]);
+            Entity.QC4 = Commons.FormatExtension.NullToString(reader["QC4"]);
             Entity.QC4_1 = Commons.FormatExtension.NullToString(reader["QC4_1"]);
             Entity.QC4_2 = Commons.FormatExtension.NullToString(reader["QC4_2"]);
             Entity.QC5 = Commons.FormatExtension.NullToString(reader["QC5"]);
