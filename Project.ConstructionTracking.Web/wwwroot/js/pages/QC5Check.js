@@ -577,14 +577,15 @@ function clearFileInputAndPreview() {
 //    });
 //});
 
-//$("#EditButton").unbind('click').click(() => {
-//    onEditButtonClick();
-//});
-if (document.getElementById('EditButton') != undefined) {
-    document.getElementById('EditButton').addEventListener('click', function () {
-        onEditButtonClick();
-    });
-}
+$("#EditButton").unbind('click').click(() => {
+    onEditButtonClick();
+});
+
+//if (document.getElementById('EditButton') != undefined) {
+//    document.getElementById('EditButton').addEventListener('click', function () {
+//        onEditButtonClick();
+//    });
+//}
 
 
 function onEditButtonClick() {
@@ -805,6 +806,10 @@ function RemoveImage(resourceID) {
 //document.getElementById('RemoveQC5Button').addEventListener('click', function () {
 //    onRemoveQC5ButtonClick();
 //});
+
+$("#RemoveQC5Button").unbind('click').click(() => {
+    onRemoveQC5ButtonClick();
+});
 
 function onRemoveQC5ButtonClick() {
     var DefectID = document.getElementById('QC5DefectID').value;
@@ -1540,7 +1545,8 @@ function openModalUpdateDefectDetailQC(defectID) {
                         let removeButtonHTML = ''; // Initialize empty remove button
 
                         // Only show the RemoveImage button if actionTypeEn is not "submit"
-                        if (actionTypeEn !== "submit") {
+                        if (actionTypeEn !== "submit" && roleIDjs === "4") {
+                            console.log("roleIDjs = " + roleIDjs);
                             if (response.Seq > response.RefSeq) {
                                 if (response.StatusID !== "27") {
                                     removeButtonHTML = `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>`;
@@ -2244,7 +2250,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function openModalEditQC(defectID) {
-    console.log("Opening modal for Defect ID: ", defectID); // Debug log
+    //console.log("Opening modal for Defect ID: ", defectID); // Debug log
     $.ajax({
         url: baseUrl + 'QC5Check/GetQC5DefactEdit',
         type: 'GET',
@@ -2258,17 +2264,12 @@ function openModalEditQC(defectID) {
                 if (fixedButton) {
                     fixedButton.style.display = 'none';
                     //clearFileInputAndPreview();
-                    console.log("Fixed button found and hidden.");
-                } else {
-                    console.log("No fixed button found.");
-                }
+                } 
 
                 // Populate the dropdowns with existing data
                 var dropdown1 = $('#dropdown1Edit')[0].selectize;
                 var dropdown2 = $('#dropdown2Edit')[0].selectize;
                 var dropdown3 = $('#dropdown3Edit')[0].selectize;
-                console.log(dropdown1);
-                console.log(response.DefectAreaID);
 
                 dropdown1.setValue(response.DefectAreaID);
                 //console.log("Dropdown 1 (Position) set value: ", response.DefectAreaID); // Debug log
@@ -2315,7 +2316,8 @@ function openModalEditQC(defectID) {
                 $('#imagePreview2').empty();
                 if (response.listImageNotpass && response.listImageNotpass.length > 0) {
                     response.listImageNotpass.forEach(function (image) {
-                        let removeButtonHTML = actionTypeEn !== "submit" ? `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>` : '';
+                        let removeButtonHTML = actionTypeEn !== "submit" && roleIDjs === "4" ? `<button type="button" class="remove-button" onclick="RemoveImage('${image.ResourceID}')">✖</button>` : '';
+
                         $('#imagePreview2').append(`
                             <div class="position-relative d-inline-block mb-3">
                                 <a data-fslightbox="gallery" href="${baseUrl + image.FilePath}">

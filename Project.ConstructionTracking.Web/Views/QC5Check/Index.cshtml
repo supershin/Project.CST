@@ -341,7 +341,7 @@
                                             <a data-fslightbox="gallery" href="~/@image.Text">
                                                 <img src="~/@image.Text" alt="Profile Image" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">
                                             </a>
-                                            @if (ViewBag.ActionTypeEn != "submit")
+                                            @if (ViewBag.ActionTypeEn != "submit" && Convert.ToInt32(RoleID) == SystemConstant.UserRole.QC)
                                             {
                                                 <button type="button" class="remove-button" onclick="RemoveImage('@image.ValueGuid')">✖</button>
                                             }
@@ -516,7 +516,7 @@
                         </div>
 
                         <!-- Dropzone for uploading images -->
-                        @if (ViewBag.ActionTypeEn != "submit")
+                        @if (ViewBag.ActionTypeEn != "submit" && Convert.ToInt32(RoleID) == SystemConstant.UserRole.QC)
                         {
                             <div class="col-12">
                                 <div class="form-label text-danger">
@@ -694,6 +694,8 @@
 
     <script type="text/javascript">
         var actionTypeEn = '@ViewBag.ActionTypeEn';  // Pass ViewBag.ActionTypeEn to JavaScript
+        var roleIDjs = '@ViewBag.RoleID';  // Pass ViewBag.ActionTypeEn to JavaScript
+
     </script>
 
 }
