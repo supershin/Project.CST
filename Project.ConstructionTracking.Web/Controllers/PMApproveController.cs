@@ -40,9 +40,10 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.UnitCode = resultModel.UnitCode;
                 ViewBag.FormID = resultModel.FormID;
                 ViewBag.FormName = resultModel.FormName;
-                ViewBag.QCName = resultModel.QCName;
-                ViewBag.QCStatus = (resultModel.QCStatus == null) ? "ยังไม่มีการตรวจ" : resultModel.QCStatus;
-                ViewBag.QCStatusID = resultModel.QCStatusID;
+                //ViewBag.QCName = resultModel.QCName;
+                //ViewBag.QCStatus = (resultModel.QCStatus == null) ? "ยังไม่มีการตรวจ" : resultModel.QCStatus;
+                //ViewBag.QCStatusID = resultModel.QCStatusID;
+                
                 ViewBag.UnitFormStatusID = resultModel.UnitFormStatusID;
                 ViewBag.Actiondate = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.Actiondate);
                 ViewBag.ActiondatePm = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.ActiondatePm);
@@ -71,6 +72,37 @@ namespace Project.ConstructionTracking.Web.Controllers
                 int? PCUnlock = listpass.Count(item => item.LockStatusID == 8 && item.PCFlageActive == true);
                 ViewBag.PCUnlock = PCUnlock;
                 ViewBag.PCALLPASS = (PCAll == PCPass) ? "yes" : "no";
+            }
+            ViewBag.ListQCData = resultModel?.PM_getListQCData;
+            var ListQCData = resultModel?.PM_getListQCData;
+            if (ListQCData != null)
+            {
+                int? QCDataAll = ListQCData.Count;
+                string qcStatusMessage;
+                string qcStatusColore;
+                if (ListQCData.All(item => item.QCStatusID == 1))
+                {
+                    qcStatusMessage = "ผ่าน";
+                    qcStatusColore = "success";
+                }
+                else if (ListQCData.All(item => item.QCStatusID == null))
+                {
+                    qcStatusMessage = "ยังไม่ได้ตรวจ";
+                    qcStatusColore = "secondary";
+                }
+                else
+                {
+                    qcStatusMessage = "กำลังตรวจ";
+                    qcStatusColore = "warning";
+                }
+
+                ViewBag.QCStatusMessage = qcStatusMessage;
+                ViewBag.qcStatusColore = qcStatusColore;
+
+                var concatenatedQCNames = ListQCData.Select((item) => $"{item.QCName}").ToList();
+                // Join them into a single string, separated by commas or new lines if needed
+                ViewBag.ConcatenatedQCNames = string.Join(", ", concatenatedQCNames);
+
             }
 
             // Pass the resultModel to the view

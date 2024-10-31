@@ -154,8 +154,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                                           join t2 in _context.tr_Form_QCCheckList on t1.CheckListID equals t2.CheckListID into formCheckLists
                                           from t2 in formCheckLists.DefaultIfEmpty()
 
-                                          join t3 in _context.tm_Ext on t1.QCTypeID equals t3.ID into exts
-                                          from t3 in exts.DefaultIfEmpty()
+                                          join t3 in _context.tm_User on t1.UpdateBy equals t3.ID into Users
+                                          from t3 in Users.DefaultIfEmpty()
 
                                           join t4 in _context.tr_UserResource on t1.UpdateBy equals t4.UserID into userResources
                                           from t4 in userResources.Where(u => u.FlagActive == true).DefaultIfEmpty()
@@ -165,20 +165,49 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                                           where t1.UnitID == model.UnitID
                                                 && t2.FormID == model.FormID
-                                                && t3.ExtTypeID == SystemConstant.Ext_Type.QCTypeID
 
                                           orderby t1.Seq descending
 
                                           select new
                                           {
-                                              QCTypeName = t3.Name,
-                                              Seq = t1.Seq,
-                                              QCStatusID = t1.QCStatusID,
+                                              Username = t3.FirstName + " " + t3.LastName,
                                               FilePath = t5.FilePath
-                                          }).FirstOrDefault()
+                                          }).FirstOrDefault(),
 
 
-        }).FirstOrDefault();
+                             ListQCData = ( from t1 in _context.tr_Form_QCCheckList
+                                            join t2 in (from qc in _context.tr_QC_UnitCheckList
+                                                        where qc.UnitID == model.UnitID
+                                                        group qc by new { qc.CheckListID, qc.UnitID } into g
+                                                        select new
+                                                        {
+                                                            g.Key.CheckListID,
+                                                            g.Key.UnitID,
+                                                            Seq = g.Max(x => x.Seq),
+                                                            QCStatusID = g.OrderByDescending(x => x.Seq).FirstOrDefault().QCStatusID
+                                                        }) on new { t1.CheckListID, UnitID = (Guid?)model.UnitID } equals new { t2.CheckListID, t2.UnitID } into unitCheckListGroup
+
+                                            from t2 in unitCheckListGroup.DefaultIfEmpty()  // Left join on max Seq
+
+                                            join t3 in _context.tm_QC_CheckList on t1.CheckListID equals t3.ID into qcCheckLists
+                                            from t3 in qcCheckLists.DefaultIfEmpty()
+
+                                            join t4 in _context.tm_Ext on t3.QCTypeID equals t4.ID into extTypes
+                                            from t4 in extTypes.Where(ext => ext.ExtTypeID == 7).DefaultIfEmpty()
+
+                                            join t5 in _context.tm_UnitQCStatus on t2.QCStatusID equals t5.ID into unitQCStatuses
+                                            from t5 in unitQCStatuses.DefaultIfEmpty()
+
+                                            where t1.FormID == model.FormID
+                                            select new
+                                            {
+                                                QCName = t4.Name,
+                                                QCStatusID = t2.QCStatusID,
+                                                QCStatus = t5.Name
+                                            }).ToList()
+
+
+                         }).FirstOrDefault();
 
             return query;
 		}

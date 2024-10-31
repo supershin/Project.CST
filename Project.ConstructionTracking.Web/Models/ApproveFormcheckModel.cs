@@ -36,6 +36,7 @@
         public int? PCPassCount { get; set; }
         public List<PM_getListgroup>? PM_getListgroup { get; set; }
         public List<PM_getListImage>? PM_getListImage { get; set; }
+        public List<PM_getListQCData>? PM_getListQCData { get; set; }
     }
 
     public class PM_getListgroup
@@ -56,7 +57,6 @@
         public string? FilePath { get; set; }
         public List<PM_getListpackage>? PM_getListpackage { get; set; }
     }
-
     public class PM_getListpackage
     {
         public int? Package_ID { get; set; }
@@ -69,5 +69,12 @@
         public string? FileName { get; set; }
         public string? FilePath { get; set; }
 
+    }
+
+    public class PM_getListQCData
+    {
+        public string? QCName { get; set; }
+        public string? QCStatus { get; set; }
+        public int? QCStatusID { get; set; }
     }
 }
