@@ -208,7 +208,7 @@
 <input type="hidden" id="hdPeName" value="@ViewBag.PEName" />
 <input type="hidden" id="hdPEUnit" value="@ViewBag.PEUnit" />
 
-@if (ViewBag.ActionTypeEn != "submit")
+@if (ViewBag.ActionTypeEn != "submit" && Convert.ToInt32(RoleID) == SystemConstant.UserRole.QC)
 {
     <button class="fixedButton" onclick="openModalDataQC('add')">
         <i class="fa-solid fa-plus fa-xl"></i>
@@ -318,7 +318,7 @@
                                 <li class="breadcrumb-item" aria-current="page">
                                     สถานะงวดงาน :
                                     <a href="#!" class="badge bg-@bgColorClass rounded-pill text-white"
-                                       onclick="goToFormGroup('@FormID','@UnitId',)">
+                                       onclick="goToSumaryQC('@FormID','@UnitId',)">
                                         <i class="fa-solid fa-magnifying-glass"></i> @FormName - @FormStatusName
                                     </a>
                                 </li>
@@ -618,7 +618,7 @@
                         </div>
 
                         <!-- Dropzone for uploading images -->
-                        @if (ViewBag.ActionTypeEn != "submit")
+                        @if (ViewBag.ActionTypeEn != "submit" && Convert.ToInt32(RoleID) == SystemConstant.UserRole.QC)
                         {
                             <div class="col-12">
                                 <div class="form-label text-danger">
@@ -654,14 +654,14 @@
 
                         <div class="col-12">
                             <label class="form-check">
-                                <input class="form-check-input" type="checkbox" id="majorDefectCheckboxupdate" disabled>
+                                <input class="form-check-input" type="checkbox" id="majorDefectCheckboxupdate">
                                 <span class="form-check-label text-danger">เป็น Major Defect</span>
                             </label>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    @if (ViewBag.ActionTypeEn != "submit")
+                    @if (ViewBag.ActionTypeEn != "submit" && Convert.ToInt32(RoleID) == SystemConstant.UserRole.QC)
                     {
                         <button type="button" class="btn btn-primary" id="UpdateDefectButton">บันทึก</button>
                     }

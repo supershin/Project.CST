@@ -16,6 +16,10 @@
         public int? FormID { get; set; }
         public int? UnitFormStatusID { get; set; }
         public string? FormName { get; set; }
+        public string? QCName { get; set; }
+        public string? QCStatus { get; set; }
+        public int? QCStatusID { get; set; }
+        public Guid? QCUnitCheckListID { get; set; }
         public Guid? ActionByPE { get; set; }
         public DateTime? Actiondate { get; set; }
         public DateTime? ActiondatePm { get; set; }

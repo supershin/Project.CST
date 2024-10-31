@@ -1,6 +1,12 @@
 ﻿const summaryqc = {
     init: () => {
         $("button[data-action='Verify']").click((e) => {
+
+            if (userRole !== RoleQCForCheck) {
+                showErrorAlertNotCloseModal('คำเตือน!', 'สามารถตรวจได้เฉพาะเจ้าหน้าที่ QC เท่านั้น');
+                return;
+            }
+
             var qcCheckListID = $(e.currentTarget).attr('data-qc-checklist-id');
             var qcTypeID = $(e.currentTarget).attr('data-qc-type-id');
             var formID = $(e.currentTarget).attr('data-form-id');
@@ -119,6 +125,13 @@
 //}
 
 function checkQC5MaxSeqStatus(ProjectID, UnitID) {
+
+    if (userRole !== RoleQCForCheck) {
+        showErrorAlertNotCloseModal('คำเตือน!', 'สามารถตรวจได้เฉพาะเจ้าหน้าที่ QC เท่านั้น');
+        return;
+    }
+
+
     showConfirmationAlert(
         'ยืนยันการตรวจ QC ในรอบถัดไป',
         'คุณต้องตรวจ QC ในรอบถัดไปใช่หรือไม่?',

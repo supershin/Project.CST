@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Services;
+using static Project.ConstructionTracking.Web.Commons.SystemConstant;
 using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
 using static Project.ConstructionTracking.Web.Models.FormGroupModel;
 
@@ -39,6 +40,9 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.UnitCode = resultModel.UnitCode;
                 ViewBag.FormID = resultModel.FormID;
                 ViewBag.FormName = resultModel.FormName;
+                ViewBag.QCName = resultModel.QCName;
+                ViewBag.QCStatus = (resultModel.QCStatus == null) ? "ยังไม่มีการตรวจ" : resultModel.QCStatus;
+                ViewBag.QCStatusID = resultModel.QCStatusID;
                 ViewBag.UnitFormStatusID = resultModel.UnitFormStatusID;
                 ViewBag.Actiondate = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.Actiondate);
                 ViewBag.ActiondatePm = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.ActiondatePm);

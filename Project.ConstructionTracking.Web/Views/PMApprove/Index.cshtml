@@ -232,9 +232,37 @@
                                                         @Actiondate
                                                     }
                                                 </label>
-                                                <label class="form-label">
-                                                    การตรวจ QC : ผ่าน
-                                                </label>
+                                                @if (ViewBag.QCName != null)
+                                                {
+                                                    
+                                                    string bgColorClass;
+
+                                                    if (@ViewBag.QCStatusID == 1 ||  @ViewBag.QCStatusID == 4)
+                                                    {
+                                                        bgColorClass = "success";
+                                                    }
+                                                    else if (@ViewBag.QCStatusID == 2 || @ViewBag.QCStatusID == 3)
+                                                    {
+                                                        bgColorClass = "danger";
+                                                    }
+                                                    else if (@ViewBag.QCStatusID == 5)
+                                                    {
+                                                        bgColorClass = "warning";
+                                                    }
+                                                    else
+                                                    {
+                                                        bgColorClass = "secondary";
+                                                    }
+                                                    
+                                                    
+                                                    <label class="form-label">
+                                                        การตรวจ :
+                                                        <a href="#!" class="badge bg-@bgColorClass rounded-pill text-white"
+                                                           onclick="goToSumaryQC('@ProjectID','@ProjectName', '@UnitID')">
+                                                            <i class="fa-solid fa-magnifying-glass"></i> @ViewBag.QCName - @ViewBag.QCStatus
+                                                        </a>
+                                                    </label>
+                                                }
                                                 <label class="form-label">
                                                     สร้างโดย : @CompanyName
                                                 </label>

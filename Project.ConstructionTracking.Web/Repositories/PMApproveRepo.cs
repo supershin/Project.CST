@@ -157,6 +157,17 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public ApproveFormcheckModel GetApproveFormcheck(ApproveFormcheckModel model)
         {
+            // Subquery to get the maximum Seq for each unique CheckListID, ProjectID, and UnitID
+            var maxSeqQuery = from qc in _context.tr_QC_UnitCheckList
+                              group qc by new { qc.CheckListID, qc.ProjectID, qc.UnitID } into g
+                              select new
+                              {
+                                  g.Key.CheckListID,
+                                  g.Key.ProjectID,
+                                  g.Key.UnitID,
+                                  MaxSeq = g.Max(x => x.Seq)
+                              };
+
             var result = (from t1 in _context.tr_UnitForm
                           join t2 in _context.tm_Vendor on t1.VendorID equals t2.ID into vendors
                           from vendor in vendors.DefaultIfEmpty()
@@ -168,19 +179,35 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from unit in units.DefaultIfEmpty()
                           join t8 in _context.tm_Form on t1.FormID equals t8.ID into forms
                           from form in forms.DefaultIfEmpty()
-                          join t10 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)1 } equals new { t10.UnitFormID, t10.RoleID } into PEUnitFormActions
+                          join t10 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PE } equals new { t10.UnitFormID, t10.RoleID } into PEUnitFormActions
                           from PEUnitFormAction in PEUnitFormActions.DefaultIfEmpty()
-                          join t11 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)2 } equals new { t11.UnitFormID, t11.RoleID } into PMUnitFormActions
+                          join t11 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PM } equals new { t11.UnitFormID, t11.RoleID } into PMUnitFormActions
                           from PMUnitFormAction in PMUnitFormActions.DefaultIfEmpty()
-                          join t12 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)3 } equals new { t12.UnitFormID, t12.RoleID } into PJMUnitFormActions
+                          join t12 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PJM } equals new { t12.UnitFormID, t12.RoleID } into PJMUnitFormActions
                           from PJMUnitFormAction in PJMUnitFormActions.DefaultIfEmpty()
                           join t13 in _context.tm_User on new { PMUnitFormAction.UpdateBy } equals new { UpdateBy = (Guid?)t13.ID } into PMUserActions
                           from PMUserAction in PMUserActions.DefaultIfEmpty()
+                          join t14 in _context.tr_Form_QCCheckList on form.ID equals t14.FormID into Form_QCCheckLists
+                          from Form_QCCheckList in Form_QCCheckLists.DefaultIfEmpty()
+                          join t15 in _context.tm_QC_CheckList on Form_QCCheckList.CheckListID equals t15.ID into QC_CheckLists
+                          from QC_CheckList in QC_CheckLists.DefaultIfEmpty()
+                          join t16 in _context.tm_Ext on new { QC_CheckList.QCTypeID, ExtTypeID = (int?)SystemConstant.Ext_Type.QCTypeID } equals new { QCTypeID = (int?)t16.ID, t16.ExtTypeID } into ExtQCtypes
+                          from ExtQCtype in ExtQCtypes.DefaultIfEmpty()
 
-                          //join t14 in _context.tr_Form_QCCheckList.Where(f => f.FlagActive == true) on t1.FormID equals t14.FormID into QCCheckLists
-                          //from QCCheckList in QCCheckLists.DefaultIfEmpty()
+                              // Join to t17 on max Seq value using maxSeqQuery
+                          join t17 in (from q in _context.tr_QC_UnitCheckList
+                                       join m in maxSeqQuery on new { q.CheckListID, q.ProjectID, q.UnitID, Seq = q.Seq }
+                                       equals new { m.CheckListID, m.ProjectID, m.UnitID, Seq = m.MaxSeq }
+                                       select q) on new { Form_QCCheckList.CheckListID, t1.ProjectID, t1.UnitID }
+                                       equals new { t17.CheckListID, t17.ProjectID, t17.UnitID } into QC_UnitCheckLists
+                          from QC_UnitCheckList in QC_UnitCheckLists.DefaultIfEmpty()
+
+                              // Additional join with t18 based on QC_UnitCheckList.QCStatusID
+                          join t18 in _context.tm_UnitQCStatus on QC_UnitCheckList.QCStatusID equals t18.ID into QCStatusS
+                          from QCStatus in QCStatusS.DefaultIfEmpty()
 
                           where t1.UnitID == model.UnitID && t1.FormID == model.FormID
+
                           select new ApproveFormcheckModel
                           {
                               ID = t1.ID,
@@ -197,6 +224,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                               UnitFormStatusID = t1.StatusID,
                               FormID = t1.FormID,
                               FormName = form.Name,
+                              QCName = ExtQCtype.Name,
+                              QCStatus = QCStatus.Name,
+                              QCStatusID = QC_UnitCheckList.QCStatusID,
+                              QCUnitCheckListID = QC_UnitCheckList.ID,
                               ActionByPE = PEUnitFormAction.UpdateBy,
                               Actiondate = PEUnitFormAction.ActionDate,
                               ActiondatePm = PMUnitFormAction.ActionDate,
@@ -246,12 +277,12 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                      FilePath = res.FilePath
                                                  }).ToList(),
                               PCAllcount = _context.tr_UnitFormPassCondition.Count(x => x.UnitFormID == t1.ID)
-
-
                           }).FirstOrDefault();
 
-             return result;
+            return result;
         }
+
+
 
         public List<UnitFormResourceModel> GetImage(UnitFormResourceModel model)
         {
@@ -505,6 +536,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                 _context.SaveChanges();
             }
         }
+
+
+
+
 
     }
 }

@@ -314,4 +314,8 @@ function deleteImage(resourceId) {
     });
 }
 
+function goToSumaryQC(ProjectId, ProjectName, UnitId) {
+    window.open(baseUrl + `SummaryUnitQC/Index?projectId=${ProjectId}&projectName=${ProjectName}&unitId=${UnitId}`, '_blank');
+}
+
 

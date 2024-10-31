@@ -1,6 +1,7 @@
 ﻿@model List<Project.ConstructionTracking.Web.Models.QC5CheckModel.QC5ChecklistModel>
 @{
     int seq = ViewBag.Seq;  // Retrieve the Seq from ViewBag
+    var RoleIDDefectlist = ViewBag.RoleID;
 }
 
 @{
@@ -72,29 +73,31 @@
                     </div>
                     @if (item.RefSeq < item.Seq)
                     {
-                        <div class="mt-2">
-                            <label class="form-check form-check-inline">
-                                <input class="form-check-input"
-                                        type="radio"
-                                        name="status_@item.ID"
-                                        value="@SystemConstant.Ext.QC5DefectStatusPass"
-                                        onclick="toggleRadioForRadioCheck(this, '@item.ID' , '')"
-                                        @(item.StatusID == SystemConstant.Ext.QC5DefectStatusPass ? "checked" : "")
-                                        @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "") />
-                                <span class="form-check-label">ผ่าน</span>
-                            </label>
-                            <label class="form-check form-check-inline">
-                                <input class="form-check-input"
-                                        type="radio"
-                                        name="status_@item.ID"
-                                        value="@SystemConstant.Ext.QC5DefectStatusNotPass"
-                                        onclick="toggleRadioForRadioCheck(this, '@item.ID' , '@item.IsMajorDefect')"
-                                        @(item.StatusID == SystemConstant.Ext.QC5DefectStatusNotPass ? "checked" : "")
-                                        @(ViewBag.ActionTypeEn == "submit" ? "disabled" : "") />
-                                <span class="form-check-label">ไม่ผ่าน</span>
-                            </label>
-                        </div>
-    }
+
+                            <div class="mt-2">
+                                <label class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                            type="radio"
+                                            name="status_@item.ID"
+                                            value="@SystemConstant.Ext.QC5DefectStatusPass"
+                                            onclick="toggleRadioForRadioCheck(this, '@item.ID' , '')"
+                                            @(item.StatusID == SystemConstant.Ext.QC5DefectStatusPass ? "checked" : "")
+                                            @(ViewBag.ActionTypeEn == "submit" || Convert.ToInt32(RoleIDDefectlist) != SystemConstant.UserRole.QC ? "disabled" : "") />
+                                    <span class="form-check-label">ผ่าน</span>
+                                </label>
+                                <label class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                            type="radio"
+                                            name="status_@item.ID"
+                                            value="@SystemConstant.Ext.QC5DefectStatusNotPass"
+                                            onclick="toggleRadioForRadioCheck(this, '@item.ID' , '@item.IsMajorDefect')"
+                                            @(item.StatusID == SystemConstant.Ext.QC5DefectStatusNotPass ? "checked" : "")
+                                @(ViewBag.ActionTypeEn == "submit" || Convert.ToInt32(RoleIDDefectlist) != SystemConstant.UserRole.QC ? "disabled" : "") />
+                                    <span class="form-check-label">ไม่ผ่าน</span>
+                                </label>
+                            </div>
+                        
+                     }
             </div>
         </div>
     </div>

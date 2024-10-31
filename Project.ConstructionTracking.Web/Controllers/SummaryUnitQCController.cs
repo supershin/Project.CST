@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Models.QCModel;
 using Project.ConstructionTracking.Web.Services;
@@ -22,6 +23,8 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             QcSummaryResp qcSummary = _qcSummaryService.GetQcSummary(projectId, unitId);
             qcSummary.ProjectName = projectName;
+            ViewBag.RoleQCForCheck = SystemConstant.UserRole.QC;
+
 
             return View(qcSummary);  
         }

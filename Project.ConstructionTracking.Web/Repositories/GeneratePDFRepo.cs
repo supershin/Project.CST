@@ -147,8 +147,38 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                              SignVendor = (from tr in _context.tm_Resource
                                            where tr.ID == truf.VendorResourceID && tr.FlagActive == true
-                                           select tr.FilePath).FirstOrDefault()
-                         }).FirstOrDefault();
+                                           select tr.FilePath).FirstOrDefault(),
+
+
+                             QCData = (from t1 in _context.tr_QC_UnitCheckList
+                                          join t2 in _context.tr_Form_QCCheckList on t1.CheckListID equals t2.CheckListID into formCheckLists
+                                          from t2 in formCheckLists.DefaultIfEmpty()
+
+                                          join t3 in _context.tm_Ext on t1.QCTypeID equals t3.ID into exts
+                                          from t3 in exts.DefaultIfEmpty()
+
+                                          join t4 in _context.tr_UserResource on t1.UpdateBy equals t4.UserID into userResources
+                                          from t4 in userResources.Where(u => u.FlagActive == true).DefaultIfEmpty()
+
+                                          join t5 in _context.tm_Resource on t4.ResourceID equals t5.ID into resources
+                                          from t5 in resources.Where(r => r.FlagActive == true).DefaultIfEmpty()
+
+                                          where t1.UnitID == model.UnitID
+                                                && t2.FormID == model.FormID
+                                                && t3.ExtTypeID == SystemConstant.Ext_Type.QCTypeID
+
+                                          orderby t1.Seq descending
+
+                                          select new
+                                          {
+                                              QCTypeName = t3.Name,
+                                              Seq = t1.Seq,
+                                              QCStatusID = t1.QCStatusID,
+                                              FilePath = t5.FilePath
+                                          }).FirstOrDefault()
+
+
+        }).FirstOrDefault();
 
             return query;
 		}
@@ -348,7 +378,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 }
                 else
                 {
-                    documentPrefix = project.ProjectCode + formatYear + DateTime.Now.ToString("MM");
+                    documentPrefix = "C" + project.ProjectCode + formatYear + DateTime.Now.ToString("MM");
                 }
             }
 
@@ -400,6 +430,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             var newFormResource = new tr_Document
             {
                 ID = Guid.NewGuid(),
+                UnitFormID = model.UnitFormID,
                 QCUnitCheckListID = model.QCUnitCheckListID,
                 ResourceID = newResource.ID,
                 DocumentNo = model.documentNo,
