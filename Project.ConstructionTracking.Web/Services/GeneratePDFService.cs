@@ -48,24 +48,22 @@ namespace Project.ConstructionTracking.Web.Services
 				GroupImages = new List<GroupImages>()
 			};
 
-			resp.FooterData = new FooterPdfData()
-			{
-				PEData = new PEModel(),
-				PMData = new PMModel(),
-				VendorData = new VendorModel()
-				{
-					VendorName = queryData.VendorName
-				},
+            resp.FooterData = new FooterPdfData()
+            {
+                PEData = new PEModel(),
+                PMData = new PMModel(),
+                VendorData = new VendorModel()
+                {
+                    VendorName = queryData?.VendorName ?? string.Empty
+                },
                 QCData = new QCModel()
                 {
-                    QCName = queryData.QCData.Username
-                    //QCImageSignUrl = queryData.QCData.FilePath,
+                    QCName = queryData?.QCData?.Username ?? string.Empty
                 }
-
-          
             };
 
-			foreach (var work in queryData.WorkerData)
+
+            foreach (var work in queryData.WorkerData)
 			{
 				if (work.RoleID == SystemConstant.UserRole.PE)
 				{
@@ -155,10 +153,8 @@ namespace Project.ConstructionTracking.Web.Services
             }
 
             // Now perform the conditional checks on listQCData
-            if (listQCData != null)
+            if (listQCData.Count > 0)
             {
-
-
                 if (listQCData.All(item => item.QCStatusID == 1))
                 {
                     resp.HeaderData.QCStatus = 1;
@@ -174,15 +170,17 @@ namespace Project.ConstructionTracking.Web.Services
 			else
 			{
                 resp.HeaderData.QCStatus = 0;
+                resp.HeaderData.QCName = "QC";
             }
 
             // set data resp into footer
-            resp.FooterData.PEData.PEImageSignUrl = queryData.SignPE;
-			resp.FooterData.PMData.PMImageSignUrl = queryData.SignPM;
-            resp.FooterData.QCData.QCImageSignUrl = queryData.QCData.FilePath;
-            resp.FooterData.VendorData.VendorImageSignUrl = queryData.SignVendor;
+            resp.FooterData.PEData.PEImageSignUrl = queryData?.SignPE ?? string.Empty;
+            resp.FooterData.PMData.PMImageSignUrl = queryData?.SignPM ?? string.Empty;
+            resp.FooterData.QCData.QCImageSignUrl = queryData?.QCData?.FilePath ?? string.Empty;
+            resp.FooterData.VendorData.VendorImageSignUrl = queryData?.SignVendor ?? string.Empty;
 
-			return resp;
+
+            return resp;
         }
 
         public DataGenerateQCPDFResp GetDataQCToGeneratePDF(DataToGenerateModel filterData)
