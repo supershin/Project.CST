@@ -379,47 +379,18 @@ namespace Project.ConstructionTracking.Web.Controllers
                         if (signQc != null)
                         {
                             table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image(signQc);
+                            table2.Cell().Row(2).Column(4).AlignCenter().Text("Quality Control (QC)");
+                            table2.Cell().Row(3).Column(4).AlignCenter().Text("( " + dataGenerate.FooterData.QCData?.QCName + " )");
                         }
                         else
                         {
-                            table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image("");
+                            //QC
+                            //table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image("");
+                            table2.Cell().Row(2).Column(4).AlignCenter().Text("Quality Control (QC)");
+                            table2.Cell().Row(3).Column(4).AlignCenter().Text("(                  )");
+
                         }
-                        table2.Cell().Row(2).Column(4).AlignCenter().Text("Quality Control (QC)");
-                        table2.Cell().Row(3).Column(4).AlignCenter().Text("( " + dataGenerate.FooterData.QCData?.QCName + " )");
 
-
-
-                        table2.ColumnsDefinition(columns =>
-                        {
-                            columns.RelativeColumn(3);
-                            columns.RelativeColumn(3);
-                            columns.RelativeColumn(3);
-                            columns.RelativeColumn(3);
-                        });
-
-                        table2.Cell().Row(1).Column(1).AlignCenter().Width(60).Image(signVendor);
-                        table2.Cell().Row(2).Column(1).AlignCenter().Text("ผู้รับเหมา");
-                        table2.Cell().Row(3).Column(1).AlignCenter().Text("( " + dataGenerate.FooterData.VendorData.VendorName + " )");
-
-                        table2.Cell().Row(1).Column(2).AlignCenter().Width(60).Image(signPe);
-                        table2.Cell().Row(2).Column(2).AlignCenter().Text("วิศวกรผู้ควบคุมงาน");
-                        table2.Cell().Row(3).Column(2).AlignCenter().Text("( " + dataGenerate.FooterData.PEData.PEName + " )");
-
-                        table2.Cell().Row(1).Column(3).AlignCenter().Width(60).Image(signPm);
-                        table2.Cell().Row(2).Column(3).AlignCenter().Text("Project Manager");
-                        table2.Cell().Row(3).Column(3).AlignCenter().Text("( " + dataGenerate.FooterData.PMData.PMName + " )");
-
-                        //QC
-                        if (dataGenerate.FooterData.QCData.QCImageSignUrl != null)
-                        {
-                            table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image(signQc);
-                        }
-                        else
-                        {
-                            table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image("");
-                        }
-                        table2.Cell().Row(2).Column(4).AlignCenter().Text("Quality Control (QC)");
-                        table2.Cell().Row(3).Column(4).AlignCenter().Text("( " + dataGenerate.FooterData.QCData.QCName + " )");
 
 
                         // Page number 
