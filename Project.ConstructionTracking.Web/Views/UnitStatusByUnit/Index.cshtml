@@ -1,9 +1,15 @@
-﻿@{
+﻿@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.UnitFormStatusModel>
+
+@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
-    var UnitCode = ViewBag.UnitCode;
+    var UnitCode = "";
+    if (Model != null && Model.Count > 0 && Model[0] != null)
+    {
+        UnitCode = Model[0].UnitCode;
+    }
 }
-@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.UnitFormStatusModel>
+
 
 <div class="page-wrapper">
     <div class="page-header d-print-none">

@@ -204,7 +204,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                 QCName = t4.Name,
                                                 QCStatusID = t2.QCStatusID,
                                                 QCStatus = t5.Name
-                                            }).ToList()
+                                            }).ToList(),
 
 
                          }).FirstOrDefault();

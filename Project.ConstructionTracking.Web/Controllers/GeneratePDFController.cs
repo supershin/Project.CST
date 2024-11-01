@@ -173,19 +173,33 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                             table.Cell().Row(3).Column(1).Element(CellStyle).AlignLeft().Text("แปลงที่ ");
                             table.Cell().Row(3).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.UnitCode);
-                            table.Cell().Row(3).Column(3).RowSpan(3).Element(CellStyle).AlignLeft().Text("การตรวจ QC ");
-                            table.Cell().Row(3).Column(4).Element(CellStyle).Width(15).Image(imageBox);
+                            table.Cell().Row(3).Column(3).RowSpan(3).Element(CellStyle).AlignLeft().Text("การตรวจ " + dataGenerate.HeaderData.QCName);
+                            if(dataGenerate.HeaderData.QCStatus == 1)
+                            {
+                                table.Cell().Row(3).Column(4).Element(CellStyle).Width(15).Image(imageCheckBox);
+                            }
+                            else
+                            {
+                                table.Cell().Row(3).Column(4).Element(CellStyle).Width(15).Image(imageBox);
+                            }                          
                             table.Cell().Row(3).Column(5).Element(CellStyle).AlignLeft().Text("ผ่านการตรวจจาก QC แล้ว");
 
                             table.Cell().Row(4).Column(1).Element(CellStyle).AlignLeft().Text("ผู้รับเหมา ");
                             table.Cell().Row(4).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.CompanyName);
-                            table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageBox);
-                            table.Cell().Row(4).Column(5).Element(CellStyle).AlignLeft().Text("ไม่ผ่านการตรวจจาก QC");
+                            if (dataGenerate.HeaderData.QCStatus == 2)
+                            {
+                                table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageCheckBox);
+                            }
+                            else
+                            {
+                                table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageBox);
+                            }
+                            table.Cell().Row(4).Column(5).Element(CellStyle).AlignLeft().Text("งวดนี้ไม่มีการตรวจ QC");
 
                             table.Cell().Row(5).Column(1).Element(CellStyle).AlignLeft().Text("ผู้ควบคุมงาน ");
                             table.Cell().Row(5).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.PEName);
-                            table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageBox);
-                            table.Cell().Row(4).Column(5).Element(CellStyle).AlignLeft().Text("งวดนี้ไม่มีการตรวจ QC");
+                            //table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageBox);
+                            //table.Cell().Row(4).Column(5).Element(CellStyle).AlignLeft().Text("งวดนี้ไม่มีการตรวจ QC");
 
                             table.Cell().Row(6).Column(1).Element(x => DefaultCellStyle(x, "#00FF00")).AlignLeft().Text(dataGenerate.HeaderData.FormName).Bold();
                             table.Cell().Row(6).Column(2).ColumnSpan(4).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.FormDesc);
@@ -335,6 +349,9 @@ namespace Project.ConstructionTracking.Web.Controllers
                         string pathPm = _hosting.ContentRootPath + "/" + dataGenerate.FooterData.PMData.PMImageSignUrl;
                         var signPm = new FileStream(pathPm, FileMode.Open);
 
+                        string pathQc = _hosting.ContentRootPath + "/" + dataGenerate.FooterData.QCData.QCImageSignUrl;
+                        var signQc = new FileStream(pathQc, FileMode.Open);
+
                         table2.ColumnsDefinition(columns =>
                         {
                             columns.RelativeColumn(3);
@@ -356,9 +373,9 @@ namespace Project.ConstructionTracking.Web.Controllers
                         table2.Cell().Row(3).Column(3).AlignCenter().Text("( " + dataGenerate.FooterData.PMData.PMName + " )");
 
                         //QC
-                        //table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image("");
+                        table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image(signQc);
                         table2.Cell().Row(2).Column(4).AlignCenter().Text("Quality Control (QC)");
-                        table2.Cell().Row(3).Column(4).AlignCenter().Text("(                  )");
+                        table2.Cell().Row(3).Column(4).AlignCenter().Text("( " + dataGenerate.FooterData.QCData.QCName + " )");
 
 
                         // Page number 

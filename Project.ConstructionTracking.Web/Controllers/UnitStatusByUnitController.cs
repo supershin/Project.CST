@@ -26,15 +26,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             };
 
             List<UnitFormStatusModel> unitstatuslists = _unitstatusProvider.sp_get_UnitFormStatusByUnit(en);
-            if (unitstatuslists != null && unitstatuslists.Count > 0 && unitstatuslists[0] != null)
-            {
-                ViewBag.UnitCode = unitstatuslists[0].UnitCode;
-            }
-            else
-            {
-                ViewBag.UnitCode = ""; 
-            }
-
+        
             return View(unitstatuslists);
         }
     }

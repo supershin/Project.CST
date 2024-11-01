@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models;
@@ -38,7 +39,7 @@ namespace Project.ConstructionTracking.Web.Services
 				UnitFormID = queryData.UnitFormID,
 				CompanyName = queryData.CompanyName,
                 FormName = queryData.FormName,
-				FormDesc = queryData.FormDesc
+				FormDesc = queryData.FormDesc             
             };
 
 			resp.BodyCheckListData = new BodyPdfCheckListData();
@@ -54,8 +55,15 @@ namespace Project.ConstructionTracking.Web.Services
 				VendorData = new VendorModel()
 				{
 					VendorName = queryData.VendorName
-				}
-			};
+				},
+                QCData = new QCModel()
+                {
+                    QCName = queryData.QCData.Username
+                    //QCImageSignUrl = queryData.QCData.FilePath,
+                }
+
+          
+            };
 
 			foreach (var work in queryData.WorkerData)
 			{
@@ -70,10 +78,13 @@ namespace Project.ConstructionTracking.Web.Services
 					resp.HeaderData.PMSubmitDate = work.UpdateDate;
 					resp.FooterData.PMData.PMName = work.FullName;
                 }
+                
             }
+            //var qcname = queryData.QCData;
+            //resp.FooterData.QCData.QCName = qcname.Username;
 
-			// set data resp into checklist
-			resp.BodyCheckListData = new BodyPdfCheckListData()
+            // set data resp into checklist
+            resp.BodyCheckListData = new BodyPdfCheckListData()
 			{
 				GroupDataModels = new List<GroupDataModel>()
 			};
@@ -130,10 +141,46 @@ namespace Project.ConstructionTracking.Web.Services
 				resp.BodyCheckListData.GroupDataModels.Add(groupData);
             }
 
-			// set data resp into footer
-			resp.FooterData.PEData.PEImageSignUrl = queryData.SignPE;
+            var listQCData = new List<dynamic>();
+
+            // Populate the list with items from ListQCData in queryData
+            foreach (var item in queryData.ListQCData)
+            {
+                listQCData.Add(new
+                {
+                    QCName = item.QCName,
+                    QCStatusID = item.QCStatusID,
+                    QCStatus = item.QCStatus
+                });
+            }
+
+            // Now perform the conditional checks on listQCData
+            if (listQCData != null)
+            {
+
+
+                if (listQCData.All(item => item.QCStatusID == 1))
+                {
+                    resp.HeaderData.QCStatus = 1;
+                }
+                else
+                {
+                    resp.HeaderData.QCStatus = 2;
+                }
+
+                var concatenatedQCNames = listQCData.Select((item) => $"{item.QCName}").ToList();
+                resp.HeaderData.QCName =  string.Join(", ", concatenatedQCNames); ;
+            }
+			else
+			{
+                resp.HeaderData.QCStatus = 0;
+            }
+
+            // set data resp into footer
+            resp.FooterData.PEData.PEImageSignUrl = queryData.SignPE;
 			resp.FooterData.PMData.PMImageSignUrl = queryData.SignPM;
-			resp.FooterData.VendorData.VendorImageSignUrl = queryData.SignVendor;
+            resp.FooterData.QCData.QCImageSignUrl = queryData.QCData.FilePath;
+            resp.FooterData.VendorData.VendorImageSignUrl = queryData.SignVendor;
 
 			return resp;
         }

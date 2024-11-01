@@ -82,7 +82,7 @@
                                             value="@SystemConstant.Ext.QC5DefectStatusPass"
                                             onclick="toggleRadioForRadioCheck(this, '@item.ID' , '')"
                                             @(item.StatusID == SystemConstant.Ext.QC5DefectStatusPass ? "checked" : "")
-                                            @(ViewBag.ActionTypeEn == "submit" || Convert.ToInt32(RoleIDDefectlist) != SystemConstant.UserRole.QC ? "disabled" : "") />
+                            @(ViewBag.ActionTypeEn == "submit" || Convert.ToInt32(ViewBag.UserRole) != SystemConstant.UserRole.QC ? "disabled" : "") />
                                     <span class="form-check-label">ผ่าน</span>
                                 </label>
                                 <label class="form-check form-check-inline">
@@ -92,7 +92,7 @@
                                             value="@SystemConstant.Ext.QC5DefectStatusNotPass"
                                             onclick="toggleRadioForRadioCheck(this, '@item.ID' , '@item.IsMajorDefect')"
                                             @(item.StatusID == SystemConstant.Ext.QC5DefectStatusNotPass ? "checked" : "")
-                                @(ViewBag.ActionTypeEn == "submit" || Convert.ToInt32(RoleIDDefectlist) != SystemConstant.UserRole.QC ? "disabled" : "") />
+                            @(ViewBag.ActionTypeEn == "submit" || Convert.ToInt32(ViewBag.UserRole) != SystemConstant.UserRole.QC ? "disabled" : "") />
                                     <span class="form-check-label">ไม่ผ่าน</span>
                                 </label>
                             </div>

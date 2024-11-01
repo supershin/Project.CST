@@ -339,7 +339,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.DisbursementStatus = Commons.FormatExtension.NullToString(reader["DisbursementStatus"]);
             Entity.PCUnlock = Commons.FormatExtension.NullToString(reader["PCUnlock"]);
             Entity.UnitFormPDF = Commons.FormatExtension.NullToString(reader["UnitFormPDF"]);
-            Entity.QCPDF = Commons.FormatExtension.NullToString(reader["QCPDF"]);
+            Entity.QCPDF = Commons.FormatExtension.NullToString(reader["UnitQCPDF"]);
             return Entity;
         }
 

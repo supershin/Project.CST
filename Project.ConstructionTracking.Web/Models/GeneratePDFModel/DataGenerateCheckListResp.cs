@@ -19,8 +19,12 @@ namespace Project.ConstructionTracking.Web.Models.GeneratePDFModel
 		public string CompanyName { get; set; }
 		//วิศวกรผู้ควบคุมงาน
 		public string PEName { get; set; }
-		//วันที่ pm อนุมัติ
-		public string PMSubmitDate { get; set; }
+
+        public string? QCName { get; set; }
+        public int QCStatus { get; set; }
+
+        //วันที่ pm อนุมัติ
+        public string PMSubmitDate { get; set; }
 
 		//ข้อมูลฟอร์ม
 		public string FormName { get; set; }
@@ -75,7 +79,8 @@ namespace Project.ConstructionTracking.Web.Models.GeneratePDFModel
 		public VendorModel VendorData { get; set; }
 		public PEModel PEData { get; set; }
 		public PMModel PMData { get; set; }
-	}
+        public QCModel QCData { get; set; }
+    }
 
 	public class VendorModel
 	{
@@ -93,6 +98,12 @@ namespace Project.ConstructionTracking.Web.Models.GeneratePDFModel
 	{
         public string PMName { get; set; }
         public string PMImageSignUrl { get; set; }
+    }
+
+    public class QCModel
+    {
+        public string QCName { get; set; }
+        public string QCImageSignUrl { get; set; }
     }
 }
 
