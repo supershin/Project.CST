@@ -188,11 +188,11 @@ namespace Project.ConstructionTracking.Web.Controllers
                             table.Cell().Row(4).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.CompanyName);
                             if (dataGenerate.HeaderData.QCStatus == 2)
                             {
-                                table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageCheckBox);
+                                table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageBox);
                             }
                             else
                             {
-                                table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageBox);
+                                table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageCheckBox);
                             }
                             table.Cell().Row(4).Column(5).Element(CellStyle).AlignLeft().Text("งวดนี้ไม่มีการตรวจ QC");
 

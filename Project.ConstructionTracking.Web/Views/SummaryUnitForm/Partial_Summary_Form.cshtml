@@ -80,7 +80,6 @@
                                         </button>
                                     </form>
                                 </div>
-
                                 @{
                                     // Count the number of non-null or non-empty QC values
                                     var nonEmptyQCCount = new[] { item.QC1, item.QC2, item.QC3, item.QC4, item.QC4_1, item.QC4_2, item.QC5 }
@@ -90,44 +89,44 @@
                                 <div class="col">
                                     @if (nonEmptyQCCount == 1)
                                     {
-                                        // If only one QC value is not null or empty, show it directly with onclick
-                                        if (!string.IsNullOrEmpty(item.QC1))
+                                        <!-- Show single QC button directly with onclick -->
+                                        @if (!string.IsNullOrEmpty(item.QC1))
                                         {
                                             <button class="status-dot bg-@item.QC1" onclick="goToSumaryQC('@item.ProjectID','@item.ProjectName','@item.UnitID')">
                                                 <span class="status-text">QC1</span>
                                             </button>
                                         }
-                                        if (!string.IsNullOrEmpty(item.QC2))
+                                        @if (!string.IsNullOrEmpty(item.QC2))
                                         {
                                             <button class="status-dot bg-@item.QC2" onclick="goToSumaryQC('@item.ProjectID','@item.ProjectName','@item.UnitID')">
                                                 <span class="status-text">QC2</span>
                                             </button>
                                         }
-                                        if (!string.IsNullOrEmpty(item.QC3))
+                                        @if (!string.IsNullOrEmpty(item.QC3))
                                         {
                                             <button class="status-dot bg-@item.QC3" onclick="goToSumaryQC('@item.ProjectID','@item.ProjectName','@item.UnitID')">
                                                 <span class="status-text">QC3</span>
                                             </button>
                                         }
-                                        if (!string.IsNullOrEmpty(item.QC4))
+                                        @if (!string.IsNullOrEmpty(item.QC4))
                                         {
                                             <button class="status-dot bg-@item.QC4" onclick="goToSumaryQC('@item.ProjectID','@item.ProjectName','@item.UnitID')">
                                                 <span class="status-text">QC4</span>
                                             </button>
                                         }
-                                        if (!string.IsNullOrEmpty(item.QC4_1))
+                                        @if (!string.IsNullOrEmpty(item.QC4_1))
                                         {
                                             <button class="status-dot bg-@item.QC4_1" onclick="goToSumaryQC('@item.ProjectID','@item.ProjectName','@item.UnitID')">
                                                 <span class="status-text">QC4.1</span>
                                             </button>
                                         }
-                                        if (!string.IsNullOrEmpty(item.QC4_2))
+                                        @if (!string.IsNullOrEmpty(item.QC4_2))
                                         {
                                             <button class="status-dot bg-@item.QC4_2" onclick="goToSumaryQC('@item.ProjectID','@item.ProjectName','@item.UnitID')">
                                                 <span class="status-text">QC4.2</span>
                                             </button>
                                         }
-                                        if (!string.IsNullOrEmpty(item.QC5))
+                                        @if (!string.IsNullOrEmpty(item.QC5))
                                         {
                                             <button class="status-dot bg-@item.QC5" onclick="goToSumaryQC('@item.ProjectID','@item.ProjectName','@item.UnitID')">
                                                 <span class="status-text">QC5</span>
@@ -136,54 +135,59 @@
                                     }
                                     else if (nonEmptyQCCount > 1)
                                     {
-                                        // If more than one QC value is not null or empty, show the popover with multiple QC statuses as buttons
-                                        <button class="status-dot bg-info" tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" title="งวดตรวจ QC" data-bs-html="true" data-bs-content="
+                                        <!-- Show popover with multiple QC statuses as buttons -->
+                                        @if (!string.IsNullOrEmpty(item.QC1) ||
+                                       !string.IsNullOrEmpty(item.QC2) ||
+                                       !string.IsNullOrEmpty(item.QC3) ||
+                                       !string.IsNullOrEmpty(item.QC4_1) ||
+                                       !string.IsNullOrEmpty(item.QC4_2) ||
+                                       !string.IsNullOrEmpty(item.QC5))
+                                        {
+                                            <div class="status-dot bg-info" tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" title="งวดตรวจ QC" data-bs-html="true" data-bs-content="
                                             @if (!string.IsNullOrEmpty(item.QC1))
                                             {
-                                                <button class='status-dot bg-@item.QC1' onclick='goToSumaryQC(\"@item.ProjectID\",\"@item.ProjectName\",\"@item.UnitID\")'>
-                                                    <span class='status-text'>QC1</span>
-                                                </button>
+                                                <a class='status-dot bg-@item.QC1'>
+                                                    <span class='status-text'>QC2</span>
+                                                </a>
                                             }
                                             @if (!string.IsNullOrEmpty(item.QC2))
                                             {
-                                                <button class='status-dot bg-@item.QC2' onclick='goToSumaryQC(\"@item.ProjectID\",\"@item.ProjectName\",\"@item.UnitID\")'>
+                                                <div class='status-dot bg-@item.QC2'>
                                                     <span class='status-text'>QC2</span>
-                                                </button>
+                                                </div>
                                             }
                                             @if (!string.IsNullOrEmpty(item.QC3))
                                             {
-                                                <button class='status-dot bg-@item.QC3' onclick='goToSumaryQC(\"@item.ProjectID\",\"@item.ProjectName\",\"@item.UnitID\")'>
+                                                <div class='status-dot bg-@item.QC3'>
                                                     <span class='status-text'>QC3</span>
-                                                </button>
-                                            }
-                                            @if (!string.IsNullOrEmpty(item.QC4))
-                                            {
-                                                <button class='status-dot bg-@item.QC4' onclick='goToSumaryQC(\"@item.ProjectID\",\"@item.ProjectName\",\"@item.UnitID\")'>
-                                                    <span class='status-text'>QC4</span>
-                                                </button>
+                                                </div>
                                             }
                                             @if (!string.IsNullOrEmpty(item.QC4_1))
                                             {
-                                                <button class='status-dot bg-@item.QC4_1' onclick='goToSumaryQC(\"@item.ProjectID\",\"@item.ProjectName\",\"@item.UnitID\")'>
+                                                <div class='status-dot bg-@item.QC4_1)'>
                                                     <span class='status-text'>QC4.1</span>
-                                                </button>
+                                                </div>
                                             }
                                             @if (!string.IsNullOrEmpty(item.QC4_2))
                                             {
-                                                <button class='status-dot bg-@item.QC4_2' onclick='goToSumaryQC(\"@item.ProjectID\",\"@item.ProjectName\",\"@item.UnitID\")'>
+                                                <div class='status-dot bg-@item.QC4_2'>
                                                     <span class='status-text'>QC4.2</span>
-                                                </button>
+                                                </div>
                                             }
                                             @if (!string.IsNullOrEmpty(item.QC5))
                                             {
-                                                <button class='status-dot bg-@item.QC5' onclick='goToSumaryQC(\"@item.ProjectID\",\"@item.ProjectName\",\"@item.UnitID\")'>
-                                                    <span class='status-text'>QC5</span>
-                                                </button>
-                                            }">
-                                            <span class="status-text">QC</span>
-                                        </button>
+                            <div class='status-dot bg-@item.QC5'>
+                                <span class='status-text'>QC5</span>
+                            </div>
+                                            }
+                            ">
+                            <span class="status-text">QC</span>
+                        </div>
+                                        }
+
                                     }
                                 </div>
+
 
                                 <div class="col">
                                     @if (@item.PEColor != "bg-secondary")
@@ -240,5 +244,12 @@
       window.open(baseUrl + `SummaryUnitQC/Index?projectId=${ProjectId}&projectName=${ProjectName}&unitId=${UnitId}`, '_blank');
     }
 
+     $("#QC1test").unbind('click').click(() => {
+        onSaveButtonClick();
+     });
+
+     function onSaveButtonClick() {
+            console.log('Test');
+    }
 </script>
 
