@@ -260,18 +260,23 @@ function performAjaxRequest(actionType) {
         processData: false,
         data: data,
         success: function (res) {
-            if (res.success) {                
-                if (mainStatus && mainStatus.value === "4" && actionType === "submit") {
-                    generatePDFAfterSave(data);
-                } else {
-                    Swal.close();
-                    showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', () => {
-                        window.location.reload();
-                    });
-                }
+            if (res.success) {        
+                Swal.close();
+                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', () => {
+                    window.location.reload();
+                });
+
+                //if (mainStatus && mainStatus.value === "4" && actionType === "submit") {
+                //    generatePDFAfterSave(data);
+                //} else {
+                //    Swal.close();
+                //    showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', () => {
+                //        window.location.reload();
+                //    });
+                //}
             } else {
                 Swal.close();
-                showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+                showErrorAlert('ผิดพลาด!', res.message);
             }
         },
         error: function (xhr, status, error) {

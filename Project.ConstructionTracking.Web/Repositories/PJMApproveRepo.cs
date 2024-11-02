@@ -2,6 +2,8 @@
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
+using Project.ConstructionTracking.Web.Services;
 using System;
 using System.Transactions;
 using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
@@ -11,10 +13,14 @@ namespace Project.ConstructionTracking.Web.Repositories
     public class PJMApproveRepo : IPJMApproveRepo
     {
         private readonly ContructionTrackingDbContext _context;
+        private readonly IGeneratePDFRepo _generatePDFRepo;
+        private readonly IGeneratePDFService _generatePDFService;
 
-        public PJMApproveRepo(ContructionTrackingDbContext context)
+        public PJMApproveRepo(ContructionTrackingDbContext context, IGeneratePDFRepo generatePDFRepo, IGeneratePDFService generatePDFService)
         {
             _context = context;
+            _generatePDFRepo = generatePDFRepo;
+            _generatePDFService = generatePDFService;
         }
 
         public List<PJMApproveModel.GetlistUnitDetail> GetListPJMApprove(PJMApproveModel.filterData filterData)
@@ -221,12 +227,63 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     InsertImagesPM(model, model.UserID, 3); // RoleID = 3 for PJM
 
+                    var modelgenpdf = new DataToGenerateModel
+                    {
+                        ProjectID = FormatExtension.AsGuid(model.ProjectID),
+                        UnitID = FormatExtension.AsGuid(model.UnitID),
+                        FormID = FormatExtension.AsInt(model.FormID)
+                    };
+
+                    if (model.ActionType == "submit")
+                    {
+                        try
+                        {
+                            GenerateAndSavePDF(modelgenpdf, model.UserID); // This must succeed or else roll back
+                        }
+                        catch (Exception pdfEx)
+                        {
+                            throw new Exception("ปลิ้น PDF ไม่สำเร็จ", pdfEx);
+                        }
+                    }
+
+
                     scope.Complete();
                 }
                 catch (Exception ex)
                 {
                     throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
                 }
+            }
+        }
+
+        private void GenerateAndSavePDF(DataToGenerateModel model, Guid? UserID)
+        {
+            try
+            {
+                DataGenerateCheckListResp dataForGenPdf = _generatePDFService.GetDataToGeneratePDF(model);
+
+                DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(model.ProjectID, "PE");
+
+                Guid NewGuid = Guid.NewGuid();
+                string pathUrl = _generatePDFRepo.GeneratePDF(NewGuid, dataForGenPdf, genDocumentNo);
+
+                var SaveTableResourc = new DataSaveTableResource
+                {
+                    UnitFormID = dataForGenPdf.HeaderData.UnitFormID,
+                    documentRunning = genDocumentNo.documentRunning,
+                    documentPrefix = genDocumentNo.documentPrefix,
+                    documentNo = genDocumentNo.documentNo,
+                    FilePath = pathUrl,
+                    FileName = NewGuid.ToString(),
+                    UserID = FormatExtension.AsGuid(UserID)
+                };
+
+                bool ResultSave = _generatePDFRepo.SaveFileDocument(SaveTableResourc);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("ปลิ้น PDF ไม่สำเร็จ", ex);
             }
         }
 
