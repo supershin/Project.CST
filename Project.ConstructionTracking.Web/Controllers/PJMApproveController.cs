@@ -76,15 +76,18 @@ namespace Project.ConstructionTracking.Web.Controllers
                 }
                 model.UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
                 model.ApplicationPath = _hosting.ContentRootPath;
-                _PJMApproveService.SaveOrUpdateUnitFormAction(model);
 
-                return Ok(new { success = true });
+                // Get the document URL if available
+                string returnUrlDoc = _PJMApproveService.SaveOrUpdateUnitFormAction(model);
+
+                return Ok(new { success = true, pdfPath = returnUrlDoc });
             }
             catch (Exception ex)
             {
                 return BadRequest(new { success = false, message = ex.Message });
             }
         }
+
 
         [HttpGet]
         public JsonResult GetImagesUnlock(Guid UnitFormID, int PassConditionID)

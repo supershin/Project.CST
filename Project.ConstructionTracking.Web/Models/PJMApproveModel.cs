@@ -61,6 +61,7 @@
             public int? FormID { get; set; }
             public string? ActionType { get; set; }
             public string? Remark { get; set; }
+            public bool? allPassed { get; set; }
             public List<PJMIUPC>? ListPCIC { get; set; }
             public string? ApplicationPath { get; set; }
             public List<IFormFile>? Images { get; set; }

@@ -148,27 +148,27 @@
                                             var popoverContent = new System.Text.StringBuilder();
                                             if (!string.IsNullOrEmpty(item.QC1))
                                             {
-                                                popoverContent.Append($"<button class='status-dot bg-{item.QC1}' onclick='goToSumaryQC(\"{item.ProjectID}\", \"{item.ProjectName}\", \"{item.UnitID}\")'>QC1</button>");
+                                                popoverContent.Append($"<button class='status-dot bg-{item.QC1} mb-2' onclick='goToSumaryQC(\"{item.ProjectID}\", \"{item.ProjectName}\", \"{item.UnitID}\")'>QC1</button>");
                                             }
                                             if (!string.IsNullOrEmpty(item.QC2))
                                             {
-                                                popoverContent.Append($"<button class='status-dot bg-{item.QC2}' onclick='goToSumaryQC(\"{item.ProjectID}\", \"{item.ProjectName}\", \"{item.UnitID}\")'>QC2</button>");
+                                                popoverContent.Append($"<button class='status-dot bg-{item.QC2} mb-2' onclick='goToSumaryQC(\"{item.ProjectID}\", \"{item.ProjectName}\", \"{item.UnitID}\")'>QC2</button>");
                                             }
                                             if (!string.IsNullOrEmpty(item.QC3))
                                             {
-                                                popoverContent.Append($"<button class='status-dot bg-{item.QC3}' onclick='goToSumaryQC(\"{item.ProjectID}\", \"{item.ProjectName}\", \"{item.UnitID}\")'>QC3</button>");
+                                                popoverContent.Append($"<button class='status-dot bg-{item.QC3} mb-2' onclick='goToSumaryQC(\"{item.ProjectID}\", \"{item.ProjectName}\", \"{item.UnitID}\")'>QC3</button>");
                                             }
                                             if (!string.IsNullOrEmpty(item.QC4_1))
                                             {
-                                                popoverContent.Append($"<button class='status-dot bg-{item.QC4_1}' onclick='goToSumaryQC(\"{item.ProjectID}\", \"{item.ProjectName}\", \"{item.UnitID}\")'>QC4.1</button>");
+                                                popoverContent.Append($"<button class='status-dot bg-{item.QC4_1} mb-2' onclick='goToSumaryQC(\"{item.ProjectID}\", \"{item.ProjectName}\", \"{item.UnitID}\")'>QC4.1</button>");
                                             }
                                             if (!string.IsNullOrEmpty(item.QC4_2))
                                             {
-                                                popoverContent.Append($"<button class='status-dot bg-{item.QC4_2}' onclick='goToSumaryQC(\"{item.ProjectID}\", \"{item.ProjectName}\", \"{item.UnitID}\")'>QC4.2</button>");
+                                                popoverContent.Append($"<button class='status-dot bg-{item.QC4_2} mb-2' onclick='goToSumaryQC(\"{item.ProjectID}\", \"{item.ProjectName}\", \"{item.UnitID}\")'>QC4.2</button>");
                                             }
                                             if (!string.IsNullOrEmpty(item.QC5))
                                             {
-                                                popoverContent.Append($"<button class='status-dot bg-{item.QC5}' onclick='goToSumaryQC(\"{item.ProjectID}\", \"{item.ProjectName}\", \"{item.UnitID}\")'>QC5</button>");
+                                                popoverContent.Append($"<button class='status-dot bg-{item.QC5} mb-2' onclick='goToSumaryQC(\"{item.ProjectID}\", \"{item.ProjectName}\", \"{item.UnitID}\")'>QC5</button>");
                                             }
 
                                             <button type="button" class="status-dot bg-info" id="popoverButton-@item.UnitID" data-bs-toggle="popover" title="งวดตรวจ QC"

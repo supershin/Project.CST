@@ -7,6 +7,6 @@ namespace Project.ConstructionTracking.Web.Repositories
         List<PMApproveModel> GetPMApproveFormList();
         ApproveFormcheckModel GetApproveFormcheck(ApproveFormcheckModel model);
         List<UnitFormResourceModel> GetImage(UnitFormResourceModel model);
-        void SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model);
+        string SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model);
     }
 }

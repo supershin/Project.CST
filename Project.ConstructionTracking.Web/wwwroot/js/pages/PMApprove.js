@@ -262,18 +262,18 @@ function performAjaxRequest(actionType) {
         success: function (res) {
             if (res.success) {        
                 Swal.close();
-                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', () => {
-                    window.location.reload();
-                });
-
-                //if (mainStatus && mainStatus.value === "4" && actionType === "submit") {
-                //    generatePDFAfterSave(data);
-                //} else {
-                //    Swal.close();
-                //    showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', () => {
-                //        window.location.reload();
-                //    });
-                //}
+                if (mainStatus && mainStatus.value === "4" && actionType === "submit") {
+                    const pdfPath = res.pdfPath;
+                    window.open(baseUrl + pdfPath, '_blank');
+                    showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จและสร้าง PDF สำเร็จ', () => {
+                        window.location.reload(); // Reload the page after success
+                    });
+                } else {
+                    Swal.close();
+                    showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', () => {
+                        window.location.reload();
+                    });
+                }
             } else {
                 Swal.close();
                 showErrorAlert('ผิดพลาด!', res.message);

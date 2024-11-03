@@ -345,8 +345,10 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
-        public void SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
+        public string SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
         {
+            string returnUrlDoc = string.Empty;
+
             var transactionOptions = new TransactionOptions
             {
                 IsolationLevel = IsolationLevel.ReadCommitted,
@@ -448,11 +450,11 @@ namespace Project.ConstructionTracking.Web.Repositories
                         FormID = FormatExtension.AsInt(model.FormID)
                     };
 
-                    if (model.ActionType == "submit")
+                    if (model.ActionType == "submit" && model.UnitFormStatus == 4)
                     {
                         try
                         {
-                            GenerateAndSavePDF(modelgenpdf, model.UserID); // This must succeed or else roll back
+                            returnUrlDoc = GenerateAndSavePDF(modelgenpdf, model.UserID); // This must succeed or else roll back
                         }
                         catch (Exception pdfEx)
                         {
@@ -467,9 +469,11 @@ namespace Project.ConstructionTracking.Web.Repositories
                     throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
                 }
             }
+
+            return returnUrlDoc;
         }
 
-        private void GenerateAndSavePDF(DataToGenerateModel model ,Guid? UserID)
+        private string GenerateAndSavePDF(DataToGenerateModel model ,Guid? UserID)
         {
             try
             {
@@ -493,6 +497,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 bool ResultSave = _generatePDFRepo.SaveFileDocument(SaveTableResourc);
 
+                return pathUrl;
             }
             catch (Exception ex)
             {

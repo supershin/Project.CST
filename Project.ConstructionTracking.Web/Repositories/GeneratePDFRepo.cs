@@ -458,24 +458,57 @@ namespace Project.ConstructionTracking.Web.Repositories
             };
             _context.tm_Resource.Add(newResource);
 
-            var newFormResource = new tr_Document
+            tr_Document existingFormResource = null;
+
+            if (model?.UnitFormID != null)
             {
-                ID = Guid.NewGuid(),
-                UnitFormID = model.UnitFormID,
-                QCUnitCheckListID = model.QCUnitCheckListID,
-                ResourceID = newResource.ID,
-                DocumentNo = model.documentNo,
-                DocumentPrefix = model.documentPrefix,
-                DocuementRunning = model.documentRunning,
-                FlagActive = true,
-                CreateDate = DateTime.Now,
-                CreateBy = model.UserID,
-                UpdateDate = DateTime.Now,
-                UpdateBy = model.UserID
-            };
-            _context.tr_Document.Add(newFormResource);
+                // Search by UnitFormID if it's not null
+                existingFormResource = _context.tr_Document.FirstOrDefault(d => d.UnitFormID == model.UnitFormID);
+            }
+            else if (model?.QCUnitCheckListID != null)
+            {
+                // Search by QCUnitCheckListID if it's not null
+                existingFormResource = _context.tr_Document.FirstOrDefault(d => d.QCUnitCheckListID == model.QCUnitCheckListID);
+            }
+
+            if (existingFormResource != null)
+            {
+                // Update the existing record
+                existingFormResource.ResourceID = newResource.ID;
+                existingFormResource.DocumentNo = model?.documentNo;
+                existingFormResource.DocumentPrefix = model?.documentPrefix;
+                existingFormResource.DocuementRunning = model?.documentRunning;
+                existingFormResource.FlagActive = true;
+                existingFormResource.UpdateDate = DateTime.Now;
+                existingFormResource.UpdateBy = model?.UserID;
+
+                _context.tr_Document.Update(existingFormResource);
+            }
+            else
+            {
+                // Insert a new record if no match found
+                var newFormResource = new tr_Document
+                {
+                    ID = Guid.NewGuid(),
+                    UnitFormID = model?.UnitFormID,
+                    QCUnitCheckListID = model?.QCUnitCheckListID,
+                    ResourceID = newResource.ID,
+                    DocumentNo = model?.documentNo,
+                    DocumentPrefix = model?.documentPrefix,
+                    DocuementRunning = model?.documentRunning,
+                    FlagActive = true,
+                    CreateDate = DateTime.Now,
+                    CreateBy = model?.UserID,
+                    UpdateDate = DateTime.Now,
+                    UpdateBy = model?.UserID
+                };
+
+                _context.tr_Document.Add(newFormResource);
+            }
 
             _context.SaveChanges();
+
+
             return true;
         }
 

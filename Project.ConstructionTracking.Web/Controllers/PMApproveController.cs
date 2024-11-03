@@ -122,9 +122,10 @@ namespace Project.ConstructionTracking.Web.Controllers
                 model.ApplicationPath = _hosting.ContentRootPath;
                 model.UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
                 model.RoleID = int.TryParse(Request.Cookies["CST.Role"], out var tempRoleInt) ? tempRoleInt : -1;
-                _PMApproveService.SaveOrUpdateUnitFormAction(model);
 
-                return Ok(new { success = true });
+                string returnUrlDoc = _PMApproveService.SaveOrUpdateUnitFormAction(model);
+
+                return Ok(new { success = true, pdfPath = returnUrlDoc });
             }
             catch (Exception ex)
             {

@@ -210,6 +210,8 @@ function saveOrSubmit(actionType) {
         data.append("Images", files[i]);
     }
 
+    data.append("allPassed", allPassed);
+
     // The main check for the "submit" action type
     if (actionType === "submit") {
         if (!allGroupsChecked) {
@@ -239,7 +241,12 @@ function saveOrSubmit(actionType) {
                         if (res.success) {
                             // If all cards are passed, call PDF generation
                             if (allPassed) {
-                                generatePDFAfterSave(data);
+                                /*generatePDFAfterSave(data);*/
+                                const pdfPath = res.pdfPath;
+                                window.open(baseUrl + pdfPath, '_blank');
+                                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จและสร้าง PDF สำเร็จ', () => {
+                                    window.location.reload(); // Reload the page after success
+                                });
                             }
                             else {
                                 showSuccessAlert('สำเร็จ!', 'บันทึกสำเร็จ', () => {
@@ -283,8 +290,6 @@ function saveOrSubmit(actionType) {
         });
     }
 }
-
-
 
 
 document.addEventListener("DOMContentLoaded", function () {

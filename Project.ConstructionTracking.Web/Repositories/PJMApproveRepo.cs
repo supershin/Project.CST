@@ -131,8 +131,10 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
-        public void SaveOrUpdateUnitFormAction(PJMApproveModel.PJMApproveIU model)
+        public string SaveOrUpdateUnitFormAction(PJMApproveModel.PJMApproveIU model)
         {
+            string returnUrlDoc = string.Empty;
+
             var transactionOptions = new TransactionOptions
             {
                 IsolationLevel = IsolationLevel.ReadCommitted,
@@ -150,18 +152,17 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     if (unitFormAction == null)
                     {
-                        // Insert a new UnitFormAction record
                         unitFormAction = new tr_UnitFormAction
                         {
                             UnitFormID = model.UnitFormID,
                             RoleID = 3,
                             ActionType = model.ActionType,
-                            StatusID = statusToUpdate, 
+                            StatusID = statusToUpdate,
                             Remark = string.IsNullOrEmpty(model.Remark) ? "" : model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
                             ActionDate = DateTime.Now,
                             UpdateBy = model.UserID,
                             UpdateDate = DateTime.Now,
-                            CreateBy = model.UserID,    
+                            CreateBy = model.UserID,
                             CraeteDate = DateTime.Now
                         };
 
@@ -169,9 +170,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                     }
                     else
                     {
-
                         unitFormAction.ActionType = model.ActionType;
-                        unitFormAction.StatusID = statusToUpdate; 
+                        unitFormAction.StatusID = statusToUpdate;
                         if (!string.IsNullOrEmpty(model.Remark))
                         {
                             if (unitFormAction.Remark != model.Remark)
@@ -193,7 +193,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     _context.SaveChanges();
 
                     int? statusForm = (statusToUpdate == 8) ? 7 : 8;
-                    UpdateUnitForm(model.UnitFormID, model.ActionType, statusForm , model.UserID);
+                    UpdateUnitForm(model.UnitFormID, model.ActionType, statusForm, model.UserID);
 
                     if (model.ListPCIC != null && model.ListPCIC.Count > 0)
                     {
@@ -224,8 +224,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         }
                     }
 
-
-                    InsertImagesPM(model, model.UserID, 3); // RoleID = 3 for PJM
+                    InsertImagesPM(model, model.UserID, 3);
 
                     var modelgenpdf = new DataToGenerateModel
                     {
@@ -234,18 +233,17 @@ namespace Project.ConstructionTracking.Web.Repositories
                         FormID = FormatExtension.AsInt(model.FormID)
                     };
 
-                    if (model.ActionType == "submit")
+                    if (model.ActionType == "submit" && model.allPassed == true)
                     {
                         try
                         {
-                            GenerateAndSavePDF(modelgenpdf, model.UserID); // This must succeed or else roll back
+                            returnUrlDoc = GenerateAndSavePDF(modelgenpdf, model.UserID);
                         }
                         catch (Exception pdfEx)
                         {
                             throw new Exception("ปลิ้น PDF ไม่สำเร็จ", pdfEx);
                         }
                     }
-
 
                     scope.Complete();
                 }
@@ -254,9 +252,12 @@ namespace Project.ConstructionTracking.Web.Repositories
                     throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
                 }
             }
+
+            return returnUrlDoc;
         }
 
-        private void GenerateAndSavePDF(DataToGenerateModel model, Guid? UserID)
+
+        private string GenerateAndSavePDF(DataToGenerateModel model, Guid? UserID)
         {
             try
             {
@@ -265,6 +266,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 DataDocumentModel genDocumentNo = _generatePDFRepo.GenerateDocumentNO(model.ProjectID, "PE");
 
                 Guid NewGuid = Guid.NewGuid();
+
                 string pathUrl = _generatePDFRepo.GeneratePDF(NewGuid, dataForGenPdf, genDocumentNo);
 
                 var SaveTableResourc = new DataSaveTableResource
@@ -280,6 +282,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 bool ResultSave = _generatePDFRepo.SaveFileDocument(SaveTableResourc);
 
+                return pathUrl;
             }
             catch (Exception ex)
             {

@@ -26,17 +26,18 @@ namespace Project.ConstructionTracking.Web.Services
             var ListImageUnlock = _IPJMApproveRepo.GetImageUnlock(filterData);
             return ListImageUnlock;
         }
-        public void SaveOrUpdateUnitFormAction(PJMApproveModel.PJMApproveIU model)
+        public string SaveOrUpdateUnitFormAction(PJMApproveModel.PJMApproveIU model)
         {
             try
             {
-                _IPJMApproveRepo.SaveOrUpdateUnitFormAction(model);
+                return _IPJMApproveRepo.SaveOrUpdateUnitFormAction(model);
             }
             catch (Exception ex)
             {
                 throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
             }
         }
+
 
     }
 }

@@ -30,11 +30,11 @@ namespace Project.ConstructionTracking.Web.Services
             return ListImage;
         }
 
-        public void SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
+        public string SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
         {
             try
             {
-                _IPMApprovelistRepo.SaveOrUpdateUnitFormAction(model);
+                return _IPMApprovelistRepo.SaveOrUpdateUnitFormAction(model);
             }
             catch (Exception ex)
             {
