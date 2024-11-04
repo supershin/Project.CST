@@ -14,56 +14,38 @@
         border-collapse: collapse;
     }
 
-/*     th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: center;
-    }
-
-    th {
-        background-color: #f8f9fa; 
-        font-weight: bold;
-        font-size: 1.2rem; 
-        padding: 12px; 
-    }
-
-    td {
-        font-size: 0.7rem; 
-        white-space: nowrap; 
-        overflow: hidden;
-        text-overflow: ellipsis; 
-        max-width: 300px; 
-        background-color: #f8f9fa;
-        border: 1px solid #050505;
-    } */
-
-
     .custom-table {
         text-align: center;
         border: 1px solid #ddd;
         padding: 8px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     }
 
-    .custom-table td {
-        padding: 4px 6px 8px 12px;
-        text-align: left;
-        border: 1px solid #dee2e6;
-    }
+        .custom-table th, .custom-table td {
+            padding: 8px; /* Add some padding for better spacing */
+            border: 1px solid #dee2e6;
+            white-space: nowrap; /* Prevent line breaks */
+            overflow: hidden; /* Hide overflow content */
+            text-overflow: ellipsis; /* Show ellipsis (...) for overflow */
+            max-width: 300px; /* Adjust as needed to control width */
+        }
 
-    .custom-table th {
-        padding: 12px;
-        background-color: #f8f9fa;
-        font-size: 1.2rem;
-        border: 1px solid #050505;
-        text-align: center;
-    }
+        .custom-table th {
+            background-color: #f8f9fa;
+            font-size: 0.9rem; /* Adjust to make the table head bigger */
+            font-weight: bold;
+        }
 
-    .custom-table tbody tr:hover {
-        background-color: #eff584;
-    }
+        .custom-table td {
+            font-size: 0.8rem; /* Smaller font size for table data */
+            text-align: left;
+        }
 
+        .custom-table tbody tr:hover {
+            background-color: #eff584;
+        }
 </style>
+
 <div class="card" id="custom-card">
     <div class="card-body">
         <div class="table-container">
