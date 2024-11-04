@@ -15,11 +15,13 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IPJMApproveService _PJMApproveService;
         private readonly IPMApproveService _PMApproveService;
         private readonly IHostEnvironment _hosting;
-        public PJMApproveController(IPJMApproveService PJMApproveService, IHostEnvironment hosting, IPMApproveService pMApproveService)
+        private readonly IGetDDLService _getDDLService;
+        public PJMApproveController(IPJMApproveService PJMApproveService, IHostEnvironment hosting, IPMApproveService pMApproveService, IGetDDLService getDDLService)
         {
             _PJMApproveService = PJMApproveService;
             _hosting = hosting;
             _PMApproveService = pMApproveService;
+            _getDDLService = getDDLService;
         }
         public IActionResult Index(Guid UnitFormID)
         {
@@ -60,6 +62,10 @@ namespace Project.ConstructionTracking.Web.Controllers
             var ListPJMImage = _PMApproveService.GetImage(model);
 
             ViewBag.ListPJMImage = ListPJMImage;
+
+            var FilepatchPDF = new GetDDL { Act = "GetUnitFornPDF", GuID = UnitFormID };
+            List<GetDDL> patchPDF = _getDDLService.GetDDLList(FilepatchPDF);
+            ViewBag.FilePathPDF = patchPDF[0].Text;
 
             return View(ListChecklistPJMApprove);
         }

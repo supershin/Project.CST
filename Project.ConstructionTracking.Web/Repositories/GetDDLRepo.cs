@@ -177,6 +177,31 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     return ImageQC5UnitList.ToList();
 
+                case "GetVenderSign":
+                    var GetVenderSign = from ure in _context.tr_UnitFormResource
+                                        join t2 in _context.tm_Resource on ure.ResourceID equals t2.ID into joined
+                                        from t2 in joined.DefaultIfEmpty()
+                                        where ure.UnitFormID == Model.GuID && ure.PassConditionID == null && ure.RoleID == 1 && ure.FormID == Model.ID
+                                        orderby ure.CreateDate descending
+                                        select new GetDDL
+                                        {
+                                            ValueGuid = ure.ResourceID,
+                                            Text = t2.FilePath
+                                        };
+                    return GetVenderSign.ToList();
+
+                case "GetUnitFornPDF":
+                    var GetUnitFornPDF = from t1 in _context.tr_Document
+                                         join t2 in _context.tm_Resource on t1.ResourceID equals t2.ID into joined
+                                         from t2 in joined.DefaultIfEmpty()
+                                         where t1.UnitFormID == Model.GuID && t1.QCUnitCheckListID == null 
+                                         select new GetDDL
+                                         {
+                                            ValueGuid = t1.ResourceID,
+                                            Text = t2.FilePath
+                                         };
+                    return GetUnitFornPDF.ToList();
+
                 default:
 
                     return new List<GetDDL>();

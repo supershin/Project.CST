@@ -645,7 +645,6 @@
                         </form>
                     </div>
                 }
-
             </div>
         </div>  
         <div class="container mt-1 mb-2">
@@ -663,19 +662,19 @@
                             </div>
                             <div class="d-flex justify-content-center" style="padding-top: 1.5rem; background-color: #e0f0ff; border-radius: 5px; padding: 10px;">
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="radios-inline" value="A" onclick="toggleRadio(this)" @(grade == "A" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "") >
+                                    <input class="form-check-input" type="radio" name="radios-inline" value="A" onclick="toggleRadio(this)" @(grade == "A" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "")>
                                     <span class="form-check-label">A</span>
                                 </label>
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="radios-inline" value="B" onclick="toggleRadio(this)" @(grade == "B" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "") >
+                                    <input class="form-check-input" type="radio" name="radios-inline" value="B" onclick="toggleRadio(this)" @(grade == "B" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "")>
                                     <span class="form-check-label">B</span>
                                 </label>
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="radios-inline" value="C" onclick="toggleRadio(this)" @(grade == "C" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "") >
+                                    <input class="form-check-input" type="radio" name="radios-inline" value="C" onclick="toggleRadio(this)" @(grade == "C" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "")>
                                     <span class="form-check-label">C</span>
                                 </label>
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="radios-inline" value="D" onclick="toggleRadio(this)" @(grade == "D" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "") >
+                                    <input class="form-check-input" type="radio" name="radios-inline" value="D" onclick="toggleRadio(this)" @(grade == "D" ? "checked" : "") @(ViewBag.UserRole != "1" ? "disabled" : "")>
                                     <span class="form-check-label">D</span>
                                 </label>
                             </div>
@@ -790,6 +789,39 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    }
+                                    else if (UnitFormstatusID == 4 && PM_ActionType == "submit")
+                                    {
+                                        @if (ViewBag.FilePathPDF != null)
+                                        {
+                                            <div class="col-12">
+                                                <a href="~/@ViewBag.FilePathPDF" target="_blank" class="btn btn-secondary w-100">
+                                                    ดูเอกสารตรวจ
+                                                </a>
+                                            </div>
+                                        }
+                                    }
+                                    else if (UnitFormstatusID == 7 && PJM_ActionType == "submit")
+                                    {
+                                        @if (ViewBag.FilePathPDF != null)
+                                        {
+                                            <div class="col-12">
+                                                <a href="~/@ViewBag.FilePathPDF" target="_blank" class="btn btn-secondary w-100">
+                                                    ดูเอกสารตรวจ
+                                                </a>
+                                            </div>
+                                        }
+                                    }
+                                    else if (UnitFormstatusID >= 9)
+                                    {
+                                        @if (ViewBag.FilePathPDF != null)
+                                        {
+                                            <div class="col-12">
+                                                <a href="~/@ViewBag.FilePathPDF" target="_blank" class="btn btn-secondary w-100">
+                                                    ดูเอกสารตรวจ
+                                                </a>
+                                            </div>
+                                        }
                                     }
                                 }
                                 else

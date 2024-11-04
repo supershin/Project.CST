@@ -83,6 +83,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                           join t6 in _context.tm_CompanyVendor.Where(a => a.FlagActive == true)
                                on t1.CompanyVendorID equals t6.ID into CompanyVendors
                           from CompanyVendor in CompanyVendors.DefaultIfEmpty()
+                          join t7 in _context.tr_Document.Where(a => a.FlagActive == true)
+                               on t1.ID equals t7.UnitFormID into DocumentS
+                          from Document in DocumentS.DefaultIfEmpty()
+                          join t8 in _context.tm_Resource.Where(a => a.FlagActive == true)
+                               on Document.ResourceID equals t8.ID into ResourcePDFS
+                          from ResourcePDF in ResourcePDFS.DefaultIfEmpty()
+
                           where t1.ID == unitFormId
                           select new
                           {
@@ -102,7 +109,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                               PM_Remark = pmAction != null ? pmAction.Remark : null,
                               PJM_ActionType = pjmAction != null ? pjmAction.ActionType : null,
                               PJM_Remark = pjmAction != null ? pjmAction.Remark : null,
-                              PJM_StatusID = pjmAction != null ? pjmAction.StatusID : null
+                              PJM_StatusID = pjmAction != null ? pjmAction.StatusID : null,
+                              Path_PDF = ResourcePDF != null ? ResourcePDF.FilePath : null
                           }).FirstOrDefault();
 
             if (result == null)
@@ -172,6 +180,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 PJM_ActionType = result.PJM_ActionType,
                 PJM_Remark = result.PJM_Remark,
                 PJM_StatusID = result.PJM_StatusID,
+                FilePathPDF = result.Path_PDF,
                 FilePath = filePath,
                 FileName = fileName,
                 FileDate = fileDate
@@ -189,7 +198,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                 return false; 
             }
         }
-
         public void SubmitSaveFormGroup(FormGroupModel.FormGroupIUDModel model)
         {
             TransactionOptions options = new TransactionOptions
@@ -253,7 +261,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                 }
             } 
         }
-
         private void SaveSignature(SignatureData signData, string? appPath, Guid? UnitFormID, string? FormGrade, int? VendorID, Guid? userID, int? RoleID ,int? FormID ,string? ActionType)
         {
             var resource = new FormGroupModel.Resources

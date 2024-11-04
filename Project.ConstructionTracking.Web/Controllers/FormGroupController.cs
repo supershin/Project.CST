@@ -52,13 +52,12 @@ namespace Project.ConstructionTracking.Web.Controllers
             if (FormGroupDetail != null)
             {
                 ViewBag.FormGroupDetail = FormGroupDetail;
-                ViewBag.Signaldate = FormatExtension.FormatDateToDayMonthNameYearTime(FormGroupDetail.FileDate);
-                ViewBag.PEActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(FormGroupDetail.PE_ActionDate);
-
+                ViewBag.Signaldate = FormatExtension.FormatDateToDayMonthNameYearTime(FormGroupDetail?.FileDate);
+                ViewBag.PEActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(FormGroupDetail?.PE_ActionDate);
+                ViewBag.FilePathPDF = FormGroupDetail?.FilePathPDF;
                 var Filter = new GetDDL { Act = "UserName", ValueGuid = FormGroupDetail.PE_ActionBy };
                 List<GetDDL> ListUser = _getDDLService.GetDDLList(Filter);
                 ViewBag.PEActionBy = ListUser[0].Text;
-
 
             }
 

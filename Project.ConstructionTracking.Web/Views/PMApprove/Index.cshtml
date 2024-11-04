@@ -35,6 +35,7 @@
     .card {
         border: none;
         border-radius: 10px;
+        padding: 10px;
     }
 
     .text-yellow {
@@ -140,6 +141,33 @@
         background-color: #e9ecef; /* Light background for readonly input */
         cursor: not-allowed; /* Change cursor to indicate non-editable field */
     }
+
+    .card {
+        height: 100%;
+    }
+
+    .dynamic-row {
+        display: flex;
+        gap: 15px;
+    }
+
+    .card-detail {
+        flex: 1;
+        max-width: 420px;
+        height: auto;
+    }
+
+    .card-image {
+        width: 400px;
+        height: auto;
+    }
+
+    .card-image img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+
 </style>
 
 <div class="page-wrapper">
@@ -209,69 +237,236 @@
     <!-- Page body -->
     <div class="page-body">
         <div class="container-xl mb-3">
-            <div class="col-12">
-                <div class="row">
-                    <div class="col-12 col-sm-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3>ข้อมูลรายละเอียด</h3>
+            <!-- Desktop and Tablet Layout: Two cards side by side -->
+            <div class="d-none d-md-block">
+                <div class="dynamic-row">
+                    <!-- Details Card -->
+                    <div class="card card-detail">
+                        <div class="card-body">
+                            <h5 class="card-title">ข้อมูลรายละเอียด</h5>
+                            <div class="col-12">
+                                <div class="container mt-1">
+                                    <label class="form-label">
+                                        PE/SE ผู้ควบคุมงาน : @PEActionBy
+                                    </label>
+                                    <label class="form-label">
+                                        เกรดที่ PE/SE ประเมินงวดนี้ : @Grade
+                                    </label>
+                                    <label class="form-label">
+                                        วันที่ส่งงาน : @if (PE_Actiontype == "submit")
+                                        {
+                                            @Actiondate
+                                        }
+                                    </label>
+                                    @if (ViewBag.ConcatenatedQCNames != "")
+                                    {
+                                        <label class="form-label">
+                                            การตรวจ :
+                                            <a href="#!" class="badge bg-@ViewBag.qcStatusColore rounded-pill text-white"
+                                               onclick="goToSumaryQC('@ProjectID','@ProjectName', '@UnitID')">
+                                                <i class="fa-solid fa-magnifying-glass"></i> @ViewBag.ConcatenatedQCNames -
+                                                @ViewBag.QCStatusMessage
+                                            </a>
+                                        </label>
+                                    }
+                                    <label class="form-label">
+                                        สร้างโดย : @CompanyName
+                                    </label>
+                                    <label class="form-label">
+                                        ชื่อผู้รับเหมาเซ็น : @VenderName
+                                    </label>
+                                    @if (PCAll != 0)
+                                    {
+                                        <label class="form-label text-danger">มีการผ่านแบบมีเงื่อนไข!!!</label>
+                                    }
+                                    @if (UnitFormStatusID == 10 || UnitFormStatusID == 11 || UnitFormStatusID == 12)
+                                    {
+                                        <div class="d-flex justify-content-center mt-2">
+                                            <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                                <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                                <input type="hidden" name="ComFrom" value="PMApprove" />
+                                                <button type="submit" class="btn custom-btn btn-success"
+                                                        id="btn-toggle-card">
+                                                    ปลดล็อค
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+                                    @if (UnitFormStatusID == 4 && PM_Actiontype == "submit")
+                                    {
+                                        @if (ViewBag.FilePathPDF != null)
+                                        {
+                                            <div class="col-12">
+                                                <a href="~/@ViewBag.FilePathPDF" target="_blank"
+                                                   class="btn btn-secondary w-100">
+                                                    ดูเอกสารตรวจ
+                                                </a>
+                                            </div>
+                                        }
+                                    }
+                                    else if (UnitFormStatusID == 7 && PJM_Actiontype == "submit")
+                                    {
+                                        @if (ViewBag.FilePathPDF != null)
+                                        {
+                                            <div class="col-12">
+                                                <a href="~/@ViewBag.FilePathPDF" target="_blank"
+                                                   class="btn btn-secondary w-100">
+                                                    ดูเอกสารตรวจ
+                                                </a>
+                                            </div>
+                                        }
+                                    }
+                                    else if (UnitFormStatusID >= 9)
+                                    {
+                                        @if (ViewBag.FilePathPDF != null)
+                                        {
+                                            <div class="col-12">
+                                                <a href="~/@ViewBag.FilePathPDF" target="_blank"
+                                                   class="btn btn-secondary w-100">
+                                                    ดูเอกสารตรวจ
+                                                </a>
+                                            </div>
+                                        }
+                                    }
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="container mt-1">
+                        </div>
+                    </div>
+                    <!-- Image Card -->
+                    <div class="card card-image">
+                        <div class="card-body">
+                            <div class="col-12">
+                                <h5 class="card-title">ลายเซ็นผู้รับเหมา</h5>
+                                <img src="~/@ViewBag.PathvenderSign" class="card-img-top" alt="Image in Card 2">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Layout: Carousel -->
+            <div class="d-block d-md-none">
+                <div id="cardCarousel" class="carousel slide" data-bs-interval="false">
+                    <!-- Carousel Indicators (Dots) -->
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#cardCarousel" data-bs-slide-to="0" class="active"
+                                aria-current="true" aria-label="Card 1"></button>
+                        <button type="button" data-bs-target="#cardCarousel" data-bs-slide-to="1" aria-label="Card 2"></button>
+                    </div>
+
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">ข้อมูลรายละเอียด</h5>
+                                    <div class="col-12">
+                                        <div class="container mt-1">
+                                            <label class="form-label">
+                                                PE/SE ผู้ควบคุมงาน : @PEActionBy
+                                            </label>
+                                            <label class="form-label">
+                                                เกรดที่ PE/SE ประเมินงวดนี้ : @Grade
+                                            </label>
+                                            <label class="form-label">
+                                                วันที่ส่งงาน : @if (PE_Actiontype == "submit")
+                                                {
+                                                    @Actiondate
+                                                }
+                                            </label>
+                                            @if (ViewBag.ConcatenatedQCNames != "")
+                                            {
                                                 <label class="form-label">
-                                                    PE/SE ผู้ควบคุมงาน : @PEActionBy
+                                                    การตรวจ :
+                                                    <a href="#!" class="badge bg-@ViewBag.qcStatusColore rounded-pill text-white"
+                                                       onclick="goToSumaryQC('@ProjectID','@ProjectName', '@UnitID')">
+                                                        <i class="fa-solid fa-magnifying-glass"></i> @ViewBag.ConcatenatedQCNames -
+                                                        @ViewBag.QCStatusMessage
+                                                    </a>
                                                 </label>
-                                                <label class="form-label">
-                                                    เกรดที่ PE/SE ประเมินงวดนี้ : @Grade
-                                                </label>
-                                                <label class="form-label">
-                                                    วันที่ส่งงาน : @if (PE_Actiontype == "submit")
-                                                    {
-                                                        @Actiondate
-                                                    }
-                                                </label>
-                                                @if (ViewBag.ConcatenatedQCNames != "")
-                                                {                                                                                                                                                        
-                                                    <label class="form-label">
-                                                        การตรวจ :
-                                                        <a href="#!" class="badge bg-@ViewBag.qcStatusColore rounded-pill text-white"
-                                                           onclick="goToSumaryQC('@ProjectID','@ProjectName', '@UnitID')">
-                                                            <i class="fa-solid fa-magnifying-glass"></i> @ViewBag.ConcatenatedQCNames - @ViewBag.QCStatusMessage
+                                            }
+                                            <label class="form-label">
+                                                สร้างโดย : @CompanyName
+                                            </label>
+                                            <label class="form-label">
+                                                ชื่อผู้รับเหมาเซ็น : @VenderName
+                                            </label>
+                                            @if (PCAll != 0)
+                                            {
+                                                <label class="form-label text-danger">มีการผ่านแบบมีเงื่อนไข!!!</label>
+                                            }
+                                            @if (UnitFormStatusID == 10 || UnitFormStatusID == 11 || UnitFormStatusID == 12)
+                                            {
+                                                <div class="d-flex justify-content-center mt-2">
+                                                    <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                                        <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                                        <input type="hidden" name="ComFrom" value="PMApprove" />
+                                                        <button type="submit" class="btn custom-btn btn-success"
+                                                                id="btn-toggle-card">
+                                                            ปลดล็อค
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            }
+                                            @if (UnitFormStatusID == 4 && PM_Actiontype == "submit")
+                                            {
+                                                @if (ViewBag.FilePathPDF != null)
+                                                {
+                                                    <div class="col-12">
+                                                        <a href="~/@ViewBag.FilePathPDF" target="_blank"
+                                                           class="btn btn-secondary w-100">
+                                                            ดูเอกสารตรวจ
                                                         </a>
-                                                    </label>
-                                                }
-                                                <label class="form-label">
-                                                    สร้างโดย : @CompanyName
-                                                </label>
-                                                <label class="form-label">
-                                                    ชื่อผู้รับเหมาเซ็น : @VenderName
-                                                </label>
-                                                @if (PCAll != 0)
-                                                {
-                                                    <label class="form-label text-danger">มีการผ่านแบบมีเงื่อนไข!!!</label>
-                                                }
-                                                @if (UnitFormStatusID == 10 || UnitFormStatusID == 11 || UnitFormStatusID == 12)
-                                                {
-                                                    <div class="d-flex justify-content-center mt-2">
-                                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
-                                                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
-                                                            <input type="hidden" name="ComFrom" value="PMApprove" />
-                                                            <button type="submit" class="btn custom-btn btn-success" id="btn-toggle-card">ปลดล็อค</button>
-                                                        </form>
                                                     </div>
                                                 }
-
-                                            </div>
-
+                                            }
+                                            else if (UnitFormStatusID == 7 && PJM_Actiontype == "submit")
+                                            {
+                                                @if (ViewBag.FilePathPDF != null)
+                                                {
+                                                    <div class="col-12">
+                                                        <a href="~/@ViewBag.FilePathPDF" target="_blank"
+                                                           class="btn btn-secondary w-100">
+                                                            ดูเอกสารตรวจ
+                                                        </a>
+                                                    </div>
+                                                }
+                                            }
+                                            else if (UnitFormStatusID >= 9)
+                                            {
+                                                @if (ViewBag.FilePathPDF != null)
+                                                {
+                                                    <div class="col-12">
+                                                        <a href="~/@ViewBag.FilePathPDF" target="_blank"
+                                                           class="btn btn-secondary w-100">
+                                                            ดูเอกสารตรวจ
+                                                        </a>
+                                                    </div>
+                                                }
+                                            }
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="carousel-item">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="col-12">
+                                        <h5 class="card-title">ลายเซ็นผู้รับเหมา</h5>
+                                        <img src="~/@ViewBag.PathvenderSign" class="card-img-top" alt="Image in Card 2">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#cardCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#cardCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -659,6 +854,17 @@
 
             adjustTextareaRows(); // Initial call
             $(window).resize(adjustTextareaRows); // Call on window resize
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Adjust the height of both cards to be the same as the first card
+            var firstCard = document.querySelector('.carousel-item.active .card');
+            var secondCard = document.querySelector('.carousel-item:nth-child(2) .card');
+
+            if (firstCard && secondCard) {
+                var firstCardHeight = firstCard.offsetHeight;
+                secondCard.style.height = firstCardHeight + 'px';
+            }
         });
     </script>
 }

@@ -431,6 +431,30 @@
                                             <button class="btn" onclick="saveOrSubmit('save')">บันทึกร่าง</button>
                                             <button class="btn btn-primary" onclick="saveOrSubmit('submit')">ยืนยัน</button>                                       
                                         }
+                                        else if (UnitFormStatus == "7" && PJM_Actiontype == "submit")
+                                        {
+                                            @if (ViewBag.FilePathPDF != null)
+                                            {
+                                                <div class="col-12">
+                                                    <a href="~/@ViewBag.FilePathPDF" target="_blank"
+                                                       class="btn btn-secondary w-100">
+                                                        ดูเอกสารตรวจ
+                                                    </a>
+                                                </div>
+                                            }
+                                        }
+                                        else if (Convert.ToInt32(UnitFormStatus) >= 9)
+                                                    {
+                                            @if (ViewBag.FilePathPDF != null)
+                                            {
+                                                <div class="col-12">
+                                                    <a href="~/@ViewBag.FilePathPDF" target="_blank"
+                                                       class="btn btn-secondary w-100">
+                                                        ดูเอกสารตรวจ
+                                                    </a>
+                                                </div>
+                                            }
+                                        }
                                     }
                                     else
                                     {
@@ -442,6 +466,7 @@
                                         <button class="btn" onclick="saveOrSubmit('save')">บันทึกร่าง</button>
                                         <button class="btn btn-primary" onclick="saveOrSubmit('submit')">ยืนยัน</button>       
                                     }
+
                                 }
                             </div>
                         </div>

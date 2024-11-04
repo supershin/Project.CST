@@ -57,10 +57,14 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.PM_Actiontype = resultModel.PM_Actiontype;
                 ViewBag.PJM_Remarkaction = resultModel.PJM_Remarkaction;
                 ViewBag.PJM_Actiontype = resultModel.PJM_Actiontype;
-
+                ViewBag.FilePathPDF = resultModel?.FilePathPDF;
                 var Filter = new GetDDL { Act = "UserName", ValueGuid = resultModel.ActionByPE };
                 List<GetDDL> ListUser = _getDDLService.GetDDLList(Filter);
                 ViewBag.PEActionBy = ListUser[0].Text;
+
+                var FindvenderSign = new GetDDL { Act = "GetVenderSign", GuID = resultModel.UnitFormID , ID = resultModel.FormID};
+                List<GetDDL> venderSign = _getDDLService.GetDDLList(FindvenderSign);
+                ViewBag.PathvenderSign = venderSign[0].Text;
 
 
             }

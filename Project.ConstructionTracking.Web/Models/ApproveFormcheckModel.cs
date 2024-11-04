@@ -32,6 +32,7 @@
         public int? PJM_StatusID { get; set; }
         public string? PJM_Remarkaction { get; set; }
         public string? PJM_Actiontype { get; set; }
+        public string? FilePathPDF { get; set; }
         public int? PCAllcount { get; set; }
         public int? PCPassCount { get; set; }
         public List<PM_getListgroup>? PM_getListgroup { get; set; }

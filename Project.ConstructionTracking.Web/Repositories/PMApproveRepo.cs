@@ -166,17 +166,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public ApproveFormcheckModel GetApproveFormcheck(ApproveFormcheckModel model)
         {
-
-           //var maxSeqQuery = from qc in _context.tr_QC_UnitCheckList
-           //                  group qc by new { qc.CheckListID, qc.ProjectID, qc.UnitID } into g
-           //                  select new
-           //                  {
-           //                      g.Key.CheckListID,
-           //                      g.Key.ProjectID,
-           //                      g.Key.UnitID,
-           //                      MaxSeq = g.Max(x => x.Seq)
-           //                  };
-
             var result = (from t1 in _context.tr_UnitForm
                           join t2 in _context.tm_Vendor on t1.VendorID equals t2.ID into vendors
                           from vendor in vendors.DefaultIfEmpty()
@@ -196,25 +185,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from PJMUnitFormAction in PJMUnitFormActions.DefaultIfEmpty()
                           join t13 in _context.tm_User on new { PMUnitFormAction.UpdateBy } equals new { UpdateBy = (Guid?)t13.ID } into PMUserActions
                           from PMUserAction in PMUserActions.DefaultIfEmpty()
-                          //join t14 in _context.tr_Form_QCCheckList on form.ID equals t14.FormID into Form_QCCheckLists
-                          //from Form_QCCheckList in Form_QCCheckLists.DefaultIfEmpty()
-                          //join t15 in _context.tm_QC_CheckList on Form_QCCheckList.CheckListID equals t15.ID into QC_CheckLists
-                          //from QC_CheckList in QC_CheckLists.DefaultIfEmpty()
-                          //join t16 in _context.tm_Ext on new { QC_CheckList.QCTypeID, ExtTypeID = (int?)SystemConstant.Ext_Type.QCTypeID } equals new { QCTypeID = (int?)t16.ID, t16.ExtTypeID } into ExtQCtypes
-                          //from ExtQCtype in ExtQCtypes.DefaultIfEmpty()
-
-                          //join t17 in (from q in _context.tr_QC_UnitCheckList
-                          //             join m in maxSeqQuery on new { q.CheckListID, q.ProjectID, q.UnitID, Seq = q.Seq }
-                          //             equals new { m.CheckListID, m.ProjectID, m.UnitID, Seq = m.MaxSeq }
-                          //             select q) on new { Form_QCCheckList.CheckListID, t1.ProjectID, t1.UnitID }
-                          //             equals new { t17.CheckListID, t17.ProjectID, t17.UnitID } into QC_UnitCheckLists
-                          //from QC_UnitCheckList in QC_UnitCheckLists.DefaultIfEmpty()
-
-                          //join t18 in _context.tm_UnitQCStatus on QC_UnitCheckList.QCStatusID equals t18.ID into QCStatusS
-                          //from QCStatus in QCStatusS.DefaultIfEmpty()
-
+                          join t14 in _context.tr_Document.Where(a => a.FlagActive == true)
+                               on t1.ID equals t14.UnitFormID into DocumentS
+                          from Document in DocumentS.DefaultIfEmpty()
+                          join t15 in _context.tm_Resource.Where(a => a.FlagActive == true)
+                               on Document.ResourceID equals t15.ID into ResourcePDFS
+                          from ResourcePDF in ResourcePDFS.DefaultIfEmpty()
                           where t1.UnitID == model.UnitID && t1.FormID == model.FormID
-
                           select new ApproveFormcheckModel
                           {
                               ID = t1.ID,
@@ -231,10 +208,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                               UnitFormStatusID = t1.StatusID,
                               FormID = t1.FormID,
                               FormName = form.Name,
-                              //QCName = ExtQCtype.Name,
-                              //QCStatus = QCStatus.Name,
-                              //QCStatusID = QC_UnitCheckList.QCStatusID,
-                              //QCUnitCheckListID = QC_UnitCheckList.ID,
                               ActionByPE = PEUnitFormAction.UpdateBy,
                               Actiondate = PEUnitFormAction.ActionDate,
                               ActiondatePm = PMUnitFormAction.ActionDate,
@@ -247,7 +220,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               PJM_StatusID = PJMUnitFormAction.StatusID,
                               PJM_Remarkaction = PJMUnitFormAction.Remark,
                               PJM_Actiontype = PJMUnitFormAction.ActionType,
-
+                              FilePathPDF = ResourcePDF.FilePath,
                               PM_getListgroup = (from fg in _context.tm_FormGroup
                                                  join t7 in _context.tr_UnitFormPassCondition on new { UnitFormID = (Guid?)t1.ID, GroupID = (int?)fg.ID } equals new { t7.UnitFormID, t7.GroupID } into unitFormPassConditions
                                                  from passCondition in unitFormPassConditions.DefaultIfEmpty()
@@ -322,7 +295,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return result;
         }
-
 
 
         public List<UnitFormResourceModel> GetImage(UnitFormResourceModel model)

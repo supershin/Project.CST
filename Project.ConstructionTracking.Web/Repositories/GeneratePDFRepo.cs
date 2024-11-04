@@ -490,8 +490,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                 var newFormResource = new tr_Document
                 {
                     ID = Guid.NewGuid(),
-                    UnitFormID = model?.UnitFormID,
-                    QCUnitCheckListID = model?.QCUnitCheckListID,
+                    UnitFormID = model.UnitFormID != null ? model.UnitFormID : null,
+                    QCUnitCheckListID = model.UnitFormID == null && model.QCUnitCheckListID != null ? model.QCUnitCheckListID : null,
                     ResourceID = newResource.ID,
                     DocumentNo = model?.documentNo,
                     DocumentPrefix = model?.documentPrefix,
