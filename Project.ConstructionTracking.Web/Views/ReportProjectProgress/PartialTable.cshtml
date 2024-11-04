@@ -1,0 +1,142 @@
+﻿<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
+<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+<style>
+    .table-container {
+        overflow-x: auto; /* Enable horizontal scrolling */
+    }
+
+    table {
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+    }
+
+/*     th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f8f9fa; 
+        font-weight: bold;
+        font-size: 1.2rem; 
+        padding: 12px; 
+    }
+
+    td {
+        font-size: 0.7rem; 
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow: ellipsis; 
+        max-width: 300px; 
+        background-color: #f8f9fa;
+        border: 1px solid #050505;
+    } */
+
+
+    .custom-table {
+        text-align: center;
+        border: 1px solid #ddd;
+        padding: 8px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    .custom-table td {
+        padding: 4px 6px 8px 12px;
+        text-align: left;
+        border: 1px solid #dee2e6;
+    }
+
+    .custom-table th {
+        padding: 12px;
+        background-color: #f8f9fa;
+        font-size: 1.2rem;
+        border: 1px solid #050505;
+        text-align: center;
+    }
+
+    .custom-table tbody tr:hover {
+        background-color: #eff584;
+    }
+
+</style>
+<div class="card" id="custom-card">
+    <div class="card-body">
+        <div class="table-container">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>โครงการ</th>
+                        <th>แปลงที่</th>
+                        <th>ผู้รับเหมา</th>
+                        <th>วิศวกรผู้ควบคุมงาน</th>
+                        <th>สถานะขาย (จอง สัญญา โอน ห้องว่าง)</th>
+                        <th>วันกำหนดโอน (ตามสัญญา)</th>
+                        <th>แผนเริ่มตามสัญญา</th>
+                        <th>แผนสิ้นสุดตามสัญญา</th>
+                        <th>สถานะงวดงานที่ผ่านล่าสุด</th>
+                        <th>% Progress ในแผน</th>
+                        <th>% Progress จริง</th>
+                        <th>% Delay/ahead</th>
+                        <th>งวดที่เบิกล่าสุด</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>โครงการ เอสต้า ซีรีนิตี้ บรมราชชนนี</td>
+                        <td>AA001</td>
+                        <td>บริษัท XYZ ก่อสร้าง</td>
+                        <td>นายสมชาย วิศวกร</td>
+                        <td>จอง</td>
+                        <td>15-Jan-2025</td>
+                        <td>01-Feb-2024</td>
+                        <td>31-Dec-2024</td>
+                        <td>งวดที่ 5</td>
+                        <td>70%</td>
+                        <td>65%</td>
+                        <td>-5%</td>
+                        <td>งวดที่ 4</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>โครงการ เอสต้า ซีรีนิตี้ บรมราชชนนี</td>
+                        <td>AA002</td>
+                        <td>บริษัท ABC ก่อสร้าง</td>
+                        <td>นางสาววิภา วิศวกร</td>
+                        <td>สัญญา</td>
+                        <td>20-Mar-2025</td>
+                        <td>01-Mar-2024</td>
+                        <td>30-Nov-2024</td>
+                        <td>งวดที่ 3</td>
+                        <td>50%</td>
+                        <td>55%</td>
+                        <td>+5%</td>
+                        <td>งวดที่ 3</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>โครงการ เอสต้า ซีรีนิตี้ บรมราชชนนี</td>
+                        <td>AA003</td>
+                        <td>บริษัท DEF ก่อสร้าง</td>
+                        <td>นายชาญชัย วิศวกร</td>
+                        <td>โอน</td>
+                        <td>10-May-2025</td>
+                        <td>01-May-2024</td>
+                        <td>31-Jan-2025</td>
+                        <td>งวดที่ 6</td>
+                        <td>90%</td>
+                        <td>85%</td>
+                        <td>-5%</td>
+                        <td>งวดที่ 6</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
