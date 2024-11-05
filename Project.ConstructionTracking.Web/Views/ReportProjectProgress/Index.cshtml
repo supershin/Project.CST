@@ -30,8 +30,32 @@
         </div>
     </div>
     <div class="page-body">
-        <div class="container">
+        <div class="container-xl mb-2">
+            <div class="card" id="card-filter">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-9 mb-2">
+                            <input type="text" class="form-control" id="text" placeholder="ค้นหาโครงการ...">
+                        </div>
+                        <div class="col-6 col-sm-1 mb-2  ms-4">
+                            <button class="btn btn-primary" id="searchButton">
+                                <i class="fas fa-search"></i> ค้นหา
+                            </button>
+                        </div>
+                        <div class="col-6 col-sm-1 mb-2">
+                            <button class="btn btn-success" id="exportExcel">
+                                <i class="fas fa-file-excel"></i> Export to Excel
+                            </button>
+                        </div>          
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-xl mb-2">
             <partial name="PartialTable"/>
         </div>
     </div>
 </div>
+
+
+

@@ -241,7 +241,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                         DefectAreaID = d.DefectAreaID,
                                         DefectTypeID = d.DefectTypeID,
                                         DefectDescriptionID = d.DefectDescriptionID,
-                                        StatusID = d.StatusID,
+                                        //StatusID = d.StatusID,
                                         Remark = d.Remark,
                                         IsMajorDefect = d.IsMajorDefect,
                                         FlagActive = d.FlagActive,
