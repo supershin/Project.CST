@@ -368,28 +368,53 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public dynamic DetailUser(Guid userId)
         {
+            //var query = (from u in _context.tm_User
+            //              join p in _context.tm_Position on u.PositionID equals p.ID
+            //              join ur in _context.tr_UserResource on u.ID equals ur.UserID into groupUr
+            //              from ur in groupUr.DefaultIfEmpty()
+            //              join r in _context.tm_Resource on ur.ResourceID equals r.ID into groupR
+            //              from r in groupR.DefaultIfEmpty()
+            //              where u.ID == userId
+            //                    && u.FlagActive == true
+            //                    && (ur == null || (r.FlagActive == true || r.ID == Guid.Empty))
+            //             select new
+            //              {
+            //                  u.ID,
+            //                  u.FirstName,
+            //                  u.LastName,
+            //                  u.Email,
+            //                  u.Mobile,
+            //                  u.BUID,
+            //                  u.RoleID,
+            //                  u.PositionID,
+            //                  PositionName = p.Name,
+            //                  r.FilePath
+            //              }).FirstOrDefault();
+
             var query = (from u in _context.tm_User
-                          join p in _context.tm_Position on u.PositionID equals p.ID
-                          join ur in _context.tr_UserResource on u.ID equals ur.UserID into groupUr
-                          from ur in groupUr.DefaultIfEmpty()
-                          join r in _context.tm_Resource on ur.ResourceID equals r.ID into groupR
-                          from r in groupR.DefaultIfEmpty()
-                          where u.ID == userId
-                                && u.FlagActive == true
-                                && (ur == null || (r.FlagActive == true || r.ID == Guid.Empty))
+                         join p in _context.tm_Position on u.PositionID equals p.ID
+                         join ur in _context.tr_UserResource.Where(ur => ur.FlagActive == true)
+                             on u.ID equals ur.UserID into urGroup
+                         from ur in urGroup.DefaultIfEmpty()
+                         join r in _context.tm_Resource
+                             on ur.ResourceID equals r.ID into rGroup
+                         from r in rGroup.DefaultIfEmpty()
+                         where u.ID == userId
+                               && u.FlagActive == true
                          select new
-                          {
-                              u.ID,
-                              u.FirstName,
-                              u.LastName,
-                              u.Email,
-                              u.Mobile,
-                              u.BUID,
-                              u.RoleID,
-                              u.PositionID,
-                              PositionName = p.Name,
-                              r.FilePath
-                          }).FirstOrDefault();
+                         {
+                             u.ID,
+                             u.FirstName,
+                             u.LastName,
+                             u.Email,
+                             u.Mobile,
+                             u.BUID,
+                             u.RoleID,
+                             u.PositionID,
+                             PositionName = p.Name,
+                             r.FilePath
+                         }).FirstOrDefault();
+
 
             return query;
         }
@@ -503,14 +528,16 @@ namespace Project.ConstructionTracking.Web.Repositories
                 _context.tr_UserResource.Update(userResource);
 
                 // update image to false
-                tm_Resource? resource = _context.tm_Resource
-                                        .Where(o => o.ID == userResource.ResourceID
-                                        && o.FlagActive == true).FirstOrDefault();
-                resource.FlagActive = false;
-                resource.UpdateDate = DateTime.Now;
-                userResource.UpdateBy = requestUserID;
+                tm_Resource? resource = _context.tm_Resource.Where(o => o.ID == userResource.ResourceID && o.FlagActive == true).FirstOrDefault();
+                if (resource != null)
+                {
+                    resource.FlagActive = false;
+                    resource.UpdateDate = DateTime.Now;
+                    _context.tm_Resource.Update(resource);
+                }
 
-                _context.tm_Resource.Update(resource);
+                userResource.UpdateBy = requestUserID;
+             
 
                 //create new image 
                 tm_Resource createResource = new tm_Resource();

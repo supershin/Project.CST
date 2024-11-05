@@ -39,6 +39,11 @@
         height: 30px;
     }
 
+    .fixedButton i {
+        color: white; /* Set icon color to white */
+    }
+
+
     .card {
         border: none;
         border-radius: 10px;
@@ -66,12 +71,12 @@
     }
 
     .fixedButton {
+        background-color: #ffc107;
         position: fixed;
         bottom: 20px;
         right: 20px;
         padding: 20px;
         z-index: 9997;
-        background-color: white;
         border-radius: 50%;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         border: none;
@@ -211,8 +216,9 @@
 @if (ViewBag.ActionTypeEn != "submit" && Convert.ToInt32(RoleID) == SystemConstant.UserRole.QC)
 {
     <button class="fixedButton" onclick="openModalDataQC('add')">
-        <i class="fa-solid fa-plus fa-xl" style="color: orange;"></i>
+        <i class="fa-solid fa-plus fa-xl"></i>
     </button>
+
 }
 
 <div class="page-wrapper">
