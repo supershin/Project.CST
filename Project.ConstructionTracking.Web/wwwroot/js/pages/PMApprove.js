@@ -188,6 +188,12 @@ function saveOrSubmit(actionType) {
             showErrorAlert('คำเตือน!', 'กรุณาระบุหมายเหตุ เมื่อไม่อนุมัติงวดงานนี้');
             return;
         }
+
+        if (_qcStatusID === 1) {
+            showErrorAlert('คำเตือน!', 'QC ยังตรวจไม่ผ่าน');
+            return;
+        }
+
     }
 
     if (actionType === "submit") {

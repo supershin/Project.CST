@@ -39,11 +39,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.UnitFormID = resultModel.UnitFormID;
                 ViewBag.UnitCode = resultModel.UnitCode;
                 ViewBag.FormID = resultModel.FormID;
-                ViewBag.FormName = resultModel.FormName;
-                //ViewBag.QCName = resultModel.QCName;
-                //ViewBag.QCStatus = (resultModel.QCStatus == null) ? "ยังไม่มีการตรวจ" : resultModel.QCStatus;
-                //ViewBag.QCStatusID = resultModel.QCStatusID;
-                
+                ViewBag.FormName = resultModel.FormName;             
                 ViewBag.UnitFormStatusID = resultModel.UnitFormStatusID;
                 ViewBag.Actiondate = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.Actiondate);
                 ViewBag.ActiondatePm = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.ActiondatePm);
@@ -57,7 +53,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.PM_Actiontype = resultModel.PM_Actiontype;
                 ViewBag.PJM_Remarkaction = resultModel.PJM_Remarkaction;
                 ViewBag.PJM_Actiontype = resultModel.PJM_Actiontype;
-                ViewBag.FilePathPDF = resultModel?.FilePathPDF;
+                ViewBag.FilePathPDF = resultModel.FilePathPDF;
                 var Filter = new GetDDL { Act = "UserName", ValueGuid = resultModel.ActionByPE };
                 List<GetDDL> ListUser = _getDDLService.GetDDLList(Filter);
                 ViewBag.PEActionBy = ListUser[0].Text;
@@ -82,24 +78,27 @@ namespace Project.ConstructionTracking.Web.Controllers
             if (ListQCData != null)
             {
                 int? QCDataAll = ListQCData.Count;
+                int? QCStatusID = 0;
                 string qcStatusMessage;
                 string qcStatusColore;
                 if (ListQCData.All(item => item.QCStatusID == 1))
                 {
                     qcStatusMessage = "ผ่าน";
-                    qcStatusColore = "success";
+                    qcStatusColore = "success";                    
                 }
                 else if (ListQCData.All(item => item.QCStatusID == null))
                 {
                     qcStatusMessage = "ยังไม่ได้ตรวจ";
                     qcStatusColore = "secondary";
+                    QCStatusID = 1;
                 }
                 else
                 {
                     qcStatusMessage = "กำลังตรวจ";
                     qcStatusColore = "warning";
+                    QCStatusID = 1;
                 }
-
+                ViewBag.QCStatusID = QCStatusID;
                 ViewBag.QCStatusMessage = qcStatusMessage;
                 ViewBag.qcStatusColore = qcStatusColore;
 

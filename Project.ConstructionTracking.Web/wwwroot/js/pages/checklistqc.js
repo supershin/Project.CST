@@ -242,6 +242,7 @@ const checklistqc = {
         return false;
     },
     openFilePDF: (data) => {
+        console.log('X')
         $.ajax({
             url: baseUrl + 'QCCheckList/OpenFilePDF',
             type: 'POST',
@@ -249,6 +250,7 @@ const checklistqc = {
             data: data,
             success: function (resp) {
                 if (resp.success) {
+                    console.log(resp.data)
                     window.open(baseUrl + resp.data)
                 //    Swal.fire({
                 //        title: 'Success!',

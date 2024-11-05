@@ -202,6 +202,24 @@ namespace Project.ConstructionTracking.Web.Repositories
                                          };
                     return GetUnitFornPDF.ToList();
 
+                case "GetCheckQCPass":
+                    var maxSeq = _context.tr_QC_UnitCheckList
+                        .Where(t1 => t1.UnitID == Model.GuID)
+                        .Max(t1 => t1.Seq);
+
+                    var GetCheckQCPass = from t1 in _context.tr_QC_UnitCheckList
+                                         join t2 in _context.tr_QC_UnitCheckList_Defect
+                                         on t1.ID equals t2.QCUnitCheckListID into joined
+                                         from t2 in joined.DefaultIfEmpty()
+                                         where t1.UnitID == Model.GuID && t1.Seq == maxSeq && (t2 == null || t2.FlagActive == true)
+                                         select new GetDDL
+                                         {
+                                             Value = t1.QCStatusID,
+                                         };
+
+                    return GetCheckQCPass.ToList();
+
+
                 default:
 
                     return new List<GetDDL>();

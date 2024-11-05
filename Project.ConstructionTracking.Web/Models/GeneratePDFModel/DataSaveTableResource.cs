@@ -2,8 +2,8 @@
 {
     public class DataSaveTableResource
     {
-        public Guid UnitFormID { get; set; }
-        public Guid QCUnitCheckListID { get; set; }
+        public Guid? UnitFormID { get; set; }
+        public Guid? QCUnitCheckListID { get; set; }
         public string? documentRunning { get; set; }
         public string? documentPrefix { get; set; }
         public string? documentNo { get; set; }

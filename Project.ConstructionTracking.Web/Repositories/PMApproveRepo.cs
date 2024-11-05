@@ -459,6 +459,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 var SaveTableResourc = new DataSaveTableResource
                 {
                     UnitFormID = dataForGenPdf.HeaderData.UnitFormID,
+                    QCUnitCheckListID = null,
                     documentRunning = genDocumentNo.documentRunning,
                     documentPrefix = genDocumentNo.documentPrefix,
                     documentNo = genDocumentNo.documentNo,

@@ -238,6 +238,7 @@ namespace Project.ConstructionTracking.Web.Services
 					{
 						DataSaveTableResource saveDocument = new DataSaveTableResource()
 						{
+							UnitFormID = null,
 							QCUnitCheckListID = submitModel.QcID,
 							documentRunning = genDocumentNo.documentRunning,
 							documentPrefix = genDocumentNo.documentPrefix,

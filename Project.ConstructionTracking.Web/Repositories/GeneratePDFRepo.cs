@@ -1815,20 +1815,18 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                             table.Cell().Row(4).Column(1).Element(CellStyle).AlignLeft().Text("ผู้รับเหมา ");
                             table.Cell().Row(4).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.CompanyName);
-                            if (dataGenerate.HeaderData.QCStatus == 2)
+                            if (dataGenerate.HeaderData.QCStatus == 0)
                             {
-                                table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageBox);
+                                table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageCheckBox);
                             }
                             else
                             {
-                                table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageCheckBox);
+                                table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageBox);
                             }
                             table.Cell().Row(4).Column(5).Element(CellStyle).AlignLeft().Text("งวดนี้ไม่มีการตรวจ QC");
 
                             table.Cell().Row(5).Column(1).Element(CellStyle).AlignLeft().Text("ผู้ควบคุมงาน ");
                             table.Cell().Row(5).Column(2).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.PEName);
-                            //table.Cell().Row(4).Column(4).Element(CellStyle).Width(15).Image(imageBox);
-                            //table.Cell().Row(4).Column(5).Element(CellStyle).AlignLeft().Text("งวดนี้ไม่มีการตรวจ QC");
 
                             table.Cell().Row(6).Column(1).Element(x => DefaultCellStyle(x, "#00FF00")).AlignLeft().Text(dataGenerate.HeaderData.FormName).Bold();
                             table.Cell().Row(6).Column(2).ColumnSpan(4).Element(CellStyle).AlignLeft().Text(dataGenerate.HeaderData.FormDesc);
@@ -1969,16 +1967,16 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     page.Footer().Table(table2 =>
                     {
-                        string pathVendor = Directory.GetCurrentDirectory() + "/wwwroot/" + dataGenerate.FooterData.VendorData.VendorImageSignUrl;
-                        var signVendor = new FileStream(pathVendor, FileMode.Open);
+                        string pathVendor = _hosting.ContentRootPath + "/wwwroot/" + dataGenerate.FooterData.VendorData.VendorImageSignUrl;
+                        var signVendor = pathVendor;
 
                         string pathPe = _hosting.ContentRootPath + "/" + dataGenerate.FooterData.PEData.PEImageSignUrl;
-                        var signPe = new FileStream(pathPe, FileMode.Open);
+                        var signPe = pathPe;
 
                         string pathPm = _hosting.ContentRootPath + "/" + dataGenerate.FooterData.PMData.PMImageSignUrl;
-                        var signPm = new FileStream(pathPm, FileMode.Open);
+                        var signPm = pathPm;
 
-                        var signQc = dataGenerate.FooterData.QCData?.QCImageSignUrl != "" ? new FileStream(_hosting.ContentRootPath + "/" + dataGenerate.FooterData.QCData.QCImageSignUrl, FileMode.Open) : null;
+                        var signQc = dataGenerate.FooterData.QCData?.QCImageSignUrl != "" ? _hosting.ContentRootPath + "/" + dataGenerate.FooterData.QCData.QCImageSignUrl : null;
 
                         // Set up columns for the table
                         table2.ColumnsDefinition(columns =>
@@ -2004,7 +2002,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         table2.Cell().Row(2).Column(3).AlignCenter().Text("Project Manager");
                         table2.Cell().Row(3).Column(3).AlignCenter().Text("( " + dataGenerate.FooterData.PMData?.PMName + " )");
 
-                        // QC column
+                        //QC column
                         if (signQc != null)
                         {
                             table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image(signQc);
@@ -2030,6 +2028,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                             text.Span(" of ");
                             text.TotalPages();
                         });
+                      
                     });
                 });
             });
@@ -2037,7 +2036,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             string returnPath = "Upload/temp/" + "DocumentNo" + "-" + guid + ".pdf";
             document.GeneratePdf(returnPath);
             //document.ShowInPreviewer();
-
+            
             return returnPath;
         }
     }
