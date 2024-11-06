@@ -38,7 +38,7 @@ namespace Project.ConstructionTracking.Web.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+                throw ex;
             }
         }
 

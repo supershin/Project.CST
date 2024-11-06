@@ -296,7 +296,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
-
         public List<UnitFormResourceModel> GetImage(UnitFormResourceModel model)
         {
             var result = (from t1 in _context.tr_UnitFormResource
@@ -317,6 +316,176 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
+        //public string SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
+        //{
+        //    string returnUrlDoc = string.Empty;
+
+        //    var transactionOptions = new TransactionOptions
+        //    {
+        //        IsolationLevel = IsolationLevel.ReadCommitted,
+        //        Timeout = TimeSpan.FromMinutes(5)
+        //    };
+
+        //    using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+        //    {
+        //        try
+        //        {
+
+        //            bool validate = false;
+
+        //            var CheckQCpass =  (from t1 in _context.tr_Form_QCCheckList
+        //                               join t2 in
+        //                                   (from qc in _context.tr_QC_UnitCheckList
+        //                                    where qc.UnitID == model.UnitID
+        //                                    group qc by new { qc.CheckListID, qc.UnitID } into g
+        //                                    select new
+        //                                    {
+        //                                        g.Key.CheckListID,
+        //                                        g.Key.UnitID,
+        //                                        Seq = g.Max(x => x.Seq),
+        //                                        QCStatusID = g.OrderByDescending(x => x.Seq).FirstOrDefault().QCStatusID
+        //                                    }) on new { t1.CheckListID, UnitID = model.UnitID } equals new { t2.CheckListID, t2.UnitID } into unitCheckListGroup
+
+        //                               from t2 in unitCheckListGroup.DefaultIfEmpty()
+        //                               where t1.FormID == model.FormID
+        //                               select new 
+        //                               {
+        //                                   QCStatusID = t2.QCStatusID
+        //                               }).ToList();
+
+        //            if (CheckQCpass.All(item => item.QCStatusID == 1) && model.ActionType == "submit")
+        //            {
+        //                validate = true;
+        //            }
+        //            else if (CheckQCpass  == null)
+        //            {
+        //                validate = true;
+        //            }
+        //            else if (model.ActionType == "save")
+        //            {
+        //                validate = true;
+        //            }
+
+        //            if(validate == true)
+        //            {
+        //                var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == model.UnitFormID && a.RoleID == 2);
+
+        //                if (unitFormAction == null)
+        //                {
+        //                    unitFormAction = new tr_UnitFormAction
+        //                    {
+        //                        UnitFormID = model.UnitFormID,
+        //                        RoleID = 2,
+        //                        ActionType = model.ActionType,
+        //                        StatusID = model.UnitFormStatus,
+        //                        Remark = string.IsNullOrEmpty(model.Remark) ? "" : model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
+        //                        ActionDate = DateTime.Now,
+        //                        UpdateBy = model.UserID,
+        //                        UpdateDate = DateTime.Now,
+        //                        CreateBy = model.UserID,
+        //                        CraeteDate = DateTime.Now
+        //                    };
+
+        //                    _context.tr_UnitFormAction.Add(unitFormAction);
+        //                }
+        //                else
+        //                {
+        //                    unitFormAction.ActionType = model.ActionType;
+        //                    unitFormAction.StatusID = model.UnitFormStatus;
+        //                    if (!string.IsNullOrEmpty(model.Remark))
+        //                    {
+        //                        if (unitFormAction.Remark != model.Remark)
+        //                        {
+        //                            unitFormAction.Remark = model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        unitFormAction.Remark = "";
+        //                    }
+        //                    unitFormAction.ActionDate = DateTime.Now;
+        //                    unitFormAction.UpdateBy = model.UserID;
+        //                    unitFormAction.UpdateDate = DateTime.Now;
+
+        //                    _context.tr_UnitFormAction.Update(unitFormAction);
+        //                }
+
+        //                _context.SaveChanges();
+
+        //                UpdateUnitForm(model.UnitFormID, model.ActionType, model.UnitFormStatus, model.UserID);
+
+        //                InsertUnitFormActionLog(unitFormAction, model.UserID);
+
+        //                if (model.PassConditionsIUD != null && model.PassConditionsIUD.Count > 0)
+        //                {
+        //                    foreach (var passConditionModel in model.PassConditionsIUD)
+        //                    {
+        //                        var passCondition = _context.tr_UnitFormPassCondition.FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.FlagActive == true);
+
+        //                        if (passCondition != null)
+        //                        {
+        //                            if (passCondition.StatusID != 8)
+        //                            {
+        //                                passCondition.StatusID = passConditionModel.PassConditionsvalue;
+        //                                if (!string.IsNullOrEmpty(passConditionModel.Remark))
+        //                                {
+        //                                    if (passCondition.PM_Remark != passConditionModel.Remark)
+        //                                    {
+        //                                        passCondition.PM_Remark = passConditionModel.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
+        //                                    }
+        //                                }
+        //                                else
+        //                                {
+        //                                    passCondition.PM_Remark = "";
+        //                                }
+        //                                passCondition.UpdateBy = model.UserID;
+        //                                passCondition.UpdateDate = DateTime.Now;
+        //                                _context.tr_UnitFormPassCondition.Update(passCondition);
+        //                                InsertUnitFormActionLogPassCondition(passCondition, model.UserID);
+        //                            }
+        //                        }
+        //                        _context.SaveChanges();
+        //                    }
+        //                }
+
+        //                InsertImagesPM(model, null, 2);
+
+
+        //                var modelgenpdf = new DataToGenerateModel
+        //                {
+        //                    ProjectID = FormatExtension.AsGuid(model.ProjectID),
+        //                    UnitID = FormatExtension.AsGuid(model.UnitID),
+        //                    FormID = FormatExtension.AsInt(model.FormID)
+        //                };
+
+        //                if (model.ActionType == "submit" && model.UnitFormStatus == 4)
+        //                {
+        //                    try
+        //                    {
+        //                        returnUrlDoc = GenerateAndSavePDF(modelgenpdf, model.UserID); // This must succeed or else roll back
+        //                    }
+        //                    catch (Exception pdfEx)
+        //                    {
+        //                        throw new Exception("ปลิ้น PDF ไม่สำเร็จ", pdfEx);
+        //                    }
+        //                }
+
+        //                scope.Complete();
+        //            }
+        //            else
+        //            {
+        //                throw new Exception("QC ยังตรวจไม่ผ่าน");
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            throw new Exception("XXXXXX", ex);
+        //        }
+        //    }
+
+        //    return returnUrlDoc;
+        //}
+
         public string SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)
         {
             string returnUrlDoc = string.Empty;
@@ -324,13 +493,51 @@ namespace Project.ConstructionTracking.Web.Repositories
             var transactionOptions = new TransactionOptions
             {
                 IsolationLevel = IsolationLevel.ReadCommitted,
-                Timeout = TimeSpan.FromMinutes(3)
+                Timeout = TimeSpan.FromMinutes(5)
             };
 
             using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
             {
                 try
                 {
+                    bool validate = false;
+
+                    var CheckQCpass = (from t1 in _context.tr_Form_QCCheckList
+                                       join t2 in
+                                           (from qc in _context.tr_QC_UnitCheckList
+                                            where qc.UnitID == model.UnitID
+                                            group qc by new { qc.CheckListID, qc.UnitID } into g
+                                            select new
+                                            {
+                                                g.Key.CheckListID,
+                                                g.Key.UnitID,
+                                                Seq = g.Max(x => x.Seq),
+                                                QCStatusID = g.OrderByDescending(x => x.Seq).FirstOrDefault().QCStatusID
+                                            }) on new { t1.CheckListID, UnitID = model.UnitID } equals new { t2.CheckListID, t2.UnitID } into unitCheckListGroup
+                                       from t2 in unitCheckListGroup.DefaultIfEmpty()
+                                       where t1.FormID == model.FormID
+                                       select new
+                                       {
+                                           QCStatusID = t2.QCStatusID
+                                       }).ToList();
+
+                    if (CheckQCpass.All(item => item.QCStatusID == 1) && model.ActionType == "submit")
+                    {
+                        validate = true;
+                    }
+                    else if (CheckQCpass == null || model.ActionType == "save")
+                    {
+                        validate = true;
+                    }
+                    else if (model.UnitFormStatus == 5)
+                    {
+                        validate = true;
+                    }
+                    if (!validate)
+                    {
+                        throw new Exception("QC ยังตรวจไม่ผ่าน");
+                    }
+
                     var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == model.UnitFormID && a.RoleID == 2);
 
                     if (unitFormAction == null)
@@ -348,19 +555,15 @@ namespace Project.ConstructionTracking.Web.Repositories
                             CreateBy = model.UserID,
                             CraeteDate = DateTime.Now
                         };
-
                         _context.tr_UnitFormAction.Add(unitFormAction);
                     }
                     else
                     {
                         unitFormAction.ActionType = model.ActionType;
                         unitFormAction.StatusID = model.UnitFormStatus;
-                        if (!string.IsNullOrEmpty(model.Remark))
+                        if (!string.IsNullOrEmpty(model.Remark) && unitFormAction.Remark != model.Remark)
                         {
-                            if (unitFormAction.Remark != model.Remark)
-                            {
-                                unitFormAction.Remark = model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
-                            }
+                            unitFormAction.Remark = model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
                         }
                         else
                         {
@@ -369,51 +572,43 @@ namespace Project.ConstructionTracking.Web.Repositories
                         unitFormAction.ActionDate = DateTime.Now;
                         unitFormAction.UpdateBy = model.UserID;
                         unitFormAction.UpdateDate = DateTime.Now;
-
                         _context.tr_UnitFormAction.Update(unitFormAction);
                     }
 
-
                     _context.SaveChanges();
-
                     UpdateUnitForm(model.UnitFormID, model.ActionType, model.UnitFormStatus, model.UserID);
-
                     InsertUnitFormActionLog(unitFormAction, model.UserID);
 
                     if (model.PassConditionsIUD != null && model.PassConditionsIUD.Count > 0)
                     {
                         foreach (var passConditionModel in model.PassConditionsIUD)
                         {
-                            var passCondition = _context.tr_UnitFormPassCondition.FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.FlagActive == true);
+                            var passCondition = _context.tr_UnitFormPassCondition
+                                .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.GroupID == passConditionModel.Group_ID && pc.FlagActive == true);
 
-                            if (passCondition != null)
+                            if (passCondition != null && passCondition.StatusID != 8)
                             {
-                                if (passCondition.StatusID != 8)
+                                passCondition.StatusID = passConditionModel.PassConditionsvalue;
+                                if (!string.IsNullOrEmpty(passConditionModel.Remark) && passCondition.PM_Remark != passConditionModel.Remark)
                                 {
-                                    passCondition.StatusID = passConditionModel.PassConditionsvalue;
-                                    if (!string.IsNullOrEmpty(passConditionModel.Remark))
-                                    {
-                                        if (passCondition.PM_Remark != passConditionModel.Remark)
-                                        {
-                                            passCondition.PM_Remark = passConditionModel.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        passCondition.PM_Remark = "";
-                                    }
-                                    passCondition.UpdateBy = model.UserID;
-                                    passCondition.UpdateDate = DateTime.Now;
-                                    _context.tr_UnitFormPassCondition.Update(passCondition);
-                                    InsertUnitFormActionLogPassCondition(passCondition, model.UserID);
+                                    passCondition.PM_Remark = passConditionModel.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
                                 }
+                                else
+                                {
+                                    passCondition.PM_Remark = "";
+                                }
+                                passCondition.UpdateBy = model.UserID;
+                                passCondition.UpdateDate = DateTime.Now;
+
+                                _context.tr_UnitFormPassCondition.Update(passCondition);
+                                InsertUnitFormActionLogPassCondition(passCondition, model.UserID);
                             }
+
                             _context.SaveChanges();
                         }
                     }
 
                     InsertImagesPM(model, null, 2);
-
 
                     var modelgenpdf = new DataToGenerateModel
                     {
@@ -426,7 +621,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     {
                         try
                         {
-                            returnUrlDoc = GenerateAndSavePDF(modelgenpdf, model.UserID); // This must succeed or else roll back
+                            returnUrlDoc = GenerateAndSavePDF(modelgenpdf, model.UserID);
                         }
                         catch (Exception pdfEx)
                         {
@@ -436,14 +631,17 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     scope.Complete();
                 }
-                catch (Exception ex)
+                catch
                 {
-                    throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+                    throw;
                 }
             }
 
             return returnUrlDoc;
         }
+
+
+
 
         private string GenerateAndSavePDF(DataToGenerateModel model ,Guid? UserID)
         {

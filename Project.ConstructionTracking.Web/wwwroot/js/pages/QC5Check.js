@@ -177,7 +177,6 @@ function openModalDataQC(action, data = null) {
 
 
 
-
 //document.getElementById('saveButton').addEventListener('click', function () {
 //    onSaveButtonClick();
 //});
@@ -836,7 +835,7 @@ function saveUnitQC5() {
         });
 
         if (hasNotPass === true) {
-            showErrorAlert('คำเตือน!', 'ยังมีรายการ Defect ที่ไม่ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาตรวจสอบสถานะให้ถูกต้อง');
             mainRadio.checked = false;
         }
     }
@@ -852,7 +851,7 @@ function saveUnitQC5() {
         });
 
         if (hasNotPass === false) {
-            showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาตรวจสอบสถานะให้ถูกต้อง');
             mainRadio.checked = false;
         }
     }
@@ -868,7 +867,7 @@ function saveUnitQC5() {
         });
 
         if (hasNotPass === false && allItems.length !== 0) {
-            showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาตรวจสอบสถานะให้ถูกต้อง');
             mainRadio.checked = false;
         }
     }
@@ -891,11 +890,11 @@ function saveUnitQC5() {
         });
 
         if (hasMajorDefect === true) {
-            showErrorAlert('คำเตือน!', 'ยังมีรายการ Major Defect ที่ไม่ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาตรวจสอบสถานะให้ถูกต้อง');
             mainRadio.checked = false;
         }
         if (hasNotPass === false) {
-            showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาตรวจสอบสถานะให้ถูกต้อง');
             mainRadio.checked = false;
         }
     }
@@ -1047,7 +1046,7 @@ function SubmitUnitQC5() {
         });
 
         if (hasNotPass === true) {
-            showErrorAlert('คำเตือน!', 'ยังมีรายการ Defect ที่ไม่ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาตรวจสอบสถานะให้ถูกต้อง');
             mainRadio.checked = false;
         }
     }
@@ -1063,7 +1062,7 @@ function SubmitUnitQC5() {
         });
 
         if (hasNotPass === false) {
-            showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาตรวจสอบสถานะให้ถูกต้อง');
             mainRadio.checked = false;
         }
     }
@@ -1079,7 +1078,7 @@ function SubmitUnitQC5() {
         });
 
         if (hasNotPass === false && allItems.length !== 0) {
-            showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาตรวจสอบสถานะให้ถูกต้อง');
             mainRadio.checked = false;
         }
         if (ImageQC5UnitList.length + files.length === 0) {
@@ -1110,11 +1109,11 @@ function SubmitUnitQC5() {
         });
 
         if (hasMajorDefect === true) {
-            showErrorAlert('คำเตือน!', 'ยังมีรายการ Major Defect ที่ไม่ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาตรวจสอบสถานะให้ถูกต้อง');
             mainRadio.checked = false;
         }
         if (hasNotPass === false) {
-            showErrorAlert('คำเตือน!', 'ไม่มีรายการ Defect ที่ไม่ผ่าน');
+            showErrorAlert('คำเตือน!', 'กรุณาตรวจสอบสถานะให้ถูกต้อง');
             mainRadio.checked = false;
         }
     }
