@@ -189,10 +189,10 @@ function saveOrSubmit(actionType) {
             return;
         }
 
-        if (_qcStatusID === 1) {
-            showErrorAlert('คำเตือน!', 'QC ยังตรวจไม่ผ่าน');
-            return;
-        }
+        //if (_qcStatusID === 1) {
+        //    showErrorAlert('คำเตือน!', 'QC ยังตรวจไม่ผ่าน');
+        //    return;
+        //}
 
     }
 
@@ -287,7 +287,9 @@ function performAjaxRequest(actionType) {
         },
         error: function (xhr, status, error) {
             Swal.close();
-            showErrorAlert('ผิดพลาด!', 'บันทึกข้อมูลไม่สำเร็จ');
+            // Display the server's error message
+            var errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : error;
+            showErrorAlert('ผิดพลาด!', errorMessage);
         }
     });
 }
