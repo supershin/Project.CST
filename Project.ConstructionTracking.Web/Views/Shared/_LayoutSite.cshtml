@@ -192,10 +192,32 @@
                 });
             }
 
+            function showAlertandClose(text) {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: text,
+                    showConfirmButton: false,
+                    timer: 5000,  
+                    toast: true  
+                });
+            }
+
             function showLoadingAlert() {
                 Swal.fire({
                     title: 'กำลังบันทึก...',
                     text: 'กรุณารอสักครู่กำลังบันทึกข้อมูล',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+            }
+
+            function showLoadingScreen() {
+                Swal.fire({
+                    title: 'กำลังโหลดข้อมูล...',
+                    text: 'กรุณารอสักครู่',
                     allowOutsideClick: false,
                     didOpen: () => {
                         Swal.showLoading();
@@ -224,7 +246,6 @@
                 element.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 element.focus({ preventScroll: true });
             }
-
 
             function generatePDFAfterSave(formData) {
                 $.ajax({

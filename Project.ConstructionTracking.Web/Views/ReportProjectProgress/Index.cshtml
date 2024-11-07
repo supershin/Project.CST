@@ -2,6 +2,7 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 }
+@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.ReportProjectProgressModel>
 <title>Report Project Progress</title>
 <style>
     .card {
@@ -35,7 +36,8 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12 col-sm-9 mb-2">
-                            <input type="text" class="form-control" id="text" placeholder="ค้นหาโครงการ...">
+                            <input type="text" id="ddlproject" placeholder="ค้นหาโครงการ...">
+                            <input type="hidden" id="selectedProjectId" />
                         </div>
                         <div class="col-6 col-sm-1 mb-2  ms-4">
                             <button class="btn btn-primary" id="searchButton">
@@ -51,11 +53,129 @@
                 </div>
             </div>
         </div>
-        <div class="container-xl mb-2">
-            <partial name="PartialTable"/>
+        <div class="container-xl mb-2" id="PartialTableReport">
+            <partial name="PartialTable" model="Model"/>
         </div>
     </div>
 </div>
+<link href="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.default.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js"></script>
+<script type="text/javascript">
+    // Handle the Export to Excel button click
+    document.getElementById('exportExcel').addEventListener('click', function () {
+        // Get the value from the hidden input
+        const selectedValue = document.getElementById('selectedProjectId').value;
+
+        // Check if a value is selected
+        if (!selectedValue) {
+            showAlertandClose('กรุณาเลือกโครงการก่อนทำการ Export'); // Use a simple alert or replace with a preferred method
+            return;
+        }
+
+        // Show loading indicator
+        showLoadingScreen();
+
+        // Use fetch API to get the file and download it with the selected projectId
+        fetch(baseUrl + 'ReportProjectProgress/ExportToExcel?projectId=' + encodeURIComponent(selectedValue))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob(); // Convert the response to a blob
+            })
+            .then(blob => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'ProjectProgressReport.xlsx'; // Set the file name
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Close the loading indicator
+                Swal.close();
+            })
+            .catch(error => {
+                console.error('Error during the download:', error);
+                // Close the loading indicator
+                Swal.close();
+            });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const ddlProject = $('#ddlproject').selectize({
+            valueField: 'ValueGuid',
+            labelField: 'Text',
+            searchField: 'Text',
+            options: [],
+            create: false,
+            placeholder: 'ค้นหาโครงการ...',
+            maxItems: 1 // Restrict to single selection
+        });
+
+        // Get the selectize instance
+        const selectize = ddlProject[0].selectize;
+
+        // Populate with data from ViewBag
+        const projectData = @Html.Raw(Json.Serialize(ViewBag.DDLProject));
+
+        projectData.forEach(item => {
+            selectize.addOption({ ValueGuid: item.ValueGuid, Text: item.Text });
+        });
+
+        // Pre-select the value if it exists in ViewBag
+        const selectedProjectId = '@Html.Raw(ViewBag.SelectedProjectId)';
+        if (selectedProjectId) {
+            selectize.setValue(selectedProjectId);
+            document.getElementById('selectedProjectId').value = selectedProjectId;
+        }
+
+        // Update hidden input when a selection is made
+        selectize.on('change', function () {
+            const selectedValue = selectize.getValue();
+            document.getElementById('selectedProjectId').value = selectedValue;
+
+            // Optionally save the selected value in a cookie
+            document.cookie = `selectedProjectId=${selectedValue}; path=/; expires=${new Date(new Date().setDate(new Date().getDate() + 7)).toUTCString()}`;
+        });
+
+        // Handle the search button click
+        document.getElementById('searchButton').addEventListener('click', function () {
+            const selectedValue = document.getElementById('selectedProjectId').value;
+
+            // Check if a value is selected
+            if (!selectedValue) {
+                showAlertandClose('กรุณาเลือกโครงการก่อนทำการค้นหา'); // Use a simple alert or replace with a preferred method
+                return;
+            }
+
+            // Show loading indicator
+            showLoadingScreen();
+
+            // Perform an AJAX POST request to the search action
+            $.ajax({
+                url: baseUrl + 'ReportProjectProgress/SearchProject',
+                type: 'POST',
+                data: { projectId: selectedValue },
+                success: function (result) {
+                    // Replace the partial view content with the updated data
+                    $('#PartialTableReport').html(result);
+
+                    // Close the loading indicator
+                    Swal.close();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error during the search:', error);
+                    // Close the loading indicator
+                    Swal.close();
+                }
+            });
+        });
+    });
+</script>
+
+
+
 
 
 
