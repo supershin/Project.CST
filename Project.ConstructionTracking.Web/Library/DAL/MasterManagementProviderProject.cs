@@ -47,6 +47,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
 
         public abstract List<WorkPeriodModel> sp_get_workperiod(WorkPeriodModel EN);
 
+        public abstract List<ReportProjectProgressModel> sp_get_report_Project_Prcress(ReportProjectProgressModel EN);
+
 
 
         #region __ Reader __
@@ -374,6 +376,41 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.GRDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["GRDate"]);
             Entity.UnitFormID = Commons.FormatExtension.ConvertStringToGuid(reader["UnitFormID"]);
             Entity.Statusworkperiod = Commons.FormatExtension.NullToString(reader["Statusworkperiod"]);
+            return Entity;
+        }
+
+
+        public static List<ReportProjectProgressModel> sp_get_report_Project_PrcressListReader(IDataReader reader)
+        {
+            List<ReportProjectProgressModel> list = new List<ReportProjectProgressModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_report_Project_Prcress_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static ReportProjectProgressModel sp_get_report_Project_Prcress_Reader(IDataReader reader, int index)
+        {
+            ReportProjectProgressModel Entity = new ReportProjectProgressModel();
+
+            Entity.index = index;
+            Entity.ProjectName = Commons.FormatExtension.NullToString(reader["ProjectName"]);
+            Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.CompanyName = Commons.FormatExtension.NullToString(reader["CompanyName"]);
+            Entity.PEName = Commons.FormatExtension.NullToString(reader["PEName"]);
+            Entity.UnitStatus = Commons.FormatExtension.NullToString(reader["UnitStatus"]);
+            Entity.TransferDate = Commons.FormatExtension.NullToString(reader["TransferDate"]);
+            Entity.StartDatePlan = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["StartDatePlan"]);
+            Entity.EndDatePlan = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["EndDatePlan"]);
+            Entity.FormActual = Commons.FormatExtension.NullToString(reader["FormActual"]);
+            Entity.ProgressPlan = Commons.FormatExtension.NullToString(reader["ProgressPlan"]);
+            Entity.ProgressActual = Commons.FormatExtension.NullToString(reader["ProgressActual"]);
+            Entity.DelayAhead = Commons.FormatExtension.NullToString(reader["DelayAhead"]);
+            Entity.LastFormTransfer = Commons.FormatExtension.NullToString(reader["LastFormTransfer"]);
             return Entity;
         }
 
