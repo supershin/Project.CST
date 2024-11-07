@@ -65,7 +65,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             var FilepatchPDF = new GetDDL { Act = "GetUnitFornPDF", GuID = UnitFormID };
             List<GetDDL> patchPDF = _getDDLService.GetDDLList(FilepatchPDF);
-            ViewBag.FilePathPDF = patchPDF[0].Text;
+            ViewBag.FilePathPDF = (patchPDF != null && patchPDF.Count > 0 && !string.IsNullOrEmpty(patchPDF[0].Text)) ? patchPDF[0].Text : string.Empty;
 
             return View(ListChecklistPJMApprove);
         }
