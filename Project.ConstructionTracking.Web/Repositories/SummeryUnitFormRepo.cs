@@ -73,7 +73,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                              join t5 in (
                                  from uf in _context.vw_UnitForm_Action
                                  join qc in _context.vw_UnitQC_Action
-                                 on new { uf.ProjectID, uf.UnitID, uf.FormID } equals new { qc.ProjectID, qc.UnitID, qc.FormID } into qcJoin
+                                 on new { uf.ProjectID, uf.UnitID, uf.FormID } equals new { qc.ProjectID, UnitID = (Guid?)qc.UnitID, qc.FormID } into qcJoin
                                  from qc in qcJoin.DefaultIfEmpty()
                                  select new
                                  {

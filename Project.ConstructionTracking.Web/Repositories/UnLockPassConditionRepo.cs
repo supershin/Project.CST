@@ -18,6 +18,55 @@ namespace Project.ConstructionTracking.Web.Repositories
         {
             _context = context;
         }
+        public UnLockPassConditionModel.GetDataUnlockDetail GetListUnlockDetail(UnLockPassConditionModel.GetDataUnlockDetail filterData)
+        {
+            var result = (from t1 in _context.tr_UnitForm
+                          join t2 in _context.tm_Vendor on t1.VendorID equals t2.ID into vendors
+                          from vendor in vendors.DefaultIfEmpty()
+                          join t4 in _context.tm_Project on t1.ProjectID equals t4.ProjectID into projects
+                          from project in projects.DefaultIfEmpty()
+                          join t4com in _context.tm_CompanyVendor on t1.CompanyVendorID equals t4com.ID into Companys
+                          from Company in Companys.DefaultIfEmpty()
+                          join t5 in _context.tm_Unit on t1.UnitID equals t5.UnitID into units
+                          from unit in units.DefaultIfEmpty()
+                          join t8 in _context.tm_Form on t1.FormID equals t8.ID into forms
+                          from form in forms.DefaultIfEmpty()
+
+                          join t10 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PE } equals new { t10.UnitFormID, t10.RoleID } into PEUnitFormActions
+                          from PEUnitFormAction in PEUnitFormActions.DefaultIfEmpty()
+                          join t10U in _context.tm_User on new { PEUnitFormAction.UpdateBy } equals new { UpdateBy = (Guid?)t10U.ID } into PEUserActions
+                          from PEUserAction in PEUserActions.DefaultIfEmpty()
+
+
+                          join t11 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PM } equals new { t11.UnitFormID, t11.RoleID } into PMUnitFormActions
+                          from PMUnitFormAction in PMUnitFormActions.DefaultIfEmpty()
+                          join t11U in _context.tm_User on new { PMUnitFormAction.UpdateBy } equals new { UpdateBy = (Guid?)t11U.ID } into PMUserActions
+                          from PMUserAction in PMUserActions.DefaultIfEmpty()
+
+
+                          join t12 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PJM } equals new { t12.UnitFormID, t12.RoleID } into PJMUnitFormActions
+                          from PJMUnitFormAction in PJMUnitFormActions.DefaultIfEmpty()
+                          join t12U in _context.tm_User on new { PJMUnitFormAction.UpdateBy } equals new { UpdateBy = (Guid?)t12U.ID } into PJMUserActions
+                          from PJMUserAction in PJMUserActions.DefaultIfEmpty()
+
+
+                          where t1.ID == filterData.UnitFormID
+                          select new GetDataUnlockDetail
+                          {
+                              ProjectName = project.ProjectName,
+                              UnitFormID = t1.ID,
+                              UnitCode = unit.UnitCode,
+                              VenderName = vendor.Name,
+                              CompanyName = Company.Name,
+                              FormName = form.Name,
+                              PEName = PEUserAction.FirstName + ' ' + PEUserAction.LastName,
+                              PMName = PMUserAction.FirstName + ' ' + PMUserAction.LastName,
+                              PJMName = PJMUserAction.FirstName + ' ' + PJMUserAction.LastName
+
+                          }).FirstOrDefault();
+
+            return result;
+        }
 
         public List<UnLockPassConditionModel.GetDataUnlockPC> GetListUnlockPC(UnLockPassConditionModel.GetDataUnlockPC filterData)
         {
@@ -136,6 +185,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         public void PERequestUnlock(UnLockPassConditionModel.UpdateUnlockPC model)
         {
+
             var passCondition = _context.tr_UnitFormPassCondition.FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.ID == model.PC_ID && pc.FlagActive == true);
 
             if (passCondition != null)
@@ -160,6 +210,58 @@ namespace Project.ConstructionTracking.Web.Repositories
                 _context.tr_UnitFormPassCondition.Update(passCondition);
             }
 
+            var UnLockPassCondition = _context.tr_UnitFormUnLockPassCondition
+               .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.PassConditionID == model.PC_ID && pc.RoleID == SystemConstant.UserRole.PE && pc.FlagActive == true);
+
+            if (UnLockPassCondition == null)
+            {
+                // Create a new instance if it doesn't exist
+                UnLockPassCondition = new tr_UnitFormUnLockPassCondition
+                {
+                    UnitFormID = model.UnitFormID,
+                    PassConditionID = model.PC_ID,
+                    RoleID = SystemConstant.UserRole.PE,
+                    StatusID = 12,
+                    Remark = string.IsNullOrEmpty(model.PEUnLock_Remark)
+                        ? ""
+                        : model.PEUnLock_Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
+                    FlagActive = true,
+                    ActionDate = DateTime.Now,
+                    UpdateDate = DateTime.Now,
+                    UpdateBy = model.UserID,
+                    CreateBy = model.UserID,
+                    CraeteDate = DateTime.Now
+                };
+
+                _context.tr_UnitFormUnLockPassCondition.Add(UnLockPassCondition);
+            }
+            else
+            {
+                // Update existing instance
+                UnLockPassCondition.UnitFormID = model.UnitFormID;
+                UnLockPassCondition.PassConditionID = model.PC_ID;
+                UnLockPassCondition.RoleID = SystemConstant.UserRole.PE;
+                UnLockPassCondition.StatusID = 12;
+
+                if (!string.IsNullOrEmpty(model.PEUnLock_Remark))
+                {
+                    if (UnLockPassCondition.Remark != model.PEUnLock_Remark)
+                    {
+                        UnLockPassCondition.Remark = model.PEUnLock_Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
+                    }
+                }
+                else
+                {
+                    UnLockPassCondition.Remark = "";
+                }
+
+                UnLockPassCondition.FlagActive = true;
+                UnLockPassCondition.ActionDate = DateTime.Now;
+                UnLockPassCondition.UpdateDate = DateTime.Now;
+                UnLockPassCondition.UpdateBy = model.UserID;
+
+                _context.tr_UnitFormUnLockPassCondition.Update(UnLockPassCondition);
+            }
 
             var actionLog = new tr_UnitFormActionLog
             {
@@ -282,6 +384,59 @@ namespace Project.ConstructionTracking.Web.Repositories
                 }
             }
 
+            var UnLockPassCondition = _context.tr_UnitFormUnLockPassCondition
+                .FirstOrDefault(pc => pc.UnitFormID == model.UnitFormID && pc.PassConditionID == model.PC_ID && pc.RoleID == SystemConstant.UserRole.PM && pc.FlagActive == true);
+
+            if (UnLockPassCondition == null)
+            {
+                // Create a new instance if it doesn't exist
+                UnLockPassCondition = new tr_UnitFormUnLockPassCondition
+                {
+                    UnitFormID = model.UnitFormID,
+                    PassConditionID = model.PC_ID,
+                    RoleID = SystemConstant.UserRole.PM,
+                    StatusID = model.Action == "Reject" ? 14 : 13,
+                    Remark = string.IsNullOrEmpty(model.PMUnLock_Remark)
+                        ? ""
+                        : model.PMUnLock_Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
+                    FlagActive = true,
+                    ActionDate = DateTime.Now,
+                    UpdateDate = DateTime.Now,
+                    UpdateBy = model.UserID,
+                    CreateBy = model.UserID,
+                    CraeteDate = DateTime.Now
+                };
+
+                _context.tr_UnitFormUnLockPassCondition.Add(UnLockPassCondition);
+            }
+            else
+            {
+                // Update existing instance
+                UnLockPassCondition.UnitFormID = model.UnitFormID;
+                UnLockPassCondition.PassConditionID = model.PC_ID;
+                UnLockPassCondition.RoleID = SystemConstant.UserRole.PM;
+                UnLockPassCondition.StatusID = model.Action == "Reject" ? 14 : 13; 
+
+                if (!string.IsNullOrEmpty(model.PMUnLock_Remark))
+                {
+                    if (UnLockPassCondition.Remark != model.PMUnLock_Remark)
+                    {
+                        UnLockPassCondition.Remark = model.PMUnLock_Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
+                    }
+                }
+                else
+                {
+                    UnLockPassCondition.Remark = "";
+                }
+
+                UnLockPassCondition.FlagActive = true;
+                UnLockPassCondition.ActionDate = DateTime.Now;
+                UnLockPassCondition.UpdateDate = DateTime.Now;
+                UnLockPassCondition.UpdateBy = model.UserID;
+
+                _context.tr_UnitFormUnLockPassCondition.Update(UnLockPassCondition);
+            }
+
             // Add action log
             var actionLog = new tr_UnitFormActionLog
             {
@@ -296,9 +451,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             _context.tr_UnitFormActionLog.Add(actionLog);
         }
-
-
-
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Repositories;
+using static Project.ConstructionTracking.Web.Models.UnLockPassConditionModel;
 
 namespace Project.ConstructionTracking.Web.Services
 {
@@ -10,6 +11,12 @@ namespace Project.ConstructionTracking.Web.Services
         public UnLockPassConditionService(IUnLockPassConditionRepo UnLockPassConditionRepo)
         {
             _IUnLockPassConditionRepo = UnLockPassConditionRepo;
+        }
+
+        public UnLockPassConditionModel.GetDataUnlockDetail GetListUnlockDetail(UnLockPassConditionModel.GetDataUnlockDetail model)
+        {
+            var UnlockDetaiData = _IUnLockPassConditionRepo.GetListUnlockDetail(model);
+            return UnlockDetaiData;
         }
 
         public List<UnLockPassConditionModel.GetDataUnlockPC> GetListUnlockPC(UnLockPassConditionModel.GetDataUnlockPC filterData)

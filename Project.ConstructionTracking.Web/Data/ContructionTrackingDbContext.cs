@@ -16,6 +16,7 @@ namespace Project.ConstructionTracking.Web.Data
         {
         }
 
+        public virtual DbSet<temp_defect> temp_defect { get; set; } = null!;
         public virtual DbSet<temp_unit_400H007> temp_unit_400H007 { get; set; } = null!;
         public virtual DbSet<tm_BU> tm_BU { get; set; } = null!;
         public virtual DbSet<tm_CompanyVendor> tm_CompanyVendor { get; set; } = null!;
@@ -117,8 +118,6 @@ namespace Project.ConstructionTracking.Web.Data
 
             modelBuilder.Entity<tm_DefectDescription>(entity =>
             {
-                entity.Property(e => e.ID).ValueGeneratedNever();
-
                 entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.DefectType)
@@ -821,11 +820,6 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tr_UnitFormResource)
                     .HasForeignKey(d => d.UnitFormID)
                     .HasConstraintName("FK_tr_UnitForm_Resource_tr_UnitForm");
-            });
-
-            modelBuilder.Entity<tr_UnitFormUnLockPassCondition>(entity =>
-            {
-                entity.Property(e => e.ID).ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<vw_UnitForm_Action>(entity =>

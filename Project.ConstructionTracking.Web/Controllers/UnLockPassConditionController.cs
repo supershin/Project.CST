@@ -19,6 +19,16 @@ namespace Project.ConstructionTracking.Web.Controllers
         public IActionResult Index(Guid UnitFormID, int GroupID , string ComFrom)
         {
             ViewBag.ComFrom = ComFrom;
+            var filter = new UnLockPassConditionModel.GetDataUnlockDetail { UnitFormID = UnitFormID};
+            var UnlockDetail = _UnLockPassConditionService.GetListUnlockDetail(filter);
+            if (UnlockDetail != null)
+            {
+                ViewBag.PEName = UnlockDetail.PEName;
+                ViewBag.PMName = UnlockDetail.PMName;
+                ViewBag.PJMName = UnlockDetail.PJMName;
+            }
+
+
             var model = new UnLockPassConditionModel.GetDataUnlockPC { UnitFormID = UnitFormID, GroupID = GroupID };
             var resultModel = _UnLockPassConditionService.GetListUnlockPC(model);
             if (resultModel != null && resultModel.Count > 0)

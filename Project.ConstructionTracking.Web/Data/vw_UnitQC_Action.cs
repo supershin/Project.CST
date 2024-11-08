@@ -10,24 +10,27 @@ namespace Project.ConstructionTracking.Web.Data
     public partial class vw_UnitQC_Action
     {
         public Guid? ProjectID { get; set; }
-        public Guid? UnitID { get; set; }
+        public Guid UnitID { get; set; }
         public int? FormID { get; set; }
-        [StringLength(50)]
+        [StringLength(9)]
         [Unicode(false)]
         public string? QC1 { get; set; }
-        [StringLength(50)]
+        [StringLength(9)]
         [Unicode(false)]
         public string? QC2 { get; set; }
-        [StringLength(50)]
+        [StringLength(9)]
         [Unicode(false)]
         public string? QC3 { get; set; }
-        [StringLength(50)]
+        [StringLength(9)]
+        [Unicode(false)]
+        public string? QC4 { get; set; }
+        [StringLength(9)]
         [Unicode(false)]
         public string? QC4_1 { get; set; }
-        [StringLength(50)]
+        [StringLength(9)]
         [Unicode(false)]
         public string? QC4_2 { get; set; }
-        [StringLength(50)]
+        [StringLength(9)]
         [Unicode(false)]
         public string? QC5 { get; set; }
     }

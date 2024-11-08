@@ -4,6 +4,20 @@ namespace Project.ConstructionTracking.Web.Models
 {
     public class UnLockPassConditionModel
     {
+
+        public class GetDataUnlockDetail
+        {
+            public Guid? UnitFormID { get; set; }
+            public string? ProjectName { get; set; }
+            public string? UnitCode { get; set; }
+            public string? FormName { get; set; }
+            public string? VenderName { get; set; }
+            public string? CompanyName { get; set; }
+            public string? PEName { get; set; }
+            public string? PMName { get; set; }
+            public string? PJMName { get; set; }
+        }
+
         public class GetDataUnlockPC
         {
             public int PC_ID { get; set; }

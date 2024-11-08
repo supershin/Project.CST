@@ -10,6 +10,9 @@
     var UnitCode = ViewBag.UnitCode;
     var FormName = ViewBag.FormName;
     var ListGroupPC = ViewBag.ListGroupPC;
+    var PEName = ViewBag.PEName;
+    var PMName = ViewBag.PMName;
+    var PJMName = ViewBag.PJMName;
 }
 
 
@@ -154,13 +157,13 @@
                     <div class="card-body">
                         <div class="col-12">
                             <label class="form-label align-center">
-                                <i class="fas fa-user-tie"></i> วิศวกรผู้ควบคุมงาน : นายสมชาย ใจดี
+                                <i class="fas fa-user-tie"></i> วิศวกรผู้ควบคุมงาน : @PEName
                             </label>
                             <label class="form-label align-center">
-                                <i class="fas fa-user-tie"></i> PM โครงการ : นายสุทธิชัย วงค์ใหญ่
+                                <i class="fas fa-user-tie"></i> PM โครงการ : @PMName
                             </label>
                             <label class="form-label align-center">
-                                <i class="fas fa-user-tie"></i> PJM Head : นายพรชัย แสวงการ
+                                <i class="fas fa-user-tie"></i> PJM Head : @PJMName
                             </label>
                         </div>
                     </div>
