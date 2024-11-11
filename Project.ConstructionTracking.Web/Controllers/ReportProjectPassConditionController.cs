@@ -155,8 +155,6 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
-
-
         [HttpPost]
         public IActionResult SearchProject(string projectId, string startdate, string enddate)
         {
