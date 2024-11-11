@@ -1,1 +1,211 @@
-﻿
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+}
+@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.ReportProjectPassConditionModel>
+<link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+<title>Report Project Progress</title>
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+</style>
+
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-home-heart">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M21 12l-9 -9l-9 9h2v7a2 2 0 0 0 2 2h6" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.39 0 .754 .112 1.061 .304" />
+                        <path d="M19 21.5l2.518 -2.58a1.74 1.74 0 0 0 0 -2.413a1.627 1.627 0 0 0 -2.346 0l-.168 .172l-.168 -.172a1.627 1.627 0 0 0 -2.346 0a1.74 1.74 0 0 0 0 2.412l2.51 2.59z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="card-body">
+                <h1>Report Project PassCondition</h1>
+            </div>
+        </div>
+    </div>
+    <div class="page-body">
+        <div class="container-xl mb-2">
+            <div class="card" id="card-filter">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-5 mb-2">
+                            <input type="text" id="ddlproject" placeholder="ค้นหาโครงการ...">
+                            <input type="hidden" id="selectedProjectId" />
+                        </div>
+                        <div class="col-3 col-sm-2 mb-2">
+                              <input type="text" id="startDate" placeholder="dd/mm/yyyy" class="form-control">
+                        </div>
+                        <div class="col-3 col-sm-2 mb-2">
+                             <input type="text" id="endDate" placeholder="dd/mm/yyyy" class="form-control">
+                        </div>
+                        <div class="col-6 col-sm-1 mb-2">
+                            <button class="btn btn-primary" id="searchButton">
+                                <i class="fas fa-search"></i> ค้นหา
+                            </button>
+                        </div>
+                        <div class="col-6 col-sm-1 mb-2">
+                            <button class="btn btn-success" id="exportExcel">
+                                <i class="fas fa-file-excel"></i> Export to Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-xl mb-2" id="PartialTableReport">
+            <partial name="PartialTable" model="Model" />
+        </div>
+    </div>
+</div>
+<link href="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.default.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script type="text/javascript">
+
+    flatpickr("#startDate", {
+        dateFormat: "d/m/Y" // Set format to dd/mm/yyyy
+    });
+    flatpickr("#endDate", {
+        dateFormat: "d/m/Y" // Set format to dd/mm/yyyy
+    });
+
+    // Handle the Export to Excel button click
+    document.getElementById('exportExcel').addEventListener('click', function () {
+    // Get the values from the inputs
+    // console.log(document.getElementById('selectedProjectId'));
+    const projectDropdown = $('#ddlproject')[0].selectize;
+
+    const selectedValue = document.getElementById('selectedProjectId').value;
+    const projectName = projectDropdown.getItem(selectedValue).text();;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    // Check if a value is selected
+    if (!selectedValue) {
+        showAlertandClose('กรุณาเลือกโครงการก่อนทำการ Export'); // Use a simple alert or replace with a preferred method
+        return;
+    }
+
+    // Show loading indicator
+    showLoadingScreen();
+
+    // Use fetch API to get the file and download it with the selected projectId and additional parameters
+    fetch(baseUrl + 'ReportProjectPassCondition/ExportToExcel?projectId=' + encodeURIComponent(selectedValue) +
+            '&projectName=' + encodeURIComponent(projectName) +
+            '&startdate=' + encodeURIComponent(startDate) +
+            '&enddate=' + encodeURIComponent(endDate))
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.blob(); // Convert the response to a blob
+        })
+        .then(blob => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'ReportProjectPassCondition.xlsx'; // Set the file name
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Close the loading indicator
+            Swal.close();
+        })
+        .catch(error => {
+            console.error('Error during the download:', error);
+            // Close the loading indicator
+            Swal.close();
+        });
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const ddlProject = $('#ddlproject').selectize({
+            valueField: 'ValueGuid',
+            labelField: 'Text',
+            searchField: 'Text',
+            options: [],
+            create: false,
+            placeholder: 'ค้นหาโครงการ...',
+            maxItems: 1 // Restrict to single selection
+        });
+
+        // Get the selectize instance
+        const selectize = ddlProject[0].selectize;
+
+        // Populate with data from ViewBag
+        const projectData = @Html.Raw(Json.Serialize(ViewBag.DDLProject));
+
+        projectData.forEach(item => {
+            selectize.addOption({ ValueGuid: item.ValueGuid, Text: item.Text });
+        });
+
+        // Pre-select the value if it exists in ViewBag
+        const selectedProjectId = '@Html.Raw(ViewBag.SelectedProjectId)';
+        if (selectedProjectId) {
+            selectize.setValue(selectedProjectId);
+            document.getElementById('selectedProjectId').value = selectedProjectId;
+        }
+
+        // Update hidden input when a selection is made
+        selectize.on('change', function () {
+            const selectedValue = selectize.getValue();
+            document.getElementById('selectedProjectId').value = selectedValue;
+
+            // Optionally save the selected value in a cookie
+            document.cookie = `selectedProjectId=${selectedValue}; path=/; expires=${new Date(new Date().setDate(new Date().getDate() + 7)).toUTCString()}`;
+        });
+
+        // Handle the search button click
+       document.getElementById('searchButton').addEventListener('click', function () {
+            const selectedValue = document.getElementById('selectedProjectId').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            // Check if a value is selected
+            if (!selectedValue) {
+                showAlertandClose('กรุณาเลือกโครงการก่อนทำการค้นหา'); // Use a simple alert or replace with a preferred method
+                return;
+            }
+
+            // Show loading indicator
+            showLoadingScreen();
+
+            // Perform an AJAX POST request to the search action
+            $.ajax({
+                url: baseUrl + 'ReportProjectPassCondition/SearchProject',
+                type: 'POST',
+                data: { projectId: selectedValue, startdate: startDate, enddate: endDate },
+                success: function (result) {
+                    // Replace the partial view content with the updated data
+                    $('#PartialTableReport').html(result);
+
+                    // Close the loading indicator
+                    Swal.close();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error during the search:', error);
+                    // Close the loading indicator
+                    Swal.close();
+                }
+            });
+        });
+
+    });
+
+</script>
+
+
+
+
+
+

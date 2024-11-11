@@ -2,6 +2,15 @@
 {
     public class ReportProjectPassConditionModel
     {
+        public string? act { get; set; }
+        public string? project_id { get; set; }
+        public string? unit_id { get; set; }
+        public string? unit_status { get; set; }
+        public string? build_status { get; set; }
+        public string? start_date { get; set; }
+        public string? end_date { get; set; }
+
+        public int index { get; set; }
         public string? UnitCode { get; set; }
         public string? FormName { get; set; }
         public string? FormGroupName { get; set; }

@@ -49,6 +49,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
 
         public abstract List<ReportProjectProgressModel> sp_get_report_Project_Prcress(ReportProjectProgressModel EN);
 
+        public abstract List<ReportProjectPassConditionModel> sp_get_report_Project_PassCondition(ReportProjectPassConditionModel EN);
 
 
         #region __ Reader __
@@ -411,6 +412,46 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.ProgressActual = Commons.FormatExtension.NullToString(reader["ProgressActual"]);
             Entity.DelayAhead = Commons.FormatExtension.NullToString(reader["DelayAhead"]);
             Entity.LastFormTransfer = Commons.FormatExtension.NullToString(reader["LastFormTransfer"]);
+            return Entity;
+        }
+
+
+        public static List<ReportProjectPassConditionModel> sp_get_report_Project_PassConditionListReader(IDataReader reader)
+        {
+            List<ReportProjectPassConditionModel> list = new List<ReportProjectPassConditionModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_report_Project_PassCondition_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static ReportProjectPassConditionModel sp_get_report_Project_PassCondition_Reader(IDataReader reader, int index)
+        {
+            ReportProjectPassConditionModel Entity = new ReportProjectPassConditionModel();
+
+            Entity.index = index;
+            Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.FormName = Commons.FormatExtension.NullToString(reader["FormName"]);
+            Entity.FormGroupName = Commons.FormatExtension.NullToString(reader["FormGroupName"]);
+            Entity.PEStatusIDName = Commons.FormatExtension.NullToString(reader["PEStatusIDName"]);
+            Entity.PEActionName = Commons.FormatExtension.NullToString(reader["PEActionName"]);
+            Entity.PEActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["PEActionDate"]);
+            Entity.PEPCRemark = Commons.FormatExtension.NullToString(reader["PEPCRemark"]);
+            Entity.PMStatusIDName = Commons.FormatExtension.NullToString(reader["PMStatusIDName"]);
+            Entity.PMActionName = Commons.FormatExtension.NullToString(reader["PMActionName"]);
+            Entity.PMActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["PMActionDate"]);
+            Entity.PMPCRemark = Commons.FormatExtension.NullToString(reader["PMPCRemark"]);
+            Entity.PJMStatusIDName = Commons.FormatExtension.NullToString(reader["PJMStatusIDName"]);
+            Entity.PJMActionName = Commons.FormatExtension.NullToString(reader["PJMActionName"]);
+            Entity.PJMActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["PJMActionDate"]);
+            Entity.PJMPCRemark = Commons.FormatExtension.NullToString(reader["PJMPCRemark"]);
+            Entity.PERequestUnlock = Commons.FormatExtension.NullToString(reader["PERequestUnlock"]);
+            Entity.PMUnlock = Commons.FormatExtension.NullToString(reader["PMUnlock"]);
+            Entity.PCStatusName = Commons.FormatExtension.NullToString(reader["PCStatusName"]);
             return Entity;
         }
 
