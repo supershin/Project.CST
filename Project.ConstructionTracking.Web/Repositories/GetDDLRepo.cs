@@ -223,46 +223,79 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     return GetCheckQCPass.ToList();
 
+                //case "GetListUnitPass":
+
+                //    var gr = from tqc in _context.tr_QC_UnitCheckList
+                //             group tqc by new { tqc.ID, tqc.UnitID, tqc.CheckListID, tqc.QCStatusID } into grouped
+                //             select new
+                //             {
+                //                 MaxSeq = grouped.Max(g => g.Seq),
+                //                 grouped.Key.ID,
+                //                 grouped.Key.UnitID,
+                //                 grouped.Key.CheckListID,
+                //                 grouped.Key.QCStatusID
+                //             };
+
+
+                //    var GetListUnitPass = (
+                //        from t1 in _context.tm_Unit
+                //        join t2 in _context.tm_Project on t1.ProjectID equals t2.ProjectID into projectJoin
+                //        from t2 in projectJoin.DefaultIfEmpty() // LEFT JOIN
+                //        join t4 in _context.tr_UnitForm on new { UnitID = (Guid?)t1.UnitID, ProjectID = (Guid?)t2.ProjectID } equals new { t4.UnitID, t4.ProjectID } into unitFormJoin
+                //        from t4 in unitFormJoin.DefaultIfEmpty() // LEFT JOIN
+                //        join t5 in _context.tr_Form_QCCheckList on t4.FormID equals t5.FormID into formQCJoin
+                //        from t5 in formQCJoin.DefaultIfEmpty() // LEFT JOIN
+                //        join tqcGroup in gr
+                //            on new { UnitID = (Guid?)t1.UnitID, t5.CheckListID } equals new { tqcGroup.UnitID, tqcGroup.CheckListID } into tqcJoin
+                //        from tqcGroup in tqcJoin.DefaultIfEmpty() // LEFT JOIN
+                //        where t1.ProjectID == Model.GuID
+                //              && (t4.StatusID == 4 || t4.StatusID == 11)
+                //              && (tqcGroup == null || tqcGroup.QCStatusID == 1 || tqcGroup.QCStatusID == 4) // Handle nulls safely
+                //        select new GetDDL
+                //        {
+                //            ValueGuid = t1.UnitID,
+                //            Text = t1.UnitCode
+                //        })
+                //        .Distinct()
+                //        .OrderBy(result => result.Text) // Ensure ordering works correctly
+                //        .ToList();
+
+                //    return GetListUnitPass;
+
                 case "GetListUnitPass":
 
-                    var gr = from tqc in _context.tr_QC_UnitCheckList
-                             group tqc by new { tqc.ID, tqc.UnitID, tqc.CheckListID, tqc.QCStatusID } into grouped
-                             select new
-                             {
-                                 MaxSeq = grouped.Max(g => g.Seq),
-                                 grouped.Key.ID,
-                                 grouped.Key.UnitID,
-                                 grouped.Key.CheckListID,
-                                 grouped.Key.QCStatusID
-                             };
+                    var GetListUnitPass = (from t1 in _context.tm_Unit
+                                  join t2 in _context.tm_Project on t1.ProjectID equals t2.ProjectID into projectJoin
+                                  from t2 in projectJoin.DefaultIfEmpty() // LEFT JOIN equivalent for project
+                                  join t4 in _context.tr_UnitForm on new { t1.ProjectID, UnitID = (Guid?)t1.UnitID } equals new { t4.ProjectID, t4.UnitID } into unitFormJoin
+                                  from t4 in unitFormJoin.DefaultIfEmpty() // LEFT JOIN equivalent for unit form
+                                  join t5 in _context.tr_Form_QCCheckList on t4.FormID equals t5.FormID into formQCCheckJoin
+                                  from t5 in formQCCheckJoin.DefaultIfEmpty() // LEFT JOIN equivalent for form QC check
+                                  join tqcMax in (
+                                      from tqc in _context.tr_QC_UnitCheckList
+                                      group tqc by new { tqc.ID, tqc.UnitID, tqc.CheckListID, tqc.QCStatusID } into grouped
+                                      select new
+                                      {
+                                          MaxSeq = grouped.Max(x => x.Seq),
+                                          grouped.Key.ID,
+                                          grouped.Key.UnitID,
+                                          grouped.Key.CheckListID,
+                                          grouped.Key.QCStatusID
+                                      }
+                                  ) on new { UnitID = (Guid?)t1.UnitID, t5.CheckListID } equals new { tqcMax.UnitID, tqcMax.CheckListID } into tqcMaxJoin
+                                  from tqcMax in tqcMaxJoin.DefaultIfEmpty() // LEFT JOIN equivalent for max sequence subquery
+                                  where t1.ProjectID == Model.GuID
+                                        && new[] { 4, 11 }.Contains(t4.StatusID ?? 0) // Handling nullable StatusID
+                                        && new[] { 1, 4 }.Contains(tqcMax.QCStatusID ?? 0) // Handling nullable QCStatusID
+                                  orderby t1.UnitCode
+                                  select new GetDDL
+                                  {
+                                      ValueGuid = t1.UnitID,
+                                      Text = t1.UnitCode
+                                  }).Distinct().ToList();
 
-
-                    var GetListUnitPass = (
-                        from t1 in _context.tm_Unit
-                        join t2 in _context.tm_Project on t1.ProjectID equals t2.ProjectID into projectJoin
-                        from t2 in projectJoin.DefaultIfEmpty() // LEFT JOIN
-                        join t4 in _context.tr_UnitForm on new { UnitID = (Guid?)t1.UnitID, ProjectID = (Guid?)t2.ProjectID } equals new { t4.UnitID, t4.ProjectID } into unitFormJoin
-                        from t4 in unitFormJoin.DefaultIfEmpty() // LEFT JOIN
-                        join t5 in _context.tr_Form_QCCheckList on t4.FormID equals t5.FormID into formQCJoin
-                        from t5 in formQCJoin.DefaultIfEmpty() // LEFT JOIN
-                        join tqcGroup in gr
-                            on new { UnitID = (Guid?)t1.UnitID, t5.CheckListID } equals new { tqcGroup.UnitID, tqcGroup.CheckListID } into tqcJoin
-                        from tqcGroup in tqcJoin.DefaultIfEmpty() // LEFT JOIN
-                        where t1.ProjectID == Model.GuID
-                              && (t4.StatusID == 4 || t4.StatusID == 11)
-                              && (tqcGroup == null || tqcGroup.QCStatusID == 1 || tqcGroup.QCStatusID == 4) // Handle nulls safely
-                        select new GetDDL
-                        {
-                            ValueGuid = t1.UnitID,
-                            Text = t1.UnitCode
-                        })
-                        .Distinct()
-                        .OrderBy(result => result.Text) // Ensure ordering works correctly
-                        .ToList();
 
                     return GetListUnitPass;
-
-
 
                 default:
 
