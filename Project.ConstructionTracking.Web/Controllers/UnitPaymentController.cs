@@ -42,7 +42,7 @@ namespace Project.ConstructionTracking.Web.Controllers
         [HttpGet]
         public IActionResult GetDDLUnitPass(Guid ProjectID)
         {
-            var ddlModel = new GetDDL { Act = "GetListUnitPass", ValueGuid = ProjectID };
+            var ddlModel = new GetDDL { Act = "GetListUnitPass", GuID = ProjectID };
             List<GetDDL> ListUnitPass = _getDDLService.GetDDLList(ddlModel);
             return Json(ListUnitPass);
         }

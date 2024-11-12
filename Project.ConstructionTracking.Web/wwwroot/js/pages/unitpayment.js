@@ -17,7 +17,7 @@
         searchField: 'Text',
         create: false,
         sortField: 'Text',
-        placeholder: 'กรุณาเลือกหน่วย',
+        placeholder: 'กรุณาเลือก Unit',
         maxItems: null // Allow multiple selections
     });
 
@@ -34,7 +34,7 @@
                 success: function (response) {
                     var ddlUnitSelectize = $ddlUnit[0].selectize; // Access the Selectize instance
                     ddlUnitSelectize.clearOptions(); // Clear existing options
-                    ddlUnitSelectize.addOption({ ValueGuid: '', Text: 'กรุณาเลือกหน่วย' }); // Add default option
+/*                    ddlUnitSelectize.addOption({ ValueGuid: '', Text: 'กรุณาเลือกหน่วย' }); // Add default option*/
 
                     // Add new options from the response
                     response.forEach(function (item) {
@@ -52,7 +52,7 @@
             // Clear the unit dropdown if no project is selected
             var ddlUnitSelectize = $ddlUnit[0].selectize;
             ddlUnitSelectize.clearOptions();
-            ddlUnitSelectize.addOption({ ValueGuid: '', Text: 'กรุณาเลือกหน่วย' });
+           /* ddlUnitSelectize.addOption({ ValueGuid: '', Text: 'กรุณาเลือกหน่วย' });*/
         }
     });
 
