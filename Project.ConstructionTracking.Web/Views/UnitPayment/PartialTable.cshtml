@@ -1,0 +1,126 @@
+﻿<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
+<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.WorkPeriodModel>
+
+<style>
+    .table-container {
+        overflow-x: auto; /* Enable horizontal scrolling */
+      /*   overflow-y: auto; */ /* Enable vertical scrolling */
+        max-height: 600px; /* Set max height for vertical scrolling */
+    }
+
+    table {
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+    }
+
+    .custom-table {
+        text-align: center;
+        border: 1px solid #ddd;
+        padding: 8px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-table th, .custom-table td {
+        padding: 8px; /* Add some padding for better spacing */
+        border: 1px solid #dee2e6;
+        white-space: nowrap;
+        overflow: hidden; /* Hide overflow content */
+        text-overflow: ellipsis; /* Show ellipsis (...) for overflow */
+    }
+
+    .custom-table th {
+        background-color: #f8f9fa;
+        font-size: 0.9rem; /* Adjust to make the table head bigger */
+        font-weight: bold;
+    }
+
+    .custom-table td {
+        font-size: 0.8rem; /* Smaller font size for table data */
+        text-align: left;
+    }
+
+    .custom-table tbody tr:hover {
+        background-color: #8495f5;
+    }
+
+</style>
+
+<div class="card" id="custom-card">
+    <div class="card-body">
+        <!-- Display the row count -->
+        <div class="row-count">
+            จำนวนรายการทั้งหมด: @Model.Count
+        </div>
+        <div class="table-container">
+            <table class="custom-table" id="tbunitpayment">
+                <thead>
+                    <tr>
+                        <th class="w-1">No.</th>
+                        <th class="w-1">โครงการ</th>
+                        <th>Unit</th>
+                        <th>งวดที่</th>
+                        <th>ผู้รับเหมา</th>
+                        <th>เลขที่ PO</th>
+                        <th>วันที่อนุมัติ</th>
+                        <th>ใบตรวจงวดงาน</th>
+                        <th>ใบตรวจ QC</th>
+                        <th>เลข GR</th>
+                        <th>วันที่บันทึก GR</th>
+                        <th>สถานะบัญชี</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.index</td>
+                                <td><a href="#" class="text-reset" tabindex="-1">@item.ProjectName</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">@item.UnitCode</a></td>
+                                <td><span class="text-secondary">@item.FormName</span></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">@item.CompanyVendorName</a></td>
+                                <td>@item.PONo</td>
+                                <td>@item.ApproveDate</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.UnitFormPDF))
+                                    {
+                                        <a href="@($"{ViewBag.BaseUrl}{item.UnitFormPDF}")" target="_blank">
+                                            <i class="fa-solid fa-file-pdf fa-2xl"></i>
+                                        </a>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.QCPDF))
+                                    {
+                                        var files = item.QCPDF.Split(',').OrderBy(pdf => pdf).ToArray(); // Sort files alphabetically
+                                        foreach (var pdf in files)
+                                        {
+                                            <a href="@($"{ViewBag.BaseUrl}{pdf}")" target="_blank">
+                                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
+                                            </a>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary btn-pill w-70"
+                                            onclick="openGR('@item.ProjectName', '@item.CompanyVendorName', '@item.FormName', '@item.PONo')">
+                                        ใส่เลข GR
+                                    </button>
+                                </td>
+                                <td>@item.GRDate</td>
+                                <td><span class="badge bg-secondary me-1"></span> @item.Statusworkperiod</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
