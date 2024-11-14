@@ -51,9 +51,16 @@
 </style>
 <div class="card" id="custom-card">
     <div class="card-body">
-        <!-- Display the row count -->
-        <div class="row-count">
-            จำนวนรายการทั้งหมด: @Model.Count
+        <!-- Display the row count and Export button -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="row-count">
+                จำนวนรายการทั้งหมด: @Model.Count
+            </div>
+            <div>
+                <button class="btn btn-success" id="exportExcel">
+                    <i class="fas fa-file-excel"></i> Export to Excel
+                </button>
+            </div>
         </div>
         <div class="table-container">
             <table class="custom-table">
@@ -63,6 +70,7 @@
                         <th>แปลงที่</th>
                         <th>งวดที่</th>
                         <th>รายการตรวจ</th>
+                        <th>สถานะปัจจุบัน</th>
                         <th>วันที่ PE ส่งเรื่อง</th>
                         <th>เหตุผลจากวิศวกร<br>ผู้ควบคุมงาน</th>
                         <th>วันที่ PM ยืนยัน</th>
@@ -72,8 +80,7 @@
                         <th>สถานะ PJM ยืนยัน</th>
                         <th>ความคิดเห็นจาก <br>PJM Head</th>
                         <th>วันที่ขอปลดล๊อค</th>
-                        <th>วันที่อนุมัติปลดล๊อค</th>
-                        <th>สถานะปัจจุบัน</th>
+                        <th>วันที่อนุมัติปลดล๊อค</th>                     
                     </tr>
                 </thead>
                 <tbody>
@@ -86,6 +93,7 @@
                                 <td>@item.UnitCode</td>
                                 <td>@item.FormName</td>
                                 <td>@item.FormGroupName </td>
+                                <td>@item.PCStatusName</td>
 
                                 <td> @item.PEActionDate <br> @item.PEActionName</td>
                                 <td>@item.PEPCRemark</td>
@@ -99,8 +107,7 @@
                                 <td>@item.PJMPCRemark</td>
 
                                 <td>@item.PERequestUnlock</td>
-                                <td>@item.PMUnlock</td>
-                                <td>@item.PCStatusName</td>
+                                <td>@item.PMUnlock</td>                               
                             </tr>
                         }
                     }
@@ -117,5 +124,11 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+
+    document.getElementById('exportExcel').addEventListener('click', handleExportToExcel);
+
+</script>
 
 

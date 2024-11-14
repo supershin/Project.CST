@@ -36,24 +36,26 @@
             <div class="card" id="card-filter">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12 col-sm-5 mb-2">
+                        <div class="col-12 col-sm-2 mb-2">
                             <input type="text" id="ddlproject" placeholder="ค้นหาโครงการ...">
                             <input type="hidden" id="selectedProjectId" />
                         </div>
-                        <div class="col-3 col-sm-2 mb-2">
-                              <input type="text" id="startDate" placeholder="dd/mm/yyyy" class="form-control">
+                        <div class="col-12 col-sm-2 mb-2">
+                            <input type="text" id="ddlStatus" placeholder="ค้นหาสถานะ...">
+                            <input type="hidden" id="selectedStatusIds" />
+                        </div>
+                        <div class="col-12 col-sm-2 mb-2">
+                            <input type="text" id="txtunitsearch" placeholder="ค้นหา Unit..." class="form-control">
                         </div>
                         <div class="col-3 col-sm-2 mb-2">
-                             <input type="text" id="endDate" placeholder="dd/mm/yyyy" class="form-control">
+                            <input type="text" id="startDate" placeholder="วันที่ส่งเรื่อง (เริ่มต้น)" class="form-control">
                         </div>
-                        <div class="col-6 col-sm-1 mb-2">
-                            <button class="btn btn-primary" id="searchButton">
+                        <div class="col-3 col-sm-2 mb-2">
+                            <input type="text" id="endDate" placeholder="วันที่ส่งเรื่อง (สิ้นสุด)" class="form-control">
+                        </div>
+                        <div class="col-6 col-sm-1">
+                            <button class="btn btn-primary w-100" id="searchButton">
                                 <i class="fas fa-search"></i> ค้นหา
-                            </button>
-                        </div>
-                        <div class="col-6 col-sm-1 mb-2">
-                            <button class="btn btn-success" id="exportExcel">
-                                <i class="fas fa-file-excel"></i> Export to Excel
                             </button>
                         </div>
                     </div>
@@ -71,6 +73,68 @@
  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script type="text/javascript">
 
+    function init(){ 
+        $("#exportExcel").unbind('click');
+        document.getElementById('exportExcel').addEventListener('click', function () {
+            // Get the values from the inputs
+            const projectDropdown = $('#ddlproject')[0].selectize;
+            const selectedValue = document.getElementById('selectedProjectId').value;
+            const projectName = projectDropdown.getItem(selectedValue).text();
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            const ddlStatusSelectize = $('#ddlStatus')[0].selectize;
+            const ddlStatusSelectizetest = document.getElementById('ddlStatus').value;
+            const ddlStatusName = ddlStatusSelectize.getItem(ddlStatusSelectizetest).text();
+            console.log(ddlStatusName);
+            const selectedStatuses = ddlStatusSelectize.getItem(); // Get selected values as an array of values
+            console.log(selectedStatuses);
+            const selectedStatusTexts = selectedStatuses.map(value => ddlStatusSelectize.options[value].text); // Map values to texts
+            const statusString = selectedStatusTexts.join(','); // Convert array of texts to a comma-separated string
+
+            const unitSearch = document.getElementById('txtunitsearch').value;
+
+            // Check if a value is selected
+            if (!selectedValue) {
+                showAlertandClose('กรุณาเลือกโครงการก่อนทำการ Export');
+                return;
+            }
+
+            // Show loading indicator
+            showLoadingScreen();
+
+            // Use fetch API to get the file and download it with the selected projectId and additional parameters
+            fetch(baseUrl + 'ReportProjectPassCondition/ExportToExcel?projectId=' + encodeURIComponent(selectedValue) +
+                '&projectName=' + encodeURIComponent(projectName) +
+                '&startdate=' + encodeURIComponent(startDate) +
+                '&enddate=' + encodeURIComponent(endDate) +
+                '&statusIds=' + encodeURIComponent(statusString) +
+                '&unitSearch=' + encodeURIComponent(unitSearch))
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob(); // Convert the response to a blob
+                })
+                .then(blob => {
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'ReportProjectPassCondition.xlsx'; // Set the file name
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Close the loading indicator
+                    Swal.close();
+                })
+                .catch(error => {
+                    console.error('Error during the download:', error);
+                    // Close the loading indicator
+                    Swal.close();
+                });
+        });
+    }
+
     flatpickr("#startDate", {
         dateFormat: "d/m/Y" // Set format to dd/mm/yyyy
     });
@@ -79,56 +143,12 @@
     });
 
     // Handle the Export to Excel button click
-    document.getElementById('exportExcel').addEventListener('click', function () {
-    // Get the values from the inputs
-    // console.log(document.getElementById('selectedProjectId'));
-    const projectDropdown = $('#ddlproject')[0].selectize;
 
-    const selectedValue = document.getElementById('selectedProjectId').value;
-    const projectName = projectDropdown.getItem(selectedValue).text();;
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-
-    // Check if a value is selected
-    if (!selectedValue) {
-        showAlertandClose('กรุณาเลือกโครงการก่อนทำการ Export'); // Use a simple alert or replace with a preferred method
-        return;
-    }
-
-    // Show loading indicator
-    showLoadingScreen();
-
-    // Use fetch API to get the file and download it with the selected projectId and additional parameters
-    fetch(baseUrl + 'ReportProjectPassCondition/ExportToExcel?projectId=' + encodeURIComponent(selectedValue) +
-            '&projectName=' + encodeURIComponent(projectName) +
-            '&startdate=' + encodeURIComponent(startDate) +
-            '&enddate=' + encodeURIComponent(endDate))
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.blob(); // Convert the response to a blob
-        })
-        .then(blob => {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'ReportProjectPassCondition.xlsx'; // Set the file name
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            // Close the loading indicator
-            Swal.close();
-        })
-        .catch(error => {
-            console.error('Error during the download:', error);
-            // Close the loading indicator
-            Swal.close();
-        });
-    });
+    
 
 
     document.addEventListener('DOMContentLoaded', function () {
+        // Project Dropdown Initialization
         const ddlProject = $('#ddlproject').selectize({
             valueField: 'ValueGuid',
             labelField: 'Text',
@@ -139,70 +159,85 @@
             maxItems: 1 // Restrict to single selection
         });
 
-        // Get the selectize instance
-        const selectize = ddlProject[0].selectize;
-
-        // Populate with data from ViewBag
+        const selectizeProject = ddlProject[0].selectize;
         const projectData = @Html.Raw(Json.Serialize(ViewBag.DDLProject));
-
         projectData.forEach(item => {
-            selectize.addOption({ ValueGuid: item.ValueGuid, Text: item.Text });
+            selectizeProject.addOption({ ValueGuid: item.ValueGuid, Text: item.Text });
         });
 
-        // Pre-select the value if it exists in ViewBag
         const selectedProjectId = '@Html.Raw(ViewBag.SelectedProjectId)';
         if (selectedProjectId) {
-            selectize.setValue(selectedProjectId);
+            selectizeProject.setValue(selectedProjectId);
             document.getElementById('selectedProjectId').value = selectedProjectId;
         }
 
-        // Update hidden input when a selection is made
-        selectize.on('change', function () {
-            const selectedValue = selectize.getValue();
+        selectizeProject.on('change', function () {
+            const selectedValue = selectizeProject.getValue();
             document.getElementById('selectedProjectId').value = selectedValue;
-
-            // Optionally save the selected value in a cookie
             document.cookie = `selectedProjectId=${selectedValue}; path=/; expires=${new Date(new Date().setDate(new Date().getDate() + 7)).toUTCString()}`;
         });
 
+        // Status Dropdown Initialization for Multi-Select
+        const ddlStatus = $('#ddlStatus').selectize({
+            valueField: 'Value',
+            labelField: 'Text',
+            searchField: 'Text',
+            options: [],
+            create: false,
+            placeholder: 'ค้นหาสถานะ...',
+            maxItems: null // Allow multiple selection
+        });
+
+        const selectizeStatus = ddlStatus[0].selectize;
+        const statusData = @Html.Raw(Json.Serialize(ViewBag.DDLStatusPC));
+        statusData.forEach(item => {
+            selectizeStatus.addOption({ Value: item.Value, Text: item.Text });
+        });
+
         // Handle the search button click
-       document.getElementById('searchButton').addEventListener('click', function () {
-            const selectedValue = document.getElementById('selectedProjectId').value;
+        document.getElementById('searchButton').addEventListener('click', function () {
+            const selectedProjectValue = document.getElementById('selectedProjectId').value;
+            const selectedStatusValues = selectizeStatus.getValue();
+            // console.log(selectedStatusValues);
+            // const selectedStatusString = selectedStatusValues.join(',');
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
+            const unitSearchValue = document.getElementById('txtunitsearch').value;
 
-            // Check if a value is selected
-            if (!selectedValue) {
-                showAlertandClose('กรุณาเลือกโครงการก่อนทำการค้นหา'); // Use a simple alert or replace with a preferred method
+            if (!selectedProjectValue) {
+                showAlertandClose('กรุณาเลือกโครงการก่อนทำการค้นหา');
                 return;
             }
 
-            // Show loading indicator
             showLoadingScreen();
 
-            // Perform an AJAX POST request to the search action
             $.ajax({
                 url: baseUrl + 'ReportProjectPassCondition/SearchProject',
                 type: 'POST',
-                data: { projectId: selectedValue, startdate: startDate, enddate: endDate },
+                data: {
+                    projectId: selectedProjectValue,                   
+                    startdate: startDate,
+                    enddate: endDate,
+                    unitsearch: unitSearchValue,
+                    status: selectedStatusValues
+                },
                 success: function (result) {
-                    // Replace the partial view content with the updated data
                     $('#PartialTableReport').html(result);
-
-                    // Close the loading indicator
+                    init();
                     Swal.close();
                 },
                 error: function (xhr, status, error) {
                     console.error('Error during the search:', error);
-                    // Close the loading indicator
                     Swal.close();
                 }
             });
         });
 
+        init();
     });
 
 </script>
+
 
 
 

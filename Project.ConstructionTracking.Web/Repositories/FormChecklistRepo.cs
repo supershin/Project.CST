@@ -467,6 +467,7 @@ public class FormChecklistRepo : IFormChecklistRepo
                 UnitFormID = unitFormIDUse,
                 GroupID = pcCheck.GroupID,
                 LockStatusID = 7,
+                StatusID = 1,
                 PE_Remark = pcCheck.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
                 FlagActive = true,
                 ActionDate = DateTime.Now,
