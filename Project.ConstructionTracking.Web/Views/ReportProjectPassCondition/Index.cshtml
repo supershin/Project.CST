@@ -40,20 +40,20 @@
                             <input type="text" id="ddlproject" placeholder="ค้นหาโครงการ...">
                             <input type="hidden" id="selectedProjectId" />
                         </div>
-                        <div class="col-12 col-sm-2 mb-2">
+                        <div class="col-12 col-sm-3 mb-2">
                             <input type="text" id="ddlStatus" placeholder="ค้นหาสถานะ...">
                             <input type="hidden" id="selectedStatusIds" />
                         </div>
                         <div class="col-12 col-sm-2 mb-2">
                             <input type="text" id="txtunitsearch" placeholder="ค้นหา Unit..." class="form-control">
                         </div>
-                        <div class="col-3 col-sm-2 mb-2">
+                        <div class="col-6 col-sm-2 mb-2">
                             <input type="text" id="startDate" placeholder="วันที่ส่งเรื่อง (เริ่มต้น)" class="form-control">
                         </div>
-                        <div class="col-3 col-sm-2 mb-2">
+                        <div class="col-6 col-sm-2 mb-2">
                             <input type="text" id="endDate" placeholder="วันที่ส่งเรื่อง (สิ้นสุด)" class="form-control">
                         </div>
-                        <div class="col-6 col-sm-1">
+                        <div class="col-12 col-sm-1">
                             <button class="btn btn-primary w-100" id="searchButton">
                                 <i class="fas fa-search"></i> ค้นหา
                             </button>
@@ -84,14 +84,11 @@
             const endDate = document.getElementById('endDate').value;
 
             const ddlStatusSelectize = $('#ddlStatus')[0].selectize;
-            const ddlStatusSelectizetest = document.getElementById('ddlStatus').value;
-            const ddlStatusName = ddlStatusSelectize.getItem(ddlStatusSelectizetest).text();
-            console.log(ddlStatusName);
-            const selectedStatuses = ddlStatusSelectize.getItem(); // Get selected values as an array of values
+            const selectedStatuses = ddlStatusSelectize.getValue();
             console.log(selectedStatuses);
-            const selectedStatusTexts = selectedStatuses.map(value => ddlStatusSelectize.options[value].text); // Map values to texts
-            const statusString = selectedStatusTexts.join(','); // Convert array of texts to a comma-separated string
-
+            // const selectedStatusTexts = ddlStatusSelectize.map(value => ddlStatusSelectize.options[value].text);
+            // console.log(selectedStatusTexts);
+            // const statusString = selectedStatusTexts.join(',');
             const unitSearch = document.getElementById('txtunitsearch').value;
 
             // Check if a value is selected
@@ -108,7 +105,7 @@
                 '&projectName=' + encodeURIComponent(projectName) +
                 '&startdate=' + encodeURIComponent(startDate) +
                 '&enddate=' + encodeURIComponent(endDate) +
-                '&statusIds=' + encodeURIComponent(statusString) +
+                '&statusIds=' + encodeURIComponent(selectedStatuses) +
                 '&unitSearch=' + encodeURIComponent(unitSearch))
                 .then(response => {
                     if (!response.ok) {

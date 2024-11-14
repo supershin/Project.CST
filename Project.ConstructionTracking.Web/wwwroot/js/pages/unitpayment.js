@@ -28,7 +28,7 @@
         if (selectedProjectId) {
             // AJAX call to fetch units based on selected project
             $.ajax({
-                url: '/UnitPayment/GetDDLUnitPass', // Ensure the URL matches your endpoint
+                url: baseUrl + 'UnitPayment/GetDDLUnitPass', // Ensure the URL matches your endpoint
                 type: 'GET',
                 data: { ProjectID: selectedProjectId },
                 success: function (response) {

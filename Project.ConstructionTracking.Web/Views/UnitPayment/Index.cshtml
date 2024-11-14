@@ -51,7 +51,7 @@
                             <input type="hidden" id="selectedUnitIds" />
                         </div>
                         <div class="col-4 col-sm-2 mb-2">
-                            <button class="btn btn-primary" id="searchButton">
+                            <button class="btn btn-primary w-100" id="searchButton">
                                 <i class="fas fa-search"></i> ค้นหา
                             </button>
                         </div>
@@ -64,6 +64,209 @@
         </div>
     </div>
 </div>
+<!-- Modal -->
+@* <div class="modal fade" id="accountModal" tabindex="-1" aria-labelledby="accountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="accountModalLabel">Manage Accounts</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Left Container (Insert New Account) -->
+                    <div class="col-12 col-md-6 mb-3">
+                        <h6>Insert New Account</h6>
+                        <form id="insertAccountForm">
+                            <div class="mb-3">
+                                <label for="accountName" class="form-label">Account Name</label>
+                                <input type="text" class="form-control" id="accountName" placeholder="Enter account name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="accountType" class="form-label">Account Type</label>
+                                <select class="form-select" id="accountType" required>
+                                    <option value="" disabled selected>Select an account type</option>
+                                    <option value="type1">Type 1</option>
+                                    <option value="type2">Type 2</option>
+                                    <option value="type3">Type 3</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success">Add Account</button>
+                        </form>
+                    </div>
+                    <!-- Right Container (List of Accounts) -->
+                    <div class="col-12 col-md-6">
+                        <h6>List of Accounts</h6>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Account Name</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accountList">
+                                <!-- Sample row (dynamic rows can be appended here) -->
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Example Account</td>
+                                    <td>Type 1</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary">Edit</button>
+                                        <button class="btn btn-sm btn-danger">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div> *@
+
+<div class="modal fade" id="bigModal" tabindex="-1" aria-labelledby="bigModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 80vw; margin: auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bigModalLabel">บันทึกเลข GR</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mt-3">
+                    <!-- Left Container (Form Section) -->
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <form id="accountForm">
+                                    <div class="mb-3">
+                                        <div class="row">
+                                            <div class="col-12 col-sm-6 mb-3">
+                                                <label for="projectName" class="form-label">โครงการ</label>
+                                                <input type="text" class="form-control" id="projectName" placeholder="Enter project name" value="เอสต้า ซีรีนิตี้ บรมราชชนนี" disabled>
+                                            </div>
+                                            <div class="col-12 col-sm-6 mb-3">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <label for="unit" class="form-label">Unit</label>
+                                                        <input type="text" class="form-control" id="unit" placeholder="Enter unit" value="AA0001" disabled>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <label for="unit" class="form-label">งวด</label>
+                                                        <input type="text" class="form-control" id="unit" placeholder="Enter unit" value="งวดที่ 1" disabled>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="row">
+                                            <div class="col-12 col-sm-6 mb-3">
+                                                <label for="company" class="form-label">บริษัท</label>
+                                                <input type="text" class="form-control" id="company" placeholder="Enter company" value="บริษัท เอ เอส พาวเวอร์ แอสแซท จำกัด" disabled>
+                                            </div>
+                                            <div class="col-12 col-sm-6 mb-3">
+                                                <label for="contractor" class="form-label">ผู้รับเหมา</label>
+                                                <input type="text" class="form-control" id="contractor" placeholder="Enter contractor" value="คุณวรเดช หริ่มรุ่งเรือง" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="row">
+                                            <div class="col-12 col-sm-6 mb-3">
+                                                <label for="poInput" class="form-label">PO Input</label>
+                                                <input type="text" class="form-control" id="poInput" placeholder="Enter PO">
+                                            </div>
+                                            <div class="col-12 col-sm-6 mb-3">
+                                                <div class="row">
+                                                    <div class="col-8">
+                                                        <label for="grInput" class="form-label">GR Input</label>
+                                                        <input type="text" class="form-control" id="grInput" placeholder="Enter GR">
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <label for="percent" class="form-label">Percent</label>
+                                                        <input type="text" class="form-control" id="percent" placeholder="Enter percentage">                                                
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="remark" class="form-label">เพิ่ม remark เพื่อระบุให้กับทาง vendor portal ทราบ</label>
+                                        <textarea class="form-control" id="remark" rows="3"></textarea>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <button type="submit" class="btn btn-success">บันทึก</button>
+                                        <button type="button" class="btn btn-secondary">ยกเลิก</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Container (Table Section) -->
+                    <div class="col-12 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div style="overflow-x: auto; max-height: 600px;">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>บริษัท</th>
+                                                <th>ผู้รับเหมา</th>
+                                                <th>PO</th>
+                                                <th>GR</th>
+                                                <th>Percent</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>บริษัท เอ เอส พาวเวอร์ แอสแซท จำกัด</td>
+                                                <td>คุณวรเดช หริ่มรุ่งเรือง</td>
+                                                <td>PO-123</td>
+                                                <td>GR124</td>
+                                                <td>80%</td>
+                                                <td>Success / Fail</td>
+                                                <td>
+                                                    <button class="btn btn-primary btn-sm">Edit</button>
+                                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>บริษัท เอ เอส พาวเวอร์ แอสแซท จำกัด</td>
+                                                <td>คุณอนุรักษ์ อนันท้าว</td>
+                                                <td>PO-125</td>
+                                                <td>GR999</td>
+                                                <td>20%</td>
+                                                <td>Success / Sync</td>
+                                                <td>
+                                                    <button class="btn btn-primary btn-sm">Edit</button>
+                                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section scripts {
     <link href="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.default.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

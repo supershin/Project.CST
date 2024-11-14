@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Library.DAL;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.StoreProcedureModel;
@@ -203,8 +204,8 @@ namespace Project.ConstructionTracking.Web.Controllers
                 worksheet.Cell(headerRowIndex, 15).Value = "สถานะปัจจุบัน";
 
                 // Prepare date filtering values by parsing dates from dd/mm/yyyy to DateTime
-                DateTime? parsedStartDate = !string.IsNullOrEmpty(startdate) ? DateTime.ParseExact(startdate, "dd/MM/yyyy", CultureInfo.InvariantCulture) : (DateTime?)null;
-                DateTime? parsedEndDate = !string.IsNullOrEmpty(enddate) ? DateTime.ParseExact(enddate, "dd/MM/yyyy", CultureInfo.InvariantCulture) : (DateTime?)null;
+                DateTime? parsedStartDate = Commons.FormatExtension.ToDate(startdate);
+                DateTime? parsedEndDate = Commons.FormatExtension.ToDate(enddate);
 
                 // Data retrieval based on the selected filters
                 var en = new ReportProjectPassConditionModel
@@ -281,8 +282,9 @@ namespace Project.ConstructionTracking.Web.Controllers
             });
 
             // Prepare date filtering values by parsing dates from dd/mm/yyyy to DateTime
-            DateTime? parsedStartDate = !string.IsNullOrEmpty(startdate) ? DateTime.ParseExact(startdate, "dd/MM/yyyy", CultureInfo.InvariantCulture) : (DateTime?)null;
-            DateTime? parsedEndDate = !string.IsNullOrEmpty(enddate) ? DateTime.ParseExact(enddate, "dd/MM/yyyy", CultureInfo.InvariantCulture) : (DateTime?)null;
+            DateTime? parsedStartDate = Commons.FormatExtension.ToDate(startdate);
+            DateTime ? parsedEndDate = Commons.FormatExtension.ToDate(enddate);
+
 
             var en = new ReportProjectPassConditionModel
             {

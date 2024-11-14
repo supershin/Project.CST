@@ -554,9 +554,9 @@ namespace Project.ConstructionTracking.Web.Repositories
             var resp = new
             {
                 QCName = query != null ? query.QCFirstName + " " + query.QCLastName : null,
-                QCNumber = query2.Name,
+                QCNumber = query2 != null ?  query2.Name : null,
                 PEName = query3 != null ? query3.PEFirstName + " " + query3.PELastName : null,
-                PEID = query3.PEID
+                PEID = query3?.PEID
             };
 
             return resp;
