@@ -23,6 +23,7 @@ namespace Project.ConstructionTracking.Web.Data
             tr_UnitForm = new HashSet<tr_UnitForm>();
             tr_UnitFormCheckList = new HashSet<tr_UnitFormCheckList>();
             tr_UnitFormPassCondition = new HashSet<tr_UnitFormPassCondition>();
+            tr_UnitFormPayment = new HashSet<tr_UnitFormPayment>();
             tr_UnitFormResource = new HashSet<tr_UnitFormResource>();
         }
 
@@ -72,6 +73,8 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual ICollection<tr_UnitFormCheckList> tr_UnitFormCheckList { get; set; }
         [InverseProperty("LockStatus")]
         public virtual ICollection<tr_UnitFormPassCondition> tr_UnitFormPassCondition { get; set; }
+        [InverseProperty("SyncStatus")]
+        public virtual ICollection<tr_UnitFormPayment> tr_UnitFormPayment { get; set; }
         [InverseProperty("Role")]
         public virtual ICollection<tr_UnitFormResource> tr_UnitFormResource { get; set; }
     }

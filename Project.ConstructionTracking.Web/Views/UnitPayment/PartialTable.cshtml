@@ -54,8 +54,7 @@
     <div class="card-body">
         <!-- Display the row count -->
         <div class="row-count">
-            @* จำนวนรายการทั้งหมด: @Model.Count *@
-            จำนวนรายการทั้งหมด: 5
+            จำนวนรายการทั้งหมด: @Model.Count
         </div>
         <div class="table-container">
             <table class="custom-table" id="tbunitpayment">
@@ -76,140 +75,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>เอสต้า ซีรีนิตี้ บรมราชชนนี</td>
-                        <td>AA0001</td>
-                        <td>งวดที่ 1</td>
-                        <td>บริษัท เอ เอส พาวเวอร์ แอสแซท จำกัด</td>
-                        <td>PO000001</td>
-                        <td>01-May-2024 15:35</td>
-                        <td>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                        </td>
-                        <td>GR000001</td>
-                        <td>05-May-2024 09:55</td>
-                        <td>เบิกแล้ว</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>เอสต้า ซีรีนิตี้ บรมราชชนนี</td>
-                        <td>AA0001</td>
-                        <td>งวดที่ 2</td>
-                        <td>บริษัท เอ เอส พาวเวอร์ แอสแซท จำกัด</td>
-                        <td>PO000002</td>
-                        <td>01-May-2024 15:35</td>
-                        <td>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                        </td>
-                        <td>GR000002</td>
-                        <td>05-May-2024 09:55</td>
-                        <td>รอตรวจสอบ</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>เอสต้า ซีรีนิตี้ บรมราชชนนี</td>
-                        <td>AA0001</td>
-                        <td>งวดที่ 3</td>
-                        <td>บริษัท เอ เอส พาวเวอร์ แอสแซท จำกัด</td>
-                        <td>PO000003</td>
-                        <td>01-May-2024 15:35</td>
-                        <td>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-primary btn-pill w-70" data-bs-toggle="modal" data-bs-target="#bigModal">
-                                ใส่เลข GR
-                            </button>
-                        </td>
-                        <td>05-May-2024 09:55</td>
-                        <td>
-                            ยังไม่บันทึกเลข GR
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>ดิ อาเบอร์</td>
-                        <td>AA0001</td>
-                        <td>งวดที่ 1</td>
-                        <td>บริษัท เทอร์ราซโซ่ที่ 8 จำกัด</td>
-                        <td>PO000049</td>
-                        <td>01-May-2024 15:35</td>
-                        <td>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                        </td>
-                        <td>GR000036</td>
-                        <td>05-May-2024 09:55</td>
-                        <td>รอตรวจสอบ</td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>ดิ อาเบอร์</td>
-                        <td>AA0001</td>
-                        <td>งวดที่ 2</td>
-                        <td>บริษัท เทอร์ราซโซ่ที่ 8 จำกัด</td>
-                        <td>PO0000053</td>
-                        <td>01-May-2024 15:35</td>
-                        <td>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                            <a href="@($"{ViewBag.BaseUrl}{""}")" target="_blank">
-                                <i class="fa-solid fa-file-pdf fa-2xl"></i>
-                            </a>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-primary btn-pill w-70" data-bs-toggle="modal" data-bs-target="#bigModal">
-                                ใส่เลข GR
-                            </button>
-                        </td>
-                        <td>05-May-2024 09:55</td>
-                        <td>ยังไม่บันทึกเลข GR</td>
-                    </tr>
-                 @* @if (Model != null && Model.Count > 0)
-                    {
+                     @if (Model != null && Model.Count > 0)
+                     {
                         @foreach (var item in Model)
                         {
                             <tr>
@@ -231,7 +98,7 @@
                                 <td>
                                     @if (!string.IsNullOrEmpty(item.QCPDF))
                                     {
-                                        var files = item.QCPDF.Split(',').OrderBy(pdf => pdf).ToArray(); // Sort files alphabetically
+                                        var files = item.QCPDF.Split(',').OrderBy(pdf => pdf).ToArray();
                                         foreach (var pdf in files)
                                         {
                                             <a href="@($"{ViewBag.BaseUrl}{pdf}")" target="_blank">
@@ -249,7 +116,7 @@
                                 <td><span class="badge bg-secondary me-1"></span> @item.Statusworkperiod</td>
                             </tr>
                         }
-                    } *@
+                     }
                 </tbody>
             </table>
         </div>

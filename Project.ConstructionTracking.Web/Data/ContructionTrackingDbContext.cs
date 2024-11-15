@@ -64,6 +64,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tr_UnitFormInbox> tr_UnitFormInbox { get; set; } = null!;
         public virtual DbSet<tr_UnitFormPackage> tr_UnitFormPackage { get; set; } = null!;
         public virtual DbSet<tr_UnitFormPassCondition> tr_UnitFormPassCondition { get; set; } = null!;
+        public virtual DbSet<tr_UnitFormPayment> tr_UnitFormPayment { get; set; } = null!;
         public virtual DbSet<tr_UnitFormResource> tr_UnitFormResource { get; set; } = null!;
         public virtual DbSet<tr_UnitFormUnLockPassCondition> tr_UnitFormUnLockPassCondition { get; set; } = null!;
         public virtual DbSet<tr_UserResource> tr_UserResource { get; set; } = null!;
@@ -791,6 +792,31 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tr_UnitFormPassCondition)
                     .HasForeignKey(d => d.UnitFormID)
                     .HasConstraintName("FK_tr_UnitFormPassCondition_tr_UnitForm");
+            });
+
+            modelBuilder.Entity<tr_UnitFormPayment>(entity =>
+            {
+                entity.Property(e => e.ID).ValueGeneratedNever();
+
+                entity.HasOne(d => d.Project)
+                    .WithMany(p => p.tr_UnitFormPayment)
+                    .HasForeignKey(d => d.ProjectID)
+                    .HasConstraintName("FK_tr_UnitFormPayment_tm_Project");
+
+                entity.HasOne(d => d.SyncStatus)
+                    .WithMany(p => p.tr_UnitFormPayment)
+                    .HasForeignKey(d => d.SyncStatusID)
+                    .HasConstraintName("FK_tr_UnitFormPayment_tm_Ext");
+
+                entity.HasOne(d => d.UnitForm)
+                    .WithMany(p => p.tr_UnitFormPayment)
+                    .HasForeignKey(d => d.UnitFormID)
+                    .HasConstraintName("FK_tr_UnitFormPayment_tr_UnitForm");
+
+                entity.HasOne(d => d.Unit)
+                    .WithMany(p => p.tr_UnitFormPayment)
+                    .HasForeignKey(d => d.UnitID)
+                    .HasConstraintName("FK_tr_UnitFormPayment_tm_Unit");
             });
 
             modelBuilder.Entity<tr_UnitFormResource>(entity =>
