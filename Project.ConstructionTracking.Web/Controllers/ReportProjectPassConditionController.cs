@@ -167,6 +167,10 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             using (var workbook = new XLWorkbook())
             {
+
+                var filter = new GetDDL { Act = "GetListDDLStatusPCtext" , searchTerm = statusIds };
+                List<GetDDL> ListStatustext = _getDDLService.GetDDLList(filter);
+                string concatenatedText = string.Join(",", ListStatustext.Select(x => x.Text));
                 var worksheet = workbook.Worksheets.Add("Report Project PassCondition");
 
                 // Add filter values
@@ -178,7 +182,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 worksheet.Cell(4, 1).Value = "End Date :";
                 worksheet.Cell(4, 2).Value = enddate;
                 worksheet.Cell(5, 1).Value = "สถานะ :";
-                worksheet.Cell(5, 2).Value = statusIds;
+                worksheet.Cell(5, 2).Value = statusIds == null ? "- สถานะทั้งหมด -" : concatenatedText;
                 worksheet.Cell(6, 1).Value = "พิมพ์ค้นหา :";
                 worksheet.Cell(6, 2).Value = unitSearch;
 

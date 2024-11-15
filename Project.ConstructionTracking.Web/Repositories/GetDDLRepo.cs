@@ -259,27 +259,21 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 return GetListUnitPass;
 
-                //case "GetListDDLStatusRpPC":
+                case "GetListDDLStatusPCtext":
 
-                //    var GetListDDLStatusRpPC = (from t1 in _context.tr_UnitForm
-                //                 join t2 in _context.tr_UnitFormPassCondition on t1.ID equals t2.UnitFormID into t2Group
-                //    from t2 in t2Group.DefaultIfEmpty()
-                //                 join t3 in _context.tr_RoleActionStatus on t2.StatusID equals t3.ID into t3Group
-                //                 from t3 in t3Group.DefaultIfEmpty()
-                //                 where t1.ProjectID == Model.GuID
-                //                       && (string.IsNullOrEmpty(Model.searchTerm) || ("," + Model.searchTerm + ",").Contains("," + t1.UnitID.ToString() + ","))
-                //                       && t2.ID != null
-                //                 select new GetDDL
-                //                 {
-                //                     Value = t2.StatusID,
-                //                     Text = t3 != null ? t3.Name : null
-                //                 })
-                //                 .Distinct()
-                //                 .ToList();
+                    var GetListDDLStatusPCtext = (from t1 in _context.tr_RoleActionStatus
+                                              where (string.IsNullOrEmpty(Model.searchTerm) || ("," + Model.searchTerm + ",").Contains("," + t1.ID.ToString() + ","))
+                                                select new GetDDL
+                                                {
+                                                    Value = t1.ID,
+                                                    Text = t1.Name
+                                                })
+                                 .Distinct()
+                                 .ToList();
 
 
 
-                //    return GetListDDLStatusRpPC;
+                 return GetListDDLStatusPCtext;
 
                 case "GetListDDLUnitRpPC":
 
