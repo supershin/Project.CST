@@ -1340,87 +1340,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 }
                                 else
                                 {
-                                    //if (data.ParentDetailDatas != null && data.ParentDetailDatas.Count > 0)
-                                    //{
-                                    //    if(data.StatusID != null) 
-                                    //    {
-                                    //        if (data.StatusID == SystemConstant.Qc_CheckList_Status.PASS)
-                                    //        {
-                                    //            table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text("✓"); // "ผ่าน" column (checked)
-                                    //            table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
-                                    //            table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text(data.PassBySeq.ToString());
-                                    //        }
-                                    //        else
-                                    //        {
-                                    //            table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
-                                    //            table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("✓"); // "ไม่ผ่าน" column (checked)
-                                    //            if (data.PassBySeq == 0)
-                                    //            {
-                                    //                table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("N/A");
-                                    //            }
-                                    //            else
-                                    //            {
-                                    //                table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
-                                    //            }
-                                    //        }
-                                    //        table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).AlignLeft().Text(data.DetailRemark);      // ความเห็นเพิ่มเติม
-                                    //    }
-                                    //    else
-                                    //    {
-                                    //        table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
-                                    //        table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
-                                    //        table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
-                                    //        table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).Text("");
-                                    //    }
-
-                                    //    int indexParent = index2 + 1;
-                                    //    foreach (var data2 in data.ParentDetailDatas)
-                                    //    {
-                                    //        if (data.StatusID != null)
-                                    //        {
-                                    //            if (data.StatusID == SystemConstant.Qc_CheckList_Status.PASS)
-                                    //            {
-                                    //                table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text("✓"); // "ผ่าน" column (checked)
-                                    //                table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
-                                    //                table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text(data.PassBySeq.ToString());
-                                    //            }
-                                    //            else
-                                    //            {
-                                    //                table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text("");  // "ผ่าน" column (empty)
-                                    //                table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("✓"); // "ไม่ผ่าน" column (checked)
-                                    //                if (data.PassBySeq == 0)
-                                    //                {
-                                    //                    table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("N/A");
-                                    //                }
-                                    //                else
-                                    //                {
-                                    //                    table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("");
-                                    //                }
-                                    //            }
-                                    //            table2.Cell().Row((uint)indexParent).Column(6).Element(CellStyle).AlignLeft().Text(data.DetailRemark);      // ความเห็นเพิ่มเติม
-                                    //        }
-                                    //        else
-                                    //        {
-
-                                    //            table2.Cell().Row((uint)indexParent).Column(1).Element(CellStyle).Text("");  // Index column
-                                    //            table2.Cell().Row((uint)indexParent).Column(2).Element(CellStyle).AlignLeft().Text("- " + data2.ParentDetailName).WrapAnywhere();
-                                    //            table2.Cell().Row((uint)indexParent).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
-                                    //            table2.Cell().Row((uint)indexParent).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
-                                    //            table2.Cell().Row((uint)indexParent).Column(5).Element(CellStyle).Text("");
-                                    //            table2.Cell().Row((uint)indexParent).Column(6).Element(CellStyle).AlignLeft().Text("");// ความเห็นเพิ่มเติม
-                                    //        }
-                                    //        indexParent++;
-                                    //    }
-                                    //    index2 = indexParent;
-                                    //}
-                                    //else
-                                    //{
-                                    //    table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
-                                    //    table2.Cell().Row((uint)index2).Column(4).Element(CellStyle).Text("");  // "ไม่ผ่าน" column (empty)
-                                    //    table2.Cell().Row((uint)index2).Column(5).Element(CellStyle).Text("");
-                                    //    table2.Cell().Row((uint)index2).Column(6).Element(CellStyle).Text("");
-                                    //    index2++;
-                                    //}
                                     if (data.ParentDetailDatas != null && data.ParentDetailDatas.Count > 0)
                                     {
                                         table2.Cell().Row((uint)index2).Column(3).Element(CellStyle).Text(""); // "ผ่าน" column (checked)
@@ -1525,7 +1444,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                            
                             if (dataQCGenerate.HeaderQCData?.QCStatus == SystemConstant.UnitQCStatus.IsNotReadyInspect)
                             {
-                                table3.Cell().Row(2).Column(1).AlignLeft().Text("สภาพไม่พร้อมให้ตรวจ").Bold();
+                                table3.Cell().Row(2).Column(1).AlignLeft().Text(" " + "สภาพไม่พร้อมให้ตรวจ").Bold();
                                 table3.Cell().Row(2).Column(2).Text("ความเห็นเพิ่มเติม");
                                 if (dataQCGenerate.HeaderQCData.Info != null)
                                 {
@@ -1562,7 +1481,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                                     table3.Cell().Row(3).Column(2).Text(dataQCGenerate.HeaderQCData.Info.MainRemark);
                                 }
-
                             }
                             else
                             {
@@ -1570,21 +1488,27 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 int i = 2;
                                 foreach (var data in dataQCGenerate?.BodyQCPdf.QcCheckListDetailDatas)
                                 {
+                                    bool hasNotPassParent = data.ParentDetailDatas?.Any(o => o.ParentStatusID == SystemConstant.Qc_CheckList_Status.NOTPASS) ?? false;
+                                    if (hasNotPassParent)
+                                    {
+                                        table3.Cell().Row((uint)i).Column(1).AlignLeft().Text(" " + index2 + ". " + data.DetailName).Bold();
+                                        table3.Cell().Row((uint)i).Column(2).Text("ความเห็นเพิ่มเติม");
+                                        i++; // Move to next row
+                                    }
+
                                     if (data.ParentDetailDatas != null && data.ParentDetailDatas.Count > 0)
                                     {
-                                        if(data.ParentDetailDatas.Any(o => o.ParentStatusID == SystemConstant.Qc_CheckList_Status.NOTPASS))
-                                        {
-                                            table3.Cell().Row((uint)i).Column(1).AlignLeft().Text(index2 + ". " + data.DetailName).Bold();
-                                            table3.Cell().Row((uint)i).Column(2).Text("ความเห็นเพิ่มเติม");
-                                        }
-                                        int mainRow = i + 1;
-                                        int parentRow = mainRow + 1;
+                                        int mainRow = i; // Initialize mainRow based on current i
                                         foreach (var data2 in data.ParentDetailDatas)
                                         {
                                             if (data2.ParentStatusID == SystemConstant.Qc_CheckList_Status.NOTPASS)
                                             {
-                                                table3.Cell().Row((uint)mainRow).Column(1).AlignLeft().Text(data2.ParentDetailName);
-                                                table3.Cell().Row((uint)parentRow).Column(1).Grid(grid =>
+                                                // Render parent detail name
+                                                table3.Cell().Row((uint)mainRow).Column(1).AlignLeft().Text(" " + data2.ParentDetailName);
+                                                mainRow++; // Increment row for images or other content
+
+                                                // Render images in the next row
+                                                table3.Cell().Row((uint)mainRow).Column(1).Grid(grid =>
                                                 {
                                                     grid.VerticalSpacing(15);
                                                     grid.HorizontalSpacing(15);
@@ -1599,64 +1523,63 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                         if (System.IO.File.Exists(imgPath))
                                                         {
                                                             using var img = new FileStream(imgPath, FileMode.Open);
-
-                                                            // Display each image and let QuestPDF handle the natural size
-                                                            grid.Item(4).AlignCenter().AlignMiddle()  // Center the image both horizontally and vertically
-                                                                .Border(0.5f)                        // Optional border for styling
+                                                            grid.Item(4).AlignCenter().AlignMiddle()
+                                                                .Border(0.5f)
                                                                 .Width(100)
                                                                 .Height(100)
-                                                                .Image(img);                         // Automatically adjust size based on image
+                                                                .Image(img);
                                                         }
                                                     }
                                                 });
-                                                table3.Cell().Row((uint)parentRow).Column(2).AlignLeft().Text(data2.ParentDetailRemark);
-                                                mainRow = parentRow + 1;
-                                                parentRow = mainRow + 1;
+
+                                                mainRow++; // Move to the next row for remarks
+                                                table3.Cell().Row((uint)mainRow).Column(2).AlignLeft().Text(data2.ParentDetailRemark);
+                                                mainRow++; // Increment row for next iteration
                                             }
                                         }
-
-                                        i = parentRow;
+                                        i = mainRow; // Update i to the latest row index to avoid overlap
                                     }
-                                    else
+                                    else if (data.StatusID == SystemConstant.Qc_CheckList_Status.NOTPASS)
                                     {
-                                        int rowNum = i + 1;
-                                        if(data.StatusID == SystemConstant.Qc_CheckList_Status.NOTPASS)
+                                        // Handle data without parent details
+                                        table3.Cell().Row((uint)i).Column(1).AlignLeft().Text(" " + index2 + ". " + data.DetailName).Bold();
+                                        table3.Cell().Row((uint)i).Column(2).Text("ความเห็นเพิ่มเติม");
+
+                                        i++; // Move to next row for images
+
+                                        table3.Cell().Row((uint)i).Column(1).Grid(grid =>
                                         {
-                                            table3.Cell().Row((uint)i).Column(1).AlignLeft().Text(index2 + ". " + data.DetailName).Bold();
-                                            table3.Cell().Row((uint)i).Column(2).Text("ความเห็นเพิ่มเติม");
+                                            grid.VerticalSpacing(15);
+                                            grid.HorizontalSpacing(15);
+                                            grid.AlignLeft();
+                                            grid.Columns(8);
 
-                                            table3.Cell().Row((uint)rowNum).Column(1).Grid(grid =>
+                                            foreach (var image2 in data.DetailImages)
                                             {
-                                                grid.VerticalSpacing(15);
-                                                grid.HorizontalSpacing(15);
-                                                grid.AlignLeft();
-                                                grid.Columns(8);
+                                                string pathImage = image2.FilePath;
+                                                var imgPath = _hosting.ContentRootPath + "/" + pathImage;
 
-                                                foreach (var image2 in data.DetailImages)
+                                                if (System.IO.File.Exists(imgPath))
                                                 {
-                                                    string pathImage = image2.FilePath;
-                                                    var imgPath = _hosting.ContentRootPath + "/" + pathImage;
-
-                                                    if (System.IO.File.Exists(imgPath))
-                                                    {
-                                                        using var img = new FileStream(imgPath, FileMode.Open);
-
-                                                        // Display each image and let QuestPDF handle the natural size
-                                                        grid.Item(4).AlignCenter().AlignMiddle()  // Center the image both horizontally and vertically
-                                                            .Border(0.5f)                        // Optional border for styling
-                                                            .Width(100)
-                                                            .Height(100)
-                                                            .Image(img);                         // Automatically adjust size based on image
-                                                    }
+                                                    using var img = new FileStream(imgPath, FileMode.Open);
+                                                    grid.Item(4).AlignCenter().AlignMiddle()
+                                                        .Border(0.5f)
+                                                        .Width(100)
+                                                        .Height(100)
+                                                        .Image(img);
                                                 }
-                                            });
-                                            table3.Cell().Row((uint)rowNum).Column(2).AlignLeft().Text(data.DetailRemark);
-                                            i = rowNum + 1;
-                                        }
+                                            }
+                                        });
+
+                                        i++; // Move to next row for remarks
+                                        table3.Cell().Row((uint)i).Column(2).AlignLeft().Text(data.DetailRemark);
+                                        i++; // Increment for the next iteration
                                     }
+
                                     index2++;
                                 }
                             }
+
                         });
                     });
 

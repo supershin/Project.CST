@@ -65,6 +65,19 @@ const checklistqc = {
 
             var isResult = validateCheckList();
 
+            var ChkPEUnit = document.getElementById('hdPEUnit').value;
+            var ChkCompanyVendor = document.getElementById('hdCompanyVendorID').value;
+
+            if (!ChkPEUnit) {
+                showErrorAlert('คำเตือน!', 'Unit นี้ยังไม่ได้ระบุวิศกรควบคุมงาน');
+                return;
+            }
+
+            if (!ChkCompanyVendor) {
+                showErrorAlert('คำเตือน!', 'Unit นี้ยังไม่ได้ระบุบริษัทผู้รับเหมา');
+                return;
+            }
+
             // Confirm submission if action radio is checked
             if ($('input[name="action-radio"]').is(':checked')) {
                 var remark = $('#main-remark').val().trim();
@@ -165,6 +178,9 @@ const checklistqc = {
         return storage;
     },
     saveQcCheckList: (data) => {
+
+        showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
+
         $.ajax({
             url: baseUrl + 'QCCheckList/SaveQcCheckList',
             type: 'POST',
@@ -173,6 +189,7 @@ const checklistqc = {
             processData: false,  // Required to prevent jQuery from processing the data (FormData handles this)
             contentType: false,  // Required to let the browser set the `Content-Type` with `multipart/form-data`
             success: function (resp) {
+                Swal.close();
                 if (resp.success) {
                     Swal.fire({
                         title: 'Success!',
@@ -197,12 +214,16 @@ const checklistqc = {
             },
             error: function (xhr, status, error) {
                 // do something
+                Swal.close();
                 alert(" Coding Error ")
             },
         });
         return false;
     },
     submitQcCheckList: (data) => {
+
+        showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
+
         $.ajax({
             url: baseUrl + 'QCCheckList/SubmitQcCheckList',
             type: 'POST',
@@ -211,6 +232,7 @@ const checklistqc = {
             processData: false,  // Required to prevent jQuery from processing the data (FormData handles this)
             contentType: false,  // Required to let the browser set the `Content-Type` with `multipart/form-data`
             success: function (resp) {
+                Swal.close();
                 if (resp.success) {
                     Swal.fire({
                         title: 'Success!',
@@ -226,6 +248,7 @@ const checklistqc = {
                         }
                     });
                 } else {
+                    Swal.close();
                     Swal.fire({
                         title: 'Error!',
                         text: "ทำการบันทึกข้อมูลไม่สำเร็จ",
@@ -236,6 +259,7 @@ const checklistqc = {
             },
             error: function (xhr, status, error) {
                 // do something
+                Swal.close();
                 alert(" Coding Error ")
             },
         });

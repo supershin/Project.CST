@@ -153,6 +153,8 @@
 @model Project.ConstructionTracking.Web.Models.QCModel.QcCheckListDetailResp
 
 <div class="page-wrapper">
+    <input type="hidden" id="hdPEUnit" value="@ViewBag.PEUnitID" />
+    <input type="hidden" id="hdCompanyVendorID" value="@ViewBag.CompanyVender" />
     <!-- Page header -->
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">

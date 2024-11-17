@@ -13,15 +13,17 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IQcCheckListService _qcCheckListService;
         private readonly IHostEnvironment _hosting;
         private readonly IQC5CheckService _QC5CheckService;
+        private readonly IGetDDLService _getDDLService;
 
         public QCChecklistController(IQcCheckListService qcCheckListService
-            , IHostEnvironment hosting,
-              IQC5CheckService qC5CheckService)
+            , IHostEnvironment hosting
+            , IQC5CheckService qC5CheckService
+            , IGetDDLService getDDLService)
         {
             _qcCheckListService = qcCheckListService;
             _hosting = hosting;
             _QC5CheckService = qC5CheckService;
-
+            _getDDLService = getDDLService;
         }
 
         public IActionResult Index(QcActionModel model)
@@ -75,6 +77,8 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.FormName = UnitFormDetai?.FormName;
             ViewBag.FormStatusID = UnitFormDetai?.StatusID;
             ViewBag.FormStatusName = UnitFormDetai?.StatusName;
+            ViewBag.PEUnitID = UnitFormDetai?.PEUnitID;
+            ViewBag.CompanyVender = UnitFormDetai?.CompanyVender;
             ViewBag.UnitId = unitid;
 
             return View(dataModel); 
@@ -150,6 +154,14 @@ namespace Project.ConstructionTracking.Web.Controllers
             if (string.IsNullOrEmpty(signUser))
                 throw new Exception("โปรดระบุลายเซ็นต์");
         }
+
+        //private void validateUnitPEAndCompanyvender(Guid unitID)
+        //{
+
+
+        //    if (string.IsNullOrEmpty(unitID))
+        //        throw new Exception("โปรดระบุลายเซ็นต์");
+        //}
 
         [HttpPost]
         public IActionResult DeleteImage(Guid qcID, int? detailID, Guid resourceID)

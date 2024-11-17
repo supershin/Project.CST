@@ -34,5 +34,6 @@ namespace Project.ConstructionTracking.Web.Models.QC5CheckModel
         public string? SubmitDate { get; set; }
         public string? FilePathQCPDF { get; set; }
         public Guid? PEUnit { get; set; }
+        public int? CompanyVendorID { get; set; }
     }
 }

@@ -217,7 +217,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                                  ActionType = t5.ActionType,
                                  CreateDate = FormatExtension.FormatDateToDayMonthNameYearTime(t4.CreateDate),
                                  FilePathQCPDF = t10.FilePath,
-                                 PEUnit = t11.UserID
+                                 PEUnit = t11.UserID,
+                                 CompanyVendorID = t2.CompanyVendorID
                              }).FirstOrDefault();
 
                 scope.Complete();  // Commit transaction if everything is successful
@@ -1419,7 +1420,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                         join t7 in _context.tm_UnitFormStatus
                             on t5Joined.StatusID equals t7.ID into t7Group
                         from t7Joined in t7Group.DefaultIfEmpty() // LEFT JOIN
-                        where t1.ProjectID == filter.ProjectID
+                        join t8 in _context.tr_PE_Unit on t1.UnitID equals t8.UnitID into PEUNITGroup
+                        from t8 in PEUNITGroup.DefaultIfEmpty()
+                         where t1.ProjectID == filter.ProjectID
                            && t1.UnitID == filter.UnitID
                            && t6Joined.CheckListID == filter.ChecklistID
                          select new
@@ -1427,8 +1430,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                             FormID = t4Joined.ID,
                             FormName = t4Joined.Name,
                             StatusID = t5Joined.StatusID,
-                            StatusName = t7Joined.Name
-                        }).FirstOrDefault();
+                            StatusName = t7Joined.Name,
+                            CompanyVender = t1.CompanyVendorID,
+                            PEUnitID = t8.UserID
+                         }).FirstOrDefault();
 
             // Combine results into UnitFormDetailModel
             var result = new UnitFormDetailModel
@@ -1436,7 +1441,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                 FormName = query?.FormName, 
                 FormID = query?.FormID,
                 StatusID = query?.StatusID ?? -99,
-                StatusName = query?.StatusName ?? "ยังไม่มีการตรวจ"  
+                StatusName = query?.StatusName ?? "ยังไม่มีการตรวจ",
+                PEUnitID = query?.PEUnitID,
+                CompanyVender = query?.CompanyVender
             };
 
             return result;  

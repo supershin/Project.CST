@@ -1017,9 +1017,15 @@ function SubmitUnitQC5() {
     var files = $('#file-input-save-submit')[0].files;
     var SigNatureData = document.getElementById('hdSigNatureData').value;
     var ChkPEUnit = document.getElementById('hdPEUnit').value;
+    var ChkCompanyVendor = document.getElementById('hdCompanyVendorID').value;
 
     if (!ChkPEUnit) {
         showErrorAlert('คำเตือน!', 'Unit นี้ยังไม่ได้ระบุวิศกรควบคุมงาน');
+        return;
+    }
+
+    if (!ChkCompanyVendor) {
+        showErrorAlert('คำเตือน!', 'Unit นี้ยังไม่ได้ระบุบริษัทผู้รับเหมา');
         return;
     }
 

@@ -10,5 +10,7 @@
         public int? ChecklistID { get; set; }
         public string? FormName { get; set; }
         public string? StatusName { get; set; }
+        public Guid? PEUnitID { get; set; }
+        public int? CompanyVender { get; set; }
     }
 }
