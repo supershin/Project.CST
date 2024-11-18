@@ -113,6 +113,7 @@ function openModalGRPayment(UnitFormID) {
 
 
 function onClickSaveGRPayment() {
+
     var ProjectID = document.getElementById('hdProjectID').value;
     var UnitID = document.getElementById('hdUnitID').value;
     var UnitFormID = document.getElementById('hdUnitFormID').value;
@@ -120,7 +121,6 @@ function onClickSaveGRPayment() {
     var GRNO = document.getElementById('grInput').value;
     var PercentPayment = document.getElementById('percentInput').value;
     var Remark = document.getElementById('remark').value;
-
 
     if (!PONO) {
         showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาระบุ PO');
@@ -139,7 +139,6 @@ function onClickSaveGRPayment() {
         return;
     }
 
-
     var formData = new FormData();
     formData.append('ProjectID', ProjectID);
     formData.append('UnitID', UnitID);
@@ -149,25 +148,40 @@ function onClickSaveGRPayment() {
     formData.append('Remark', Remark);
     formData.append('PercentPayment', PercentPayment);
 
-    showLoadingAlert();
+    showConfirmationAlert(
+        'ยืนยันการบันทึกเลข GR Payment',
+        'คุณต้องการบันทึกเลข GR Payment นี้ใช่หรือไม่?',
+        'warning',
+        'ใช่',
+        'ยกเลิก',
+        function () {
 
-    $.ajax({
-        url: baseUrl + 'UnitPayment/SaveUnitFormGRPaymentData',
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (response) {
-            Swal.close();
-            if (response.success) {
-                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
-            } else {
-                showErrorAlertNotCloseModal('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
-            }
-        },
-        error: function (xhr, status, error) {
-            Swal.close();
-            showErrorAlertNotCloseModal('เกิดข้อผิดพลาด!', error);
+            showLoadingAlert();
+
+            $.ajax({
+                url: baseUrl + 'UnitPayment/SaveUnitFormGRPaymentData',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    Swal.close();
+                    if (response.success) {
+                        document.getElementById('poInput').value = "";
+                        document.getElementById('grInput').value = "";
+                        document.getElementById('percentInput').value = "";
+                        showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
+                    } else {
+                        showErrorAlertNotCloseModal(response.message, 'บันทึกข้อมูลไม่สำเร็จ' || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.close();
+                    showErrorAlertNotCloseModal('เกิดข้อผิดพลาด!', error);
+                }
+
+            });
         }
-    });
+    );
+
 }
