@@ -1926,20 +1926,19 @@ namespace Project.ConstructionTracking.Web.Repositories
                         table2.Cell().Row(3).Column(3).AlignCenter().Text("( " + dataGenerate.FooterData.PMData?.PMName + " )");
 
                         //QC column
-                        if (signQc != null)
-                        {
-                            table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image(signQc);
-                            table2.Cell().Row(2).Column(4).AlignCenter().Text("Quality Control (QC)");
-                            table2.Cell().Row(3).Column(4).AlignCenter().Text("( " + dataGenerate.FooterData.QCData?.QCName + " )");
-                        }
-                        else
-                        {
-                            //QC
-                            //table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image("");
-                            table2.Cell().Row(2).Column(4).AlignCenter().Text("Quality Control (QC)");
-                            table2.Cell().Row(3).Column(4).AlignCenter().Text("(                  )");
-
-                        }
+                        table2.Cell().Row(2).Column(4).AlignCenter().Text("Quality Control (QC)");
+                        table2.Cell().Row(3).Column(4).AlignCenter().Text("(                  )");
+                        //if (signQc != null)
+                        //{
+                        //    table2.Cell().Row(1).Column(4).AlignCenter().Width(60).Image(signQc);
+                        //    table2.Cell().Row(2).Column(4).AlignCenter().Text("Quality Control (QC)");
+                        //    table2.Cell().Row(3).Column(4).AlignCenter().Text("( " + dataGenerate.FooterData.QCData?.QCName + " )");
+                        //}
+                        //else
+                        //{
+                        //    table2.Cell().Row(2).Column(4).AlignCenter().Text("Quality Control (QC)");
+                        //    table2.Cell().Row(3).Column(4).AlignCenter().Text("(                  )");
+                        //}
 
 
 

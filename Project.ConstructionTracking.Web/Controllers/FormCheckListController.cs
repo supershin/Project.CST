@@ -104,6 +104,7 @@ namespace Project.ConstructionTracking.Web.Controllers
         }
 
         [HttpPost]
+        [RequestSizeLimit(524_288_000)] // 500 MB
         public IActionResult UpdateStatus(FormChecklistIUDModel model)
         {
             try
