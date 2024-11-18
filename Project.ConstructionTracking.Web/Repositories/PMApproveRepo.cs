@@ -330,43 +330,43 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 try
                 {
-                    //bool validate = false;
+                    bool validate = false;
 
-                    //var CheckQCpass = (from t1 in _context.tr_Form_QCCheckList
-                    //                   join t2 in
-                    //                       (from qc in _context.tr_QC_UnitCheckList
-                    //                        where qc.UnitID == model.UnitID
-                    //                        group qc by new { qc.CheckListID, qc.UnitID } into g
-                    //                        select new
-                    //                        {
-                    //                            g.Key.CheckListID,
-                    //                            g.Key.UnitID,
-                    //                            Seq = g.Max(x => x.Seq),
-                    //                            QCStatusID = g.OrderByDescending(x => x.Seq).FirstOrDefault().QCStatusID
-                    //                        }) on new { t1.CheckListID, UnitID = model.UnitID } equals new { t2.CheckListID, t2.UnitID } into unitCheckListGroup
-                    //                   from t2 in unitCheckListGroup.DefaultIfEmpty()
-                    //                   where t1.FormID == model.FormID
-                    //                   select new
-                    //                   {
-                    //                       QCStatusID = t2.QCStatusID
-                    //                   }).ToList();
+                    var CheckQCpass = (from t1 in _context.tr_Form_QCCheckList
+                                       join t2 in
+                                           (from qc in _context.tr_QC_UnitCheckList
+                                            where qc.UnitID == model.UnitID
+                                            group qc by new { qc.CheckListID, qc.UnitID } into g
+                                            select new
+                                            {
+                                                g.Key.CheckListID,
+                                                g.Key.UnitID,
+                                                Seq = g.Max(x => x.Seq),
+                                                QCStatusID = g.OrderByDescending(x => x.Seq).FirstOrDefault().QCStatusID
+                                            }) on new { t1.CheckListID, UnitID = model.UnitID } equals new { t2.CheckListID, t2.UnitID } into unitCheckListGroup
+                                       from t2 in unitCheckListGroup.DefaultIfEmpty()
+                                       where t1.FormID == model.FormID
+                                       select new
+                                       {
+                                           QCStatusID = t2.QCStatusID
+                                       }).ToList();
 
-                    //if (CheckQCpass.All(item => item.QCStatusID == 1) && model.ActionType == "submit")
-                    //{
-                    //    validate = true;
-                    //}
-                    //else if (CheckQCpass == null || model.ActionType == "save")
-                    //{
-                    //    validate = true;
-                    //}
-                    //else if (model.UnitFormStatus == 5)
-                    //{
-                    //    validate = true;
-                    //}
-                    //if (!validate)
-                    //{
-                    //    throw new Exception("QC ยังตรวจไม่ผ่าน");
-                    //}
+                    if (CheckQCpass.All(item => item.QCStatusID == 1) && model.ActionType == "submit")
+                    {
+                        validate = true;
+                    }
+                    else if (CheckQCpass == null || model.ActionType == "save")
+                    {
+                        validate = true;
+                    }
+                    else if (model.UnitFormStatus == 5 || model.UnitFormStatus == 6)
+                    {
+                        validate = true;
+                    }
+                    if (!validate)
+                    {
+                        throw new Exception("QC ยังตรวจไม่ผ่าน");
+                    }
 
                     var unitFormAction = _context.tr_UnitFormAction.FirstOrDefault(a => a.UnitFormID == model.UnitFormID && a.RoleID == 2);
 

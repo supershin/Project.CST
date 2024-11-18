@@ -6,6 +6,7 @@ using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Models.UnitFormPaymentModel;
 using Project.ConstructionTracking.Web.Services;
 using QuestPDF.Infrastructure;
+using System.Transactions;
 using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
@@ -19,35 +20,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             _context = context;
         }
          
-        private string InsertNewGRPayment(UnitFormPaymentModel.insertGRPayment Model)
-        {
-            try
-            {
-                var newGRPayment = new tr_UnitFormPayment
-                {
-                    ProjectID = Model.ProjectID,
-                    UnitID = Model.UnitID,
-                    UnitFormID = Model.UnitFormID,
-                    GRNO = Model.GRNO,
-                    PONO = Model.PONO,
-                    Remark = Model.Remark,
-                    PercentPayment = Model.PercentPayment,
-                    SyncStatusID = Model.SyncStatusID,
-                    SyncMessage = Model.SyncMessage,
-                    CreateBy = Model.UserID,
-                    CreateDate = DateTime.Now,
-                    UpdateBy = Model.UserID,
-                    UpdateDate = DateTime.Now,
-                };
-                _context.tr_UnitFormPayment.Add(newGRPayment);
-
-                return "success";
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("ปลิ้น PDF ไม่สำเร็จ", ex);
-            }
-        }
 
         public UnitFormPaymentModel.getUnitFormGRDetail getUnitFormGRDetail(UnitFormPaymentModel.getUnitFormGRDetail Model)
         {
@@ -70,6 +42,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                              ProjectName = t2.ProjectName,
                              UnitID = t1.UnitID,
                              UnitCode = t3.UnitCode,
+                             UnitFormID = t1.ID,
                              FormName = t4.Name,
                              CompanyVenderName = t5.Name,
                              VenderName = t6.Name
@@ -78,5 +51,52 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
+
+        public string InsertNewGRPayment(UnitFormPaymentModel.insertGRPayment Model)
+        {
+            string returnUrlDoc = string.Empty;
+
+            var transactionOptions = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TimeSpan.FromMinutes(5)
+            };
+
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            {
+                try
+                {
+                    var newGRPayment = new tr_UnitFormPayment
+                    {
+                        ID = Guid.NewGuid(),
+                        ProjectID = Model.ProjectID,
+                        UnitID = Model.UnitID,
+                        UnitFormID = Model.UnitFormID,
+                        GRNO = Model.GRNO,
+                        PONO = Model.PONO,
+                        Remark = Model.Remark,
+                        PercentPayment = Model.PercentPayment,
+                        SyncStatusID = Model.SyncStatusID,
+                        SyncMessage = Model.SyncMessage,
+                        CreateBy = Model.UserID,
+                        CreateDate = DateTime.Now,
+                        UpdateBy = Model.UserID,
+                        UpdateDate = DateTime.Now,
+                    };
+                    _context.tr_UnitFormPayment.Add(newGRPayment);
+                    _context.SaveChanges();
+
+                    returnUrlDoc = "บันทึกข้อมูลสำเร็จ";
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("เกิดเหตุขัดข้องบันทึกไม่สำเร็จ", ex);
+                }
+            }
+
+            return returnUrlDoc;
+        }
     }
 }

@@ -65,11 +65,11 @@
     </div>
 </div>
 <!-- Modal -->
-<div class="modal fade" id="bigModal" tabindex="-1" aria-labelledby="bigModalLabel" aria-hidden="true">
+<div class="modal fade" id="ModalGRPayment" tabindex="-1" aria-labelledby="ModalGRPaymentLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 80vw; margin: auto;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="bigModalLabel">บันทึกเลข GR</h5>
+                <h5 class="modal-title" id="ModalGRPaymentLabel">บันทึกเลข GR</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -83,17 +83,20 @@
                                         <div class="row">
                                             <div class="col-12 col-sm-6 mb-3">
                                                 <label for="projectName" class="form-label">โครงการ</label>
-                                                <input type="text" class="form-control" id="projectName" placeholder="Enter project name" value="เอสต้า ซีรีนิตี้ บรมราชชนนี" disabled>
+                                                <input type="text" class="form-control" id="projectName" placeholder="Project Name" value="" disabled>
+                                                <input type="hidden" id="hdProjectID" />
                                             </div>
                                             <div class="col-12 col-sm-6 mb-3">
                                                 <div class="row">
                                                     <div class="col-6">
                                                         <label for="unit" class="form-label">Unit</label>
-                                                        <input type="text" class="form-control" id="unit" placeholder="Enter unit" value="AA0001" disabled>
+                                                        <input type="text" class="form-control" id="unitcode" placeholder="Unit Code" value="" disabled>
+                                                        <input type="hidden" id="hdUnitID" />
+                                                        <input type="hidden" id="hdUnitFormID" />
                                                     </div>
                                                     <div class="col-6">
                                                         <label for="unit" class="form-label">งวด</label>
-                                                        <input type="text" class="form-control" id="unit" placeholder="Enter unit" value="งวดที่ 1" disabled>
+                                                        <input type="text" class="form-control" id="formName" placeholder="งวดที่" value="" disabled>
                                                     </div>
                                                 </div>
                                             </div>
@@ -103,11 +106,11 @@
                                         <div class="row">
                                             <div class="col-12 col-sm-6 mb-3">
                                                 <label for="company" class="form-label">บริษัท</label>
-                                                <input type="text" class="form-control" id="company" placeholder="Enter company" value="บริษัท เอ เอส พาวเวอร์ แอสแซท จำกัด" disabled>
+                                                <input type="text" class="form-control" id="companyvenderName" placeholder="Company Vender Name" value="" disabled>
                                             </div>
                                             <div class="col-12 col-sm-6 mb-3">
                                                 <label for="contractor" class="form-label">ผู้รับเหมา</label>
-                                                <input type="text" class="form-control" id="contractor" placeholder="Enter contractor" value="คุณวรเดช หริ่มรุ่งเรือง" disabled>
+                                                <input type="text" class="form-control" id="venderName" placeholder="Vender Name" value="" disabled>
                                             </div>
                                         </div>
                                     </div>
@@ -115,17 +118,17 @@
                                         <div class="row">
                                             <div class="col-12 col-sm-6 mb-3">
                                                 <label for="poInput" class="form-label">PO Input</label>
-                                                <input type="text" class="form-control" id="poInput" placeholder="Enter PO">
+                                                <input type="text" class="form-control" id="poInput" placeholder="กรุณาระบุ PO">
                                             </div>
                                             <div class="col-12 col-sm-6 mb-3">
                                                 <div class="row">
                                                     <div class="col-8">
                                                         <label for="grInput" class="form-label">GR Input</label>
-                                                        <input type="text" class="form-control" id="grInput" placeholder="Enter GR">
+                                                        <input type="text" class="form-control" id="grInput" placeholder="กรุณาระบุ GR">
                                                     </div>
                                                     <div class="col-4">
-                                                        <label for="percent" class="form-label">Percent</label>
-                                                        <input type="text" class="form-control" id="percent" placeholder="Enter percentage">                                                
+                                                        <label for="percentInput" class="form-label">Percent</label>
+                                                        <input type="number" class="form-control" id="percentInput" placeholder="กรุณาระบุ % ของ GR นี้" step="0.01" min="0">
                                                     </div>
                                                 </div>
                                             </div>
@@ -135,9 +138,9 @@
                                         <label for="remark" class="form-label">เพิ่ม remark เพื่อระบุให้กับทาง vendor portal ทราบ</label>
                                         <textarea class="form-control" id="remark" rows="3"></textarea>
                                     </div>
-                                    <div class="d-flex justify-content-between">
-                                        <button type="submit" class="btn btn-success">บันทึก</button>
+                                    <div class="d-flex justify-content-between">                        
                                         <button type="button" class="btn btn-secondary">ยกเลิก</button>
+                                        <button type="button" class="btn btn-success" onclick="onClickSaveGRPayment()">บันทึก</button>
                                     </div>
                                 </form>
                             </div>

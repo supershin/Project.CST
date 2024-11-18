@@ -176,11 +176,6 @@ function openModalDataQC(action, data = null) {
 }
 
 
-
-//document.getElementById('saveButton').addEventListener('click', function () {
-//    onSaveButtonClick();
-//});
-
 $("#saveButton").unbind('click').click(() => {
     onSaveButtonClick();
 });
@@ -420,13 +415,6 @@ $("#EditButton").unbind('click').click(() => {
     onEditButtonClick();
 });
 
-//if (document.getElementById('EditButton') != undefined) {
-//    document.getElementById('EditButton').addEventListener('click', function () {
-//        onEditButtonClick();
-//    });
-//}
-
-
 function onEditButtonClick() {
     var DefectID = document.getElementById('QC5DefectID').value;
     var defectAreaId = document.getElementById('dropdown1Edit').value;
@@ -642,10 +630,6 @@ function RemoveImage(resourceID) {
 }
 
 
-//document.getElementById('RemoveQC5Button').addEventListener('click', function () {
-//    onRemoveQC5ButtonClick();
-//});
-
 $("#RemoveQC5Button").unbind('click').click(() => {
     onRemoveQC5ButtonClick();
 });
@@ -662,15 +646,14 @@ function onRemoveQC5ButtonClick() {
     formData.append('UnitID', unitId);
     formData.append('Seq', seq);
 
-    // Confirmation alert before proceeding
     showConfirmationAlert(
-        'ยืนยันการลบข้อมูล', // Confirm deletion
-        'คุณต้องการลบข้อมูลนี้ใช่หรือไม่?', // Do you want to delete this data?
+        'ยืนยันการลบข้อมูล', 
+        'คุณต้องการลบข้อมูลนี้ใช่หรือไม่?', 
         'warning',
-        'ใช่',  // Yes
-        'ยกเลิก',  // Cancel
+        'ใช่', 
+        'ยกเลิก',  
         function () {
-            // If confirmed, proceed with data removal
+
             showLoadingAlert();
 
             $.ajax({
@@ -1587,10 +1570,6 @@ function ClickNotPass(mainRadio) {
     }
 }
 
-
-//document.getElementById('UpdateDefectButton').addEventListener('click', function () {
-//    onUpdateDefectButtonClick();
-//});
 
 $("#UpdateDefectButton").unbind('click').click(() => {
     onUpdateDefectButtonClick();

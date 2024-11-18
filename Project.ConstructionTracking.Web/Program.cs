@@ -91,6 +91,9 @@ builder.Services.AddScoped<IQcSummaryRepo, QcSummaryRepo>();
 builder.Services.AddScoped<IQcCheckListService, QcCheckListService>();
 builder.Services.AddScoped<IQcCheckListRepo, QcCheckListRepo>();
 
+builder.Services.AddScoped<IUnitFormPaymentService, UnitFormPaymentService>();
+builder.Services.AddScoped<IUnitFormPaymentRepo, UnitFormPaymentRepo>();
+
 // Add the new services for SQL and data access
 builder.Services.AddScoped<MasterManagementProviderProject, SqlMasterManagementProject>();
 
