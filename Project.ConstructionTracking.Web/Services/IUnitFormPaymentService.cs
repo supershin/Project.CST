@@ -5,6 +5,13 @@ namespace Project.ConstructionTracking.Web.Services
     public interface IUnitFormPaymentService
     {
         UnitFormPaymentModel.getUnitFormGRDetail getUnitFormGRDetail(UnitFormPaymentModel.getUnitFormGRDetail Model);
-        string InsertNewGRPayment(UnitFormPaymentModel.insertGRPayment Model);
+
+        List<UnitFormPaymentModel.getListUnitFormGRPaymentTable> GetListUnitFormGRPaymentTable(UnitFormPaymentModel.getListUnitFormGRPaymentTable Model);
+
+        string InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model);
+
+        string RemoveGRPayment(UnitFormPaymentModel.IUDGRPayment Model);
+
+        string SyncGRPayment(UnitFormPaymentModel.IUDGRPayment Model);
     }
 }

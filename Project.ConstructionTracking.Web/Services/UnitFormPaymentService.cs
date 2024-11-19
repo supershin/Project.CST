@@ -7,12 +7,15 @@ namespace Project.ConstructionTracking.Web.Services
 {
     public class UnitFormPaymentService : IUnitFormPaymentService
     {
+
         private readonly IUnitFormPaymentRepo _IUnitFormPaymentRepo;
+
 
         public UnitFormPaymentService(IUnitFormPaymentRepo UnitFormPaymentRepo)
         {
             _IUnitFormPaymentRepo = UnitFormPaymentRepo;
         }
+
 
         public UnitFormPaymentModel.getUnitFormGRDetail getUnitFormGRDetail(UnitFormPaymentModel.getUnitFormGRDetail Model)
         {
@@ -20,11 +23,45 @@ namespace Project.ConstructionTracking.Web.Services
             return UnitFormGRDetail;
         }
 
-        public string InsertNewGRPayment(UnitFormPaymentModel.insertGRPayment Model)
+
+        public List<UnitFormPaymentModel.getListUnitFormGRPaymentTable> GetListUnitFormGRPaymentTable(UnitFormPaymentModel.getListUnitFormGRPaymentTable Model)
+        {
+            var ListUnitFormGRPaymentTable = _IUnitFormPaymentRepo.GetListUnitFormGRPaymentTable(Model);
+            return ListUnitFormGRPaymentTable;
+        }
+
+
+        public string InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
         {
             try
             {
                 return _IUnitFormPaymentRepo.InsertNewGRPayment(Model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("เกิดเหตุขัดข้องบันทึกไม่สำเร็จ", ex);
+            }
+        }
+
+
+        public string RemoveGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
+        {
+            try
+            {
+                return _IUnitFormPaymentRepo.RemoveGRPayment(Model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("เกิดเหตุขัดข้องบันทึกไม่สำเร็จ", ex);
+            }
+        }
+
+
+        public string SyncGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
+        {
+            try
+            {
+                return _IUnitFormPaymentRepo.SyncGRPayment(Model);
             }
             catch (Exception ex)
             {

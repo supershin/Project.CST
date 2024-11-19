@@ -9,6 +9,8 @@
             public const int SAVE_DARF_PE = 8;
             public const int QC5DefectStatusPass = 27;
             public const int QC5DefectStatusNotPass = 28;
+            public const int SyncSuccess = 31;
+            public const int SyncFail = 32;
         }
 
         public static class Ext_Type
