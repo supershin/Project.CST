@@ -1,0 +1,64 @@
+﻿@model List<Project.ConstructionTracking.Web.Models.UnitFormPaymentModel.UnitFormPaymentModel.getListUnitFormGRPaymentTable>
+
+<div class="card">
+    <div class="card-body">
+        <div style="overflow-x: auto; max-height: 600px;">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>PO</th>
+                        <th>GR</th>
+                        <th>Percent</th>
+                        <th>หมายเหต์</th>
+                        <th>สถานะ</th>
+                        <th>วันที่บันทึก GR ล่าสุด</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        int index = 1; 
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@index</td> 
+                                <td><a href="#!" class="text-reset" tabindex="-1">@item.PONO</a></td>
+                                <td><a href="#!" class="text-reset" tabindex="-1">@item.GRNO</a></td>
+                                <td><span class="text-primary">@item.PercentPayment %</span></td>
+                                <td>@item.Remark</td>
+                                <td>
+                                    @if (item.SyncStatusID == SystemConstant.Ext.SyncSuccess)
+                                    {
+                                        <span class="badge bg-success rounded-pill text-white">@item.SyncStatusName</span>
+                                    }
+                                    else if (item.SyncStatusID == SystemConstant.Ext.SyncFail)
+                                    {
+                                        <span class="badge bg-danger rounded-pill text-white">@item.SyncStatusName</span>
+                                        <br>
+                                        @item.SyncMessage
+                                    }
+                                </td>
+                                <td>
+                                    <i class="fa-regular fa-calendar"></i> @item.UpdateDate
+                                    <br>
+                                    <i class="fa-regular fa-user"></i> @item.CreateBy
+                                </td>
+                                <td>
+                                    @if (item.SyncStatusID == SystemConstant.Ext.SyncFail)
+                                    {
+                                        <button class="btn btn-warning" onclick="onClickSyncGRPayment('@item.ID')"><i class="fa-solid fa-repeat"></i></button>
+                                        <button class="btn btn-danger" onclick="onClickRemoveGRPayment('@item.ID')"><i class="fa-regular fa-trash-can"></i></button>
+                                    }
+                                </td>
+                            </tr>
+                            index++; 
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

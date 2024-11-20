@@ -8,12 +8,15 @@ using Project.ConstructionTracking.Web.Services;
 using QuestPDF.Infrastructure;
 using System.Transactions;
 using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
+using static Project.ConstructionTracking.Web.Models.UnitFormPaymentModel.UnitFormPaymentModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
     public class UnitFormPaymentRepo : IUnitFormPaymentRepo
     {
+
         private readonly ContructionTrackingDbContext _context;
+
 
         public UnitFormPaymentRepo(ContructionTrackingDbContext context)
         {
@@ -52,7 +55,44 @@ namespace Project.ConstructionTracking.Web.Repositories
         }
 
 
-        public string InsertNewGRPayment(UnitFormPaymentModel.insertGRPayment Model)
+        public List<UnitFormPaymentModel.getListUnitFormGRPaymentTable> GetListUnitFormGRPaymentTable(UnitFormPaymentModel.getListUnitFormGRPaymentTable Model)
+        {
+            var query = from t1 in _context.tr_UnitFormPayment
+                        join t2 in _context.tm_Project on t1.ProjectID equals t2.ProjectID into t2Join
+                        from t2 in t2Join.DefaultIfEmpty()
+                        join t3 in _context.tm_Unit on t1.UnitID equals t3.UnitID into t3Join
+                        from t3 in t3Join.DefaultIfEmpty()
+                        join t4 in _context.tm_User on t1.CreateBy equals t4.ID into t4Join
+                        from t4 in t4Join.DefaultIfEmpty()
+                        join t5 in _context.tm_Ext on new { t1.SyncStatusID, ExtTypeID = (int?)11 } equals new { SyncStatusID = (int?)t5.ID, t5.ExtTypeID } into t5Join
+                        from t5 in t5Join.DefaultIfEmpty()
+                        where t1.FlagActive == true
+                              && t1.UnitFormID == Model.UnitFormID
+                        orderby t1.CreateDate
+                        select new getListUnitFormGRPaymentTable
+                        {
+                            ID = t1.ID,
+                            ProjectID = t1.ProjectID,
+                            ProjectName = t2 != null ? t2.ProjectName : null,
+                            UnitID = t1.UnitID,
+                            UnitCode = t3 != null ? t3.UnitCode : null,
+                            UnitFormID = t1.UnitFormID,
+                            GRNO = t1.GRNO,
+                            PONO = t1.PONO,
+                            Remark = t1.Remark,
+                            PercentPayment = t1.PercentPayment,
+                            SyncStatusID = t1.SyncStatusID,
+                            SyncStatusName = t5 != null ? t5.Name : null,
+                            SyncMessage = t1.SyncMessage,
+                            UpdateDate = FormatExtension.FormatDateToDayMonthNameYearTime(t1.UpdateDate),
+                            CreateBy = t4 != null ? t4.FirstName + " " + t4.LastName : null
+                        };
+
+            return query.ToList();
+        }
+
+
+        public string InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
         {
             string returnUrlDoc = string.Empty;
 
@@ -66,6 +106,22 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 try
                 {
+                    // Generate a random number to decide SyncStatusID
+                    Random random = new Random();
+                    int syncStatusID = random.Next(0, 2) == 0 ? 31 : 32; // Randomly sets to 31 or 32
+                    string syncMessage = syncStatusID == 31 ? "ทำการ Sync สำเร็จ" : "ทำการ Sync ไม่สำเร็จ"; // Set SyncMessage based on SyncStatusID
+
+
+                    // Introduce delay based on SyncStatusID
+                    if (syncStatusID == 31)
+                    {
+                        System.Threading.Thread.Sleep(4000); // 4-second delay
+                    }
+                    else
+                    {
+                        System.Threading.Thread.Sleep(8000); // 8-second delay
+                    }
+
                     var newGRPayment = new tr_UnitFormPayment
                     {
                         ID = Guid.NewGuid(),
@@ -76,8 +132,11 @@ namespace Project.ConstructionTracking.Web.Repositories
                         PONO = Model.PONO,
                         Remark = Model.Remark,
                         PercentPayment = Model.PercentPayment,
-                        SyncStatusID = Model.SyncStatusID,
-                        SyncMessage = Model.SyncMessage,
+                        //SyncStatusID = Model.SyncStatusID,
+                        //SyncMessage = Model.SyncMessage,
+                        SyncStatusID = syncStatusID, // Assign the randomly chosen value
+                        SyncMessage = syncMessage, // Assign the corresponding SyncMessage
+                        FlagActive = true,
                         CreateBy = Model.UserID,
                         CreateDate = DateTime.Now,
                         UpdateBy = Model.UserID,
@@ -93,6 +152,85 @@ namespace Project.ConstructionTracking.Web.Repositories
                 catch (Exception ex)
                 {
                     throw new Exception("เกิดเหตุขัดข้องบันทึกไม่สำเร็จ", ex);
+                }
+            }
+
+            return returnUrlDoc;
+        }
+
+
+        public string RemoveGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
+        {
+            string returnUrlDoc = string.Empty;
+
+            var transactionOptions = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TimeSpan.FromMinutes(5)
+            };
+
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            {
+                try
+                {
+                    var tbUnitFormPayment = _context.tr_UnitFormPayment.FirstOrDefault(d => d.ID == Model.ID);
+
+                    if (tbUnitFormPayment != null)
+                    {
+                        tbUnitFormPayment.FlagActive = false;
+                        tbUnitFormPayment.UpdateDate = DateTime.Now;
+                        tbUnitFormPayment.UpdateBy = Model.UserID;
+                        _context.tr_UnitFormPayment.Update(tbUnitFormPayment);
+                    }               
+                    _context.SaveChanges();
+
+                    returnUrlDoc = "ลบข้อมูลสำเร็จ";
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("เกิดเหตุขัดข้องลบไม่สำเร็จ", ex);
+                }
+            }
+
+            return returnUrlDoc;
+        }
+
+
+        public string SyncGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
+        {
+            string returnUrlDoc = string.Empty;
+
+            var transactionOptions = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TimeSpan.FromMinutes(5)
+            };
+
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            {
+                try
+                {
+                    var tbUnitFormPayment = _context.tr_UnitFormPayment.FirstOrDefault(d => d.ID == Model.ID);
+
+                    if (tbUnitFormPayment != null)
+                    {
+                        tbUnitFormPayment.SyncStatusID = 31;
+                        tbUnitFormPayment.SyncMessage = "ทำการ Sync สำเร็จ";
+                        tbUnitFormPayment.UpdateDate = DateTime.Now;
+                        tbUnitFormPayment.UpdateBy = Model.UserID;
+                        _context.tr_UnitFormPayment.Update(tbUnitFormPayment);
+                    }
+                    _context.SaveChanges();
+
+                    returnUrlDoc = "Sync ข้อมูลสำเร็จ";
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("เกิดเหตุขัดข้อง Sync ไม่สำเร็จ", ex);
                 }
             }
 

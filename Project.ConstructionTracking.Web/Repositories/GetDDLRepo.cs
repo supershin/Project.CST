@@ -299,6 +299,29 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                 }).ToList();
                 return GetListDDLStatusRpPC;
 
+                case "GetListUnitFormPayment":
+
+                    var GetListUnitFormPayment = (from t1 in _context.tr_UnitFormPayment
+                                                  where t1.UnitFormID == Model.GuID && t1.FlagActive == true
+                                                  select new GetDDL
+                                                  {
+                                                      Valuedecimal = t1.PercentPayment,
+                                                      Text = t1.SyncMessage
+                                                  }).ToList();
+                return GetListUnitFormPayment;
+
+                case "GetUnitFormPayment":
+
+                    var GetUnitFormPayment = (from t1 in _context.tr_UnitFormPayment
+                                                  where t1.ID == Model.GuID && t1.FlagActive == true
+                                                  select new GetDDL
+                                                  {
+                                                      Value = t1.SyncStatusID,
+                                                      Text = t1.SyncMessage
+                                                  }).ToList();
+                    return GetUnitFormPayment;
+
+
                 default:
 
                 return new List<GetDDL>();

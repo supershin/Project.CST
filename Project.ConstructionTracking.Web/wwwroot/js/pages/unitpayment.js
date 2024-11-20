@@ -6,54 +6,8 @@
         searchField: 'Text',
         create: false,
         sortField: 'text',
-        placeholder: 'กรุณาเลือก', // Placeholder text
+        placeholder: 'กรุณาเลือกโครงการ', // Placeholder text
         maxItems: 1 // Single select
-    });
-
-    // Initialize Selectize for the unit dropdown (multi-select)
-    var $ddlUnit = $('#ddlunit').selectize({
-        valueField: 'ValueGuid',
-        labelField: 'Text',
-        searchField: 'Text',
-        create: false,
-        sortField: 'Text',
-        placeholder: 'กรุณาเลือก Unit',
-        maxItems: null // Allow multiple selections
-    });
-
-    // Handle change event for project dropdown to dynamically populate unit dropdown
-    $('#DDLProjectID').on('change', function () {
-        var selectedProjectId = $(this).val();
-
-        if (selectedProjectId) {
-            // AJAX call to fetch units based on selected project
-            $.ajax({
-                url: baseUrl + 'UnitPayment/GetDDLUnitPass', // Ensure the URL matches your endpoint
-                type: 'GET',
-                data: { ProjectID: selectedProjectId },
-                success: function (response) {
-                    var ddlUnitSelectize = $ddlUnit[0].selectize; // Access the Selectize instance
-                    ddlUnitSelectize.clearOptions(); // Clear existing options
-/*                    ddlUnitSelectize.addOption({ ValueGuid: '', Text: 'กรุณาเลือกหน่วย' }); // Add default option*/
-
-                    // Add new options from the response
-                    response.forEach(function (item) {
-                        ddlUnitSelectize.addOption({ ValueGuid: item.ValueGuid, Text: item.Text });
-                    });
-
-                    ddlUnitSelectize.refreshOptions(false); // Refresh the dropdown options
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error fetching unit data:', error);
-                    alert('เกิดข้อผิดพลาดในการดึงข้อมูล');
-                }
-            });
-        } else {
-            // Clear the unit dropdown if no project is selected
-            var ddlUnitSelectize = $ddlUnit[0].selectize;
-            ddlUnitSelectize.clearOptions();
-           /* ddlUnitSelectize.addOption({ ValueGuid: '', Text: 'กรุณาเลือกหน่วย' });*/
-        }
     });
 
     // Initialize DataTable
@@ -80,47 +34,65 @@ function setDatatable() {
     });
 }
 
-function openModalGRPayment(UnitFormID) {
+async function openModalGRPayment(UnitFormID) {
+    try {
+        showLoadingScreen();
 
-    showLoadingScreen();
+        // Fetch details for the form
+        const response = await $.ajax({
+            url: baseUrl + 'UnitPayment/GetUnitFormGRDetail',
+            type: 'GET',
+            data: { UnitFormID: UnitFormID }
+        });
 
-    $.ajax({
-        url: baseUrl + 'UnitPayment/GetUnitFormGRDetail',
-        type: 'GET',
-        data: { UnitFormID: UnitFormID },
-        success: function (response) {           
-            if (response) {
-                /*$('#projectName').val(response.ProjectName).prop('disabled', false);*/
-                $('#projectName').val(response.ProjectName);
-                $('#hdProjectID').val(response.ProjectID);
-                $('#unitcode').val(response.UnitCode);
-                $('#hdUnitID').val(response.UnitID);
-                $('#hdUnitFormID').val(response.UnitFormID);
-                $('#formName').val(response.FormName);
-                $('#companyvenderName').val(response.CompanyVenderName);
-                $('#venderName').val(response.VenderName);
-                var ModalGRPayment = new bootstrap.Modal(document.getElementById('ModalGRPayment'));
-                ModalGRPayment.show();
-                Swal.close();
-            }
-        },
-        error: function () {
+        if (response) {
+            $('#projectName').val(response.ProjectName);
+            $('#hdProjectID').val(response.ProjectID);
+            $('#unitcode').val(response.UnitCode);
+            $('#hdUnitID').val(response.UnitID);
+            $('#hdUnitFormID').val(response.UnitFormID);
+            $('#formName').val(response.FormName);
+            $('#companyvenderName').val(response.CompanyVenderName);
+            $('#venderName').val(response.VenderName);
+
+            // Load the table data asynchronously
+            await fetchListUnitFormGRPaymentTable(UnitFormID);
+
+            const ModalGRPayment = new bootstrap.Modal(document.getElementById('ModalGRPayment'));
+            ModalGRPayment.show();
             Swal.close();
-            showErrorAlert('ผิดพลาด!', 'โหลดข้อมูลไม่สำเร็จ');
+
         }
-    });
+    } catch (error) {
+        Swal.close();
+        showErrorAlert('ผิดพลาด!', 'โหลดข้อมูลไม่สำเร็จ');
+    }
 }
 
+async function fetchListUnitFormGRPaymentTable(UnitFormID) {
+    try {
+        const response = await $.ajax({
+            url: baseUrl + 'UnitPayment/FetchListUnitFormGRPaymentTable',
+            type: 'GET',
+            data: { UnitFormID: UnitFormID }
+        });
 
-function onClickSaveGRPayment() {
-    var ProjectID = document.getElementById('hdProjectID').value;
-    var UnitID = document.getElementById('hdUnitID').value;
-    var UnitFormID = document.getElementById('hdUnitFormID').value;
-    var PONO = document.getElementById('poInput').value;
-    var GRNO = document.getElementById('grInput').value;
-    var PercentPayment = document.getElementById('percentInput').value;
-    var Remark = document.getElementById('remark').value;
+        // Replace the content of the table container with the new content
+        $('#PartialTableListGRPayment').html(response);
 
+    } catch (error) {
+        showErrorAlert('ผิดพลาด!', 'โหลดตารางไม่สำเร็จ');
+    }
+}
+
+async function onClickSaveGRPayment() {
+    const ProjectID = document.getElementById('hdProjectID').value;
+    const UnitID = document.getElementById('hdUnitID').value;
+    const UnitFormID = document.getElementById('hdUnitFormID').value;
+    const PONO = document.getElementById('poInput').value.trim();
+    const GRNO = document.getElementById('grInput').value.trim();
+    const PercentPayment = document.getElementById('percentInput').value.trim();
+    const Remark = document.getElementById('remark').value.trim();
 
     if (!PONO) {
         showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาระบุ PO');
@@ -139,8 +111,7 @@ function onClickSaveGRPayment() {
         return;
     }
 
-
-    var formData = new FormData();
+    const formData = new FormData();
     formData.append('ProjectID', ProjectID);
     formData.append('UnitID', UnitID);
     formData.append('UnitFormID', UnitFormID);
@@ -149,25 +120,167 @@ function onClickSaveGRPayment() {
     formData.append('Remark', Remark);
     formData.append('PercentPayment', PercentPayment);
 
-    showLoadingAlert();
+    showConfirmationAlert(
+        'ยืนยันการบันทึกเลข GR Payment',
+        'คุณต้องการบันทึกเลข GR Payment นี้ใช่หรือไม่?',
+        'warning',
+        'ใช่',
+        'ยกเลิก',
+        async function () {
+            // Show loading indicator
+            showLoadingAlert();
+
+            try {
+                const response = await $.ajax({
+                    url: baseUrl + 'UnitPayment/SaveUnitFormGRPaymentData',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false
+                });
+
+                Swal.close();
+                if (response.success) {
+                    await fetchListUnitFormGRPaymentTable(UnitFormID);
+                    document.getElementById('poInput').value = "";
+                    document.getElementById('grInput').value = "";
+                    document.getElementById('percentInput').value = "";
+                    document.getElementById('remark').value = "";
+                    showSuccessAlert('สำเร็จ!', response.message);
+                } else {
+                    showErrorAlertNotCloseModal(response.message, 'บันทึกข้อมูลไม่สำเร็จ' || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+                }
+            } catch (error) {
+                Swal.close();
+                showErrorAlertNotCloseModal('เกิดข้อผิดพลาด!', error);
+            }
+        }
+    );
+}
+
+async function onClickRemoveGRPayment(ID) {
+    const UnitFormID = document.getElementById('hdUnitFormID').value;
+
+    const formData = new FormData();
+    formData.append('ID', ID);
+
+    showConfirmationAlert(
+        'ยืนยันการลบ GR Payment',
+        'คุณต้องการลบ GR Payment นี้ใช่หรือไม่?',
+        'warning',
+        'ใช่',
+        'ยกเลิก',
+        async function () {
+            // Show loading indicator
+            showLoadingAlert();
+
+            try {
+                showLoadingAlert();
+
+                const response = await $.ajax({
+                    url: baseUrl + 'UnitPayment/RemoveUnitFormGRPaymentData',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false
+                });
+
+                Swal.close();
+                if (response.success) {
+                    await fetchListUnitFormGRPaymentTable(UnitFormID);
+                    showSuccessAlert('สำเร็จ!', response.message);
+
+                } else {
+                    showErrorAlertNotCloseModal(response.message || 'ลบข้อมูลไม่สำเร็จ', 'เกิดข้อผิดพลาดในการลบข้อมูล');
+                }
+            } catch (error) {
+                Swal.close();
+                showErrorAlertNotCloseModal('เกิดข้อผิดพลาด!', error);
+            }
+        }
+    );
+}
+
+async function onClickSyncGRPayment(ID) {
+    const UnitFormID = document.getElementById('hdUnitFormID').value;
+
+    const formData = new FormData();
+    formData.append('ID', ID);
+
+    showConfirmationAlert(
+        'ยืนยันการ Sync GR Payment',
+        'คุณต้องการ Sync GR Payment นี้ใช่หรือไม่?',
+        'warning',
+        'ใช่',
+        'ยกเลิก',
+        async function () {
+            // Show loading indicator
+            showLoadingAlert();
+
+            try {
+                showLoadingAlert();
+
+                const response = await $.ajax({
+                    url: baseUrl + 'UnitPayment/SyncUnitFormGRPaymentData',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false
+                });
+
+                Swal.close();
+                if (response.success) {
+                    await fetchListUnitFormGRPaymentTable(UnitFormID);
+                    showSuccessAlert('สำเร็จ!', response.message);
+
+                } else {
+                    showErrorAlertNotCloseModal(response.message || 'Sync ข้อมูลไม่สำเร็จ', 'เกิดข้อผิดพลาดในการลบข้อมูล');
+                }
+            } catch (error) {
+                Swal.close();
+                showErrorAlertNotCloseModal('เกิดข้อผิดพลาด!', error);
+            }
+        }
+    );
+}
+
+function onClickClearinputsaveGR() {
+    document.getElementById('poInput').value = "";
+    document.getElementById('grInput').value = "";
+    document.getElementById('percentInput').value = "";
+    document.getElementById('remark').value = "";
+}
+
+
+function searchByProjectAndUnit() {
+
+    const selectedProjectId = document.getElementById('DDLProjectID').value;
+    const unitSearchValue = document.getElementById('txtunitsearch').value;
+
+    //if (!selectedProjectId) {
+    //    showAlertandClose('กรุณาเลือกโครงการก่อนทำการค้นหา');
+    //    return;
+    //}
+
+    showLoadingScreen();
 
     $.ajax({
-        url: baseUrl + 'UnitPayment/SaveUnitFormGRPaymentData',
+        url: baseUrl + 'UnitPayment/SearchClick', 
         type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (response) {
-            Swal.close();
-            if (response.success) {
-                showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
-            } else {
-                showErrorAlertNotCloseModal('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
-            }
+        data: {
+            projectId: selectedProjectId,
+            unitSearch: unitSearchValue
+        },
+        success: function (result) {
+
+            $('#PartialTableReport').html(result);
+            Swal.close(); 
         },
         error: function (xhr, status, error) {
-            Swal.close();
-            showErrorAlertNotCloseModal('เกิดข้อผิดพลาด!', error);
+            console.error('Error during the search:', error);
+            Swal.close(); 
         }
     });
 }
+
+document.getElementById('searchButton').addEventListener('click', searchByProjectAndUnit);

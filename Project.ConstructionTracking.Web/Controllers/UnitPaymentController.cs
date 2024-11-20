@@ -6,6 +6,7 @@ using Project.ConstructionTracking.Web.Services;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Models.UnitFormPaymentModel;
 using Project.ConstructionTracking.Web.Commons;
+using Microsoft.CodeAnalysis;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
@@ -35,14 +36,13 @@ namespace Project.ConstructionTracking.Web.Controllers
             var en = new WorkPeriodModel
             {
                 act = "Getworkperiodlist",
-                project_id = (ListProject != null && ListProject.Count > 0) ? ListProject[0].ValueGuid.ToString() : string.Empty,
+                project_id = "",
                 unit_id = "",
                 unit_status = "",
                 user_id = userID
 
             };
             List<WorkPeriodModel> WorkPeriodlists = _unitstatusProvider.sp_get_workperiod(en);
-
             return View(WorkPeriodlists);
         }
 
@@ -62,8 +62,20 @@ namespace Project.ConstructionTracking.Web.Controllers
             return Json(UnitFormGRDetail);
         }
 
+        public IActionResult FetchListUnitFormGRPaymentTable(Guid UnitFormID)
+        {
+            var Model = new UnitFormPaymentModel.getListUnitFormGRPaymentTable
+            {
+                UnitFormID = UnitFormID
+            };
+
+            List<UnitFormPaymentModel.getListUnitFormGRPaymentTable> ModelTableListUnitFormGRPayment = _UnitFormPaymentService.GetListUnitFormGRPaymentTable(Model);
+
+            return PartialView("PartialTableListUnitFormGRPayment", ModelTableListUnitFormGRPayment);
+        }
+
         [HttpPost]
-        public IActionResult SaveUnitFormGRPaymentData(UnitFormPaymentModel.insertGRPayment Model)
+        public IActionResult SaveUnitFormGRPaymentData(UnitFormPaymentModel.IUDGRPayment Model)
         {
             try
             {
@@ -72,9 +84,30 @@ namespace Project.ConstructionTracking.Web.Controllers
                 if (RoleID == SystemConstant.UserRole.ADMIN)
                 {
                     Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
-                    Model.UserID = userid;
-                    returnmessage = _UnitFormPaymentService.InsertNewGRPayment(Model);
-                    return Json(new { success = true, message = returnmessage });
+
+                    var Filters = new GetDDL { Act = "GetListUnitFormPayment", GuID = Model.UnitFormID };
+                    List<GetDDL> CheckPercentPayment = _getDDLService.GetDDLList(Filters);
+                    decimal totalValuedecimalSum = CheckPercentPayment?.Where(x => x.Valuedecimal.HasValue).Sum(x => x.Valuedecimal.Value) ?? 0;
+
+                    if (totalValuedecimalSum < 100)
+                    {
+                        if (totalValuedecimalSum + Model.PercentPayment < 100)
+                        {
+                            Model.UserID = userid;
+                            returnmessage = _UnitFormPaymentService.InsertNewGRPayment(Model);
+                            return Json(new { success = true, message = returnmessage });
+                        }
+                        else
+                        {
+                            returnmessage = "ไม่สามารถเบิกงวดงานเกิน 100% ได้";
+                            return Json(new { success = false, message = returnmessage });
+                        }
+                    }
+                    else
+                    {
+                        returnmessage = "งวดงานนี้เบิกครบ 100% แล้ว";
+                        return Json(new { success = false, message = returnmessage });
+                    }
                 }
                 else
                 {
@@ -87,6 +120,120 @@ namespace Project.ConstructionTracking.Web.Controllers
             {
                 return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
             }
+        }
+
+        [HttpPost]
+        public IActionResult RemoveUnitFormGRPaymentData(UnitFormPaymentModel.IUDGRPayment Model)
+        {
+            try
+            {
+                string returnmessage = "";
+                int RoleID = int.TryParse(Request.Cookies["CST.Role"], out var tempRoleInt) ? tempRoleInt : -1;
+                if (RoleID == SystemConstant.UserRole.ADMIN)
+                {
+                    Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+
+                    var Filters = new GetDDL { Act = "GetUnitFormPayment", GuID = Model.ID };
+                    List<GetDDL> CheckPercentPayment = _getDDLService.GetDDLList(Filters);
+
+                    if (CheckPercentPayment.Count > 0)
+                    {
+                        if (CheckPercentPayment[0].Value == SystemConstant.Ext.SyncFail)
+                        {
+                            Model.UserID = userid;
+                            returnmessage = _UnitFormPaymentService.RemoveGRPayment(Model);
+                            return Json(new { success = true, message = returnmessage });
+                        }
+                        else
+                        {
+                            returnmessage = "ไม่สามารถลบเบิกงวดงานนี้ได้เนื่องจาก Sync Success แล้ว";
+                            return Json(new { success = false, message = returnmessage });
+                        }
+                    }
+                    else
+                    {
+                        returnmessage = "หาเบิกงวดงานนี้ไม่พบ";
+                        return Json(new { success = false, message = returnmessage });
+                    }
+                }
+                else
+                {
+                    returnmessage = "สิทธิ์เบิกงวดไม่ถูกต้อง";
+                    return Json(new { success = false, message = returnmessage });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult SyncUnitFormGRPaymentData(UnitFormPaymentModel.IUDGRPayment Model)
+        {
+            try
+            {
+                string returnmessage = "";
+                int RoleID = int.TryParse(Request.Cookies["CST.Role"], out var tempRoleInt) ? tempRoleInt : -1;
+                if (RoleID == SystemConstant.UserRole.ADMIN)
+                {
+                    Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+
+                    var Filters = new GetDDL { Act = "GetUnitFormPayment", GuID = Model.ID };
+                    List<GetDDL> CheckPercentPayment = _getDDLService.GetDDLList(Filters);
+
+                    if (CheckPercentPayment.Count > 0)
+                    {
+                        if (CheckPercentPayment[0].Value == SystemConstant.Ext.SyncFail)
+                        {
+                            Model.UserID = userid;
+                            returnmessage = _UnitFormPaymentService.SyncGRPayment(Model);
+                            return Json(new { success = true, message = returnmessage });
+                        }
+                        else
+                        {
+                            returnmessage = "ไม่สามารถ Sync เบิกงวดงานนี้ได้เนื่องจาก Sync Success แล้ว";
+                            return Json(new { success = false, message = returnmessage });
+                        }
+                    }
+                    else
+                    {
+                        returnmessage = "หาเบิกงวดงานนี้ไม่พบ";
+                        return Json(new { success = false, message = returnmessage });
+                    }
+                }
+                else
+                {
+                    returnmessage = "สิทธิ์เบิกงวดไม่ถูกต้อง";
+                    return Json(new { success = false, message = returnmessage });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult SearchClick(string projectId, string unitSearch)
+        {
+
+            var userID = Request.Cookies["CST.ID"];
+
+            var en = new WorkPeriodModel
+            {
+                act = "Getworkperiodlist",
+                project_id = projectId == null ? "" : projectId,
+                unit_id = unitSearch == null ? "" : unitSearch,
+                unit_status = "",
+                user_id = userID
+
+            };
+            List<WorkPeriodModel> UnitFormpaymentlist = _unitstatusProvider.sp_get_workperiod(en);
+
+            return PartialView("PartialTable", UnitFormpaymentlist);
         }
     }
 }
