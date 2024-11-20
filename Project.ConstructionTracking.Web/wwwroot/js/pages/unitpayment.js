@@ -6,54 +6,8 @@
         searchField: 'Text',
         create: false,
         sortField: 'text',
-        placeholder: 'กรุณาเลือก', // Placeholder text
+        placeholder: 'กรุณาเลือกโครงการ', // Placeholder text
         maxItems: 1 // Single select
-    });
-
-    // Initialize Selectize for the unit dropdown (multi-select)
-    var $ddlUnit = $('#ddlunit').selectize({
-        valueField: 'ValueGuid',
-        labelField: 'Text',
-        searchField: 'Text',
-        create: false,
-        sortField: 'Text',
-        placeholder: 'กรุณาเลือก Unit',
-        maxItems: null // Allow multiple selections
-    });
-
-    // Handle change event for project dropdown to dynamically populate unit dropdown
-    $('#DDLProjectID').on('change', function () {
-        var selectedProjectId = $(this).val();
-
-        if (selectedProjectId) {
-            // AJAX call to fetch units based on selected project
-            $.ajax({
-                url: baseUrl + 'UnitPayment/GetDDLUnitPass', // Ensure the URL matches your endpoint
-                type: 'GET',
-                data: { ProjectID: selectedProjectId },
-                success: function (response) {
-                    var ddlUnitSelectize = $ddlUnit[0].selectize; // Access the Selectize instance
-                    ddlUnitSelectize.clearOptions(); // Clear existing options
-/*                    ddlUnitSelectize.addOption({ ValueGuid: '', Text: 'กรุณาเลือกหน่วย' }); // Add default option*/
-
-                    // Add new options from the response
-                    response.forEach(function (item) {
-                        ddlUnitSelectize.addOption({ ValueGuid: item.ValueGuid, Text: item.Text });
-                    });
-
-                    ddlUnitSelectize.refreshOptions(false); // Refresh the dropdown options
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error fetching unit data:', error);
-                    alert('เกิดข้อผิดพลาดในการดึงข้อมูล');
-                }
-            });
-        } else {
-            // Clear the unit dropdown if no project is selected
-            var ddlUnitSelectize = $ddlUnit[0].selectize;
-            ddlUnitSelectize.clearOptions();
-           /* ddlUnitSelectize.addOption({ ValueGuid: '', Text: 'กรุณาเลือกหน่วย' });*/
-        }
     });
 
     // Initialize DataTable
@@ -135,10 +89,10 @@ async function onClickSaveGRPayment() {
     const ProjectID = document.getElementById('hdProjectID').value;
     const UnitID = document.getElementById('hdUnitID').value;
     const UnitFormID = document.getElementById('hdUnitFormID').value;
-    const PONO = document.getElementById('poInput').value;
-    const GRNO = document.getElementById('grInput').value;
-    const PercentPayment = document.getElementById('percentInput').value;
-    const Remark = document.getElementById('remark').value;
+    const PONO = document.getElementById('poInput').value.trim();
+    const GRNO = document.getElementById('grInput').value.trim();
+    const PercentPayment = document.getElementById('percentInput').value.trim();
+    const Remark = document.getElementById('remark').value.trim();
 
     if (!PONO) {
         showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาระบุ PO');
@@ -290,3 +244,43 @@ async function onClickSyncGRPayment(ID) {
     );
 }
 
+function onClickClearinputsaveGR() {
+    document.getElementById('poInput').value = "";
+    document.getElementById('grInput').value = "";
+    document.getElementById('percentInput').value = "";
+    document.getElementById('remark').value = "";
+}
+
+
+function searchByProjectAndUnit() {
+
+    const selectedProjectId = document.getElementById('DDLProjectID').value;
+    const unitSearchValue = document.getElementById('txtunitsearch').value;
+
+    //if (!selectedProjectId) {
+    //    showAlertandClose('กรุณาเลือกโครงการก่อนทำการค้นหา');
+    //    return;
+    //}
+
+    showLoadingScreen();
+
+    $.ajax({
+        url: baseUrl + 'UnitPayment/SearchClick', 
+        type: 'POST',
+        data: {
+            projectId: selectedProjectId,
+            unitSearch: unitSearchValue
+        },
+        success: function (result) {
+
+            $('#PartialTableReport').html(result);
+            Swal.close(); 
+        },
+        error: function (xhr, status, error) {
+            console.error('Error during the search:', error);
+            Swal.close(); 
+        }
+    });
+}
+
+document.getElementById('searchButton').addEventListener('click', searchByProjectAndUnit);

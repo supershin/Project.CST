@@ -36,14 +36,13 @@ namespace Project.ConstructionTracking.Web.Controllers
             var en = new WorkPeriodModel
             {
                 act = "Getworkperiodlist",
-                project_id = (ListProject != null && ListProject.Count > 0) ? ListProject[0].ValueGuid.ToString() : string.Empty,
+                project_id = "",
                 unit_id = "",
                 unit_status = "",
                 user_id = userID
 
             };
             List<WorkPeriodModel> WorkPeriodlists = _unitstatusProvider.sp_get_workperiod(en);
-
             return View(WorkPeriodlists);
         }
 
@@ -88,11 +87,11 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                     var Filters = new GetDDL { Act = "GetListUnitFormPayment", GuID = Model.UnitFormID };
                     List<GetDDL> CheckPercentPayment = _getDDLService.GetDDLList(Filters);
-                    int countOfValuedecimal = CheckPercentPayment?.Count(x => x.Valuedecimal.HasValue) ?? 0;
+                    decimal totalValuedecimalSum = CheckPercentPayment?.Where(x => x.Valuedecimal.HasValue).Sum(x => x.Valuedecimal.Value) ?? 0;
 
-                    if (countOfValuedecimal < 100)
+                    if (totalValuedecimalSum < 100)
                     {
-                        if (countOfValuedecimal + Model.PercentPayment < 100)
+                        if (totalValuedecimalSum + Model.PercentPayment < 100)
                         {
                             Model.UserID = userid;
                             returnmessage = _UnitFormPaymentService.InsertNewGRPayment(Model);
@@ -215,6 +214,26 @@ namespace Project.ConstructionTracking.Web.Controllers
             {
                 return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
             }
+        }
+
+        [HttpPost]
+        public IActionResult SearchClick(string projectId, string unitSearch)
+        {
+
+            var userID = Request.Cookies["CST.ID"];
+
+            var en = new WorkPeriodModel
+            {
+                act = "Getworkperiodlist",
+                project_id = projectId == null ? "" : projectId,
+                unit_id = unitSearch == null ? "" : unitSearch,
+                unit_status = "",
+                user_id = userID
+
+            };
+            List<WorkPeriodModel> UnitFormpaymentlist = _unitstatusProvider.sp_get_workperiod(en);
+
+            return PartialView("PartialTable", UnitFormpaymentlist);
         }
     }
 }
