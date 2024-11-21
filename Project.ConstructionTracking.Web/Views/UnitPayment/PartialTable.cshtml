@@ -45,7 +45,7 @@
     }
 
     .custom-table tbody tr:hover {
-        background-color: #8495f5;
+            background-color: #eff584;
     }
 
 </style>
@@ -139,9 +139,18 @@
                                             }
                                         </div>
                                         <br>
-                                        <button type="button" class="btn btn-primary btn-pill w-70" onclick="openModalGRPayment('@item.UnitFormID')">
-                                            ใส่เลข GR
-                                        </button>                    
+                                        @if (item.SumPercentPayment == "100.00")
+                                        {
+                                            <button type="button" class="btn btn-success btn-pill w-60" onclick="openModalGRPayment('@item.UnitFormID')">
+                                                ดูเลข GR
+                                            </button>                                
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-primary btn-pill w-70" onclick="openModalGRPayment('@item.UnitFormID')">
+                                                ใส่เลข GR
+                                            </button>
+                                        }                                            
                                     }
                                     else
                                     {

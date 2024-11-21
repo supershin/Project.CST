@@ -377,6 +377,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.SyncStatusID = Commons.FormatExtension.NullToString(reader["SyncStatusID"]);
             Entity.GRDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["GRDate"]);
             Entity.UnitFormID = Commons.FormatExtension.ConvertStringToGuid(reader["UnitFormID"]);
+            Entity.SumPercentPayment = Commons.FormatExtension.NullToString(reader["SumPercentPayment"]);
             Entity.Statusworkperiod = Commons.FormatExtension.NullToString(reader["Statusworkperiod"]);
             return Entity;
         }

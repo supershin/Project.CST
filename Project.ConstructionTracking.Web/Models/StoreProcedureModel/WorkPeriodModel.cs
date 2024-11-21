@@ -19,9 +19,10 @@
         public string? UnitFormPDF { get; set; }      
         public string? QCPDF { get; set; }      
         public string? GRNo { get; set; }
-        public string? SyncStatusID { get; set; }
+        public string? SyncStatusID { get; set; }      
         public string? GRDate { get; set; }
         public Guid? UnitFormID { get; set; }
+        public string? SumPercentPayment { get; set; }
         public string? Statusworkperiod { get; set; }
     }
 }
