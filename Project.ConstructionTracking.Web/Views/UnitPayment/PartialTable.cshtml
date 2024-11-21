@@ -81,11 +81,27 @@
                         {
                             <tr>
                                 <td>@item.index</td>
-                                <td><a href="#" class="text-reset" tabindex="-1">@item.ProjectName</a></td>
-                                <td><a href="#" class="text-reset" tabindex="-1">@item.UnitCode</a></td>
+                                <td>@item.ProjectName</td>
+                                <td>@item.UnitCode</td>
                                 <td><span class="text-secondary">@item.FormName</span></td>
-                                <td><a href="#" class="text-reset" tabindex="-1">@item.CompanyVendorName</a></td>
-                                <td>@item.PONo</td>
+                                <td>@item.CompanyVendorName</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.PONo) && !string.IsNullOrEmpty(item.SyncStatusID))
+                                    {
+                                        <div style="padding-top: 0rem;">
+                                            @foreach (var po in item.PONo.Split(',').Select((value, index) => new { Value = value, Index = index }))
+                                            {
+                                                var syncStatuses = item.SyncStatusID.Split(',').Select(int.Parse).ToArray(); // Convert SyncStatusID to an array of integers
+                                                var status = syncStatuses.Length > po.Index ? syncStatuses[po.Index] : (int?)null;
+
+                                                <div>
+                                                    <span class="badge @(status == SystemConstant.Ext.SyncSuccess ? "bg-success" : "bg-danger") me-1"></span>
+                                                    @po.Value
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </td>
                                 <td>@item.ApproveDate</td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(item.UnitFormPDF))
@@ -107,22 +123,19 @@
                                         }
                                     }
                                 </td>
-@*                                  <td>
-                                    <div style="padding-top : 0rem;">
-                                        @item.GRNo
-                                    </div>
-                                    <br>
-                                    <button type="button" class="btn btn-primary btn-pill w-70" onclick="openModalGRPayment('@item.UnitFormID')">
-                                        ใส่เลข GR
-                                    </button>
-                                </td> *@
                                 <td>
-                                    @if (!string.IsNullOrEmpty(item.GRNo))
+                                    @if (!string.IsNullOrEmpty(item.GRNo) && !string.IsNullOrEmpty(item.SyncStatusID))
                                     {
                                         <div style="padding-top: 0rem;">
-                                            @foreach (var grNo in @item.GRNo.Split(','))
+                                            @foreach (var po in item.GRNo.Split(',').Select((value, index) => new { Value = value, Index = index }))
                                             {
-                                                <div>  <span class="badge bg-secondary me-1"></span>@grNo</div>
+                                                var syncStatuses = item.SyncStatusID.Split(',').Select(int.Parse).ToArray(); // Convert SyncStatusID to an array of integers
+                                                var status = syncStatuses.Length > po.Index ? syncStatuses[po.Index] : (int?)null;
+
+                                                <div>
+                                                    <span class="badge @(status == SystemConstant.Ext.SyncSuccess ? "bg-success" : "bg-danger") me-1"></span>
+                                                    @po.Value
+                                                </div>
                                             }
                                         </div>
                                         <br>

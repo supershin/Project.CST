@@ -19,6 +19,7 @@
             public const int UNIT_STATUS_ID = 4;
             public const int QCTypeID = 7;
             public const int QC5RadioChecklist = 9;
+            public const int PercentPayment = 12;
         }
 
         public static class Unit_Status

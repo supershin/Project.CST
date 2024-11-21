@@ -23,7 +23,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 case "Ext":
                     var extQuery = from ext in _context.tm_Ext
-                                   where ext.ExtTypeID == Model.ID
+                                   where ext.ExtTypeID == Model.ID && ext.FlagActive == true
                                    orderby ext.LineOrder
                                    select new GetDDL
                                    {
@@ -320,7 +320,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                       Text = t1.SyncMessage
                                                   }).ToList();
                     return GetUnitFormPayment;
-
+    
 
                 default:
 

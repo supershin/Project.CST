@@ -48,7 +48,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                              UnitFormID = t1.ID,
                              FormName = t4.Name,
                              CompanyVenderName = t5.Name,
-                             VenderName = t6.Name
+                             VenderName = t6.Name,
+                             PONo = t3.PONo
                          }).FirstOrDefault();
 
             return result;

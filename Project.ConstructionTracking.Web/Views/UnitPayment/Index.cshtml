@@ -141,7 +141,13 @@
                                                 <label for="percentInput" class="form-label">
                                                     Percent <span style="color: red;">*</span>
                                                 </label>
-                                                <input type="number" class="form-control" id="percentInput" placeholder="กรุณาระบุ % ของ GR นี้" step="0.01" min="0">
+                                                <select id="DDLPercentPaymentID" class="form-control">
+                                                    <option value="-1">กรุณาเลือก</option>
+                                                    @foreach (var item in ViewBag.DDLPercentPayment)
+                                                    {
+                                                        <option value="@item.Text">@item.Text</option>
+                                                    }
+                                                </select>
                                             </div>
                                         </div>
                                     </div>

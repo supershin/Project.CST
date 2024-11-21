@@ -31,6 +31,11 @@ namespace Project.ConstructionTracking.Web.Controllers
             List<GetDDL> ListProject = _getDDLService.GetDDLList(ddlModel);
             ViewBag.DDLProject = ListProject;
 
+
+            var ExtPaymentModel = new GetDDL { Act = "Ext" , ID = SystemConstant.Ext_Type.PercentPayment };
+            List<GetDDL> ListExtPayment = _getDDLService.GetDDLList(ExtPaymentModel);
+            ViewBag.DDLPercentPayment = ListExtPayment;
+
             var userID = Request.Cookies["CST.ID"];
 
             var en = new WorkPeriodModel
@@ -107,7 +112,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                     List<GetDDL> CheckPercentPayment = _getDDLService.GetDDLList(Filters);
                     decimal totalValuedecimalSum = CheckPercentPayment?.Where(x => x.Valuedecimal.HasValue).Sum(x => x.Valuedecimal.Value) ?? 0;
 
-                    if (totalValuedecimalSum > 100)
+                    if (totalValuedecimalSum >= 100)
                     {
                         returnmessage = "งวดงานนี้เบิกครบ 100% แล้ว";
                         return Json(new { success = false, message = returnmessage });

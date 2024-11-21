@@ -54,6 +54,7 @@ async function openModalGRPayment(UnitFormID) {
             $('#formName').val(response.FormName);
             $('#companyvenderName').val(response.CompanyVenderName);
             $('#venderName').val(response.VenderName);
+            $('#poInput').val(response.PONo);
 
             // Load the table data asynchronously
             await fetchListUnitFormGRPaymentTable(UnitFormID);
@@ -91,7 +92,7 @@ async function onClickSaveGRPayment() {
     const UnitFormID = document.getElementById('hdUnitFormID').value;
     const PONO = document.getElementById('poInput').value.trim();
     const GRNO = document.getElementById('grInput').value.trim();
-    const PercentPayment = document.getElementById('percentInput').value.trim();
+    const PercentPayment = document.getElementById('DDLPercentPaymentID').value;
     const Remark = document.getElementById('remark').value.trim();
 
     if (!PONO) {
@@ -102,8 +103,8 @@ async function onClickSaveGRPayment() {
         showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาระบุ GR');
         return;
     }
-    if (!PercentPayment) {
-        showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาระบุเปอร์เซ็นต์');
+    if (PercentPayment === "-1") {
+        showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาเลือกเปอร์เซ็นต์');
         return;
     }
     //if (!Remark) {
@@ -144,8 +145,10 @@ async function onClickSaveGRPayment() {
                     await fetchListUnitFormGRPaymentTable(UnitFormID);
                     document.getElementById('poInput').value = "";
                     document.getElementById('grInput').value = "";
-                    document.getElementById('percentInput').value = "";
+                    document.getElementById('DDLPercentPaymentID').value = "-1";
                     document.getElementById('remark').value = "";
+                    const searchButton = document.getElementById('searchButton');
+                    searchButton.click();
                     showSuccessAlert('สำเร็จ!', response.message);
                 } else {
                     showErrorAlertNotCloseModal(response.message, 'บันทึกข้อมูลไม่สำเร็จ' || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');

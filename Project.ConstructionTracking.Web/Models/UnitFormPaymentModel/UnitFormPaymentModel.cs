@@ -12,6 +12,7 @@
             public string? FormName { get; set; }
             public string? CompanyVenderName { get; set; }
             public string? VenderName { get; set; }
+            public string? PONo { get; set; }
         }
 
         public class IUDGRPayment

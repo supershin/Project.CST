@@ -370,11 +370,12 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.FormName = Commons.FormatExtension.NullToString(reader["FormName"]);
             Entity.CompanyVendorName = Commons.FormatExtension.NullToString(reader["CompanyVendorName"]);
             Entity.PONo = Commons.FormatExtension.NullToString(reader["PONo"]);
-            Entity.ApproveDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["ApproveDate"]);
+            Entity.ApproveDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["ApproveDate"]);
             Entity.UnitFormPDF = Commons.FormatExtension.NullToString(reader["UnitFormPDF"]);
             Entity.QCPDF = Commons.FormatExtension.NullToString(reader["QCPDF"]);
             Entity.GRNo = Commons.FormatExtension.NullToString(reader["GRNo"]);
-            Entity.GRDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["GRDate"]);
+            Entity.SyncStatusID = Commons.FormatExtension.NullToString(reader["SyncStatusID"]);
+            Entity.GRDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["GRDate"]);
             Entity.UnitFormID = Commons.FormatExtension.ConvertStringToGuid(reader["UnitFormID"]);
             Entity.Statusworkperiod = Commons.FormatExtension.NullToString(reader["Statusworkperiod"]);
             return Entity;
@@ -449,8 +450,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.PJMActionName = Commons.FormatExtension.NullToString(reader["PJMActionName"]);
             Entity.PJMActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["PJMActionDate"]);
             Entity.PJMPCRemark = Commons.FormatExtension.NullToString(reader["PJMPCRemark"]);
-            Entity.PERequestUnlock = Commons.FormatExtension.NullToString(reader["PERequestUnlock"]);
-            Entity.PMUnlock = Commons.FormatExtension.NullToString(reader["PMUnlock"]);
+            Entity.PERequestUnlock = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["PERequestUnlock"]);
+            Entity.PMUnlock = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["PMUnlock"]);
             Entity.PCStatusName = Commons.FormatExtension.NullToString(reader["PCStatusName"]);
             return Entity;
         }
