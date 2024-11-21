@@ -79,48 +79,63 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                // Check for missing or invalid required fields
+                if (string.IsNullOrWhiteSpace(Model.GRNO))
+                {
+                    return Json(new { success = false, message = "กรุณาระบุ GR" });
+                }
+
+                if (string.IsNullOrWhiteSpace(Model.PONO)) 
+                {
+                    return Json(new { success = false, message = "กรุณาระบุ PO" });
+                }
+
+                if (!Model.PercentPayment.HasValue || Model.PercentPayment <= 0)
+                {
+                    return Json(new { success = false, message = "กรุณาระบุเปอร์เซ็นต์ที่มากกว่า 0" });
+                }
+
                 string returnmessage = "";
                 int RoleID = int.TryParse(Request.Cookies["CST.Role"], out var tempRoleInt) ? tempRoleInt : -1;
+
                 if (RoleID == SystemConstant.UserRole.ADMIN)
                 {
                     Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
 
+                    // Check the total percentage for the UnitFormID
                     var Filters = new GetDDL { Act = "GetListUnitFormPayment", GuID = Model.UnitFormID };
                     List<GetDDL> CheckPercentPayment = _getDDLService.GetDDLList(Filters);
                     decimal totalValuedecimalSum = CheckPercentPayment?.Where(x => x.Valuedecimal.HasValue).Sum(x => x.Valuedecimal.Value) ?? 0;
 
-                    if (totalValuedecimalSum < 100)
-                    {
-                        if (totalValuedecimalSum + Model.PercentPayment < 100)
-                        {
-                            Model.UserID = userid;
-                            returnmessage = _UnitFormPaymentService.InsertNewGRPayment(Model);
-                            return Json(new { success = true, message = returnmessage });
-                        }
-                        else
-                        {
-                            returnmessage = "ไม่สามารถเบิกงวดงานเกิน 100% ได้";
-                            return Json(new { success = false, message = returnmessage });
-                        }
-                    }
-                    else
+                    if (totalValuedecimalSum > 100)
                     {
                         returnmessage = "งวดงานนี้เบิกครบ 100% แล้ว";
                         return Json(new { success = false, message = returnmessage });
                     }
+
+                    if (totalValuedecimalSum + Model.PercentPayment > 100)
+                    {
+                        returnmessage = "ไม่สามารถเบิกงวดงานเกิน 100% ได้";
+                        return Json(new { success = false, message = returnmessage });
+                    }
+
+                    // Insert the new GR payment if all validations pass
+                    Model.UserID = userid;
+                    returnmessage = _UnitFormPaymentService.InsertNewGRPayment(Model);
+                    return Json(new { success = true, message = returnmessage });
                 }
                 else
                 {
                     returnmessage = "สิทธิ์บันทึกเบิกงวดไม่ถูกต้อง";
                     return Json(new { success = false, message = returnmessage });
                 }
-
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
             }
         }
+
 
         [HttpPost]
         public IActionResult RemoveUnitFormGRPaymentData(UnitFormPaymentModel.IUDGRPayment Model)

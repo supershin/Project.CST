@@ -543,10 +543,23 @@ public class FormChecklistRepo : IFormChecklistRepo
                     string fileName = guidId + ".jpg"; // Set the file name with .jpg extension
                     var filePath = Path.Combine(dirPath, fileName); // Determine the full file path
 
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+
+
+                    using (var imageStream = image.OpenReadStream())
                     {
-                        image.CopyTo(fileStream);
+                        using (var resizedImageStream = FormatExtension.ResizeImage(imageStream, 0.7))
+                        {
+                            using (var fileStream = new FileStream(filePath, FileMode.Create))
+                            {
+                                resizedImageStream.CopyTo(fileStream); // Save resized image
+                            }
+                        }
                     }
+
+                    //using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    //{
+                    //    image.CopyTo(fileStream);
+                    //}
 
                     // Prepare the relative file path and replace backslashes with forward slashes
                     string relativeFilePath = Path.Combine("Upload", "document", folder, "PEImage", fileName).Replace("\\", "/");

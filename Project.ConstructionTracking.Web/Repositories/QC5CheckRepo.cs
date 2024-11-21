@@ -540,6 +540,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 using (var imageStream = image.OpenReadStream())
                                 {
                                     using (var resizedImageStream = ResizeImage(imageStream, 0.7)) // Resize to 50%
+                                    //using (var resizedImageStream = FormatExtension.ResizeImage(imageStream, 0.7))
                                     {
                                         using (var fileStream = new FileStream(filePath, FileMode.Create))
                                         {

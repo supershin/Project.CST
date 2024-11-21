@@ -265,5 +265,35 @@ namespace Project.ConstructionTracking.Web.Commons
             return string.Empty;
         }
 
+        /// <summary>
+        /// คือ Function ResizeImage  
+        /// </summary>
+        /// <param name="imageStream"></param>
+        /// <param name="scaleFactor"></param>
+        /// <returns></returns>
+        public static Stream ResizeImage(Stream imageStream, double scaleFactor)
+        {
+            using (var originalImage = System.Drawing.Image.FromStream(imageStream))
+            {
+                int newWidth = (int)(originalImage.Width * scaleFactor);
+                int newHeight = (int)(originalImage.Height * scaleFactor);
+
+                var resizedImage = new System.Drawing.Bitmap(newWidth, newHeight);
+                using (var graphics = System.Drawing.Graphics.FromImage(resizedImage))
+                {
+                    graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                    graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                    graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+
+                    graphics.DrawImage(originalImage, 0, 0, newWidth, newHeight);
+                }
+
+                var resizedImageStream = new MemoryStream();
+                resizedImage.Save(resizedImageStream, System.Drawing.Imaging.ImageFormat.Jpeg);
+                resizedImageStream.Seek(0, SeekOrigin.Begin); // Reset stream position
+
+                return resizedImageStream;
+            }
+        }
     }
 }
