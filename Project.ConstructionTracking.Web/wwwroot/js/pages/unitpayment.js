@@ -106,10 +106,10 @@ async function onClickSaveGRPayment() {
         showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาระบุเปอร์เซ็นต์');
         return;
     }
-    if (!Remark) {
-        showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาหมายเหตุให้กับทาง vendor portal ทราบ');
-        return;
-    }
+    //if (!Remark) {
+    //    showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาหมายเหตุให้กับทาง vendor portal ทราบ');
+    //    return;
+    //}
 
     const formData = new FormData();
     formData.append('ProjectID', ProjectID);
@@ -250,7 +250,6 @@ function onClickClearinputsaveGR() {
     document.getElementById('percentInput').value = "";
     document.getElementById('remark').value = "";
 }
-
 
 function searchByProjectAndUnit() {
 
