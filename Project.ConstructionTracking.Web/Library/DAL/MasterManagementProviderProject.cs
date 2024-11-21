@@ -370,11 +370,11 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.FormName = Commons.FormatExtension.NullToString(reader["FormName"]);
             Entity.CompanyVendorName = Commons.FormatExtension.NullToString(reader["CompanyVendorName"]);
             Entity.PONo = Commons.FormatExtension.NullToString(reader["PONo"]);
-            Entity.ApproveDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["ApproveDate"]);
+            Entity.ApproveDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["ApproveDate"]);
             Entity.UnitFormPDF = Commons.FormatExtension.NullToString(reader["UnitFormPDF"]);
             Entity.QCPDF = Commons.FormatExtension.NullToString(reader["QCPDF"]);
             Entity.GRNo = Commons.FormatExtension.NullToString(reader["GRNo"]);
-            Entity.GRDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["GRDate"]);
+            Entity.GRDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["GRDate"]);
             Entity.UnitFormID = Commons.FormatExtension.ConvertStringToGuid(reader["UnitFormID"]);
             Entity.Statusworkperiod = Commons.FormatExtension.NullToString(reader["Statusworkperiod"]);
             return Entity;

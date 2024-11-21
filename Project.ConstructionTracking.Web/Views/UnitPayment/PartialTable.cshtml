@@ -107,10 +107,35 @@
                                         }
                                     }
                                 </td>
-                                <td>
+@*                                  <td>
+                                    <div style="padding-top : 0rem;">
+                                        @item.GRNo
+                                    </div>
+                                    <br>
                                     <button type="button" class="btn btn-primary btn-pill w-70" onclick="openModalGRPayment('@item.UnitFormID')">
                                         ใส่เลข GR
                                     </button>
+                                </td> *@
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.GRNo))
+                                    {
+                                        <div style="padding-top: 0rem;">
+                                            @foreach (var grNo in @item.GRNo.Split(','))
+                                            {
+                                                <div>  <span class="badge bg-secondary me-1"></span>@grNo</div>
+                                            }
+                                        </div>
+                                        <br>
+                                        <button type="button" class="btn btn-primary btn-pill w-70" onclick="openModalGRPayment('@item.UnitFormID')">
+                                            ใส่เลข GR
+                                        </button>                    
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-primary btn-pill w-70" onclick="openModalGRPayment('@item.UnitFormID')">
+                                            ใส่เลข GR
+                                        </button>
+                                    }
                                 </td>
                                 <td>@item.GRDate</td>
                                 <td><span class="badge bg-secondary me-1"></span> @item.Statusworkperiod</td>
