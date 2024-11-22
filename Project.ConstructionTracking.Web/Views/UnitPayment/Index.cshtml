@@ -21,6 +21,15 @@
         font-size: 14px; /* Optional: Adjust dropdown font size if needed */
     }
 
+    .table-bordered {
+        border: 2px solid #dee2e6; /* Add a border to the entire table */
+    }
+
+    .table-bordered th,
+    .table-bordered td {
+        border: 1px solid #dee2e6; /* Add a border to each cell */
+    }
+
 </style>
 <title>Unit Payment</title>
 <div class="page-wrapper">
@@ -73,7 +82,7 @@
         </div>
     </div>
 </div>
-<!-- Modal -->
+<!-- ModalGRPayment -->
 <div class="modal fade" id="ModalGRPayment" tabindex="-1" aria-labelledby="ModalGRPaymentLabel" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 100vw; margin: auto;">
         <div class="modal-content">
@@ -180,8 +189,62 @@
         </div>
     </div>
 </div>
-
-
+<!-- ModalViewGRPaymentLabel -->
+<div class="modal fade" id="ModalViewGRPayment" tabindex="-1" aria-labelledby="ModalViewGRPaymentLabel" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: auto; margin: auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalGRPaymentLabel">ข้อมูลเลข GR</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="page-content page-container" id="page-content">
+                    <div class="padding">
+                        <div class="row container d-flex justify-content-center">
+                            <div class="col-12 grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-block d-sm-flex align-items-baseline custom-heading">
+                                            <h3 class="mb-0 header-text" id="viewProjectName">ProjectName</h3>
+                                            <div class="text-muted">
+                                                <p class="text-yellow d-block d-sm-inline ms-sm-2 mb-0" id="viewUnitcode">Unitcode</p>
+                                                <p class="text-yellow d-block d-sm-inline ms-sm-2 mb-0" id="viewFormname">Formname</p>
+                                            </div>
+                                        </div>
+                                        <p class="card-description" id="viewVenderCompany">
+                                            VenderCompany And VenderName
+                                        </p>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ลำดับ</th>
+                                                        <th>PO</th>
+                                                        <th>GR</th>
+                                                        <th>Percent</th>
+                                                        <th>หมายเหต์</th>
+                                                        <th>สถานะ</th>
+                                                        <th>วันที่บันทึก GR ล่าสุด</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="TableBodyViewGRPayment">
+                                                    <!-- Rows will be appended here dynamically -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @section scripts {

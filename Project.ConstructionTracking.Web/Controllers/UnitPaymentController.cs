@@ -79,6 +79,27 @@ namespace Project.ConstructionTracking.Web.Controllers
             return PartialView("PartialTableListUnitFormGRPayment", ModelTableListUnitFormGRPayment);
         }
 
+        public IActionResult FetchListUnitFormViewGRPaymentTable(Guid UnitFormID)
+        {
+            try
+            {
+                var model = new UnitFormPaymentModel.getListUnitFormGRPaymentTable
+                {
+                    UnitFormID = UnitFormID
+                };
+
+                List<UnitFormPaymentModel.getListUnitFormGRPaymentTable> modelTableListUnitFormGRPayment = _UnitFormPaymentService.GetListUnitFormGRPaymentTable(model);
+
+                // Return JSON instead of a partial view
+                return Json(modelTableListUnitFormGRPayment);
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions and return error message in JSON format
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
         [HttpPost]
         public IActionResult SaveUnitFormGRPaymentData(UnitFormPaymentModel.IUDGRPayment Model)
         {
@@ -140,7 +161,6 @@ namespace Project.ConstructionTracking.Web.Controllers
                 return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
             }
         }
-
 
         [HttpPost]
         public IActionResult RemoveUnitFormGRPaymentData(UnitFormPaymentModel.IUDGRPayment Model)

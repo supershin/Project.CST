@@ -16,11 +16,12 @@ namespace Project.ConstructionTracking.Web.Repositories
     {
 
         private readonly ContructionTrackingDbContext _context;
+        private readonly IGetDDLService _getDDLService;
 
-
-        public UnitFormPaymentRepo(ContructionTrackingDbContext context)
+        public UnitFormPaymentRepo(ContructionTrackingDbContext context, IGetDDLService getDDLService)
         {
             _context = context;
+            _getDDLService = getDDLService;
         }
          
 
@@ -146,7 +147,19 @@ namespace Project.ConstructionTracking.Web.Repositories
                     _context.tr_UnitFormPayment.Add(newGRPayment);
                     _context.SaveChanges();
 
-                    returnUrlDoc = "บันทึกข้อมูลสำเร็จ";
+                    var Filters = new GetDDL { Act = "GetListUnitFormPayment", GuID = Model.UnitFormID };
+                    List<GetDDL> CheckPercentPayment = _getDDLService.GetDDLList(Filters);
+                    decimal totalValuedecimalSum = CheckPercentPayment?.Where(x => x.Valuedecimal.HasValue).Sum(x => x.Valuedecimal.Value) ?? 0;
+
+
+                    if (totalValuedecimalSum + Model.PercentPayment > 100)
+                    {
+                        returnUrlDoc = "บันทึกข้อมูลสำเร็จ";
+                    }
+                    else
+                    {
+                        returnUrlDoc = "บันทึกข้อมูลครบ100%";
+                    }
 
                     scope.Complete();
                 }

@@ -86,6 +86,128 @@ async function fetchListUnitFormGRPaymentTable(UnitFormID) {
     }
 }
 
+async function openModalViewGRPayment(UnitFormID) {
+    try {
+        showLoadingScreen();
+
+        const response = await $.ajax({
+            url: baseUrl + 'UnitPayment/GetUnitFormGRDetail',
+            type: 'GET',
+            data: { UnitFormID: UnitFormID }
+        });
+
+        if (response) {
+            $('#viewProjectName').text(response.ProjectName);
+            $('#viewUnitcode').text(response.UnitCode);
+            $('#viewFormname').text(response.FormName);
+            $('#viewVenderCompany').text(response.CompanyVenderName + ' (' + response.VenderName + ')');
+
+            // Clear the table body before appending new data
+            $('#TableBodyViewGRPayment').empty();
+
+            // Fetch table data
+            await fetchListViewTableGRPaymentTable(UnitFormID);
+
+            // Show modal
+            const ModalViewGRPayment = new bootstrap.Modal(document.getElementById('ModalViewGRPayment'));
+            ModalViewGRPayment.show();
+            Swal.close();
+        }
+    } catch (error) {
+        Swal.close();
+        showErrorAlert('ผิดพลาด!', 'โหลดข้อมูลไม่สำเร็จ');
+    }
+}
+
+async function fetchListViewTableGRPaymentTable(UnitFormID) {
+    try {
+        const response = await $.ajax({
+            url: baseUrl + 'UnitPayment/FetchListUnitFormViewGRPaymentTable',
+            type: 'GET',
+            data: { UnitFormID: UnitFormID }
+        });
+
+        if (!response || response.length === 0) {
+            $('#TableBodyViewGRPayment').html('<tr><td colspan="7" class="text-center">ไม่มีข้อมูล</td></tr>');
+            return;
+        }
+
+        let rowIndex = 1; // Initialize running number
+        $('#TableBodyViewGRPayment').empty(); // Clear table before appending
+        response.forEach((item) => {
+
+        const syncBadge = item.SyncStatusID === 31
+            ? `<span class="badge bg-success rounded-pill text-white">${item.SyncStatusName}</span>`
+            : `<span class="badge bg-danger rounded-pill text-white">${item.SyncStatusName}</span><br>${item.SyncMessage || ''}`;
+
+            $('#TableBodyViewGRPayment').append(`
+                <tr>
+                    <td>${rowIndex}</td>
+                    <td>${item.PONO}</td>
+                    <td>${item.GRNO}</td>
+                    <td><span class="text-primary">${item.PercentPayment} %</span></td>
+                    <td>${item.Remark}</td>
+                    <td>${syncBadge}</td>
+                    <td>
+                        <i class="fa-regular fa-calendar"></i> ${item.UpdateDate || ''}
+                        <br>
+                        <i class="fa-regular fa-user"></i> ${item.CreateBy || ''}
+                    </td>
+                </tr>
+            `);
+            rowIndex++; // Increment the counter
+        });
+    } catch (error) {
+        showErrorAlert('ผิดพลาด!', 'โหลดตารางไม่สำเร็จ');
+    }
+}
+
+//async function fetchListViewTableGRPaymentTable(UnitFormID) {
+//    try {
+//        const response = await $.ajax({
+//            url: baseUrl + 'UnitPayment/FetchListUnitFormGRPaymentTable',
+//            type: 'GET',
+//            data: { UnitFormID: UnitFormID }
+//        });
+
+//        if (!response || response.length === 0) {
+//            $('#TableBodyViewGRPayment').html('<tr><td colspan="7" class="text-center">ไม่มีข้อมูล</td></tr>');
+//            return;
+//        }
+
+//        let rowIndex = 1; // Initialize running number
+//        $('#TableBodyViewGRPayment').empty(); // Clear table //}before appending
+//        response.forEach((item) => {
+//            const syncBadge = item.SyncStatusID === 31
+//                ? `<span class="badge bg-success rounded-pill text-white">${item.SyncStatusName}</span>`
+//                : `<span class="badge bg-danger rounded-pill text-white">${item.SyncStatusName}</span><br>${item.SyncMessage || ''}`;
+
+//            $('#TableBodyViewGRPayment').append(`
+//                <tr>
+//                    <td>${rowIndex}</td>
+//                    <td><a href="#!" class="text-reset" tabindex="-1">${item.PONO}</a></td>
+//                    <td><a href="#!" class="text-reset" tabindex="-1">${item.GRNO}</a></td>
+//                    <td><span class="text-primary">${item.PercentPayment} %</span></td>
+//                    <td>${item.Remark || ''}</td>
+//                    <td>${syncBadge}</td>
+//                    <td>
+//                        <i class="fa-regular fa-calendar"></i> ${item.UpdateDate || ''}
+//                        <br>
+//                        <i class="fa-regular fa-user"></i> ${item.CreateBy || ''}
+//                    </td>
+//                </tr>
+//            `);
+//            rowIndex++; // Increment the counter
+//        });
+//    } catch (error) {
+//        showErrorAlert('ผิดพลาด!', 'โหลดตารางไม่สำเร็จ');
+//    }
+
+
+
+
+
+
 async function onClickSaveGRPayment() {
     const ProjectID = document.getElementById('hdProjectID').value;
     const UnitID = document.getElementById('hdUnitID').value;
