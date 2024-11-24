@@ -343,7 +343,8 @@
                                     </span>
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            @* <li class="nav-item" id="nav-Project"> *@
+                            <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "ProjectList" ? "active" : "")" id="nav-Project">
                                 <a class="nav-link" asp-controller="ProjectList" asp-action="Index">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-building-community">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -360,7 +361,8 @@
                             </li>
                             @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
                             {
-                                <li class="nav-item">
+                                @* <li class="nav-item"> *@
+                                <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "MyTaskPM" ? "active" : "")" id="nav-MyTaskPM">
                                     <a class="nav-link" asp-controller="MyTaskPM" asp-action="Index">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -380,7 +382,8 @@
                             }
                             @if (ViewBag.UserRole == SystemConstant.UserRole.PJM.ToString())
                             {
-                                <li class="nav-item">
+                      @*        <li class="nav-item"> *@
+                                <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "MyTaskPJM" ? "active" : "")" id="nav-MyTaskPJM">
                                     <a class="nav-link" asp-controller="MyTaskPJM" asp-action="Index">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -399,7 +402,8 @@
                             }
                             @if (ViewBag.UserRole == SystemConstant.UserRole.PE.ToString())
                             {
-                                <li class="nav-item">
+                                @* <li class="nav-item"> *@
+                                <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "MyTaskPE" ? "active" : "")" id="nav-MyTaskPE">
                                     <a class="nav-link" asp-controller="MyTaskPE" asp-action="Index">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
