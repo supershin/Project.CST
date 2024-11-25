@@ -196,6 +196,16 @@
     <script>
 
       document.addEventListener("DOMContentLoaded", function () {
+
+        const navItems = document.querySelectorAll('.nav-item');
+
+        navItems.forEach(item => item.classList.remove('active'));
+
+        const activeItem = document.getElementById('nav-Dashboard');
+        if (activeItem) {
+            activeItem.classList.add('active');
+        }
+
       	window.ApexCharts && (new ApexCharts(document.getElementById('chart-demo-pie'), {
       		chart: {
       			type: "donut",

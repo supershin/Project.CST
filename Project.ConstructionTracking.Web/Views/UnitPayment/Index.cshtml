@@ -253,15 +253,15 @@
     <script src="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js"></script>
     <script src="~/js/pages/unitpayment.js?ver=@DateTime.Now.Ticks.ToString()"></script>
     <script>
-         
         document.addEventListener('DOMContentLoaded', function () {
+            // Toggling Left and Right Containers
             var leftContainer = document.getElementById('leftContainer');
             var rightContainer = document.getElementById('rightContainer');
             var toggleButton = document.getElementById('toggleLeftContainer');
 
             toggleButton.addEventListener('click', function () {
-        if (leftContainer.style.display === 'none' || leftContainer.classList.contains('d-none')) {
-                // Show the left container and adjust the right container
+                if (leftContainer.style.display === 'none' || leftContainer.classList.contains('d-none')) {
+                    // Show the left container and adjust the right container
                     leftContainer.style.display = 'block';
                     leftContainer.classList.remove('d-none');
                     rightContainer.classList.remove('col-12');
@@ -274,8 +274,18 @@
                     rightContainer.classList.add('col-12');
                 }
             });
-        });
 
+            // Navbar Active Class Logic
+            const desktopNavItem = document.getElementById('nav-Desktop');
+            const unitPaymentNavItem = document.getElementById('nav-UnitPayment');
+
+            if (desktopNavItem) {
+                desktopNavItem.classList.add('active'); // Make Desktop nav active
+            }
+            if (unitPaymentNavItem) {
+                unitPaymentNavItem.classList.add('active'); // Make UnitPayment nav active
+            }
+        });
     </script>
 }
 
