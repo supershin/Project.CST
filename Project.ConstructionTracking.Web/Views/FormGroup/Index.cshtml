@@ -24,6 +24,9 @@
     var VenderValue = FormGroupDetail?.VenderID;
     var UnitFormstatusID = FormGroupDetail?.UnitFormstatusID;
     var UnitFormstatus = FormGroupDetail?.UnitFormstatus;
+    var UnitFormstatusPe = FormGroupDetail?.UnitFormstatusPe;
+    var UnitFormstatusPm = FormGroupDetail?.UnitFormstatusPm;
+    var UnitFormstatusPjm = FormGroupDetail?.UnitFormstatusPjm;
     var PE_ActionType = FormGroupDetail?.PE_ActionType;
     var PE_StatusID = FormGroupDetail?.PE_StatusID;
     var PM_ActionType = FormGroupDetail?.PM_ActionType;
@@ -34,6 +37,7 @@
     var PJM_StatusID = FormGroupDetail?.PJM_StatusID;
     var FilePath = FormGroupDetail?.FilePath;
     var ListVender = ViewBag.ListVender;
+    var CntPC = ViewBag.CntPC;
     
 }
 @model List<Project.ConstructionTracking.Web.Models.FormGroupModel>
@@ -300,6 +304,7 @@
         text-align: center; /* Center the text within the label */
     }
 
+
 </style>
 
 @if (Convert.ToInt32(RoleID) != SystemConstant.UserRole.QC)
@@ -384,92 +389,230 @@
         @if (PE_ActionType == "submit")
         {
             <div class="container mt-1 mb-2">
-            <div class="row">
-                <div class="mb-1">
-                @if (UnitFormstatusID == 2 || UnitFormstatusID == 3 || UnitFormstatusID == 6 || UnitFormstatusID == 9 || UnitFormstatusID == 10)
-                {
-                    <!-- In Progress Card -->
-                    <div class="col-md-4">
-                        <div id="in-progress-card" class="card">
-                            <div class="card-body text-center">
-                                <br>
-                                <h3 id="progress-title" class="card-title">@UnitFormstatus</h3>
-                                <p id="progress-text" class="card-text">
-                                    ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "ไม่มีความคิดเห็น") <br>
-                                    ความคิดเห็น PJM : @(PJM_ActionType == "submit" ? PJM_Remark : "ไม่มีความคิดเห็น")
-                                </p>
-                                @if (UnitFormMainStatusID == 10)
-                                {
-                                    <div class="d-flex justify-content-center">
-                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
-                                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
-                                            <input type="hidden" name="ComFrom" value="FormGroup" />
-                                            <button type="submit" class="btn custom-btn btn-warning" id="btn-toggle-card">ขอปลดล็อค</button>
-                                        </form>
+                <div class="row">
+                    @if (CntPC == 0)
+                    {              
+                        // Step configuration
+                        string stepPE = "step-item";
+                        string stepPMCheck = "step-item";
+                        string stepPMApprove = "step-item";
+                        string stepPMCheckText = "PM กำลังตรวจ";
+
+                        // Icon configuration
+                        string stepPEIcon = "fa-solid fa-clipboard-check";
+                        string stepPMCheckIcon = "fa-solid fa-search";
+                        string stepPMApproveIcon = "fa-solid fa-check-circle";
+
+                        // Logic for step states
+                        if (UnitFormstatusID == 2)
+                        {
+                            stepPE += " completed";
+                            // stepPMCheck += " active";
+                        }
+                        else if (PM_ActionType == "save" && UnitFormstatusID < 4)
+                        {
+                            stepPE += " completed";
+                            stepPMCheck += " active";
+                        }
+                        else if (PM_ActionType == "submit")
+                        {
+                            stepPE += " completed";
+
+                            if (UnitFormstatusID == 4)
+                            {
+                                stepPMApprove += " completed";
+                                stepPMCheck += " completed";
+                            }
+                            else if (UnitFormstatusID == 5)
+                            {
+                                stepPMCheckText = "PM ไม่อนุมัติผ่าน";
+                                stepPMCheck += " danger";
+                                stepPMCheckIcon = "fa-solid fa-times-circle";
+                            }
+                        }                 
+                        <div class="col-md-8 mb-2">
+                            <div class="card card-link card-link-pop">
+                                <div class="card-body">
+                                    <div class="stepper-container">
+                                        <ul class="stepper">
+                                            <li class="@stepPE">
+                                                <div class="step-icon">
+                                                    <i class="@stepPEIcon"></i>
+                                                </div>
+                                                <span class="step-label">PE/SE ยืนยัน</span>
+                                            </li>
+                                            <li class="@stepPMCheck">
+                                                <div class="step-icon">
+                                                    <i class="@stepPMCheckIcon"></i>
+                                                </div>
+                                                <span class="step-label">@stepPMCheckText</span>
+                                            </li>
+                                            <li class="@stepPMApprove">
+                                                <div class="step-icon">
+                                                    <i class="@stepPMApproveIcon"></i>
+                                                </div>
+                                                <span class="step-label">PM อนุมัติผ่าน</span>
+                                            </li>
+                                        </ul>
                                     </div>
-                                }
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
-                else if (UnitFormstatusID == 4 || UnitFormstatusID == 7 || UnitFormstatusID == 11)
-                {
-                    <!-- Approved Card 1 -->
-                    <div class="col-md-4">
-                        <div id="approved-card-1" class="card">
-                            <div class="card-body text-center">
-                                <button class="btn" id="btn-approved-1">
-                                    <span class="status-text"><i class="fa-regular fa-circle-check"></i></span>
-                                </button>
-                                <h3 id="approved-title" class="card-title">@UnitFormstatus</h3>
-                                <p id="progress-text" class="card-text">
-                                    ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "ไม่มีความคิดเห็น") <br>
-                                    ความคิดเห็น PJM : @(PJM_ActionType == "submit" ? PJM_Remark : "ไม่มีความคิดเห็น")
-                                </p>
-                                @if (UnitFormMainStatusID == 7 || UnitFormstatusID == 11)
-                                {
-                                    <div class="d-flex justify-content-center">                                     
-                                            <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
-                                                <input type="hidden" name="UnitFormID" value="@UnitFormID" />
-                                                 <input type="hidden" name="ComFrom" value="FormGroup" />
-                                                <button type="submit" class="btn custom-btn btn-warning" id="btn-toggle-card">ขอปลดล็อค</button>
-                                            </form>
-                                    </div>
-                                }
+                        <div class="col-md-4">
+                            <div class="card card-link card-link-pop">
+                                <div class="card-body">
+                                    <h3 class="card-title">ความคิดเห็น PM</h3>
+                                        <textarea id="PM_Remark"
+                                                    class="form-control"
+                                                    rows="1"
+                                                    disabled>@PM_Remark</textarea>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
-                else if (UnitFormstatusID == 5 || UnitFormstatusID == 8 || UnitFormstatusID == 12)
-                {
-                    <!-- Rejected Card -->
-                    <div class="col-md-4">
-                        <div id="rejected-card" class="card">
-                            <div class="card-body text-center">
-                                <button class="btn" id="btn-rejected">
-                                    <span class="status-text"><i class="fa-regular fa-circle-xmark"></i></span>
-                                </button>
-                                <h3 id="rejected-title" class="card-title">@UnitFormstatus</h3>
-                                <p id="progress-text" class="card-text">
-                                    ความคิดเห็น PM : @(PM_ActionType == "submit" ? PM_Remark : "ไม่มีความคิดเห็น") <br>
-                                    ความคิดเห็น PJM : @(PJM_ActionType == "submit" ? PJM_Remark : "ไม่มีความคิดเห็น")
-                                </p>
-                                @if (UnitFormMainStatusID == 7 || UnitFormstatusID == 12)
-                                {
-                                    <div class="d-flex justify-content-center">
-                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
-                                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
-                                            <input type="hidden" name="ComFrom" value="FormGroup" />
-                                            <button type="submit" class="btn custom-btn btn-warning" id="btn-toggle-card">ขอปลดล็อค</button>
-                                        </form>
+                    }      
+                    else
+                    {
+                 
+                        // Step configuration
+                        string PCstepPE = "step-item";
+                        string PCstepPM = "step-item";
+                        string PCstepPJM = "step-item";
+                        string PCstepLock = "step-item";
+                        string PCstepUnLock = "step-item";
+                        string PCstepPMText = "PM ตรวจ";
+                        string PCstepPJMText = "PJM ตรวจ";
+
+                        // Icon configuration
+                        string PCstepPEIcon = "fa-solid fa-clipboard-check";
+                        string PCstepPMIcon = "fa-solid fa-search";
+                        string PCstepPJMIcon = "fa-solid fa-search";
+                        string PCstepLockIcon = "fa-solid fa-lock";
+                        string PCstepUnockIcon = "fa-solid fa-lock-open";
+                        string PCstepFailIcon = "fa-solid fa-times-circle";
+
+                        // Logic for step states
+                        if (UnitFormstatusID == 2)
+                        {
+                            PCstepPE += " completed";
+                        }
+                        else if (PM_ActionType == "save" && UnitFormstatusID < 4)
+                        {
+                            PCstepPE += " completed";
+                            PCstepPMText = "PM กำลังตรวจ";
+                        }
+                        else if (PM_ActionType == "submit" && UnitFormstatusID < 7)
+                        {
+                            PCstepPE += " completed";
+
+                            if (UnitFormstatusID == 6)
+                            {
+                                PCstepPMText = "PM อนุมัติผ่าน";
+                                PCstepPM += " completed";
+                                PCstepPMIcon = "fa-solid fa-clipboard-check";
+                            }
+                            else if (UnitFormstatusID == 5)
+                            {
+                                PCstepPMText = "PM ไม่อนุมัติผ่าน";
+                                PCstepPM += " danger";
+                                PCstepPMIcon = PCstepFailIcon;
+                            }
+                        }
+                        else if (PJM_ActionType == "save")
+                        {
+                            PCstepPE += " completed";
+                            PCstepPM += " completed";
+                            @* PCstepPJM += " completed"; *@
+                            PCstepPJMText = "PJM กำลังตรวจ";
+                            PCstepPMText = "PM อนุมัติผ่าน";
+                            PCstepPMIcon = "fa-solid fa-clipboard-check";
+                        }
+                        else if (PJM_ActionType == "submit" && UnitFormstatusID < 10)
+                        {
+                            PCstepPE += " completed";
+                            PCstepPM += " completed";
+                            PCstepPMText = "PM อนุมัติผ่าน";
+                            PCstepPMIcon = "fa-solid fa-clipboard-check";
+                            if (UnitFormstatusID == 7)
+                            {
+                                PCstepPMText = "PJM อนุมัติผ่าน";
+                                PCstepPJM += " completed";
+                                PCstepPJMIcon = "fa-solid fa-check-circle";
+                            }
+                            else if (UnitFormstatusID == 8)
+                            {
+                                PCstepPMText = "PJM อนุมัติผ่าน";
+                                PCstepPJMText = "PJM ไม่อนุมัติผ่าน";
+                                PCstepPJM += " danger";
+                                PCstepPJMIcon = PCstepFailIcon;
+                            }
+                        }
+                        else if (UnitFormstatusID == 10)
+                        {
+                            PCstepPMText = "PJM อนุมัติผ่าน";
+                            PCstepPMText = "PM อนุมัติผ่าน";
+                            PCstepPMIcon = "fa-solid fa-clipboard-check";
+                            PCstepPJMIcon = "fa-solid fa-check-circle";
+                            PCstepPE += " completed";
+                            PCstepPM += " completed";
+                            PCstepPJM += " completed";
+                            PCstepLock += " completed";
+                        }
+                        else if (UnitFormstatusID == 11)
+                        {
+                            PCstepPMText = "PJM อนุมัติผ่าน";
+                            PCstepPMText = "PM อนุมัติผ่าน";
+                            PCstepPMIcon = "fa-solid fa-clipboard-check";
+                            PCstepPJMIcon = "fa-solid fa-check-circle";
+                            PCstepPE += " completed";
+                            PCstepPM += " completed";
+                            PCstepPJM += " completed";
+                            PCstepLock += " completed";
+                            PCstepUnLock += " completed";
+                        }
+
+                        <div class="col-md-12 mb-2">
+                            <div class="card card-link card-link-pop">
+                                <div class="card-body">
+                                    <div class="stepper-container">
+                                        <ul class="stepper">
+                                            <li class="@PCstepPE">
+                                                <div class="step-icon">
+                                                    <i class="@PCstepPEIcon"></i>
+                                                </div>
+                                                <span class="step-label">PE/SE ยืนยัน</span>
+                                            </li>
+                                            <li class="@PCstepPM">
+                                                <div class="step-icon">
+                                                    <i class="@PCstepPMIcon"></i>
+                                                </div>
+                                                <span class="step-label">@PCstepPMText</span>
+                                            </li>
+                                            <li class="@PCstepPJM">
+                                                <div class="step-icon">
+                                                    <i class="@PCstepPJMIcon"></i>
+                                                </div>
+                                                <span class="step-label">@PCstepPJMText</span>
+                                            </li>
+                                            <li class="@PCstepLock">
+                                                <div class="step-icon">
+                                                    <i class="@PCstepLockIcon"></i>
+                                                </div>
+                                                <span class="step-label">ขอปลดล็อค</span>
+                                            </li>
+                                            <li class="@PCstepUnLock">
+                                                <div class="step-icon">
+                                                    <i class="@PCstepUnockIcon"></i>
+                                                </div>
+                                                <span class="step-label">ปลดล็อค</span>
+                                            </li>
+                                        </ul>
                                     </div>
-                                }
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
+
+                    }
                 </div>
-            </div>
             </div>
         }
         <div class="container mt-1 mb-2">

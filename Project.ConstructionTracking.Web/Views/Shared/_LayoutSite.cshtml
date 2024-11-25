@@ -106,9 +106,109 @@
         border: none;
     }
 
+    .stepper-container {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+    }
 
-    
-</style>
+    /* Stepper Styles */
+    .stepper {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        max-width: 800px;
+        position: relative;
+    }
+
+    .stepper .step-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+
+    .stepper .step-item .step-icon {
+        width: 40px;
+        height: 40px;
+        background-color: #6c757d; /* Default grey */
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        z-index: 2;
+        position: relative;
+    }
+
+    .stepper .step-item .step-label {
+        margin-top: 8px;
+        font-size: 14px;
+        text-align: center;
+        color: #333;
+    }
+
+    /* Connector Lines */
+    .stepper .step-item:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 20px;
+        right: -50%;
+        width: 100%;
+        height: 4px;
+        background-color: #6c757d; /* Default grey for connector */
+        z-index: 1;
+    }
+
+    .stepper .step-item.completed:not(:last-child)::after {
+        background-color: #28a745; /* Green for completed */
+    }
+
+    .stepper .step-item.danger:not(:last-child)::after {
+        background-color: #dc3545; /* Red for danger */
+    }
+
+    /* Active Step */
+    .stepper .step-item.active .step-icon {
+        background-color: #6c757d; /* Grey for active */
+        border: 3px solid #007bff; /* Blue border for active step */
+    }
+
+    /* Completed Step */
+    .stepper .step-item.completed .step-icon {
+        background-color: #28a745; /* Green background for completed */
+    }
+
+    /* Danger Step */
+    .stepper .step-item.danger .step-icon {
+        background-color: #dc3545; /* Red background for danger */
+    }
+
+        /* Responsive */
+        /* @@media (max-width: 768px) {
+        .stepper {
+            flex-direction: column;
+        }
+
+            .stepper .step-item {
+                margin-bottom: 20px;
+            }
+
+                .stepper .step-item:not(:last-child)::after {
+                    position: absolute;
+                    top: auto;
+                    left: 50%;
+                    width: 4px;
+                    height: 40px;
+                    right: auto;
+                    transform: translateX(-50%);
+                }
+    } */
+    </style>
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />

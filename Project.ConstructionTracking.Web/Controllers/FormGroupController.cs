@@ -71,7 +71,9 @@ namespace Project.ConstructionTracking.Web.Controllers
             bool ResultPermissionSubmit = _FormGroupService.ValidateUserSubmit(userIDuse , UnitFormData.UnitID);
             ViewBag.PermissionSubmit = ResultPermissionSubmit;
 
-
+            var FilterPC = new GetDDL { Act = "GetUnitFormPassCondition", GuID = UnitFormData.UnitFormID };
+            List<GetDDL> ListPC = _getDDLService.GetDDLList(FilterPC);
+            ViewBag.CntPC = (ListPC?.Count > 0) ? ListPC.Count : 0;
 
             return View(listFormGroup);
         }

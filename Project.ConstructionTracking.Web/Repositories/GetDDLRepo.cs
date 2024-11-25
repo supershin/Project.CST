@@ -320,7 +320,17 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                       Text = t1.SyncMessage
                                                   }).ToList();
                     return GetUnitFormPayment;
-    
+
+                case "GetUnitFormPassCondition":
+
+                    var GetUnitFormPassCondition = (from t1 in _context.tr_UnitFormPassCondition
+                                                    where t1.UnitFormID == Model.GuID && t1.FlagActive == true
+                                              select new GetDDL
+                                              {
+                                                  Value = t1.ID,
+                                                  //Text = t1.SyncMessage
+                                              }).ToList();
+                    return GetUnitFormPassCondition;
 
                 default:
 

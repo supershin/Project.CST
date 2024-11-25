@@ -170,6 +170,25 @@ namespace Project.ConstructionTracking.Web.Repositories
                     12 => "PM ไม่อนุมัติปลดล็อค",
                     _ => "สถานะไม่ทราบ"
                 },
+                UnitFormstatusPe = result.PE_StatusID switch
+                {
+                    1 => "PE/SE ผ่าน",
+                    _ => ""
+                },
+                UnitFormstatusPm = result.PM_StatusID switch
+                {
+                    4 => "PM อนุมัติผ่าน",
+                    5 => "PM ไม่อนุมัติผ่าน",
+                    6 => "PM ส่งเรื่องอนุมัติการผ่านแบบมีเงื่อนไขให้ PJM พิจารณา",
+                    7 => "PM ไม่อนุมัติผ่านแบบมีเงื่อนไข",
+                    _ => "สถานะไม่ทราบ"
+                },
+                UnitFormstatusPjm = result.PJM_StatusID switch
+                {
+                    8 => "PJM อนุมัติผ่าน",
+                    9 => "PJM ไม่อนุมัติผ่าน",
+                    _ => "สถานะไม่ทราบ"
+                },
                 PE_ActionBy = result.PE_ActionBy,
                 PE_ActionDate = result.PE_ActionDate,
                 PE_ActionType = result.PE_ActionType,
