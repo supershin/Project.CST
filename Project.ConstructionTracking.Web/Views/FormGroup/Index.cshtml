@@ -490,6 +490,8 @@
                         string PCstepUnockIcon = "fa-solid fa-lock-open";
                         string PCstepFailIcon = "fa-solid fa-times-circle";
 
+                        string UnlockColor = "secondary";
+
                         // Logic for step states
                         if (UnitFormstatusID == 2)
                         {
@@ -534,13 +536,12 @@
                             PCstepPMIcon = "fa-solid fa-clipboard-check";
                             if (UnitFormstatusID == 7)
                             {
-                                PCstepPMText = "PJM อนุมัติผ่าน";
+                                PCstepPJMText = "PJM อนุมัติผ่าน";
                                 PCstepPJM += " completed";
                                 PCstepPJMIcon = "fa-solid fa-check-circle";
                             }
                             else if (UnitFormstatusID == 8)
                             {
-                                PCstepPMText = "PJM อนุมัติผ่าน";
                                 PCstepPJMText = "PJM ไม่อนุมัติผ่าน";
                                 PCstepPJM += " danger";
                                 PCstepPJMIcon = PCstepFailIcon;
@@ -548,7 +549,7 @@
                         }
                         else if (UnitFormstatusID == 10)
                         {
-                            PCstepPMText = "PJM อนุมัติผ่าน";
+                            PCstepPJMText = "PJM อนุมัติผ่าน";
                             PCstepPMText = "PM อนุมัติผ่าน";
                             PCstepPMIcon = "fa-solid fa-clipboard-check";
                             PCstepPJMIcon = "fa-solid fa-check-circle";
@@ -559,7 +560,7 @@
                         }
                         else if (UnitFormstatusID == 11)
                         {
-                            PCstepPMText = "PJM อนุมัติผ่าน";
+                            PCstepPJMText = "PJM อนุมัติผ่าน";
                             PCstepPMText = "PM อนุมัติผ่าน";
                             PCstepPMIcon = "fa-solid fa-clipboard-check";
                             PCstepPJMIcon = "fa-solid fa-check-circle";
@@ -597,7 +598,15 @@
                                                 <div class="step-icon">
                                                     <i class="@PCstepLockIcon"></i>
                                                 </div>
-                                                <span class="step-label">ขอปลดล็อค</span>
+                                                <span class="step-label">ขอปลดล็อค
+
+@*                                                     <a href="#!" class="badge bg-@UnlockColor rounded-pill text-white"
+                                                       onclick="goToSumaryQC('@ProjectID','@ProjectName', '@UnitID')">
+                                                        <i class="fa-solid fa-magnifying-glass"></i> @ViewBag.ConcatenatedQCNames -
+                                                        @ViewBag.QCStatusMessage
+                                                    </a> *@
+                                                </span>
+
                                             </li>
                                             <li class="@PCstepUnLock">
                                                 <div class="step-icon">
@@ -610,7 +619,32 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="col-md-12 mb-2">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card card-link card-link-pop">
+                                        <div class="card-body">
+                                            <h3 class="card-title">ความคิดเห็น PM</h3>
+                                            <textarea id="PM_Remark"
+                                                        class="form-control"
+                                                        rows="1"
+                                                        disabled>@PM_Remark</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card card-link card-link-pop">
+                                        <div class="card-body">
+                                            <h3 class="card-title">ความคิดเห็น PJM</h3>
+                                            <textarea id="PJM_Remark"
+                                                      class="form-control"
+                                                      rows="1"
+                                                      disabled>@PJM_Remark</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     }
                 </div>
             </div>
