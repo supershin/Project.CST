@@ -534,6 +534,7 @@
                             PCstepPM += " completed";
                             PCstepPMText = "PM อนุมัติผ่าน";
                             PCstepPMIcon = "fa-solid fa-clipboard-check";
+                            UnlockColor = "success";
                             if (UnitFormstatusID == 7)
                             {
                                 PCstepPJMText = "PJM อนุมัติผ่าน";
@@ -549,6 +550,7 @@
                         }
                         else if (UnitFormstatusID == 10)
                         {
+                            UnlockColor = "success";
                             PCstepPJMText = "PJM อนุมัติผ่าน";
                             PCstepPMText = "PM อนุมัติผ่าน";
                             PCstepPMIcon = "fa-solid fa-clipboard-check";
@@ -560,6 +562,7 @@
                         }
                         else if (UnitFormstatusID == 11)
                         {
+                            UnlockColor = "success";
                             PCstepPJMText = "PJM อนุมัติผ่าน";
                             PCstepPMText = "PM อนุมัติผ่าน";
                             PCstepPMIcon = "fa-solid fa-clipboard-check";
@@ -598,13 +601,12 @@
                                                 <div class="step-icon">
                                                     <i class="@PCstepLockIcon"></i>
                                                 </div>
-                                                <span class="step-label">ขอปลดล็อค
-
-@*                                                     <a href="#!" class="badge bg-@UnlockColor rounded-pill text-white"
-                                                       onclick="goToSumaryQC('@ProjectID','@ProjectName', '@UnitID')">
-                                                        <i class="fa-solid fa-magnifying-glass"></i> @ViewBag.ConcatenatedQCNames -
-                                                        @ViewBag.QCStatusMessage
-                                                    </a> *@
+                                                <span class="step-label">
+                                                    <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                                        <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                                        <input type="hidden" name="ComFrom" value="FormGroup" />
+                                                        <button type="submit" class="badge bg-@UnlockColor rounded-pill text-white" id="btn-toggle-card"> <i class="fa-solid fa-magnifying-glass"></i> ขอปลดล็อค</button>
+                                                    </form>
                                                 </span>
 
                                             </li>
@@ -660,7 +662,7 @@
                             <input type="hidden" name="GobackTo" value="@GobackTo" />
                             <input type="hidden" name="GroupID" value="@item.GroupID" />
 
-                            <div class="card card-link card-link-pop p-3 mb-2" onclick="this.closest('form').submit();">
+                            <div class="card p-3 mb-2" onclick="this.closest('form').submit();">
                                 <div class="d-flex justify-content-between">
                                     <div class="d-flex flex-row align-items-center">
                                         <button type="button" class="status-dot bg-@item.StatusUse @(item.StatusUse == "danger" || item.StatusUse == "warning" ? "status-dot-animated" : "")">
@@ -1189,9 +1191,6 @@
 
             autocomplete(document.getElementById("ddlList"), availableVendors);
         });
-
-
-
 
         function toggleComments(event, groupId) {
             event.stopPropagation(); // Prevent the event from bubbling up and triggering form submission
