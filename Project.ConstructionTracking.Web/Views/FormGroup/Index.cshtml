@@ -386,8 +386,8 @@
                 <label class="form-label custom-label">ยังไม่ได้ Submit</label>
             }
         }
-        @if (PE_ActionType == "submit")
-        {
+@*         @if (PE_ActionType == "submit")
+        { *@
             <div class="container mt-1 mb-2">
                 <div class="row">
                     @if (CntPC == 0)
@@ -404,7 +404,7 @@
                         string stepPMApproveIcon = "fa-solid fa-check-circle";
 
                         // Logic for step states
-                        if (UnitFormstatusID == 2)
+                        if (PE_ActionType == "submit" && UnitFormstatusID < 4)
                         {
                             stepPE += " completed";
                             // stepPMCheck += " active";
@@ -431,7 +431,7 @@
                             }
                         }                 
                         <div class="col-md-8 mb-2">
-                            <div class="card card-link card-link-pop">
+                            <div class="card">
                                 <div class="card-body">
                                     <div class="stepper-container">
                                         <ul class="stepper">
@@ -459,7 +459,7 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card card-link card-link-pop">
+                            <div class="card">
                                 <div class="card-body">
                                     <h3 class="card-title">ความคิดเห็น PM</h3>
                                         <textarea id="PM_Remark"
@@ -493,7 +493,7 @@
                         string UnlockColor = "secondary";
 
                         // Logic for step states
-                        if (UnitFormstatusID == 2)
+                    if (PE_ActionType == "submit" && UnitFormstatusID < 4)
                         {
                             PCstepPE += " completed";
                         }
@@ -575,7 +575,7 @@
                         }
 
                         <div class="col-md-12 mb-2">
-                            <div class="card card-link card-link-pop">
+                            <div class="card">
                                 <div class="card-body">
                                     <div class="stepper-container">
                                         <ul class="stepper">
@@ -624,7 +624,7 @@
                         <div class="col-md-12 mb-2">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="card card-link card-link-pop">
+                                    <div class="card">
                                         <div class="card-body">
                                             <h3 class="card-title">ความคิดเห็น PM</h3>
                                             <textarea id="PM_Remark"
@@ -635,7 +635,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="card card-link card-link-pop">
+                                    <div class="card">
                                         <div class="card-body">
                                             <h3 class="card-title">ความคิดเห็น PJM</h3>
                                             <textarea id="PJM_Remark"
@@ -650,7 +650,7 @@
                     }
                 </div>
             </div>
-        }
+      @*   } *@
         <div class="container mt-1 mb-2">
             <div class="row">
                 @foreach (var item in Model)

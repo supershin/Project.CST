@@ -60,9 +60,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                 var FindvenderSign = new GetDDL { Act = "GetVenderSign", GuID = resultModel.UnitFormID , ID = resultModel.FormID};
                 List<GetDDL> venderSign = _getDDLService.GetDDLList(FindvenderSign);
-                ViewBag.PathvenderSign = venderSign[0].Text;
-
-
+                ViewBag.PathvenderSign = (venderSign != null && venderSign.Count > 0) ? venderSign[0].Text : null;
             }
             var listpass = resultModel?.PM_getListgroup;
             if (listpass != null)

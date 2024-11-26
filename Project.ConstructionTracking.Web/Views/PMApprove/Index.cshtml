@@ -168,6 +168,15 @@
         height: auto;
     }
 
+    .custom-label {
+        background-color: red; /* Red background */
+        color: white; /* White text color */
+        font-size: 20px; /* Keep the font size */
+        padding: 5px; /* Add some padding around the text */
+        border-radius: 3px; /* Optional: add rounded corners */
+        text-align: center; /* Center the text within the label */
+    }
+
 </style>
 
 <div class="page-wrapper">
@@ -220,12 +229,51 @@
                             </form>
                         }
                     </div>
-                    <div class="d-block d-sm-flex align-items-baseline custom-heading">
-                        <h3 class="mb-0 header-text">PM ตรวจงาน @FormName</h3>
-                        <div class="text-muted">
-                            <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@ProjectName ( Unit : @UnitCode )</h5>
+                    <div id="desktopContent" style="display: none;">
+                        <div class="d-block d-sm-flex align-items-baseline custom-heading">
+                            <h1>PM ตรวจงาน @FormName </h1>
+                            <div class="text-muted">
+                                <h3 class="text-yellow"> &nbsp; @ProjectName ( Unit : @UnitCode )</h3>
+                            </div>
                         </div>
                     </div>
+
+                    <div id="ipadAirContent" style="display: none;">
+                        <div class="d-block d-sm-flex align-items-baseline custom-heading">
+                            <h3 class="mb-0 header-text">PM ตรวจงาน @FormName </h3>
+                            <div class="text-muted">
+                                <h5 class="text-yellow d-block d-sm-inline ms-sm-2 mb-0">@ProjectName ( Unit : @UnitCode )</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        // Function to check screen width and display appropriate content
+                        function toggleContentBasedOnSize() {
+                            const width = window.innerWidth;
+                            const desktopContent = document.getElementById('desktopContent');
+                            const ipadAirContent = document.getElementById('ipadAirContent');
+
+                            // Reset displays
+                            desktopContent.style.display = 'none';
+                            ipadAirContent.style.display = 'none';
+
+                            // Show based on size
+                            if (width > 820) { // Devices larger than iPad Air
+                                desktopContent.style.display = 'block';
+                            } else if (width <= 820) { // Devices up to iPad Air size
+                                ipadAirContent.style.display = 'block';
+                            }
+                        }
+
+                        // Run on page load
+                        toggleContentBasedOnSize();
+
+                        // Recheck on window resize
+                        window.addEventListener('resize', toggleContentBasedOnSize);
+                    </script>
+
+
                     <div class="align-items-right">
                         <button class="status-dot bg-transparent">
                         </button>
@@ -236,176 +284,118 @@
     </div>
     <!-- Page body -->
     <div class="page-body">
-        <div class="container-xl mb-3">
-            <!-- Desktop and Tablet Layout: Two cards side by side -->
-            <div class="d-none d-md-block">
-                <div class="dynamic-row">
-                    <!-- Details Card -->
-                    <div class="card card-detail">
-                        <div class="card-body">
-                            <h5 class="card-title">ข้อมูลรายละเอียด</h5>
-                            <div class="col-12">
-                                <div class="container mt-1">
-                                    <label class="form-label">
-                                        PE/SE ผู้ควบคุมงาน : @PEActionBy
-                                    </label>
-                                    <label class="form-label">
-                                        เกรดที่ PE/SE ประเมินงวดนี้ : @Grade
-                                    </label>
-                                    <label class="form-label">
-                                        วันที่ส่งงาน : @if (PE_Actiontype == "submit")
-                                        {
-                                            @Actiondate
-                                        }
-                                    </label>
-                                    @if (ViewBag.ConcatenatedQCNames != "")
-                                    {
-                                        <label class="form-label">
-                                            การตรวจ :
-                                            <a href="#!" class="badge bg-@ViewBag.qcStatusColore rounded-pill text-white"
-                                               onclick="goToSumaryQC('@ProjectID','@ProjectName', '@UnitID')">
-                                                <i class="fa-solid fa-magnifying-glass"></i> @ViewBag.ConcatenatedQCNames -
-                                                @ViewBag.QCStatusMessage
-                                            </a>
-                                        </label>
-                                    }
-                                    <label class="form-label">
-                                        สร้างโดย : @CompanyName
-                                    </label>
-                                    <label class="form-label">
-                                        ชื่อผู้รับเหมาเซ็น : @VenderName
-                                    </label>
-                                    @if (PCAll != 0)
-                                    {
-                                        <label class="form-label text-danger">มีการผ่านแบบมีเงื่อนไข!!!</label>
-                                    }
-                                    @if (UnitFormStatusID == 10 || UnitFormStatusID == 11 || UnitFormStatusID == 12)
-                                    {
-                                        <div class="d-flex justify-content-center mt-2 mb-2">
-                                            <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
-                                                <input type="hidden" name="UnitFormID" value="@UnitFormID" />
-                                                <input type="hidden" name="ComFrom" value="PMApprove" />
-                                                <button type="submit" class="btn btn-success w-100" id="btn-toggle-card">
-                                                    ปลดล็อค
-                                                </button>
-                                            </form>
-                                        </div>
-                                    }
-                                    @if (UnitFormStatusID == 4 && PM_Actiontype == "submit")
-                                    {
-                                        @if (ViewBag.FilePathPDF != null)
-                                        {
-                                            <div class="col-12">
-                                                <a href="~/@ViewBag.FilePathPDF" target="_blank"
-                                                   class="btn btn-secondary w-100">
-                                                    ดูเอกสารตรวจ
-                                                </a>
+        @if (PCAll != 0)
+        {
+            <label id="statusLabel" class="form-label custom-label">มีการผ่านแบบมีเงื่อนไข!!!</label>
+        }
+        <div class="container mt-1 mb-2">
+            <div class="row">
+                @if (PCAll == 0)
+                {
+                    // Step configuration
+                    string stepPE = "step-item";
+                    string stepPMCheck = "step-item";
+                    string stepPMApprove = "step-item";
+                    string stepPMCheckText = "PM กำลังตรวจ";
+
+                    // Icon configuration
+                    string stepPEIcon = "fa-solid fa-clipboard-check";
+                    string stepPMCheckIcon = "fa-solid fa-search";
+                    string stepPMApproveIcon = "fa-solid fa-check-circle";
+
+                    // Logic for step states
+                    if (PM_Actiontype == "submit" && UnitFormStatusID < 4)
+                    {
+                        stepPE += " completed";
+                        // stepPMCheck += " active";
+                    }
+                    else if (PM_Actiontype == "save" && UnitFormStatusID < 4)
+                    {
+                        stepPE += " completed";
+                        stepPMCheck += " active";
+                    }
+                    else if (PM_Actiontype == "submit")
+                    {
+                        stepPE += " completed";
+
+                        if (UnitFormStatusID == 4)
+                        {
+                            stepPMApprove += " completed";
+                            stepPMCheck += " completed";
+                        }
+                        else if (UnitFormStatusID == 5)
+                        {
+                            stepPMCheckText = "PM ไม่อนุมัติผ่าน";
+                            stepPMCheck += " danger";
+                            stepPMCheckIcon = "fa-solid fa-times-circle";
+                        }
+                    }
+                    <div class="col-md-6 mb-2">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="stepper-container">
+                                    <ul class="stepper">
+                                        <li class="@stepPE">
+                                            <div class="step-icon">
+                                                <i class="@stepPEIcon"></i>
                                             </div>
-                                        }
-                                    }
-                                    else if (UnitFormStatusID == 7 && PJM_Actiontype == "submit")
-                                    {
-                                        @if (ViewBag.FilePathPDF != null)
-                                        {
-                                            <div class="col-12">
-                                                <a href="~/@ViewBag.FilePathPDF" target="_blank"
-                                                   class="btn btn-secondary w-100">
-                                                    ดูเอกสารตรวจ
-                                                </a>
+                                            <span class="step-label">PE/SE ยืนยัน</span>
+                                        </li>
+                                        <li class="@stepPMCheck">
+                                            <div class="step-icon">
+                                                <i class="@stepPMCheckIcon"></i>
                                             </div>
-                                        }
-                                    }
-                                    else if (UnitFormStatusID >= 9)
-                                    {
-                                        @if (ViewBag.FilePathPDF != null)
-                                        {
-                                            <div class="col-12">
-                                                <a href="~/@ViewBag.FilePathPDF" target="_blank"
-                                                   class="btn btn-secondary w-100">
-                                                    ดูเอกสารตรวจ
-                                                </a>
+                                            <span class="step-label">@stepPMCheckText</span>
+                                        </li>
+                                        <li class="@stepPMApprove">
+                                            <div class="step-icon">
+                                                <i class="@stepPMApproveIcon"></i>
                                             </div>
-                                        }
-                                    }
+                                            <span class="step-label">PM อนุมัติผ่าน</span>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Image Card -->
-                    <div class="card card-image">
-                        <div class="card-body">
-                            <div class="col-12">
-                                <h5 class="card-title">ลายเซ็นผู้รับเหมา</h5>
-                                <img src="~/@ViewBag.PathvenderSign" class="card-img-top" alt="Image in Card 2">
+                    <div class="col-md-6 mb-2">
+                        <div class="card" style="border: 2px solid #000066; padding: 16px; border-radius: 8px; background-color: #f8f9fa;">
+                            <div class="card-stamp">
+                                <div class="card-stamp-icon bg-yellow">
+                                    <!-- Download SVG icon from http://tabler-icons.io/i/id -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-id"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 4m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v10a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z" /><path d="M9 10m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M15 8l2 0" /><path d="M15 12l2 0" /><path d="M7 16l10 0" /></svg>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mobile Layout: Carousel -->
-            <div class="d-block d-md-none">
-                <div id="cardCarousel" class="carousel slide" data-bs-interval="false">
-                    <!-- Carousel Indicators (Dots) -->
-                    <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#cardCarousel" data-bs-slide-to="0" class="active"
-                                aria-current="true" aria-label="Card 1"></button>
-                        <button type="button" data-bs-target="#cardCarousel" data-bs-slide-to="1" aria-label="Card 2"></button>
-                    </div>
-
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">ข้อมูลรายละเอียด</h5>
-                                    <div class="col-12">
-                                        <div class="container mt-1">
-                                            <label class="form-label">
-                                                PE/SE ผู้ควบคุมงาน : @PEActionBy
-                                            </label>
-                                            <label class="form-label">
-                                                เกรดที่ PE/SE ประเมินงวดนี้ : @Grade
-                                            </label>
-                                            <label class="form-label">
-                                                วันที่ส่งงาน : @if (PE_Actiontype == "submit")
-                                                {
-                                                    @Actiondate
-                                                }
-                                            </label>
-                                            @if (ViewBag.ConcatenatedQCNames != "")
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">
+                                        <h3 class="card-title">ข้อมูลรายละเอียด</h3>
+                                        <p class="text-secondary mb-1">PE/SE ผู้ควบคุมงาน : @PEActionBy</p>
+                                        <p class="text-secondary mb-1">เกรดงวดนี้ : @Grade</p>
+                                        <p class="text-secondary mb-1">
+                                            วันที่ส่งงาน : @if (PE_Actiontype == "submit")
                                             {
-                                                <label class="form-label">
-                                                    การตรวจ :
-                                                    <a href="#!" class="badge bg-@ViewBag.qcStatusColore rounded-pill text-white"
-                                                       onclick="goToSumaryQC('@ProjectID','@ProjectName', '@UnitID')">
-                                                        <i class="fa-solid fa-magnifying-glass"></i> @ViewBag.ConcatenatedQCNames -
-                                                        @ViewBag.QCStatusMessage
-                                                    </a>
-                                                </label>
+                                                @Actiondate
                                             }
-                                            <label class="form-label">
-                                                สร้างโดย : @CompanyName
-                                            </label>
-                                            <label class="form-label">
-                                                ชื่อผู้รับเหมาเซ็น : @VenderName
-                                            </label>
-                                            @if (PCAll != 0)
-                                            {
-                                                <label class="form-label text-danger">มีการผ่านแบบมีเงื่อนไข!!!</label>
-                                            }
-                                            @if (UnitFormStatusID == 10 || UnitFormStatusID == 11 || UnitFormStatusID == 12)
-                                            {
-                                                <div class="d-flex justify-content-center mt-2">
-                                                    <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
-                                                        <input type="hidden" name="UnitFormID" value="@UnitFormID" />
-                                                        <input type="hidden" name="ComFrom" value="PMApprove" />
-                                                        <button type="submit" class="btn custom-btn btn-success"
-                                                                id="btn-toggle-card">
-                                                            ปลดล็อค
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            }
+                                        </p>
+                                        @if (ViewBag.ConcatenatedQCNames != "")
+                                        {
+                                            <p class="text-secondary mb-1">
+                                                การตรวจ :
+                                                <a href="#!" class="badge bg-@ViewBag.qcStatusColore rounded-pill text-white"
+                                                   onclick="goToSumaryQC('@ProjectID','@ProjectName', '@UnitID')">
+                                                    <i class="fa-solid fa-magnifying-glass"></i> @ViewBag.ConcatenatedQCNames -
+                                                    @ViewBag.QCStatusMessage
+                                                </a>
+                                            </p>
+                                        }
+                                        <p class="text-secondary mb-1">
+                                            สร้างโดย : @CompanyName
+                                        </p>
+                                        <p class="text-secondary mb-1">
+                                            ชื่อผู้รับเหมาเซ็น : @VenderName
+                                        </p>
+                                        <p class="text-secondary mb-1">
                                             @if (UnitFormStatusID == 4 && PM_Actiontype == "submit")
                                             {
                                                 @if (ViewBag.FilePathPDF != null)
@@ -442,31 +432,295 @@
                                                     </div>
                                                 }
                                             }
-                                        </div>
+                                        </p>
                                     </div>
+                                    <div class="col-12 col-sm-6">
+                                        <h3 class="card-title">ลายเซ็นผู้รับเหมา</h3>
+                                        @if (!string.IsNullOrEmpty(ViewBag.PathvenderSign as string))
+                                        {
+                                            <img src="~/@ViewBag.PathvenderSign" class="card-img-top custom-size" alt="Image in Card 2">
+                                        }
+                                        else
+                                        {
+                                            <label class="text-danger">ไม่มีรูปภาพ</label>
+                                        }
+                                    </div>
+
+                                    <!-- Custom CSS -->
+                                    <style>
+                                        .custom-size {
+                                            width: 288px;
+                                            height: 160px;
+                                            object-fit: cover; /* Ensures the image scales without distortion */
+                                        }
+                                    </style>
+
                                 </div>
                             </div>
                         </div>
-                        <div class="carousel-item">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="col-12">
-                                        <h5 class="card-title">ลายเซ็นผู้รับเหมา</h5>
-                                        <img src="~/@ViewBag.PathvenderSign" class="card-img-top" alt="Image in Card 2">
+                    </div>
+                }
+                else
+                {
+
+                    // Step configuration
+                    string PCstepPE = "step-item";
+                    string PCstepPM = "step-item";
+                    string PCstepPJM = "step-item";
+                    string PCstepLock = "step-item";
+                    string PCstepUnLock = "step-item";
+                    string PCstepPMText = "PM ตรวจ";
+                    string PCstepPJMText = "PJM ตรวจ";
+
+                    // Icon configuration
+                    string PCstepPEIcon = "fa-solid fa-clipboard-check";
+                    string PCstepPMIcon = "fa-solid fa-search";
+                    string PCstepPJMIcon = "fa-solid fa-search";
+                    string PCstepLockIcon = "fa-solid fa-lock";
+                    string PCstepUnockIcon = "fa-solid fa-lock-open";
+                    string PCstepFailIcon = "fa-solid fa-times-circle";
+
+                    string UnlockColor = "secondary";
+
+                    // Logic for step states
+                    if (PJM_Actiontype == "submit" && UnitFormStatusID < 4)
+                    {
+                        PCstepPE += " completed";
+                    }
+                    else if (PM_Actiontype == "save" && UnitFormStatusID < 4)
+                    {
+                        PCstepPE += " completed";
+                        PCstepPMText = "PM กำลังตรวจ";
+                    }
+                    else if (PM_Actiontype == "submit" && UnitFormStatusID < 7)
+                    {
+                        PCstepPE += " completed";
+
+                        if (UnitFormStatusID == 6)
+                        {
+                            PCstepPMText = "PM อนุมัติผ่าน";
+                            PCstepPM += " completed";
+                            PCstepPMIcon = "fa-solid fa-clipboard-check";
+                        }
+                        else if (UnitFormStatusID == 5)
+                        {
+                            PCstepPMText = "PM ไม่อนุมัติผ่าน";
+                            PCstepPM += " danger";
+                            PCstepPMIcon = PCstepFailIcon;
+                        }
+                    }
+                    else if (PJM_Actiontype == "save")
+                    {
+                        PCstepPE += " completed";
+                        PCstepPM += " completed";
+                        @* PCstepPJM += " completed"; *@
+                        PCstepPJMText = "PJM กำลังตรวจ";
+                        PCstepPMText = "PM อนุมัติผ่าน";
+                        PCstepPMIcon = "fa-solid fa-clipboard-check";
+                    }
+                    else if (PJM_Actiontype == "submit" && UnitFormStatusID < 10)
+                    {
+                        PCstepPE += " completed";
+                        PCstepPM += " completed";
+                        PCstepPMText = "PM อนุมัติผ่าน";
+                        PCstepPMIcon = "fa-solid fa-clipboard-check";
+                        UnlockColor = "success";
+                        if (UnitFormStatusID == 7)
+                        {
+                            PCstepPJMText = "PJM อนุมัติผ่าน";
+                            PCstepPJM += " completed";
+                            PCstepPJMIcon = "fa-solid fa-check-circle";
+                        }
+                        else if (UnitFormStatusID == 8)
+                        {
+                            PCstepPJMText = "PJM ไม่อนุมัติผ่าน";
+                            PCstepPJM += " danger";
+                            PCstepPJMIcon = PCstepFailIcon;
+                        }
+                    }
+                    else if (UnitFormStatusID == 10)
+                    {
+                        UnlockColor = "success";
+                        PCstepPJMText = "PJM อนุมัติผ่าน";
+                        PCstepPMText = "PM อนุมัติผ่าน";
+                        PCstepPMIcon = "fa-solid fa-clipboard-check";
+                        PCstepPJMIcon = "fa-solid fa-check-circle";
+                        PCstepPE += " completed";
+                        PCstepPM += " completed";
+                        PCstepPJM += " completed";
+                        PCstepLock += " completed";
+                    }
+                    else if (UnitFormStatusID == 11)
+                    {
+                        UnlockColor = "success";
+                        PCstepPJMText = "PJM อนุมัติผ่าน";
+                        PCstepPMText = "PM อนุมัติผ่าน";
+                        PCstepPMIcon = "fa-solid fa-clipboard-check";
+                        PCstepPJMIcon = "fa-solid fa-check-circle";
+                        PCstepPE += " completed";
+                        PCstepPM += " completed";
+                        PCstepPJM += " completed";
+                        PCstepLock += " completed";
+                        PCstepUnLock += " completed";
+                    }
+
+                    <div class="col-md-12 mb-2">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 mb-2">
+                                        <div class="stepper-container">
+                                            <ul class="stepper">
+                                                <li class="@PCstepPE">
+                                                    <div class="step-icon">
+                                                        <i class="@PCstepPEIcon"></i>
+                                                    </div>
+                                                    <span class="step-label">PE/SE ยืนยัน</span>
+                                                </li>
+                                                <li class="@PCstepPM">
+                                                    <div class="step-icon">
+                                                        <i class="@PCstepPMIcon"></i>
+                                                    </div>
+                                                    <span class="step-label">@PCstepPMText</span>
+                                                </li>
+                                                <li class="@PCstepPJM">
+                                                    <div class="step-icon">
+                                                        <i class="@PCstepPJMIcon"></i>
+                                                    </div>
+                                                    <span class="step-label">@PCstepPJMText</span>
+                                                </li>
+                                                <li class="@PCstepLock">
+                                                    <div class="step-icon">
+                                                        <i class="@PCstepLockIcon"></i>
+                                                    </div>
+                                                    <span class="step-label">
+                                                        ขอปลดล็อค
+                                                    </span>
+
+                                                </li>
+                                                <li class="@PCstepUnLock">
+                                                    <div class="step-icon">
+                                                        <i class="@PCstepUnockIcon"></i>
+                                                    </div>
+                                                    <span class="step-label">
+                                                        <form asp-controller="SummaryUnitForm" asp-action="GoToPC" method="post">
+                                                            <input type="hidden" name="UnitFormID" value="@UnitFormID" />
+                                                            <input type="hidden" name="ComFrom" value="FormGroup" />
+                                                            <button type="submit" class="badge bg-@UnlockColor rounded-pill text-white" id="btn-toggle-card"> <i class="fa-solid fa-magnifying-glass"></i> ปลดล็อค</button>
+                                                        </form>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                            </div>
+                                    </div>
+                                    <div class="col-12" style="display: flex; justify-content: center; align-items: center;">
+                                    <div class="col-lg-8">
+                                        <div class="card" style="border: 2px solid #000066; padding: 16px; border-radius: 8px; background-color: #f8f9fa;">
+                                            <div class="card-stamp">
+                                                <div class="card-stamp-icon bg-yellow">
+                                                    <!-- Download SVG icon from http://tabler-icons.io/i/id -->
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-id"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 4m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v10a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z" /><path d="M9 10m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M15 8l2 0" /><path d="M15 12l2 0" /><path d="M7 16l10 0" /></svg>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-12 col-sm-6">
+                                                        <h3 class="card-title">ข้อมูลรายละเอียด</h3>
+                                                        <p class="text-secondary mb-1">PE/SE ผู้ควบคุมงาน : @PEActionBy</p>
+                                                        <p class="text-secondary mb-1">เกรดงวดนี้ : @Grade</p>
+                                                        <p class="text-secondary mb-1">
+                                                            วันที่ส่งงาน : @if (PE_Actiontype == "submit")
+                                                            {
+                                                                @Actiondate
+                                                            }
+                                                        </p>
+                                                        @if (ViewBag.ConcatenatedQCNames != "")
+                                                        {
+                                                            <p class="text-secondary mb-1">
+                                                                การตรวจ :
+                                                                <a href="#!" class="badge bg-@ViewBag.qcStatusColore rounded-pill text-white"
+                                                                   onclick="goToSumaryQC('@ProjectID','@ProjectName', '@UnitID')">
+                                                                    <i class="fa-solid fa-magnifying-glass"></i> @ViewBag.ConcatenatedQCNames -
+                                                                    @ViewBag.QCStatusMessage
+                                                                </a>
+                                                            </p>
+                                                        }
+                                                        <p class="text-secondary mb-1">
+                                                            สร้างโดย : @CompanyName
+                                                        </p>
+                                                        <p class="text-secondary mb-1">
+                                                            ชื่อผู้รับเหมาเซ็น : @VenderName
+                                                        </p>
+                                                        <p class="text-secondary mb-1">
+                                                            @if (UnitFormStatusID == 4 && PM_Actiontype == "submit")
+                                                            {
+                                                                @if (ViewBag.FilePathPDF != null)
+                                                                {
+                                                                    <div class="col-12">
+                                                                        <a href="~/@ViewBag.FilePathPDF" target="_blank"
+                                                                           class="btn btn-secondary w-100">
+                                                                            ดูเอกสารตรวจ
+                                                                        </a>
+                                                                    </div>
+                                                                }
+                                                            }
+                                                            else if (UnitFormStatusID == 7 && PJM_Actiontype == "submit")
+                                                            {
+                                                                @if (ViewBag.FilePathPDF != null)
+                                                                {
+                                                                    <div class="col-12">
+                                                                        <a href="~/@ViewBag.FilePathPDF" target="_blank"
+                                                                           class="btn btn-secondary w-100">
+                                                                            ดูเอกสารตรวจ
+                                                                        </a>
+                                                                    </div>
+                                                                }
+                                                            }
+                                                            else if (UnitFormStatusID >= 9)
+                                                            {
+                                                                @if (ViewBag.FilePathPDF != null)
+                                                                {
+                                                                    <div class="col-12">
+                                                                        <a href="~/@ViewBag.FilePathPDF" target="_blank"
+                                                                           class="btn btn-secondary w-100">
+                                                                            ดูเอกสารตรวจ
+                                                                        </a>
+                                                                    </div>
+                                                                }
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-12 col-sm-6">
+                                                        <h3 class="card-title">ลายเซ็นผู้รับเหมา</h3>
+                                                        @if (!string.IsNullOrEmpty(ViewBag.PathvenderSign as string))
+                                                        {
+                                                            <img src="~/@ViewBag.PathvenderSign" class="card-img-top custom-size" alt="Image in Card 2">
+                                                        }
+                                                        else
+                                                        {
+                                                            <label class="text-danger">ไม่มีรูปภาพ</label>
+                                                        }
+                                                    </div>
+
+                                                    <!-- Custom CSS -->
+                                                    <style>
+                                                        .custom-size {
+                                                            width: 288px;
+                                                            height: 160px;
+                                                            object-fit: cover; /* Ensures the image scales without distortion */
+                                                        }
+                                                    </style>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#cardCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#cardCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
+                }
             </div>
         </div>
         <div class="container-xl mb-3">
@@ -475,7 +729,7 @@
                 {
                     @foreach (var group in Model.PM_getListgroup)
                     {
-                        <div class="col-md-4">
+                        <div class="col-md-4 mb-2">
                             <div class="card p-3 mb-2">
                                 <div class="d-flex justify-content-between">
                                     <div class="d-flex flex-row align-items-center">
@@ -555,7 +809,6 @@
                                                 <i class="@iconClass"></i>
                                             </button>
                                         </form>
-
                                         <div class="ms-2 c-details">
                                             <h3 class="mb-0">
                                                 @group.Group_Name
@@ -847,7 +1100,7 @@
                 if ($(window).width() <= 576) {
                     $('textarea.form-control').attr('rows', 4);
                 } else {
-                    $('textarea.form-control').attr('rows', 2);
+                    $('textarea.form-control').attr('rows', 4);
                 }
             }
 
