@@ -641,7 +641,7 @@
                                                     <span class="step-label">
                                                         @stepPMCheckText
                                                         <br>
-                                                        <button type="button" class="badge bg-primary rounded-pill text-white" onclick="openModal('@UnitFormID','@FormID', '2')">
+                                                        <button type="button" class="badge bg-primary rounded-pill text-white" onclick="openModalPMPJMComment('@UnitFormID','@FormID', '2')">
                                                             ดูรายละเอียด
                                                         </button>
                                                     </span>
@@ -777,7 +777,7 @@
                                                     <span class="step-label">
                                                         @PCstepPMText
                                                         <br>
-                                                        <button type="button" class="badge bg-primary rounded-pill text-white" onclick="openModal('@FormID',@UnitFormID, 2)">
+                                                        <button type="button" class="badge bg-primary rounded-pill text-white" onclick="openModalPMPJMComment('@UnitFormID','@FormID', '2')">
                                                             ดูรายละเอียด
                                                         </button>
                                                     </span>
@@ -789,7 +789,7 @@
                                                     <span class="step-label">
                                                         @PCstepPJMText
                                                         <br>
-                                                        <button type="button" class="badge bg-primary rounded-pill text-white" data-bs-toggle="modal" data-bs-target="#imageModaltest">
+                                                        <button type="button" class="badge bg-primary rounded-pill text-white" onclick="openModalPMPJMComment('@UnitFormID','@FormID', '3')">
                                                             ดูรายละเอียด
                                                         </button>
                                                     </span>
@@ -1049,9 +1049,6 @@
                     </div>
 
                 </div>
-@*                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div> *@
             </div>
         </div>
     </div>

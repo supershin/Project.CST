@@ -153,5 +153,32 @@ namespace Project.ConstructionTracking.Web.Controllers
             return Json(images);
         }
 
+        [HttpGet]
+        public JsonResult GetDetailCommentPmpjm(Guid UnitFormID, int FormID, int RoleID)
+        {
+            var model = new UnitFormResourceModel
+            {
+                UnitFormID = UnitFormID,
+                FormID = FormID,
+                RoleID = RoleID
+            };
+
+            var images = _PMApproveService.GetImage(model);
+
+            var ddlModel = new GetDDL { Act = "GetDetailCommentPMPJM", GuID = UnitFormID, ID = RoleID };
+            List<GetDDL> detailCommentPmpjm = _getDDLService.GetDDLList(ddlModel);
+
+            // Ensure data is handled safely
+            var response = new
+            {
+                images = images, // Return empty list if no images
+                Date = detailCommentPmpjm?.FirstOrDefault()?.Text ?? string.Empty,
+                Username = detailCommentPmpjm?.FirstOrDefault()?.Text2 ?? string.Empty,
+                Remark = detailCommentPmpjm?.FirstOrDefault()?.Text3 ?? string.Empty
+            };
+
+            return Json(response);
+        }
+
     }
 }

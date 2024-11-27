@@ -252,7 +252,7 @@ window.onload = function () {
     }
 };
 
-function openModal(UnitFormID, FormID, RoleID) {
+function openModalPMPJMComment(UnitFormID, FormID, RoleID) {
     $.ajax({
         url: baseUrl + 'FormGroup/GetDetailCommentPmpjm',
         type: 'GET',
@@ -262,6 +262,9 @@ function openModal(UnitFormID, FormID, RoleID) {
                 // Populate images
                 var imageContainer = $('#image-container');
                 imageContainer.empty();
+
+                var modalTitle = RoleID === "2" ? "รูปภาพและคอมเม้น PM" : RoleID === "3" ? "รูปภาพและคอมเม้น PJM" : "Images and Text";
+                $('#ModalDetailPMPjmLabel').text(modalTitle);
 
                 if (response.images && response.images.length > 0) {
                     response.images.forEach(function (image) {

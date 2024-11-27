@@ -395,7 +395,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         {
                             unitFormAction.Remark = model.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
                         }
-                        else
+                        else if(model.Remark == "")
                         {
                             unitFormAction.Remark = "";
                         }

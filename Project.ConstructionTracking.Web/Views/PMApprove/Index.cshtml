@@ -345,7 +345,13 @@
                                             <div class="step-icon">
                                                 <i class="@stepPMCheckIcon"></i>
                                             </div>
-                                            <span class="step-label">@stepPMCheckText</span>
+                                            <span class="step-label">
+                                                @stepPMCheckText
+                                                <br>
+                                                <button type="button" class="badge bg-primary rounded-pill text-white" onclick="openModalPMPJMComment('@UnitFormID','@FormID', '2')">
+                                                    ดูรายละเอียด
+                                                </button>
+                                            </span>
                                         </li>
                                         <li class="@stepPMApprove">
                                             <div class="step-icon">
@@ -581,13 +587,25 @@
                                                     <div class="step-icon">
                                                         <i class="@PCstepPMIcon"></i>
                                                     </div>
-                                                    <span class="step-label">@PCstepPMText</span>
+                                                    <span class="step-label">
+                                                        @PCstepPMText
+                                                        <br>
+                                                        <button type="button" class="badge bg-primary rounded-pill text-white" onclick="openModalPMPJMComment('@UnitFormID','@FormID', '2')">
+                                                            ดูรายละเอียด
+                                                        </button>
+                                                    </span>
                                                 </li>
                                                 <li class="@PCstepPJM">
                                                     <div class="step-icon">
                                                         <i class="@PCstepPJMIcon"></i>
                                                     </div>
-                                                    <span class="step-label">@PCstepPJMText</span>
+                                                    <span class="step-label">
+                                                        @PCstepPJMText
+                                                        <br>
+                                                        <button type="button" class="badge bg-primary rounded-pill text-white" onclick="openModalPMPJMComment('@UnitFormID','@FormID', '3')">
+                                                            ดูรายละเอียด
+                                                        </button>
+                                                    </span>
                                                 </li>
                                                 <li class="@PCstepLock">
                                                     <div class="step-icon">
@@ -596,7 +614,6 @@
                                                     <span class="step-label">
                                                         ขอปลดล็อค
                                                     </span>
-
                                                 </li>
                                                 <li class="@PCstepUnLock">
                                                     <div class="step-icon">
@@ -1083,6 +1100,39 @@
                         <div class="row g-2 g-md-3" id="image-container">
                             <!-- Images will be injected here -->
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="ModalDetailPMPjm" tabindex="-1" aria-labelledby="ModalDetailPMPjmLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ModalDetailPMPjmLabel">Images and Text</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-2 g-md-3" id="image-container-2">
+                            <!-- Images will be injected here -->
+                        </div>
+                        <div class="mt-3">
+                            <div class="row">
+                                <div class="col-6">
+                                    <label class="form-label">PM/PJM ผู้ตรวจ</label>
+                                    <input type="text" id="DetailPMPjmName" class="form-control" disabled>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">ล่าสุดวันที่</label>
+                                    <input type="text" id="DetailPMPjmDate" class="form-control" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <label for="DetailPMPjmRemark" class="form-label">หมายเหตุ</label>
+                            <textarea id="DetailPMPjmRemark" rows="3" class="form-control" disabled></textarea>
+                        </div>
+
                     </div>
                 </div>
             </div>
