@@ -252,3 +252,48 @@ window.onload = function () {
     }
 };
 
+function openModal(UnitFormID, FormID, RoleID) {
+    $.ajax({
+        url: baseUrl + 'FormGroup/GetDetailCommentPmpjm',
+        type: 'GET',
+        data: { UnitFormID: UnitFormID, FormID: FormID, RoleID: RoleID },
+        success: function (response) {
+            if (response) {
+                // Populate images
+                var imageContainer = $('#image-container');
+                imageContainer.empty();
+
+                if (response.images && response.images.length > 0) {
+                    response.images.forEach(function (image) {
+                        var imageHtml = `
+                            <div class="col-6 position-relative">
+                                <a data-fslightbox="gallery" href="${baseUrl}${image.FilePath}">
+                                    <img src="${baseUrl}${image.FilePath}" alt="Image" class="img-thumbnail">
+                                </a>
+                            </div>
+                        `;
+                        imageContainer.append(imageHtml);
+                    });
+
+                    refreshFsLightbox();
+                } else {
+                    // Show "ไม่มีรูปภาพ" if no images are present
+                    imageContainer.html('<label class="text-danger">ไม่มีรูปภาพ</label>');
+                }
+
+                // Populate other details
+                $('#DetailPMPjmName').val(response.Username || "N/A");
+                $('#DetailPMPjmDate').val(response.Date || "N/A");
+                $('#DetailPMPjmRemark').val(response.Remark || "ไม่มีหมายเหตุ");
+
+                // Show modal
+                var myModal = new bootstrap.Modal(document.getElementById('ModalDetailPMPjm'));
+                myModal.show();
+            }
+        },
+        error: function (error) {
+            console.error('Failed to fetch details:', error);
+        }
+    });
+}
+
