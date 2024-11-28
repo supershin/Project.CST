@@ -71,7 +71,6 @@ var unitEquipment = {
 
             if (statusUse !== 'success' && !(cntCheckListAll === cntCheckListUnit && cntCheckListNotPass === 0)) {
                 isValid = false;
-                debugger
                 validationMessage = 'กรุณาตรวจสอบสถานะของรายการทั้งหมดก่อนบันทึกข้อมูล';
                 return false;
             }
