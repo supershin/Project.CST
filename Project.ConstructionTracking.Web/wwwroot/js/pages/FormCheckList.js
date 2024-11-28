@@ -349,7 +349,7 @@ function deleteImage(resourceId) {
     );
 }
 
-
+/*text*/
 
 
 
