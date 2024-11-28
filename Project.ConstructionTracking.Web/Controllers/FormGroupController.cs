@@ -12,13 +12,15 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IFormChecklistService _FormChecklistService;
         private readonly IGetDDLService _getDDLService;
         private readonly IHostEnvironment _hosting;
+        private readonly IPMApproveService _PMApproveService;
 
-        public FormGroupController(IFormGroupService FormGroupService, IGetDDLService getDDLService, IHostEnvironment hosting , IFormChecklistService formChecklistService)
+        public FormGroupController(IFormGroupService FormGroupService, IGetDDLService getDDLService, IHostEnvironment hosting , IFormChecklistService formChecklistService , IPMApproveService PMApproveService)
         {
             _FormGroupService = FormGroupService;
             _getDDLService = getDDLService;
             _hosting = hosting;
             _FormChecklistService = formChecklistService;
+            _PMApproveService = PMApproveService;
         }
 
         public IActionResult Index(int FormID, Guid unitId , string comeFrom)
@@ -71,7 +73,9 @@ namespace Project.ConstructionTracking.Web.Controllers
             bool ResultPermissionSubmit = _FormGroupService.ValidateUserSubmit(userIDuse , UnitFormData.UnitID);
             ViewBag.PermissionSubmit = ResultPermissionSubmit;
 
-
+            var FilterPC = new GetDDL { Act = "GetUnitFormPassCondition", GuID = UnitFormData.UnitFormID };
+            List<GetDDL> ListPC = _getDDLService.GetDDLList(FilterPC);
+            ViewBag.CntPC = (ListPC?.Count > 0) ? ListPC.Count : 0;
 
             return View(listFormGroup);
         }
@@ -100,5 +104,33 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             return RedirectToAction("Index", "FormCheckList", new { FormID,unitId,GroupID,GobackTo });
         }
+
+        [HttpGet]
+        public JsonResult GetDetailCommentPmpjm(Guid UnitFormID, int FormID, int RoleID)
+        {
+            var model = new UnitFormResourceModel
+            {
+                UnitFormID = UnitFormID,
+                FormID = FormID,
+                RoleID = RoleID
+            };
+
+            var images = _PMApproveService.GetImage(model);
+
+            var ddlModel = new GetDDL { Act = "GetDetailCommentPMPJM", GuID = UnitFormID, ID = RoleID };
+            List<GetDDL> detailCommentPmpjm = _getDDLService.GetDDLList(ddlModel);
+
+            // Ensure data is handled safely
+            var response = new
+            {
+                images = images, // Return empty list if no images
+                Date = detailCommentPmpjm?.FirstOrDefault()?.Text ?? string.Empty,
+                Username = detailCommentPmpjm?.FirstOrDefault()?.Text2 ?? string.Empty,
+                Remark = detailCommentPmpjm?.FirstOrDefault()?.Text3 ?? string.Empty
+            };
+
+            return Json(response);
+        }
+
     }
 }

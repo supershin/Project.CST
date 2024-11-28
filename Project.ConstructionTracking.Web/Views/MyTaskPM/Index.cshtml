@@ -198,6 +198,7 @@
         });
 
         $(document).ready(function () {
+            setActiveNav()
             $('#ddlProject').on('change', function () {
                 var selectedProjectId = $(this).val();
                 var ddlUnit = $('#ddlUnit')[0].choicesInstance; // Get the Choices instance for ddlUnit
@@ -315,6 +316,17 @@
                                     </div>`;
                 container.append(card);
             });
+        }
+
+        function setActiveNav() {
+            const navItems = document.querySelectorAll('.nav-item');
+
+            navItems.forEach(item => item.classList.remove('active'));
+
+            const activeItem = document.getElementById('nav-MyTaskPM');
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
         }
     </script>
 }

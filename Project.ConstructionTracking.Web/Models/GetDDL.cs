@@ -8,6 +8,8 @@
         public int? Value { get; set; }
         public decimal? Valuedecimal { get; set; }
         public string? Text { get; set; }
+        public string? Text2 { get; set; }
+        public string? Text3 { get; set; }
         public string? searchTerm { get; set; }
         public Guid? ValueGuid { get; set; }
         public Guid? UserID { get; set; }

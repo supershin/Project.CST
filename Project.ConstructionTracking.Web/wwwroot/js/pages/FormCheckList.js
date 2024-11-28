@@ -285,8 +285,6 @@ $('#saveButton').on('click', function () {
             data.append('Images', files[i]);
         }
 
-        debugger
-
         $.ajax({
             url: baseUrl + 'FormCheckList/UpdateStatus',
             type: 'POST',
@@ -350,7 +348,6 @@ function deleteImage(resourceId) {
         }
     );
 }
-
 
 
 

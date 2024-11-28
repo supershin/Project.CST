@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.InkML;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using QuestPDF.Infrastructure;
@@ -320,7 +321,33 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                       Text = t1.SyncMessage
                                                   }).ToList();
                     return GetUnitFormPayment;
-    
+
+                case "GetUnitFormPassCondition":
+
+                    var GetUnitFormPassCondition = (from t1 in _context.tr_UnitFormPassCondition
+                                                    where t1.UnitFormID == Model.GuID && t1.FlagActive == true
+                                              select new GetDDL
+                                              {
+                                                  Value = t1.ID,
+                                                  //Text = t1.SyncMessage
+                                              }).ToList();
+                    return GetUnitFormPassCondition;
+
+                case "GetDetailCommentPMPJM":
+
+                    var GetDetailCommentPMPJM = (
+                                                    from t1 in _context.tr_UnitFormAction
+                                                    join t2 in _context.tm_User on t1.UpdateBy equals t2.ID into userGroup
+                                                    from t2 in userGroup.DefaultIfEmpty()
+                                                    where t1.UnitFormID == Model.GuID
+                                                          && t1.RoleID == Model.ID
+                                                    select new GetDDL
+                                                    {
+                                                        Text = FormatExtension.FormatDateToDayMonthNameYearTime(t1.UpdateDate),
+                                                        Text2 = t2.FirstName + " " + t2.LastName,
+                                                        Text3 = t1.Remark
+                                                    }).ToList();
+                    return GetDetailCommentPMPJM;
 
                 default:
 

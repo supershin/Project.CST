@@ -152,10 +152,19 @@
 
     // Handle the Export to Excel button click
 
-    
-
-
     document.addEventListener('DOMContentLoaded', function () {
+
+        const desktopNavItem = document.getElementById('nav-Report');
+        const ReportProjectProgressNavItem = document.getElementById('nav-Report-Project-PassCondition');
+
+        if (desktopNavItem) {
+            desktopNavItem.classList.add('active'); // Make Desktop nav active
+        }
+        if (ReportProjectProgressNavItem) {
+            ReportProjectProgressNavItem.classList.add('active'); // Make Report Project PassCondition nav active
+        }
+
+
         // Project Dropdown Initialization
         const ddlProject = $('#ddlproject').selectize({
             valueField: 'ValueGuid',

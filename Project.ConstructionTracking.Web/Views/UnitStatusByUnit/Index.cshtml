@@ -55,5 +55,16 @@
                 "infoFiltered": "(filtered from _MAX_ total records)"
             }
         });
+
+        // Navbar Active Class Logic
+        const desktopNavItem = document.getElementById('nav-Desktop');
+        const unitPaymentNavItem = document.getElementById('nav-UnitStatus');
+
+        if (desktopNavItem) {
+            desktopNavItem.classList.add('active'); // Make Desktop nav active
+        }
+        if (unitPaymentNavItem) {
+            unitPaymentNavItem.classList.add('active'); // Make UnitStatus nav active
+        }
     });
 </script>
