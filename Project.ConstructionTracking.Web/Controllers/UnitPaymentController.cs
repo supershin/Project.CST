@@ -148,7 +148,19 @@ namespace Project.ConstructionTracking.Web.Controllers
                     // Insert the new GR payment if all validations pass
                     Model.UserID = userid;
                     returnmessage = _UnitFormPaymentService.InsertNewGRPayment(Model);
-                    return Json(new { success = true, message = returnmessage });
+
+                    var ChkFilters = new GetDDL { Act = "GetListUnitFormPayment2", GuID = Model.UnitFormID };
+                    List<GetDDL> CheckBackPercentPayment = _getDDLService.GetDDLList(ChkFilters);
+                    decimal ChktotalValuedecimalSum = CheckBackPercentPayment?.Where(x => x.Valuedecimal.HasValue).Sum(x => x.Valuedecimal.Value) ?? 0;
+                    if (ChktotalValuedecimalSum == 100)
+                    {
+                        returnmessage = "เบิกงวดงานนี้ครบ 100% แล้ว";
+                        return Json(new { success = true, message = returnmessage });
+                    }
+                    else
+                    {
+                        return Json(new { success = true, message = returnmessage });
+                    }
                 }
                 else
                 {
@@ -229,7 +241,19 @@ namespace Project.ConstructionTracking.Web.Controllers
                         {
                             Model.UserID = userid;
                             returnmessage = _UnitFormPaymentService.SyncGRPayment(Model);
-                            return Json(new { success = true, message = returnmessage });
+
+                            var ChkFilters = new GetDDL { Act = "GetListUnitFormPayment2", GuID = Model.UnitFormID };
+                            List<GetDDL> CheckBackPercentPayment = _getDDLService.GetDDLList(ChkFilters);
+                            decimal ChktotalValuedecimalSum = CheckBackPercentPayment?.Where(x => x.Valuedecimal.HasValue).Sum(x => x.Valuedecimal.Value) ?? 0;
+                            if (ChktotalValuedecimalSum == 100)
+                            {
+                                returnmessage = "เบิกงวดงานนี้ครบ 100% แล้ว";
+                                return Json(new { success = true, message = returnmessage });
+                            }
+                            else
+                            {
+                                return Json(new { success = true, message = returnmessage });
+                            }
                         }
                         else
                         {

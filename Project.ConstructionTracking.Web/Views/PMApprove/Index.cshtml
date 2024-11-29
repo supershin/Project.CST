@@ -304,7 +304,7 @@
                     string stepPMApproveIcon = "fa-solid fa-check-circle";
 
                     // Logic for step states
-                    if (PM_Actiontype == "submit" && UnitFormStatusID < 4)
+                    if (PM_Actiontype != "submit" && PM_Actiontype != "save" && PE_Actiontype == "submit" && UnitFormStatusID < 4)
                     {
                         stepPE += " completed";
                         // stepPMCheck += " active";
@@ -312,9 +312,10 @@
                     else if (PM_Actiontype == "save" && UnitFormStatusID < 4)
                     {
                         stepPE += " completed";
-                        stepPMCheck += " active";
+                        stepPMCheck += " completed";
+                        @*stepPMCheck += " active"; *@
                     }
-                    else if (PM_Actiontype == "submit")
+                    else if (PE_Actiontype == "submit" && PM_Actiontype == "submit")
                     {
                         stepPE += " completed";
 
@@ -347,10 +348,10 @@
                                             </div>
                                             <span class="step-label">
                                                 @stepPMCheckText
-                                                <br>
+@*                                                 <br>
                                                 <button type="button" class="badge bg-primary rounded-pill text-white" onclick="openModalPMPJMComment('@UnitFormID','@FormID', '2')">
                                                     ดูรายละเอียด
-                                                </button>
+                                                </button> *@
                                             </span>
                                         </li>
                                         <li class="@stepPMApprove">

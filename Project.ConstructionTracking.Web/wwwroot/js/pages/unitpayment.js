@@ -162,52 +162,6 @@ async function fetchListViewTableGRPaymentTable(UnitFormID) {
     }
 }
 
-//async function fetchListViewTableGRPaymentTable(UnitFormID) {
-//    try {
-//        const response = await $.ajax({
-//            url: baseUrl + 'UnitPayment/FetchListUnitFormGRPaymentTable',
-//            type: 'GET',
-//            data: { UnitFormID: UnitFormID }
-//        });
-
-//        if (!response || response.length === 0) {
-//            $('#TableBodyViewGRPayment').html('<tr><td colspan="7" class="text-center">ไม่มีข้อมูล</td></tr>');
-//            return;
-//        }
-
-//        let rowIndex = 1; // Initialize running number
-//        $('#TableBodyViewGRPayment').empty(); // Clear table //}before appending
-//        response.forEach((item) => {
-//            const syncBadge = item.SyncStatusID === 31
-//                ? `<span class="badge bg-success rounded-pill text-white">${item.SyncStatusName}</span>`
-//                : `<span class="badge bg-danger rounded-pill text-white">${item.SyncStatusName}</span><br>${item.SyncMessage || ''}`;
-
-//            $('#TableBodyViewGRPayment').append(`
-//                <tr>
-//                    <td>${rowIndex}</td>
-//                    <td><a href="#!" class="text-reset" tabindex="-1">${item.PONO}</a></td>
-//                    <td><a href="#!" class="text-reset" tabindex="-1">${item.GRNO}</a></td>
-//                    <td><span class="text-primary">${item.PercentPayment} %</span></td>
-//                    <td>${item.Remark || ''}</td>
-//                    <td>${syncBadge}</td>
-//                    <td>
-//                        <i class="fa-regular fa-calendar"></i> ${item.UpdateDate || ''}
-//                        <br>
-//                        <i class="fa-regular fa-user"></i> ${item.CreateBy || ''}
-//                    </td>
-//                </tr>
-//            `);
-//            rowIndex++; // Increment the counter
-//        });
-//    } catch (error) {
-//        showErrorAlert('ผิดพลาด!', 'โหลดตารางไม่สำเร็จ');
-//    }
-
-
-
-
-
-
 async function onClickSaveGRPayment() {
     const ProjectID = document.getElementById('hdProjectID').value;
     const UnitID = document.getElementById('hdUnitID').value;
@@ -229,10 +183,6 @@ async function onClickSaveGRPayment() {
         showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาเลือกเปอร์เซ็นต์');
         return;
     }
-    //if (!Remark) {
-    //    showErrorAlertNotCloseModal('คำเตือน!', 'กรุณาหมายเหตุให้กับทาง vendor portal ทราบ');
-    //    return;
-    //}
 
     const formData = new FormData();
     formData.append('ProjectID', ProjectID);
@@ -260,19 +210,26 @@ async function onClickSaveGRPayment() {
                     data: formData,
                     contentType: false,
                     processData: false
-                });
-
-                Swal.close();
+                });               
                 if (response.success) {
+                    Swal.close();
                     await fetchListUnitFormGRPaymentTable(UnitFormID);
+                    await searchByProjectAndUnit();
                     document.getElementById('poInput').value = "";
                     document.getElementById('grInput').value = "";
                     document.getElementById('DDLPercentPaymentID').value = "-1";
                     document.getElementById('remark').value = "";
-                    const searchButton = document.getElementById('searchButton');
-                    searchButton.click();
+
+                    if (response.message === 'เบิกงวดงานนี้ครบ 100% แล้ว') {
+                        const closeButton = document.getElementById('closeModalGRPayment');
+                        closeButton.click();
+                        await openModalViewGRPayment(UnitFormID);                       
+                    }
+
                     showSuccessAlert('สำเร็จ!', response.message);
+
                 } else {
+                    Swal.close();
                     showErrorAlertNotCloseModal(response.message, 'บันทึกข้อมูลไม่สำเร็จ' || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
                 }
             } catch (error) {
@@ -313,6 +270,8 @@ async function onClickRemoveGRPayment(ID) {
                 Swal.close();
                 if (response.success) {
                     await fetchListUnitFormGRPaymentTable(UnitFormID);
+                    const searchButton = document.getElementById('searchButton');
+                    searchButton.click();
                     showSuccessAlert('สำเร็จ!', response.message);
 
                 } else {
@@ -331,6 +290,7 @@ async function onClickSyncGRPayment(ID) {
 
     const formData = new FormData();
     formData.append('ID', ID);
+    formData.append('UnitFormID', UnitFormID);
 
     showConfirmationAlert(
         'ยืนยันการ Sync GR Payment',
@@ -356,8 +316,17 @@ async function onClickSyncGRPayment(ID) {
                 Swal.close();
                 if (response.success) {
                     await fetchListUnitFormGRPaymentTable(UnitFormID);
-                    showSuccessAlert('สำเร็จ!', response.message);
 
+                    await searchByProjectAndUnit();
+                  
+                    if (response.message === 'เบิกงวดงานนี้ครบ 100% แล้ว') {
+                        const closeButton = document.getElementById('closeModalGRPayment');
+                        closeButton.click();
+                        await openModalViewGRPayment(UnitFormID);
+                    }
+
+                    showSuccessAlert('สำเร็จ!', response.message);
+                    
                 } else {
                     showErrorAlertNotCloseModal(response.message || 'Sync ข้อมูลไม่สำเร็จ', 'เกิดข้อผิดพลาดในการลบข้อมูล');
                 }
@@ -376,15 +345,10 @@ function onClickClearinputsaveGR() {
     document.getElementById('remark').value = "";
 }
 
-function searchByProjectAndUnit() {
+async function searchByProjectAndUnit() {
 
     const selectedProjectId = document.getElementById('DDLProjectID').value;
     const unitSearchValue = document.getElementById('txtunitsearch').value;
-
-    //if (!selectedProjectId) {
-    //    showAlertandClose('กรุณาเลือกโครงการก่อนทำการค้นหา');
-    //    return;
-    //}
 
     showLoadingScreen();
 
@@ -406,5 +370,6 @@ function searchByProjectAndUnit() {
         }
     });
 }
+
 
 document.getElementById('searchButton').addEventListener('click', searchByProjectAndUnit);

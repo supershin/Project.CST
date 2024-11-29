@@ -311,6 +311,17 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                   }).ToList();
                 return GetListUnitFormPayment;
 
+                case "GetListUnitFormPayment2":
+
+                    var GetListUnitFormPayment2 = (from t1 in _context.tr_UnitFormPayment
+                                                  where t1.UnitFormID == Model.GuID && t1.FlagActive == true && t1.SyncStatusID == SystemConstant.Ext.SyncSuccess
+                                                   select new GetDDL
+                                                  {
+                                                      Valuedecimal = t1.PercentPayment,
+                                                      Text = t1.SyncMessage
+                                                  }).ToList();
+                    return GetListUnitFormPayment2;
+
                 case "GetUnitFormPayment":
 
                     var GetUnitFormPayment = (from t1 in _context.tr_UnitFormPayment
