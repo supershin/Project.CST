@@ -598,7 +598,7 @@
                                 string stepPMApproveIcon = "fa-solid fa-check-circle";
 
                                 // Logic for step states
-                                if (PE_ActionType == "submit" && UnitFormstatusID < 4)
+                                if (PM_ActionType != "submit" && PM_ActionType != "save" && PE_ActionType == "submit" && UnitFormstatusID < 4)
                                 {
                                     stepPE += " completed";
                                     // stepPMCheck += " active";
@@ -606,9 +606,9 @@
                                 else if (PM_ActionType == "save" && UnitFormstatusID < 4)
                                 {
                                     stepPE += " completed";
-                                    stepPMCheck += " active";
+                                    stepPMCheck += " completed";
                                 }
-                                else if (PM_ActionType == "submit")
+                                else if (PE_ActionType == "submit" && PM_ActionType == "submit")
                                 {
                                     stepPE += " completed";
 
@@ -680,7 +680,7 @@
                                 string UnlockColor = "secondary";
 
                                 // Logic for step states
-                                if (PE_ActionType == "submit" && UnitFormstatusID < 4)
+                                if (PM_ActionType != "submit" && PM_ActionType != "save" && PE_ActionType == "submit" && UnitFormstatusID < 4)
                                 {
                                     PCstepPE += " completed";
                                 }
@@ -689,7 +689,7 @@
                                     PCstepPE += " completed";
                                     PCstepPMText = "PM กำลังตรวจ";
                                 }
-                                else if (PM_ActionType == "submit" && UnitFormstatusID < 7)
+                                else if (PE_ActionType == "submit" && PM_ActionType == "submit" && UnitFormstatusID < 7)
                                 {
                                     PCstepPE += " completed";
 
@@ -715,7 +715,7 @@
                                     PCstepPMText = "PM อนุมัติผ่าน";
                                     PCstepPMIcon = "fa-solid fa-clipboard-check";
                                 }
-                                else if (PJM_ActionType == "submit" && UnitFormstatusID < 10)
+                                else if (PE_ActionType == "submit" && PJM_ActionType == "submit" && UnitFormstatusID < 10)
                                 {
                                     PCstepPE += " completed";
                                     PCstepPM += " completed";
