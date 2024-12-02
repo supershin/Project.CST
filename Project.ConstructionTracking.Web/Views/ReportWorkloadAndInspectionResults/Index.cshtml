@@ -45,7 +45,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12 col-sm-4 mb-2">
-                            <label for="ddlproject" class="form-label">โครงการ</label>
+                            <label for="ddlproject" class="form-label">โครงการ<span style="color: red;">*</span></label>
                             <input type="text" id="ddlproject" placeholder="ค้นหาโครงการ...">
                             <input type="hidden" id="selectedProjectId" />
                         </div>
@@ -57,28 +57,30 @@
                             <input type="hidden" id="companyvenderId">
                         </div>
                         <div class="col-6 col-sm-3 mb-2">
-                            <label for="txtyearsearch" class="form-label">ปีการตรวจ</label>
+                            <label for="txtyearsearch" class="form-label">ปีการตรวจ<span style="color: red;">*</span></label>
                             <input type="text" id="txtyearsearch" placeholder="พิมพ์ค้นหาโดยปี" class="form-control" maxlength="4" oninput="validateInput(this)" />
                         </div>
-                            <button class="btn btn-primary w-100" id="searchButton">
+                        <div class="col-12 col-sm-2 mb-2" style="padding-top : 1.6rem;">
+                            <button class="btn btn-primary w-100" id="searchButton" onclick="performSearch()">
                                 <i class="fas fa-search"></i> ค้นหา
                             </button>
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
-        </div>
         <div class="container-xl mb-2" id="PartialTableReport">
             <partial name="PartialTable" model="Model" />
         </div>
     </div>
-</div>
+ </div>
+
 <link href="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.default.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js"></script>
 <script type="text/javascript">
 
-     function validateInput(input) {
+    function validateInput(input) {
         // Remove any non-numeric characters
         input.value = input.value.replace(/[^0-9]/g, '');
 
@@ -90,58 +92,52 @@
 
 
     document.addEventListener('DOMContentLoaded', function () {
-    // Initialize the project dropdown
-    const ddlProject = $('#ddlproject').selectize({
-        valueField: 'ValueGuid',
-        labelField: 'Text',
-        searchField: 'Text',
-        options: [],
-        create: false,
-        placeholder: 'ค้นหาโครงการ...',
-        maxItems: 1
-    });
 
-    const selectizeProject = ddlProject[0].selectize;
+        const txtYearSearch = document.getElementById('txtyearsearch');
+        const currentYear = new Date().getFullYear(); // Get the current year
+        txtYearSearch.value = currentYear; // Set the default value
 
-    // Populate project dropdown with data
-    const projectData = @Html.Raw(Json.Serialize(ViewBag.DDLProject));
-    projectData.forEach(item => {
-        selectizeProject.addOption({ ValueGuid: item.ValueGuid, Text: item.Text });
-    });
+        const desktopNavItem = document.getElementById('nav-Report');
+        const ReportProjectProgressNavItem = document.getElementById('nav-Report-QC-Group');
+        const ReportQCOverviewNavItem = document.getElementById('nav-Report-QC-Overview');
 
-    // Pre-select project
-    const selectedProjectId = '@Html.Raw(ViewBag.SelectedProjectId)';
-    if (selectedProjectId) {
-        selectizeProject.setValue(selectedProjectId);
-        document.getElementById('selectedProjectId').value = selectedProjectId;
-    }
+        if (desktopNavItem){
+            desktopNavItem.classList.add('active'); 
+        }
+        if (ReportProjectProgressNavItem) {
+            ReportProjectProgressNavItem.classList.add('active'); 
+        }
+        if (ReportQCOverviewNavItem) {
+            ReportQCOverviewNavItem.classList.add('active');
+        }  
 
-    // Initialize company vendor dropdown
-    const ddlCompanyVendor = $('#ddlcompanyvender').selectize({
-        valueField: 'Value',
-        labelField: 'Text',
-        searchField: 'Text',
-        options: [],
-        create: false,
-        placeholder: 'ทั้งหมด',
-        maxItems: 1
-    });
+        // Initialize the project dropdown
+        const ddlProject = $('#ddlproject').selectize({
+            valueField: 'ValueGuid',
+            labelField: 'Text',
+            searchField: 'Text',
+            options: [],
+            create: false,
+            placeholder: 'ค้นหาโครงการ...',
+            maxItems: 1
+        });
 
-    const selectizeCompanyVendor = ddlCompanyVendor[0].selectize;
-    selectizeCompanyVendor.disable(); // Initially disable
+        const selectizeProject = ddlProject[0].selectize;
 
-    // On project change, load corresponding company vendors
-    selectizeProject.on('change', function (value) {
-        document.getElementById('selectedProjectId').value = value;
+        // Populate project dropdown with data
+        const projectData = @Html.Raw(Json.Serialize(ViewBag.DDLProject));
+        projectData.forEach(item => {
+            selectizeProject.addOption({ ValueGuid: item.ValueGuid, Text: item.Text });
+        });
 
-        selectizeCompanyVendor.clear(); // Clear current selection
-        selectizeCompanyVendor.clearOptions(); // Clear options
-        selectizeCompanyVendor.disable(); // Disable until data is loaded
-
-        if (value) {
+        // Pre-select project
+        const selectedProjectId = '@Html.Raw(ViewBag.SelectedProjectId)';
+        if (selectedProjectId) {
+            selectizeProject.setValue(selectedProjectId);
+            document.getElementById('selectedProjectId').value = selectedProjectId;
             $.ajax({
                 url: baseUrl + 'ReportWorkloadAndInspectionResults/GetDDLVenderByProject',
-                data: { ProjectId: value },
+                data: { ProjectId: selectedProjectId },
                 success: function (data) {
                     data.forEach(item => {
                         selectizeCompanyVendor.addOption({ Value: item.Value, Text: item.Text });
@@ -152,30 +148,119 @@
                     console.log('Failed to load data for Company Vendor dropdown.');
                 }
             });
+
         }
+
+        // Initialize company vendor dropdown
+        const ddlCompanyVendor = $('#ddlcompanyvender').selectize({
+            valueField: 'Value',
+            labelField: 'Text',
+            searchField: 'Text',
+            options: [],
+            create: false,
+            placeholder: 'ทั้งหมด',
+            maxItems: 1
+        });
+
+        const selectizeCompanyVendor = ddlCompanyVendor[0].selectize;
+        selectizeCompanyVendor.disable(); // Initially disable
+
+        // On project change, load corresponding company vendors
+        selectizeProject.on('change', function (value) {
+            document.getElementById('selectedProjectId').value = value;
+
+            selectizeCompanyVendor.clear(); // Clear current selection
+            selectizeCompanyVendor.clearOptions(); // Clear options
+            selectizeCompanyVendor.disable(); // Disable until data is loaded
+
+            if (value) {
+                $.ajax({
+                    url: baseUrl + 'ReportWorkloadAndInspectionResults/GetDDLVenderByProject',
+                    data: { ProjectId: value },
+                    success: function (data) {
+                        data.forEach(item => {
+                            selectizeCompanyVendor.addOption({ Value: item.Value, Text: item.Text });
+                        });
+                        selectizeCompanyVendor.enable(); // Enable dropdown after data load
+                    },
+                    error: function () {
+                        console.log('Failed to load data for Company Vendor dropdown.');
+                    }
+                });
+            }
+        });
     });
-});
+
+    function performSearch() {
+        // Retrieve filter values
+        const projectId = document.getElementById('selectedProjectId').value || "";
+        const companyVendorId = document.getElementById('ddlcompanyvender').value || "";
+        const year = document.getElementById('txtyearsearch').value || "";
+
+        // Validate required fields
+        if (!projectId || !year) {
+            showAlertandClose('กรุณาเลือกโครงการและกรอกปีการตรวจ');
+            return;
+        }
+
+        showLoadingScreen();
+
+        // AJAX Request to the Controller
+        $.ajax({
+            url: baseUrl + 'ReportWorkloadAndInspectionResults/OnclickSearch',
+            type: 'POST',
+            data: {
+                projectId: projectId,
+                CompanyvenderID: companyVendorId,
+                year: year
+            },
+            success: function (data) {
+                $('#PartialTableReport').html(data);
+                 Swal.close();
+            },
+            error: function (error) {
+                Swal.close();
+                console.error('Search failed:', error);
+                showAlertandClose('เกิดข้อผิดพลาดในการค้นหา');
+            }
+        });
+    }
 
 
+ function exportInspectionResults() {
+    const projectId = document.getElementById('selectedProjectId').value;
+    const companyVendorId = document.getElementById('companyvenderId').value || "";
+    const year = document.getElementById('txtyearsearch').value || new Date().getFullYear();
+
+    if (!projectId || !year) {
+        alert('กรุณาเลือกโครงการและปีการตรวจเพื่อทำการ Export');
+        return;
+    }
+
+    const exportUrl = `ReportWorkloadAndInspectionResults/ExportToExcel?projectId=${encodeURIComponent(projectId)}&companyVendorId=${encodeURIComponent(companyVendorId)}&year=${encodeURIComponent(year)}`;
+
+    fetch(exportUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error occurred during file download.');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `InspectionResults_${year}.xlsx`;
+            link.click();
+        })
+        .catch(error => {
+            console.error('Export failed:', error);
+            alert('การส่งออกข้อมูลล้มเหลว');
+        });
+}
+
+// Attach the function to the export button
+document.getElementById('exportExcel').addEventListener('click', exportInspectionResults);
 
 
-    // document.addEventListener('DOMContentLoaded', function () {
-
-    //     const desktopNavItem = document.getElementById('nav-Report');
-    //     const ReportProjectProgressNavItem = document.getElementById('nav-Report-QC-Group');
-    //     const ReportQCOverviewNavItem = document.getElementById('nav-Report-QC-Overview');
-
-    //     if (desktopNavItem){
-    //         desktopNavItem.classList.add('active'); 
-    //     }
-    //     if (ReportProjectProgressNavItem) {
-    //         ReportProjectProgressNavItem.classList.add('active'); 
-    //     }
-    //     if (ReportQCOverviewNavItem) {
-    //         ReportQCOverviewNavItem.classList.add('active');
-    //     }  
-
-
-    // });
 
 </script>
