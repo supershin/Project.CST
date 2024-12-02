@@ -360,6 +360,25 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                     }).ToList();
                     return GetDetailCommentPMPJM;
 
+                case "GetListDDLCompanyVenderInProject":
+
+                    var GetListDDLCompanyVenderInProject = _context.tm_Unit
+                            .Where(t1 => t1.ProjectID == Model.GuID && t1.CompanyVendorID != null)
+                            .Join(
+                                _context.tm_CompanyVendor,
+                                t1 => t1.CompanyVendorID,
+                                t2 => t2.ID,
+                                (t1, t2) => new GetDDL
+                                {
+                                    Value = t1.CompanyVendorID,
+                                    Text = t2.Name
+                                }
+                            )
+                            .Distinct()
+                            .ToList();
+
+                    return GetListDDLCompanyVenderInProject;
+
                 default:
 
                 return new List<GetDDL>();

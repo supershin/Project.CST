@@ -9,6 +9,17 @@
         border: none;
         border-radius: 10px;
     }
+
+    .selectize-control .selectize-input {
+        min-height: 40px; /* Adjust this value as needed */
+        padding: 8px 12px; /* Add padding for better spacing */
+        line-height: normal; /* Ensure text isn't vertically clipped */
+        font-size: 14px; /* Optional: Adjust font size */
+    }
+
+    .selectize-control .selectize-dropdown {
+        font-size: 14px; /* Optional: Adjust dropdown font size if needed */
+    }
 </style>
 <div class="page-wrapper">
     <div class="page-header d-print-none">
@@ -29,9 +40,142 @@
         </div>
     </div>
     <div class="page-body">
+        <div class="container-xl mb-2">
+            <div class="card" id="card-filter">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-4 mb-2">
+                            <label for="ddlproject" class="form-label">โครงการ</label>
+                            <input type="text" id="ddlproject" placeholder="ค้นหาโครงการ...">
+                            <input type="hidden" id="selectedProjectId" />
+                        </div>
+                        <div class="col-6 col-sm-3 mb-2">
+                            <label for="ddlcompanyvender" class="form-label">บริษัทผู้รับเหมา</label>
+                            <select id="ddlcompanyvender">
+                                <option value="">ทั้งหมด</option>
+                            </select>
+                            <input type="hidden" id="companyvenderId">
+                        </div>
+                        <div class="col-6 col-sm-3 mb-2">
+                            <label for="txtyearsearch" class="form-label">ปีการตรวจ</label>
+                            <input type="text" id="txtyearsearch" placeholder="พิมพ์ค้นหาโดยปี" class="form-control" maxlength="4" oninput="validateInput(this)" />
+                        </div>
+                            <button class="btn btn-primary w-100" id="searchButton">
+                                <i class="fas fa-search"></i> ค้นหา
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="container-xl mb-2" id="PartialTableReport">
             <partial name="PartialTable" model="Model" />
         </div>
-
     </div>
 </div>
+<link href="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.default.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js"></script>
+<script type="text/javascript">
+
+     function validateInput(input) {
+        // Remove any non-numeric characters
+        input.value = input.value.replace(/[^0-9]/g, '');
+
+        // Ensure the input doesn't exceed 4 characters (maxlength already enforces this)
+        if (input.value.length > 4) {
+            input.value = input.value.slice(0, 4);
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+    // Initialize the project dropdown
+    const ddlProject = $('#ddlproject').selectize({
+        valueField: 'ValueGuid',
+        labelField: 'Text',
+        searchField: 'Text',
+        options: [],
+        create: false,
+        placeholder: 'ค้นหาโครงการ...',
+        maxItems: 1
+    });
+
+    const selectizeProject = ddlProject[0].selectize;
+
+    // Populate project dropdown with data
+    const projectData = @Html.Raw(Json.Serialize(ViewBag.DDLProject));
+    projectData.forEach(item => {
+        selectizeProject.addOption({ ValueGuid: item.ValueGuid, Text: item.Text });
+    });
+
+    // Pre-select project
+    const selectedProjectId = '@Html.Raw(ViewBag.SelectedProjectId)';
+    if (selectedProjectId) {
+        selectizeProject.setValue(selectedProjectId);
+        document.getElementById('selectedProjectId').value = selectedProjectId;
+    }
+
+    // Initialize company vendor dropdown
+    const ddlCompanyVendor = $('#ddlcompanyvender').selectize({
+        valueField: 'Value',
+        labelField: 'Text',
+        searchField: 'Text',
+        options: [],
+        create: false,
+        placeholder: 'ทั้งหมด',
+        maxItems: 1
+    });
+
+    const selectizeCompanyVendor = ddlCompanyVendor[0].selectize;
+    selectizeCompanyVendor.disable(); // Initially disable
+
+    // On project change, load corresponding company vendors
+    selectizeProject.on('change', function (value) {
+        document.getElementById('selectedProjectId').value = value;
+
+        selectizeCompanyVendor.clear(); // Clear current selection
+        selectizeCompanyVendor.clearOptions(); // Clear options
+        selectizeCompanyVendor.disable(); // Disable until data is loaded
+
+        if (value) {
+            $.ajax({
+                url: baseUrl + 'ReportWorkloadAndInspectionResults/GetDDLVenderByProject',
+                data: { ProjectId: value },
+                success: function (data) {
+                    data.forEach(item => {
+                        selectizeCompanyVendor.addOption({ Value: item.Value, Text: item.Text });
+                    });
+                    selectizeCompanyVendor.enable(); // Enable dropdown after data load
+                },
+                error: function () {
+                    console.log('Failed to load data for Company Vendor dropdown.');
+                }
+            });
+        }
+    });
+});
+
+
+
+
+    // document.addEventListener('DOMContentLoaded', function () {
+
+    //     const desktopNavItem = document.getElementById('nav-Report');
+    //     const ReportProjectProgressNavItem = document.getElementById('nav-Report-QC-Group');
+    //     const ReportQCOverviewNavItem = document.getElementById('nav-Report-QC-Overview');
+
+    //     if (desktopNavItem){
+    //         desktopNavItem.classList.add('active'); 
+    //     }
+    //     if (ReportProjectProgressNavItem) {
+    //         ReportProjectProgressNavItem.classList.add('active'); 
+    //     }
+    //     if (ReportQCOverviewNavItem) {
+    //         ReportQCOverviewNavItem.classList.add('active');
+    //     }  
+
+
+    // });
+
+</script>

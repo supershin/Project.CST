@@ -571,6 +571,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                     SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = EN.unit_id ?? (object)DBNull.Value;
                     SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = EN.unit_status ?? (object)DBNull.Value;
                     SqlCmd.Parameters.Add(new SqlParameter("@build_status", SqlDbType.NVarChar)).Value = EN.build_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@vender_id", SqlDbType.NVarChar)).Value = EN.vender_id ?? (object)DBNull.Value;
                     SqlCmd.Parameters.Add(new SqlParameter("@start_date", SqlDbType.NVarChar)).Value = EN.start_date ?? (object)DBNull.Value;
                     SqlCmd.Parameters.Add(new SqlParameter("@end_date", SqlDbType.NVarChar)).Value = EN.end_date ?? (object)DBNull.Value;
                     switch (EN.act)
@@ -590,8 +591,9 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                     Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", EN.project_id);
                     Log.Error("SEND pram4 unit_status (nvarchar) : {Unit_status}", EN.unit_status);
                     Log.Error("SEND pram5 build_status (nvarchar) : {build_status}", EN.build_status);
-                    Log.Error("SEND pram6 start_date (nvarchar) : {start_date}", EN.start_date);
-                    Log.Error("SEND pram7 end_date (nvarchar) : {end_date}", EN.end_date);
+                    Log.Error("SEND pram6 vender_id (nvarchar) : {vender_id}", EN.vender_id);
+                    Log.Error("SEND pram7 start_date (nvarchar) : {start_date}", EN.start_date);
+                    Log.Error("SEND pram8 end_date (nvarchar) : {end_date}", EN.end_date);
                     Log.Error(ex.ToString());
                     Log.Error("=========== END ===========");
 

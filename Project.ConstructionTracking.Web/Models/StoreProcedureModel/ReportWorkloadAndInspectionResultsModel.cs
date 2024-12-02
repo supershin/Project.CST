@@ -7,6 +7,7 @@
         public string? unit_id { get; set; }
         public string? unit_status { get; set; }
         public string? build_status { get; set; }
+        public string? vender_id { get; set; }
         public string? start_date { get; set; }
         public string? end_date { get; set; }
 

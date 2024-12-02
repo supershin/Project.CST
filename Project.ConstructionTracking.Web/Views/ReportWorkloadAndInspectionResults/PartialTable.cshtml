@@ -41,7 +41,7 @@
 
     .custom-table td {
         font-size: 0.8rem; /* Smaller font size for table data */
-        text-align: left;
+        text-align: center;
     }
 
     .custom-table tbody tr:hover {
@@ -54,7 +54,9 @@
     <div class="card-body">
         <!-- Display the row count -->
         <div class="row-count">
-            จำนวนรายการทั้งหมด: 
+            <button class="btn btn-success" id="exportExcel">
+                <i class="fas fa-file-excel"></i> Export to Excel
+            </button>
         </div>
         <div class="table-container">
             <table class="custom-table">
