@@ -229,38 +229,38 @@
 
  function exportInspectionResults() {
     const projectId = document.getElementById('selectedProjectId').value;
-    const companyVendorId = document.getElementById('companyvenderId').value || "";
+        const companyVendorId = document.getElementById('ddlcompanyvender').value || "";
     const year = document.getElementById('txtyearsearch').value || new Date().getFullYear();
 
     if (!projectId || !year) {
-        alert('กรุณาเลือกโครงการและปีการตรวจเพื่อทำการ Export');
+            showAlertandClose('กรุณาเลือกโครงการและปีการตรวจเพื่อทำการ Export');
         return;
     }
+        showLoadingScreen();
 
     const exportUrl = `ReportWorkloadAndInspectionResults/ExportToExcel?projectId=${encodeURIComponent(projectId)}&companyVendorId=${encodeURIComponent(companyVendorId)}&year=${encodeURIComponent(year)}`;
 
     fetch(exportUrl)
         .then(response => {
             if (!response.ok) {
+                Swal.close();
+                showAlertandClose('Export Excel ไม่สำเร็จ');
                 throw new Error('Error occurred during file download.');
             }
+                Swal.close();
             return response.blob();
         })
         .then(blob => {
+            Swal.close();
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
-            link.download = `InspectionResults_${year}.xlsx`;
+                link.download = `รายงานปริมาณงานและผลการตรวจ.xlsx`;
             link.click();
         })
         .catch(error => {
+            Swal.close();
             console.error('Export failed:', error);
-            alert('การส่งออกข้อมูลล้มเหลว');
+            showAlertandClose('การส่งออกข้อมูลล้มเหลว');
         });
 }
-
-// Attach the function to the export button
-document.getElementById('exportExcel').addEventListener('click', exportInspectionResults);
-
-
-
 </script>

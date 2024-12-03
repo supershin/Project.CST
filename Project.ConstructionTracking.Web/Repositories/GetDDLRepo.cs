@@ -101,8 +101,19 @@ namespace Project.ConstructionTracking.Web.Repositories
                     return UserName.ToList();
 
                 case "ProjectAdmin":
+                    //var ListProjectAdmint = from t1 in _context.tm_Project
+                    //                        where t1.FlagActive == true
+                    //                        select new GetDDL
+                    //                        {
+                    //                            ValueGuid = t1.ProjectID,
+                    //                            Text = t1.ProjectName
+                    //                        };
+
+                    //return ListProjectAdmint.ToList();
+
                     var ListProjectAdmint = from t1 in _context.tm_Project
-                                            where t1.FlagActive == true
+                                            where t1.FlagActive == true &&
+                                                  (Model.GuID == null || t1.ProjectID == Model.GuID)
                                             select new GetDDL
                                             {
                                                 ValueGuid = t1.ProjectID,
@@ -110,6 +121,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                             };
 
                     return ListProjectAdmint.ToList();
+
 
                 case "DefectArea":
                     var ListDefectArea = from t1 in _context.tm_DefectArea
@@ -362,22 +374,41 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 case "GetListDDLCompanyVenderInProject":
 
-                    var GetListDDLCompanyVenderInProject = _context.tm_Unit
-                            .Where(t1 => t1.ProjectID == Model.GuID && t1.CompanyVendorID != null)
-                            .Join(
-                                _context.tm_CompanyVendor,
-                                t1 => t1.CompanyVendorID,
-                                t2 => t2.ID,
-                                (t1, t2) => new GetDDL
-                                {
-                                    Value = t1.CompanyVendorID,
-                                    Text = t2.Name
-                                }
-                            )
-                            .Distinct()
-                            .ToList();
+                    //var GetListDDLCompanyVenderInProject = _context.tm_Unit
+                    //        .Where(t1 => t1.ProjectID == Model.GuID && t1.CompanyVendorID != null)
+                    //        .Join(
+                    //            _context.tm_CompanyVendor,
+                    //            t1 => t1.CompanyVendorID,
+                    //            t2 => t2.ID,
+                    //            (t1, t2) => new GetDDL
+                    //            {
+                    //                Value = t1.CompanyVendorID,
+                    //                Text = t2.Name
+                    //            }
+                    //        )
+                    //        .Distinct()
+                    //        .ToList();
 
+                    //return GetListDDLCompanyVenderInProject;
+
+                    var GetListDDLCompanyVenderInProject = _context.tm_Unit
+                        .Where(t1 => t1.ProjectID == Model.GuID && t1.CompanyVendorID != null)
+                        .Join(
+                            _context.tm_CompanyVendor,
+                            t1 => t1.CompanyVendorID,
+                            t2 => t2.ID,
+                            (t1, t2) => new { t1, t2 }
+                        )
+                        .Where(joined => Model.ID == null || joined.t2.ID == Model.ID) // Check if Model.ID is null or matches
+                        .Select(joined => new GetDDL
+                        {
+                            Value = joined.t1.CompanyVendorID,
+                            Text = joined.t2.Name
+                        })
+                        .Distinct()
+                        .ToList();
                     return GetListDDLCompanyVenderInProject;
+
 
                 default:
 
