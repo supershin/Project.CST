@@ -29,7 +29,9 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             string projectId = Request.Cookies.ContainsKey("ReportWorkloadAndInspectionResultsselectedProjectId") ? Request.Cookies["ReportWorkloadAndInspectionResultsselectedProjectId"] : null;
 
-            string currentYear = DateTime.Now.Year.ToString();
+            var currentYear = DateTime.Now.Year;
+            var yearList = Enumerable.Range(currentYear - 3, 4).OrderByDescending(y => y).ToList();
+            ViewBag.DDLyearList = yearList;
 
             List<ReportWorkloadAndInspectionResultsModel> ReportWorkloadAndInspectionResultslists = new List<ReportWorkloadAndInspectionResultsModel>();
 
@@ -41,7 +43,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 unit_status = "",
                 build_status = "",
                 vender_id = "",
-                start_date = currentYear
+                start_date = currentYear.ToString()
             };
 
             ReportWorkloadAndInspectionResultslists = _ReportWorkloadAndInspectionResultsProvider.sp_get_report_workload_inspection_results(en);
