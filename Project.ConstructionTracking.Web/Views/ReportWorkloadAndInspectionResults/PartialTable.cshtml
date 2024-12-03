@@ -1,0 +1,177 @@
+﻿<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
+<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.ReportWorkloadAndInspectionResultsModel>
+<style>
+    .table-container {
+        overflow-x: auto; /* Enable horizontal scrolling */
+        overflow-y: auto; /* Enable vertical scrolling */
+        max-height: 600px; /* Set max height for vertical scrolling */
+    }
+
+    table {
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+    }
+
+    .custom-table {
+        text-align: center;
+        border: 1px solid #ddd;
+        padding: 8px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-table th, .custom-table td {
+        padding: 8px; /* Add some padding for better spacing */
+        border: 1px solid #dee2e6;
+        white-space: nowrap;
+        overflow: hidden; /* Hide overflow content */
+        text-overflow: ellipsis; /* Show ellipsis (...) for overflow */
+        max-width: 300px; /* Set max width */
+    }
+
+    .custom-table th {
+        background-color: #f8f9fa;
+        font-size: 0.9rem; /* Adjust to make the table head bigger */
+        font-weight: bold;
+    }
+
+    .custom-table td {
+        font-size: 0.8rem; /* Smaller font size for table data */
+        text-align: center;
+    }
+
+    .custom-table tbody tr:hover {
+        background-color: #eff584;
+    }
+
+</style>
+
+<div class="card" id="custom-card">
+    <div class="card-body">
+        <!-- Display the row count -->
+        <div class="row-count">
+            <button class="btn btn-success" id="exportExcel" onclick="exportInspectionResults()">
+                <i class="fas fa-file-excel"></i> Export to Excel
+            </button>
+        </div>
+        <div class="table-container">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">เดือน</th>
+                        <!-- QC1 Header -->
+                        <th colspan="4" class="bg-light">QC1</th>
+                        <th rowspan="2">Total</th>
+                        <!-- QC2 Header -->
+                        <th colspan="4" class="bg-warning">QC2</th>
+                        <th rowspan="2">Total</th>
+                        <!-- QC3 Header -->
+                        <th colspan="4" class="bg-light">QC3</th>
+                        <th rowspan="2">Total</th>
+                        <!-- QC4 Header -->
+                        <th colspan="4" class="bg-warning">QC4</th>
+                        <th rowspan="2">Total</th>
+                        <!-- QC5 Header -->
+                        <th colspan="4" class="bg-light">QC5</th>
+                        <th rowspan="2">Total</th>
+                        <!-- QC1-QC5 Total Header -->
+                        <th colspan="4" class="bg-success">QC1-QC5</th>
+                        <th rowspan="2">Total</th>
+                    </tr>
+                    <tr>
+                        <!-- QC1 Sub-Headers -->
+                        <th>ผ่าน</th>
+                        <th>ไม่ผ่าน</th>
+                        <th>ไม่พร้อม<br>ตรวจ</th>
+                        <th>% ผ่าน</th>
+                        <!-- QC2 Sub-Headers -->
+                        <th>ผ่าน</th>
+                        <th>ไม่ผ่าน</th>
+                        <th>ไม่พร้อม<br>ตรวจ</th>
+                        <th>% ผ่าน</th>
+                        <!-- QC3 Sub-Headers -->
+                        <th>ผ่าน</th>
+                        <th>ไม่ผ่าน</th>
+                        <th>ไม่พร้อม<br>ตรวจ</th>
+                        <th>% ผ่าน</th>
+                        <!-- QC4 Sub-Headers -->
+                        <th>ผ่าน</th>
+                        <th>ไม่ผ่าน</th>
+                        <th>ไม่พร้อม<br>ตรวจ</th>
+                        <th>% ผ่าน</th>
+                        <!-- QC5 Sub-Headers -->
+                        <th>ผ่าน</th>
+                        <th>ไม่ผ่าน</th>
+                        <th>ไม่พร้อม<br>ตรวจ</th>
+                        <th>% ผ่าน</th>
+                        <!-- QC1-QC5 Sub-Headers -->
+                        <th>ผ่าน</th>
+                        <th>ไม่ผ่าน</th>
+                        <th>ไม่พร้อม<br>ตรวจ</th>
+                        <th>% ผ่าน</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Add more rows as needed -->
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.MonthName</td>
+                                <!-- QC1 Data -->
+                                <td>@item.QC1Pass</td>
+                                <td>@item.QC1NotPass</td>
+                                <td>@item.QC1NotReady</td>
+                                <td>@item.QC1PercentPass</td>
+                                <td>@item.TotalQC1</td>
+                                <!-- QC2 Data -->
+                                <td>@item.QC2Pass</td>
+                                <td>@item.QC2NotPass</td>
+                                <td>@item.QC2NotReady</td>
+                                <td>@item.QC2PercentPass</td>
+                                <td>@item.TotalQC2</td>
+                                <!-- QC3 Data -->
+                                <td>@item.QC3Pass</td>
+                                <td>@item.QC3NotPass</td>
+                                <td>@item.QC3NotReady</td>
+                                <td>@item.QC3PercentPass</td>
+                                <td>@item.TotalQC3</td>
+                                <!-- QC4 Data -->
+                                <td>@item.QC4Pass</td>
+                                <td>@item.QC4NotPass</td>
+                                <td>@item.QC4NotReady</td>
+                                <td>@item.QC4PercentPass</td>
+                                <td>@item.TotalQC4</td>
+                                <!-- QC5 Data -->
+                                <td>@item.QC5Pass</td>
+                                <td>@item.QC5NotPass</td>
+                                <td>@item.QC5NotReady</td>
+                                <td>@item.QC5PercentPass</td>
+                                <td>@item.TotalQC5</td>
+                                <!-- QC 1-5 Data -->
+                                <td>@item.QCALLPass</td>
+                                <td>@item.QCALLNotPass</td>
+                                <td>@item.QCALLNotReady</td>
+                                <td>@item.QCALLPercentPass</td>
+                                <td>@item.TotalQCALL</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="14" style="text-align: center; font-weight: bold;">
+                                ไม่มีข้อมูล
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

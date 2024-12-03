@@ -136,6 +136,36 @@ namespace Project.ConstructionTracking.Web.Commons
             return MimeTypesMap.GetExtension(contentType);
         }
 
+        public static string NullTo2decimalplaces(object obj, string defaultString = "")
+        {
+            string temp = defaultString;
+
+            if (obj == null || System.Convert.IsDBNull(obj) || obj.ToString().Trim() == "")
+            {
+                return defaultString;
+            }
+
+            if (double.TryParse(obj.ToString(), out double result))
+            {
+                if (result == 0)
+                {
+                    return ""; // Return empty string if the value is 0
+                }
+
+                // Truncate to two decimal places
+                result = Math.Truncate(result * 100) / 100;
+                temp = result.ToString("F2");
+            }
+            else
+            {
+                // Return as string if not a number
+                temp = obj.ToString();
+            }
+
+            return temp;
+        }
+
+
         /// <summary>
         /// NullToString
         /// คือ Function สำหรับแปลง Object ใดๆ เป็น string

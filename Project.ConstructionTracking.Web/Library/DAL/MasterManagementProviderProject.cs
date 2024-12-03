@@ -51,6 +51,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
 
         public abstract List<ReportProjectPassConditionModel> sp_get_report_Project_PassCondition(ReportProjectPassConditionModel EN);
 
+        public abstract List<ReportWorkloadAndInspectionResultsModel> sp_get_report_workload_inspection_results(ReportWorkloadAndInspectionResultsModel EN);
+
 
         #region __ Reader __
         public static List<ProjectModel> SP_Get_Project_ListReader(IDataReader reader)
@@ -454,6 +456,61 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.PERequestUnlock = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["PERequestUnlock"]);
             Entity.PMUnlock = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["PMUnlock"]);
             Entity.PCStatusName = Commons.FormatExtension.NullToString(reader["PCStatusName"]);
+            return Entity;
+        }
+
+
+        public static List<ReportWorkloadAndInspectionResultsModel> sp_get_report_workload_inspection_resultsListReader(IDataReader reader)
+        {
+            List<ReportWorkloadAndInspectionResultsModel> list = new List<ReportWorkloadAndInspectionResultsModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_report_workload_inspection_results_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static ReportWorkloadAndInspectionResultsModel sp_get_report_workload_inspection_results_Reader(IDataReader reader, int index)
+        {
+            ReportWorkloadAndInspectionResultsModel Entity = new ReportWorkloadAndInspectionResultsModel();
+
+            Entity.index = index;
+            Entity.MonthName = Commons.FormatExtension.NullTo2decimalplaces(reader["MonthName"]);
+            Entity.MonthNumber = Commons.FormatExtension.NullTo2decimalplaces(reader["MonthNumber"]);
+            Entity.QC1Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC1Pass"]);
+            Entity.QC1NotPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC1NotPass"]);
+            Entity.QC1NotReady = Commons.FormatExtension.NullTo2decimalplaces(reader["QC1NotReady"]);
+            Entity.TotalQC1 = Commons.FormatExtension.NullTo2decimalplaces(reader["TotalQC1"]);
+            Entity.QC1PercentPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC1PercentPass"]);
+            Entity.QC2Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC2Pass"]);
+            Entity.QC2NotPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC2NotPass"]);
+            Entity.QC2NotReady = Commons.FormatExtension.NullTo2decimalplaces(reader["QC2NotReady"]);
+            Entity.TotalQC2 = Commons.FormatExtension.NullTo2decimalplaces(reader["TotalQC2"]);
+            Entity.QC2PercentPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC2PercentPass"]);
+            Entity.QC3Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC3Pass"]);
+            Entity.QC3NotPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC3NotPass"]);
+            Entity.QC3NotReady = Commons.FormatExtension.NullTo2decimalplaces(reader["QC3NotReady"]);
+            Entity.TotalQC3 = Commons.FormatExtension.NullTo2decimalplaces(reader["TotalQC3"]);
+            Entity.QC3PercentPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC3PercentPass"]);
+            Entity.QC4Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC4Pass"]);
+            Entity.QC4NotPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC4NotPass"]);
+            Entity.QC4NotReady = Commons.FormatExtension.NullTo2decimalplaces(reader["QC4NotReady"]);
+            Entity.TotalQC4 = Commons.FormatExtension.NullTo2decimalplaces(reader["TotalQC4"]);
+            Entity.QC4PercentPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC4PercentPass"]);
+            Entity.QC5Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC5Pass"]);
+            Entity.QC5NotPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC5NotPass"]);
+            Entity.QC5NotReady = Commons.FormatExtension.NullTo2decimalplaces(reader["QC5NotReady"]);
+            Entity.TotalQC5 = Commons.FormatExtension.NullTo2decimalplaces(reader["TotalQC5"]);
+            Entity.QC5PercentPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QC5PercentPass"]);
+            Entity.QCALLPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QCALLPass"]);
+            Entity.QCALLNotPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QCALLNotPass"]);
+            Entity.QCALLNotReady = Commons.FormatExtension.NullTo2decimalplaces(reader["QCALLNotReady"]);
+            Entity.TotalQCALL = Commons.FormatExtension.NullTo2decimalplaces(reader["TotalQCALL"]);
+            Entity.QCALLPercentPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QCALLPercentPass"]);
+            Entity.RowOrder = Commons.FormatExtension.NullTo2decimalplaces(reader["RowOrder"]);
             return Entity;
         }
 
