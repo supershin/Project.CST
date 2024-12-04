@@ -122,7 +122,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     return ListProjectAdmint.ToList();
 
-
                 case "DefectArea":
                     var ListDefectArea = from t1 in _context.tm_DefectArea
                                          where t1.FlagActive == true
@@ -408,7 +407,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                         .Distinct()
                         .ToList();
                     return GetListDDLCompanyVenderInProject;
-
 
                 default:
 
