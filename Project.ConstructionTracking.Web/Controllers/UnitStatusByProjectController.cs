@@ -17,6 +17,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             _unitstatusProvider = unitstatusProvider;
             _getDDLService = getDDLService;
         }
+
         public IActionResult Index()
         {
 
@@ -65,7 +66,6 @@ namespace Project.ConstructionTracking.Web.Controllers
             // Return the partial view with the updated model
             return PartialView("PartialTable", unitstatuslists);
         }
-
 
     }
 }

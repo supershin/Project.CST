@@ -58,8 +58,15 @@
                             <input type="hidden" id="companyvenderId">
                         </div>
                         <div class="col-6 col-sm-3 mb-2">
-                            <label for="txtyearsearch" class="form-label">ปีการตรวจ<span style="color: red;">*</span></label>
-                            <input type="text" id="txtyearsearch" placeholder="พิมพ์ค้นหาโดยปี" class="form-control" maxlength="4" oninput="validateInput(this)" />
+                            <label for="ddlYearSearch" class="form-label">ปีการตรวจ<span style="color: red;">*</span></label>
+                            <select id="ddlYearSearch" class="form-control">
+                                @foreach (var year in ViewBag.DDLyearList as List<int>)
+                                {
+                                    <option value="@year">@year</option>
+                                }
+                            </select>
+@*                             <label for="txtyearsearch" class="form-label">ปีการตรวจ<span style="color: red;">*</span></label>
+                            <input type="text" id="txtyearsearch" placeholder="พิมพ์ค้นหาโดยปี" class="form-control" maxlength="4" oninput="validateInput(this)" /> *@
                         </div>
                         <div class="col-12 col-sm-2 mb-2" style="padding-top : 1.6rem;">
                             <button class="btn btn-primary w-100" id="searchButton" onclick="performSearch()">
@@ -93,10 +100,6 @@
 
 
     document.addEventListener('DOMContentLoaded', function () {
-
-        const txtYearSearch = document.getElementById('txtyearsearch');
-        const currentYear = new Date().getFullYear(); // Get the current year
-        txtYearSearch.value = currentYear; // Set the default value
 
         const desktopNavItem = document.getElementById('nav-Report');
         const ReportProjectProgressNavItem = document.getElementById('nav-Report-QC-Group');
@@ -196,7 +199,7 @@
         // Retrieve filter values
         const projectId = document.getElementById('selectedProjectId').value || "";
         const companyVendorId = document.getElementById('ddlcompanyvender').value || "";
-        const year = document.getElementById('txtyearsearch').value || "";
+        const year = document.getElementById('ddlYearSearch').value || "";
 
         // Validate required fields
         if (!projectId || !year) {
@@ -230,14 +233,15 @@
 
  function exportInspectionResults() {
     const projectId = document.getElementById('selectedProjectId').value;
-        const companyVendorId = document.getElementById('ddlcompanyvender').value || "";
-    const year = document.getElementById('txtyearsearch').value || new Date().getFullYear();
+    const companyVendorId = document.getElementById('ddlcompanyvender').value || "";
+    const year = document.getElementById('ddlYearSearch').value || "";
 
     if (!projectId || !year) {
             showAlertandClose('กรุณาเลือกโครงการและปีการตรวจเพื่อทำการ Export');
         return;
     }
-        showLoadingScreen();
+
+    showLoadingScreen();
 
     const exportUrl = `ReportWorkloadAndInspectionResults/ExportToExcel?projectId=${encodeURIComponent(projectId)}&companyVendorId=${encodeURIComponent(companyVendorId)}&year=${encodeURIComponent(year)}`;
 

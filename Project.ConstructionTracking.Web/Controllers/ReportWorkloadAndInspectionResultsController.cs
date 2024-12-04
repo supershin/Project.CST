@@ -62,14 +62,6 @@ namespace Project.ConstructionTracking.Web.Controllers
         [HttpPost]
         public IActionResult OnclickSearch(string projectId, string CompanyvenderID, string year)
         {
-            // Convert year from B.E. to A.D. if needed
-            if (!string.IsNullOrEmpty(year))
-            {
-                if (int.TryParse(year, out int parsedYear) && parsedYear > 2400) // Assuming B.E. year > 2400
-                {
-                    year = (parsedYear - 543).ToString(); // Convert to A.D. year
-                }
-            }
 
             // Save the projectId in a cookie
             Response.Cookies.Append("ReportWorkloadAndInspectionResultsselectedProjectId", projectId, new CookieOptions
