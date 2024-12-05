@@ -607,5 +607,59 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                 }
             }
         }
+
+        public override List<ReportAverageNumberofPassedInspectionsModel> sp_get_report_average_numberof_passed_inspections(ReportAverageNumberofPassedInspectionsModel EN)
+        {
+            using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
+            {
+                SqlCommand SqlCmd = new SqlCommand("sp_get_report", SqlCon);
+                try
+                {
+                    SqlCon.Open();
+                    SqlTransaction Trans = SqlCon.BeginTransaction();
+                    SqlCmd.Transaction = Trans;
+                    SqlCmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = EN.act ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@project_id", SqlDbType.NVarChar)).Value = EN.project_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = EN.unit_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = EN.unit_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@build_status", SqlDbType.NVarChar)).Value = EN.build_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@vender_id", SqlDbType.NVarChar)).Value = EN.vender_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@start_date", SqlDbType.NVarChar)).Value = EN.start_date ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@end_date", SqlDbType.NVarChar)).Value = EN.end_date ?? (object)DBNull.Value;
+                    switch (EN.act)
+                    {
+                        case "ReportAverageNumberofPassedInspections":
+                            return sp_get_report_average_numberof_passed_inspectionsListReader(ExecuteReader(SqlCmd));
+
+                        default:
+                            return new List<ReportAverageNumberofPassedInspectionsModel>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Stored name : sp_get_unitstatus");
+                    Log.Error("SEND pram1 Act (nvarchar) : {Act}", EN.act);
+                    Log.Error("SEND pram2 unit_id (nvarchar) : {Unit_id}", EN.unit_id);
+                    Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", EN.project_id);
+                    Log.Error("SEND pram4 unit_status (nvarchar) : {Unit_status}", EN.unit_status);
+                    Log.Error("SEND pram5 build_status (nvarchar) : {build_status}", EN.build_status);
+                    Log.Error("SEND pram6 vender_id (nvarchar) : {vender_id}", EN.vender_id);
+                    Log.Error("SEND pram7 start_date (nvarchar) : {start_date}", EN.start_date);
+                    Log.Error("SEND pram8 end_date (nvarchar) : {end_date}", EN.end_date);
+                    Log.Error(ex.ToString());
+                    Log.Error("=========== END ===========");
+
+                    return new List<ReportAverageNumberofPassedInspectionsModel>();
+                }
+                finally
+                {
+                    SqlCmd.Dispose();
+                    SqlCon.Close();
+                    SqlCon.Dispose();
+                }
+            }
+        }
     }
 }

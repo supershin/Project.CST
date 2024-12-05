@@ -53,6 +53,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
 
         public abstract List<ReportWorkloadAndInspectionResultsModel> sp_get_report_workload_inspection_results(ReportWorkloadAndInspectionResultsModel EN);
 
+        public abstract List<ReportAverageNumberofPassedInspectionsModel> sp_get_report_average_numberof_passed_inspections(ReportAverageNumberofPassedInspectionsModel EN);
 
         #region __ Reader __
         public static List<ProjectModel> SP_Get_Project_ListReader(IDataReader reader)
@@ -511,6 +512,45 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.TotalQCALL = Commons.FormatExtension.NullTo2decimalplaces(reader["TotalQCALL"]);
             Entity.QCALLPercentPass = Commons.FormatExtension.NullTo2decimalplaces(reader["QCALLPercentPass"]);
             Entity.RowOrder = Commons.FormatExtension.NullTo2decimalplaces(reader["RowOrder"]);
+            return Entity;
+        }
+
+
+        public static List<ReportAverageNumberofPassedInspectionsModel> sp_get_report_average_numberof_passed_inspectionsListReader(IDataReader reader)
+        {
+            List<ReportAverageNumberofPassedInspectionsModel> list = new List<ReportAverageNumberofPassedInspectionsModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_report_average_numberof_passed_inspections_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static ReportAverageNumberofPassedInspectionsModel sp_get_report_average_numberof_passed_inspections_Reader(IDataReader reader, int index)
+        {
+            ReportAverageNumberofPassedInspectionsModel Entity = new ReportAverageNumberofPassedInspectionsModel();
+
+            Entity.index = index;
+            Entity.ProjectName = Commons.FormatExtension.NullTo2decimalplaces(reader["ProjectName"]);
+            Entity.CompanyVendorName = Commons.FormatExtension.NullTo2decimalplaces(reader["CompanyVendorName"]);
+            Entity.AverageQC1Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["AverageQC1Pass"]);
+            Entity.CntUnitQC1Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["CntUnitQC1Pass"]);
+            Entity.SumQC1MaxPass = Commons.FormatExtension.NullTo2decimalplaces(reader["SumQC1MaxPass"]);
+            Entity.AverageQC2Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["AverageQC2Pass"]);
+            Entity.CntUnitQC2Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["CntUnitQC2Pass"]);
+            Entity.SumQC2MaxPass = Commons.FormatExtension.NullTo2decimalplaces(reader["SumQC2MaxPass"]);
+            Entity.AverageQC3Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["AverageQC3Pass"]);
+            Entity.CntUnitQC3Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["CntUnitQC3Pass"]);
+            Entity.SumQC3MaxPass = Commons.FormatExtension.NullTo2decimalplaces(reader["SumQC3MaxPass"]);
+            Entity.AverageQC4Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["AverageQC4Pass"]);
+            Entity.CntUnitQC4Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["CntUnitQC4Pass"]);
+            Entity.SumQC4MaxPass = Commons.FormatExtension.NullTo2decimalplaces(reader["SumQC4MaxPass"]);
+            Entity.AverageQC5Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["AverageQC5Pass"]);
+            Entity.CntUnitQC5Pass = Commons.FormatExtension.NullTo2decimalplaces(reader["CntUnitQC5Pass"]);
+            Entity.SumQC5MaxPass = Commons.FormatExtension.NullTo2decimalplaces(reader["SumQC5MaxPass"]);
             return Entity;
         }
 

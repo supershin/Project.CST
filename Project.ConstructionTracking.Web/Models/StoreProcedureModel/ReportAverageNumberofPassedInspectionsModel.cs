@@ -12,6 +12,7 @@
         public string? end_date { get; set; }
 
 
+        public int index { get; set; }
         public string? ProjectName { get; set; }
         public string? CompanyVendorName { get; set; }
         public string? AverageQC1Pass { get; set; }

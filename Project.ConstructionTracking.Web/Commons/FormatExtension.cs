@@ -138,8 +138,7 @@ namespace Project.ConstructionTracking.Web.Commons
 
         public static string NullTo2decimalplaces(object obj, string defaultString = "")
         {
-            string temp = defaultString;
-
+            // Handle null or empty input
             if (obj == null || System.Convert.IsDBNull(obj) || obj.ToString().Trim() == "")
             {
                 return defaultString;
@@ -152,17 +151,19 @@ namespace Project.ConstructionTracking.Web.Commons
                     return ""; // Return empty string if the value is 0
                 }
 
-                // Truncate to two decimal places
-                result = Math.Truncate(result * 100) / 100;
-                temp = result.ToString("F2");
-            }
-            else
-            {
-                // Return as string if not a number
-                temp = obj.ToString();
+                // Check if it's a whole number
+                if (result % 1 == 0)
+                {
+                    return ((int)result).ToString(); // Return as an integer if no decimal value
+                }
+                else
+                {
+                    return result.ToString("F2").TrimEnd('0').TrimEnd('.'); // Return up to two decimals
+                }
             }
 
-            return temp;
+            // Return original value as string if not a valid number
+            return obj.ToString();
         }
 
 
