@@ -10,6 +10,42 @@
     }
 }
 
+<style>
+
+    .fixed-size-btn {
+        width: 80px; /* Adjust the width as needed */
+        height: 30px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .carousel-item {
+        flex: 1 0 auto;
+        text-align: center;
+    }
+
+    .status-text {
+        font-size: 1em;
+    }
+
+
+    .status-dot {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        border: none;
+        outline: none;
+        font-size: 18px;
+    }
+</style>
 
 <div class="page-wrapper">
     <div class="page-header d-print-none">
@@ -25,7 +61,23 @@
                 </div>
             </div>
             <div class="card-body">
-                <h1>หน้าจอ Unit status แสดงราย Unit (show on website)</h1>
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-row align-items-baseline">
+                        <form id="form-UnitStatusByProject" method="post" asp-controller="UnitStatusByProject" asp-action="Index">
+                            <button class="status-dot bg-transparent">
+                                <i class="fa-solid fa-chevron-left fa-xl" style="color: #f7f7f7;"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="d-block d-sm-flex align-items-baseline custom-heading">
+                        <h1>หน้าจอ Unit status แสดงราย Unit (show on website)</h1>
+                    </div>
+                    <div class="align-items-right">
+                        @*                      <button id="toggleButton" class="status-dot bg-transparent" onclick="openCollapse()">
+                        <i class="fas fa-arrow-down animated-arrow fa-xl" style="color: #f7f7f7;"></i>
+                        </button>*@
+                    </div>
+                </div>
             </div>
         </div>
     </div>

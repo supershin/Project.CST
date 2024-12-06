@@ -54,6 +54,24 @@ namespace Project.ConstructionTracking.Web.Commons
             }
             return null;
         }
+        /// <summary>
+        /// Converts a string in DD/MM/YYYY format to a string in YYYY-MM-DD format.
+        /// </summary>
+        /// <param name="str">The input date string in DD/MM/YYYY format.</param>
+        /// <returns>The formatted date string in YYYY-MM-DD format, or an empty string if the input is invalid.</returns>
+        public static string ToDateString(this string str)
+        {
+            if (!string.IsNullOrEmpty(str))
+            {
+                DateTime result;
+                if (DateTime.TryParseExact(str, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out result))
+                {
+                    return result.ToString("yyyy-MM-dd"); // Convert to YYYY-MM-DD format
+                }
+            }
+            return string.Empty; // Return an empty string for invalid input
+        }
+
         public static string? ToStringNullable(this string? param)
         {
             return string.IsNullOrEmpty(param) ? null : param.Trim();

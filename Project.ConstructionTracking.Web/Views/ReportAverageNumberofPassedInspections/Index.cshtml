@@ -3,6 +3,7 @@
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 }
 @model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.ReportAverageNumberofPassedInspectionsModel>
+<link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
 <title>รายงานค่าเฉลี่ยจำนวนครั้งที่ตรวจผ่าน</title>
 <style>
     .card {
@@ -44,7 +45,7 @@
             <div class="card" id="card-filter">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12 col-sm-4 mb-2">
+                        <div class="col-12 col-sm-3 mb-2">
                             <label for="ddlproject" class="form-label">โครงการ<span style="color: red;">*</span></label>
                             <input type="text" id="ddlproject" placeholder="ค้นหาโครงการ...">
                             <input type="hidden" id="selectedProjectId" />
@@ -56,8 +57,16 @@
                             </select>
                             <input type="hidden" id="companyvenderId">
                         </div>
+                        <div class="col-6 col-sm-2 mb-2">
+                            <label for="startDate" class="form-label">วันที่ตรวจตั้งแต่</label>
+                            <input type="text" id="startDate" placeholder="ค้นหาโดยวันที่(เริ่มต้น)" class="form-control">
+                        </div>
+                        <div class="col-6 col-sm-2 mb-2">
+                            <label for="endDate" class="form-label">วันที่ตรวจจนถึง</label>
+                            <input type="text" id="endDate" placeholder="ค้นหาโดยวันที่(สิ้นสุด)" class="form-control">
+                        </div>
                         <div class="col-12 col-sm-2 mb-2" style="padding-top : 1.6rem;">
-                            <button class="btn btn-primary w-100" id="searchButton" onclick="performSearch()">
+                            <button class="btn btn-primary w-100" id="searchButton" onclick="OnclickSearch()">
                                 <i class="fas fa-search"></i> ค้นหา
                             </button>
                         </div>
@@ -74,6 +83,7 @@
 <link href="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.default.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script type="text/javascript">
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -92,7 +102,13 @@
                 ReportQCOverviewNavItem.classList.add('active');
             }
 
-            // Initialize the project dropdown
+            flatpickr("#startDate", {
+                dateFormat: "d/m/Y" 
+            });
+            flatpickr("#endDate", {
+                dateFormat: "d/m/Y" 
+            });
+
             const ddlProject = $('#ddlproject').selectize({
                 valueField: 'ValueGuid',
                 labelField: 'Text',
@@ -132,7 +148,6 @@
 
             }
 
-            // Initialize company vendor dropdown
             const ddlCompanyVendor = $('#ddlcompanyvender').selectize({
                 valueField: 'Value',
                 labelField: 'Text',
@@ -144,15 +159,14 @@
             });
 
             const selectizeCompanyVendor = ddlCompanyVendor[0].selectize;
-            selectizeCompanyVendor.disable(); // Initially disable
+            selectizeCompanyVendor.disable(); 
 
-            // On project change, load corresponding company vendors
             selectizeProject.on('change', function (value) {
                 document.getElementById('selectedProjectId').value = value;
 
-                selectizeCompanyVendor.clear(); // Clear current selection
-                selectizeCompanyVendor.clearOptions(); // Clear options
-                selectizeCompanyVendor.disable(); // Disable until data is loaded
+                selectizeCompanyVendor.clear(); 
+                selectizeCompanyVendor.clearOptions(); 
+                selectizeCompanyVendor.disable();
 
                 if (value) {
                     $.ajax({
@@ -172,79 +186,130 @@
             });
         });
 
-        // function performSearch() {
-        //     // Retrieve filter values
-        //     const projectId = document.getElementById('selectedProjectId').value || "";
-        //     const companyVendorId = document.getElementById('ddlcompanyvender').value || "";
-        //     const year = document.getElementById('ddlYearSearch').value || "";
+        function calculateTableTotals() {
+            const table = document.querySelector('.custom-table'); // Select the table
+            if (!table) return; // Exit if the table is not present
 
-        //     // Validate required fields
-        //     if (!projectId || !year) {
-        //         showAlertandClose('กรุณาเลือกโครงการและกรอกปีการตรวจ');
-        //         return;
-        //     }
+            const tbodyRows = table.querySelectorAll('tbody tr'); // All rows in tbody
+            const totalRow = document.getElementById('totalRow'); // The summary row
 
-        //     showLoadingScreen();
+            // Clear previous total row cells (except the label cell)
+            while (totalRow.cells.length > 1) {
+                totalRow.deleteCell(1);
+            }
 
-        //     // AJAX Request to the Controller
-        //     $.ajax({
-        //         url: baseUrl + 'ReportWorkloadAndInspectionResults/OnclickSearch',
-        //         type: 'POST',
-        //         data: {
-        //             projectId: projectId,
-        //             CompanyvenderID: companyVendorId,
-        //             year: year
-        //         },
-        //         success: function (data) {
-        //             $('#PartialTableReport').html(data);
-        //              Swal.close();
-        //         },
-        //         error: function (error) {
-        //             Swal.close();
-        //             console.error('Search failed:', error);
-        //             showAlertandClose('เกิดข้อผิดพลาดในการค้นหา');
-        //         }
-        //     });
-        // }
+            // Initialize sums for each column that needs to be calculated
+            const columnSums = Array.from({ length: 10 }, () => 0); // Adjust the number of columns to sum
+
+            // Loop through each row in the table body
+            tbodyRows.forEach(row => {
+                const cells = row.querySelectorAll('td'); // Get all cells in the row
+                cells.forEach((cell, index) => {
+                    if (index >= 3 && index <= 12) { // Indices for the columns to calculate
+                        const value = parseFloat(cell.textContent) || 0; // Parse value or default to 0
+                        columnSums[index - 3] += value; // Sum values (adjust index to match columnSums array)
+                    }
+                });
+            });
+
+            // Populate the total row
+            columnSums.forEach((sum, index) => {
+                const totalCell = document.createElement('td');
+
+                // Display sum as integer if it has no decimals, otherwise show 2 decimal places
+                if (sum % 1 === 0) {
+                    totalCell.textContent = sum === 0 ? "" : sum.toFixed(0); // Integer
+                } else {
+                    totalCell.textContent = sum.toFixed(2); // Decimal
+                }
+
+                totalCell.style.textAlign = 'center'; // Align totals to the center
+                totalRow.appendChild(totalCell);
+            });
+        }
+
+        // Initial calculation on page load
+        document.addEventListener('DOMContentLoaded', calculateTableTotals);
+
+        // Reapply the calculation script after AJAX updates
+        function OnclickSearch() {
+            // Retrieve filter values
+            const projectId = document.getElementById('selectedProjectId').value || "";
+            const companyVendorId = document.getElementById('ddlcompanyvender').value || "";
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            // Validate required fields
+            if (!projectId) {
+                showAlertandClose('กรุณาเลือกโครงการ');
+                return;
+            }
+
+            showLoadingScreen();
+
+            // AJAX Request to the Controller
+            $.ajax({
+                url: baseUrl + 'ReportAverageNumberofPassedInspections/OnclickSearch',
+                type: 'POST',
+                data: {
+                    projectId: projectId,
+                    CompanyvenderID: companyVendorId,
+                    startdate: startDate,
+                    enddate: endDate
+                },
+                success: function (data) {
+                    $('#PartialTableReport').html(data); // Update the partial view
+                    calculateTableTotals(); // Reapply total calculation after the partial view is updated
+                    Swal.close();
+                },
+                error: function (error) {
+                    Swal.close();
+                    console.error('Search failed:', error);
+                    showAlertandClose('เกิดข้อผิดพลาดในการค้นหา');
+                }
+            });
+        }
 
 
-        // function exportInspectionResults() {
-        //     const projectId = document.getElementById('selectedProjectId').value;
-        //     const companyVendorId = document.getElementById('ddlcompanyvender').value || "";
-        //     const year = document.getElementById('ddlYearSearch').value || "";
 
-        //     if (!projectId || !year) {
-        //             showAlertandClose('กรุณาเลือกโครงการและปีการตรวจเพื่อทำการ Export');
-        //         return;
-        //     }
+        function exportInspectionResults() {
+            const projectId = document.getElementById('selectedProjectId').value;
+            const companyVendorId = document.getElementById('ddlcompanyvender').value || "";
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
 
-        //     showLoadingScreen();
+            if (!projectId) {
+                    showAlertandClose('กรุณาเลือกโครงการการตรวจเพื่อทำการ Export');
+                return;
+            }
 
-        //     const exportUrl = `ReportWorkloadAndInspectionResults/ExportToExcel?projectId=${encodeURIComponent(projectId)}&companyVendorId=${encodeURIComponent(companyVendorId)}&year=${encodeURIComponent(year)}`;
+            showLoadingScreen();
 
-        //     fetch(exportUrl)
-        //         .then(response => {
-        //             if (!response.ok) {
-        //                 Swal.close();
-        //                 showAlertandClose('Export Excel ไม่สำเร็จ');
-        //                 throw new Error('Error occurred during file download.');
-        //             }
-        //                 Swal.close();
-        //             return response.blob();
-        //         })
-        //         .then(blob => {
-        //             Swal.close();
-        //             const link = document.createElement('a');
-        //             link.href = window.URL.createObjectURL(blob);
-        //                 link.download = `รายงานปริมาณงานและผลการตรวจ.xlsx`;
-        //             link.click();
-        //         })
-        //         .catch(error => {
-        //             Swal.close();
-        //             console.error('Export failed:', error);
-        //             showAlertandClose('การส่งออกข้อมูลล้มเหลว');
-        //         });
-        // }
+            const exportUrl = `ReportAverageNumberofPassedInspections/ExportToExcel?projectId=${encodeURIComponent(projectId)}&companyVendorId=${encodeURIComponent(companyVendorId)}&startdate=${encodeURIComponent(startDate)}&enddate=${encodeURIComponent(endDate)}`;
+
+            fetch(exportUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        Swal.close();
+                        showAlertandClose('Export Excel ไม่สำเร็จ');
+                        throw new Error('Error occurred during file download.');
+                    }
+                        Swal.close();
+                    return response.blob();
+                })
+                .then(blob => {
+                    Swal.close();
+                    const link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                        link.download = `รายงานค่าเฉลี่ยจำนวนครั้งที่ตรวจผ่าน.xlsx`;
+                    link.click();
+                })
+                .catch(error => {
+                    Swal.close();
+                    console.error('Export failed:', error);
+                    showAlertandClose('การส่งออกข้อมูลล้มเหลว');
+                });
+        }
 
 
 </script>

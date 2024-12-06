@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <h1>Report Project Pass Condition</h1>
+                <h1>รายงานการผ่านแบบมีเงื่อนไข</h1>
             </div>
         </div>
     </div>
@@ -164,8 +164,6 @@
             ReportProjectProgressNavItem.classList.add('active'); // Make Report Project PassCondition nav active
         }
 
-
-        // Project Dropdown Initialization
         const ddlProject = $('#ddlproject').selectize({
             valueField: 'ValueGuid',
             labelField: 'Text',
@@ -173,7 +171,7 @@
             options: [],
             create: false,
             placeholder: 'ค้นหาโครงการ...',
-            maxItems: 1 // Restrict to single selection
+            maxItems: 1 
         });
 
         const selectizeProject = ddlProject[0].selectize;
@@ -194,7 +192,6 @@
             document.cookie = `selectedProjectId=${selectedValue}; path=/; expires=${new Date(new Date().setDate(new Date().getDate() + 7)).toUTCString()}`;
         });
 
-        // Status Dropdown Initialization for Multi-Select
         const ddlStatus = $('#ddlStatus').selectize({
             valueField: 'Value',
             labelField: 'Text',
@@ -202,7 +199,7 @@
             options: [],
             create: false,
             placeholder: 'ค้นหาสถานะ...',
-            maxItems: null // Allow multiple selection
+            maxItems: null 
         });
 
         const selectizeStatus = ddlStatus[0].selectize;
@@ -215,8 +212,6 @@
         document.getElementById('searchButton').addEventListener('click', function () {
             const selectedProjectValue = document.getElementById('selectedProjectId').value;
             const selectedStatusValues = selectizeStatus.getValue();
-            // console.log(selectedStatusValues);
-            // const selectedStatusString = selectedStatusValues.join(',');
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
             const unitSearchValue = document.getElementById('txtunitsearch').value;

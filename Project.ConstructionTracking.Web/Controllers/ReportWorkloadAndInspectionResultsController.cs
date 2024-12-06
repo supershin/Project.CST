@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Project.ConstructionTracking.Web.Library.DAL;
@@ -257,21 +258,27 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                         var BorderQC1 = worksheet.Range(row, 2, row, 6);
                         BorderQC1.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        worksheet.Cell(row , 6).Style.Fill.BackgroundColor = XLColor.LightGray;
 
                         var BorderQC2 = worksheet.Range(row, 7, row, 11);
                         BorderQC2.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        worksheet.Cell(row, 11).Style.Fill.BackgroundColor = XLColor.LightGray;
 
                         var BorderQC3 = worksheet.Range(row, 12, row, 16);
                         BorderQC3.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        worksheet.Cell(row, 16).Style.Fill.BackgroundColor = XLColor.LightGray;
 
                         var BorderQC4 = worksheet.Range(row, 17, row, 21);
                         BorderQC4.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        worksheet.Cell(row, 21).Style.Fill.BackgroundColor = XLColor.LightGray;
 
                         var BorderQC5 = worksheet.Range(row, 22, row, 26);
                         BorderQC5.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        worksheet.Cell(row, 26).Style.Fill.BackgroundColor = XLColor.LightGray;
 
                         var BorderQCALL = worksheet.Range(row, 27, row, 31);
                         BorderQCALL.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        worksheet.Cell(row, 31).Style.Fill.BackgroundColor = XLColor.LightGray;
 
                         row++;
                     }

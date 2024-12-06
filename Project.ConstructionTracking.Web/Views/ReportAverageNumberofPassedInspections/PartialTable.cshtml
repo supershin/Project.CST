@@ -4,7 +4,6 @@
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
 @model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.ReportAverageNumberofPassedInspectionsModel>
-
 <style>
     .table-container {
         overflow-x: auto; /* Enable horizontal scrolling */
@@ -42,13 +41,14 @@
 
     .custom-table td {
         font-size: 0.8rem; /* Smaller font size for table data */
-        text-align: left;
+        text-align: center;
     }
 
-    .custom-table tbody tr:hover {
-        background-color: #eff584;
+    .custom-table tbody tr:hover td{
+        background-color: #eff584 !important;
     }
 </style>
+
 <div class="card" id="custom-card">
     <div class="card-body">
         <!-- Display the row count and Export button -->
@@ -57,7 +57,7 @@
                 <!-- จำนวนรายการทั้งหมด: @Model.Count -->
             </div>
             <div>
-                <button class="btn btn-success" id="exportExcel">
+                <button class="btn btn-success" id="exportExcel" onclick="exportInspectionResults()">
                     <i class="fas fa-file-excel"></i> Export to Excel
                 </button>
             </div>
@@ -129,34 +129,6 @@
     </div>
 </div>
 <script>
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     const table = document.querySelector('.custom-table'); // Select the table
-    //     const tbodyRows = table.querySelectorAll('tbody tr'); // All rows in tbody
-    //     const totalRow = document.getElementById('totalRow'); // The summary row
-
-    //     // Initialize sums for each column that needs to be calculated
-    //     const columnSums = Array.from({ length: 10 }, () => 0); // We have 10 columns to sum up
-
-    //     // Loop through each row in the table body
-    //     tbodyRows.forEach(row => {
-    //         const cells = row.querySelectorAll('td'); // Get all cells in the row
-    //         cells.forEach((cell, index) => {
-    //             if (index >= 3 && index <= 12) { // Indices for the 10 columns to calculate
-    //                 const value = parseFloat(cell.textContent) || 0; // Parse value or default to 0
-    //                 columnSums[index - 3] += value; // Sum values (adjust index to match columnSums array)
-    //             }
-    //         });
-    //     });
-
-    //     // Populate the total row
-    //     columnSums.forEach((sum, index) => {
-    //         const totalCell = document.createElement('td');
-    //         totalCell.textContent = sum > 0 ? sum.toFixed(2) : ""; // Show "" if sum is 0
-    //         totalCell.style.textAlign = index === 0 ? 'left' : 'center'; // Align the first column left, others center
-    //         totalRow.appendChild(totalCell);
-    //     });
-    // });
-
     document.addEventListener('DOMContentLoaded', function () {
         const table = document.querySelector('.custom-table'); // Select the table
         const tbodyRows = table.querySelectorAll('tbody tr'); // All rows in tbody
