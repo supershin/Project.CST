@@ -409,7 +409,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.CompanyName = Commons.FormatExtension.NullToString(reader["CompanyName"]);
             Entity.PEName = Commons.FormatExtension.NullToString(reader["PEName"]);
             Entity.UnitStatus = Commons.FormatExtension.NullToString(reader["UnitStatus"]);
-            Entity.TransferDate = Commons.FormatExtension.NullToString(reader["TransferDate"]);
+            Entity.TransferDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["TransferDate"]);
             Entity.StartDatePlan = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["StartDatePlan"]);
             Entity.EndDatePlan = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["EndDatePlan"]);
             Entity.FormActual = Commons.FormatExtension.NullToString(reader["FormActual"]);
