@@ -661,5 +661,61 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                 }
             }
         }
+
+        public override List<ReportQC14FailModel> sp_get_report_qc1_4fail(ReportQC14FailModel EN)
+        {
+            using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
+            {
+                SqlCommand SqlCmd = new SqlCommand("sp_get_report", SqlCon);
+                try
+                {
+                    SqlCon.Open();
+                    SqlTransaction Trans = SqlCon.BeginTransaction();
+                    SqlCmd.Transaction = Trans;
+                    SqlCmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = EN.act ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@project_id", SqlDbType.NVarChar)).Value = EN.project_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = EN.unit_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = EN.unit_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@build_status", SqlDbType.NVarChar)).Value = EN.build_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@vender_id", SqlDbType.NVarChar)).Value = EN.vender_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@qctype_id", SqlDbType.NVarChar)).Value = EN.qctype_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@start_date", SqlDbType.NVarChar)).Value = EN.start_date ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@end_date", SqlDbType.NVarChar)).Value = EN.end_date ?? (object)DBNull.Value;
+                    switch (EN.act)
+                    {
+                        case "ReporQC1-4Fail":
+                            return sp_get_report_qc1_4failListReader(ExecuteReader(SqlCmd));
+
+                        default:
+                            return new List<ReportQC14FailModel>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Stored name : sp_get_report");
+                    Log.Error("SEND pram1 Act (nvarchar) : {Act}", EN.act);
+                    Log.Error("SEND pram2 unit_id (nvarchar) : {Unit_id}", EN.unit_id);
+                    Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", EN.project_id);
+                    Log.Error("SEND pram4 unit_status (nvarchar) : {Unit_status}", EN.unit_status);
+                    Log.Error("SEND pram5 build_status (nvarchar) : {build_status}", EN.build_status);
+                    Log.Error("SEND pram6 vender_id (nvarchar) : {vender_id}", EN.vender_id);
+                    Log.Error("SEND pram7 qctype_id (nvarchar) : {qctype_id}", EN.qctype_id);
+                    Log.Error("SEND pram9 start_date (nvarchar) : {start_date}", EN.start_date);
+                    Log.Error("SEND pram10 end_date (nvarchar) : {end_date}", EN.end_date);
+                    Log.Error(ex.ToString());
+                    Log.Error("=========== END ===========");
+
+                    return new List<ReportQC14FailModel>();
+                }
+                finally
+                {
+                    SqlCmd.Dispose();
+                    SqlCon.Close();
+                    SqlCon.Dispose();
+                }
+            }
+        }
     }
 }

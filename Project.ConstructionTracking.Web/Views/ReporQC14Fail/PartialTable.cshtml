@@ -1,0 +1,106 @@
+﻿<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
+<script src="https://kit.fontawesome.com/21fea36ed8.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.ReportQC14FailModel>
+<style>
+    .table-container {
+        overflow-x: auto; /* Enable horizontal scrolling */
+        overflow-y: auto; /* Enable vertical scrolling */
+        max-height: 600px; /* Set max height for vertical scrolling */
+    }
+
+    table {
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+    }
+
+    .custom-table {
+        text-align: center;
+        border: 1px solid #ddd;
+        padding: 8px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-table th, .custom-table td {
+        padding: 8px; /* Add some padding for better spacing */
+        border: 1px solid #dee2e6;
+        white-space: nowrap;
+        overflow: hidden; /* Hide overflow content */
+        text-overflow: ellipsis; /* Show ellipsis (...) for overflow */
+        /* max-width: 300px; */
+    }
+
+    .custom-table th {
+        background-color: #f8f9fa;
+        font-size: 0.9rem; /* Adjust to make the table head bigger */
+        font-weight: bold;
+    }
+
+    .custom-table td {
+        font-size: 0.8rem; /* Smaller font size for table data */
+        text-align: center;
+    }
+
+    .custom-table tbody tr:hover td {
+        background-color: #eff584 !important;
+    }
+
+</style>
+<div class="card" id="custom-card">
+    <div class="card-body">
+        <!-- Display the row count and Export button -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="row-count">
+                <!-- จำนวนรายการทั้งหมด: @Model.Count -->
+            </div>
+            <div>
+                <button class="btn btn-success" id="exportExcel" onclick="exportInspectionResults()">
+                    <i class="fas fa-file-excel"></i> Export to Excel
+                </button>
+            </div>
+        </div>
+        <div class="table-container">
+            <table id="custom-table" class="custom-table">
+                <thead>
+                    <tr>
+                        <th>QC</th>
+                        <th>No.</th>
+                        <th>รายการตรวจ</th>
+                        <th>จำนวนครั้งที่ตรวจทั้งหมด</th>
+                        <th>จำนวนครั้งที่่ไม่ผ่าน</th>
+                        <th>% สัดส่วนที่ไม่ผ่าน</th>
+                        <th>จำนวนหลังที่ตรวจ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.QCTypeName</td>
+                                <td>@item.index</td>
+                                <td>@item.ChecklistName</td>
+                                <td>@item.AllQC</td>
+                                <td>@item.AllQCFail</td>
+                                <td>@item.QCPercentFail</td>
+                                <td>@item.CNTUnit</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="14" style="text-align: center; font-weight: bold;">
+                                ไม่มีข้อมูล
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
