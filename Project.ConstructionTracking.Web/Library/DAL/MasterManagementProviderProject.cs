@@ -55,6 +55,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
 
         public abstract List<ReportAverageNumberofPassedInspectionsModel> sp_get_report_average_numberof_passed_inspections(ReportAverageNumberofPassedInspectionsModel EN);
 
+        public abstract List<ReportQC14FailModel> sp_get_report_qc1_4fail(ReportQC14FailModel EN);
+
         #region __ Reader __
         public static List<ProjectModel> SP_Get_Project_ListReader(IDataReader reader)
         {
@@ -554,6 +556,36 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             return Entity;
         }
 
+
+        public static List<ReportQC14FailModel> sp_get_report_qc1_4failListReader(IDataReader reader)
+        {
+            List<ReportQC14FailModel> list = new List<ReportQC14FailModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_report_qc1_4fail_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static ReportQC14FailModel sp_get_report_qc1_4fail_Reader(IDataReader reader, int index)
+        {
+            ReportQC14FailModel Entity = new ReportQC14FailModel();
+
+            Entity.index = index;
+            Entity.QCTypeID = Commons.FormatExtension.Nulltoint(reader["QCTypeID"]);
+            Entity.QCTypeName = Commons.FormatExtension.NullToString(reader["QCTypeName"]);
+            Entity.ChecklistID = Commons.FormatExtension.Nulltoint(reader["ChecklistID"]); 
+            Entity.ParentID = Commons.FormatExtension.Nulltoint(reader["ParentID"]);
+            Entity.ChecklistName = Commons.FormatExtension.NullToString(reader["ChecklistName"]);
+            Entity.AllQC = Commons.FormatExtension.NullTo2decimalplaces(reader["AllQC"]);
+            Entity.AllQCFail = Commons.FormatExtension.NullTo2decimalplaces(reader["AllQCFail"]);
+            Entity.QCPercentFail = Commons.FormatExtension.NullTo2decimalplaces(reader["QCPercentFail"]);
+            Entity.CNTUnit = Commons.FormatExtension.NullTo2decimalplaces(reader["CNTUnit"]);
+            return Entity;
+        }
         #endregion
     }
 }
