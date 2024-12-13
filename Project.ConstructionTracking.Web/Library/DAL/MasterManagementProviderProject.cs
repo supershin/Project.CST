@@ -577,7 +577,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.index = index;
             Entity.QCTypeID = Commons.FormatExtension.Nulltoint(reader["QCTypeID"]);
             Entity.QCTypeName = Commons.FormatExtension.NullToString(reader["QCTypeName"]);
-            Entity.ChecklistID = Commons.FormatExtension.Nulltoint(reader["ChecklistID"]);
+            Entity.ChecklistID = Commons.FormatExtension.Nulltoint(reader["ChecklistID"]); 
+            Entity.ParentID = Commons.FormatExtension.Nulltoint(reader["ParentID"]);
             Entity.ChecklistName = Commons.FormatExtension.NullToString(reader["ChecklistName"]);
             Entity.AllQC = Commons.FormatExtension.NullTo2decimalplaces(reader["AllQC"]);
             Entity.AllQCFail = Commons.FormatExtension.NullTo2decimalplaces(reader["AllQCFail"]);

@@ -63,6 +63,20 @@
             </div>
         </div>
         <div class="table-container">
+            @{
+                // Grouping the model data by QCTypeID
+                var groupedData = Model?
+                .GroupBy(x => x.QCTypeID)
+                .Select(g => new
+                {
+                    QCTypeID = g.Key,
+                    QCTypeName = g.FirstOrDefault()?.QCTypeName,
+                    RowSpan = g.Count(),
+                    Details = g.ToList()
+                })
+                .ToList();
+            }
+
             <table id="custom-table" class="custom-table">
                 <thead>
                     <tr>
@@ -76,25 +90,46 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Model != null && Model.Count > 0)
+                    @if (groupedData != null && groupedData.Count > 0)
                     {
-                        foreach (var item in Model)
+                        foreach (var group in groupedData)
                         {
-                            <tr>
-                                <td>@item.QCTypeName</td>
-                                <td>@item.index</td>
-                                <td>@item.ChecklistName</td>
-                                <td>@item.AllQC</td>
-                                <td>@item.AllQCFail</td>
-                                <td>@item.QCPercentFail</td>
-                                <td>@item.CNTUnit</td>
-                            </tr>
+                            bool isFirstRow = true; // Flag to handle the first row in each group
+                            int runningIndex = 1;  // Initialize a counter for the current group
+
+                            foreach (var item in group.Details)
+                            {
+                                <tr>
+                                    @if (isFirstRow)
+                                    {
+                                        <td rowspan="@group.RowSpan">@group.QCTypeName</td>
+                                        isFirstRow = false; // Set to false after the first row
+                                    }
+                                    <td>@runningIndex</td> <!-- Running index for the current group -->
+                                    <td style="@((item.ParentID == 0 && item.AllQC == "" && item.AllQCFail == "" && item.CNTUnit == "" && item.QCTypeID != 12 && item.QCTypeID != 14) ? "background-color: #f0f0f0; font-weight: bold;" : "")">
+                                        @item.ChecklistName
+                                    </td>
+                                    <td style="@((item.ParentID == 0 && item.AllQC == "" && item.AllQCFail == "" && item.CNTUnit == "" && item.QCTypeID != 12 && item.QCTypeID != 14) ? "background-color: #f0f0f0;" : "")">
+                                        @item.AllQC
+                                    </td>
+                                    <td style="@((item.ParentID == 0 && item.AllQC == "" && item.AllQCFail == "" && item.CNTUnit == "" && item.QCTypeID != 12 && item.QCTypeID != 14) ? "background-color: #f0f0f0;" : "")">
+                                        @item.AllQCFail
+                                    </td>
+                                    <td style="@((item.ParentID == 0 && item.AllQC == "" && item.AllQCFail == "" && item.CNTUnit == "" && item.QCTypeID != 12 && item.QCTypeID != 14) ? "background-color: #f0f0f0;" : "")">
+                                        @item.QCPercentFail
+                                    </td>
+                                    <td style="@((item.ParentID == 0 && item.AllQC == "" && item.AllQCFail == "" && item.CNTUnit == "" && item.QCTypeID != 12 && item.QCTypeID != 14) ? "background-color: #f0f0f0;" : "")">
+                                        @item.CNTUnit
+                                    </td>
+                                </tr>
+                                runningIndex++; // Increment the index for the next row in the group
+                            }
                         }
                     }
                     else
                     {
                         <tr>
-                            <td colspan="14" style="text-align: center; font-weight: bold;">
+                            <td colspan="7" style="text-align: center; font-weight: bold;">
                                 ไม่มีข้อมูล
                             </td>
                         </tr>
@@ -102,5 +137,6 @@
                 </tbody>
             </table>
         </div>
+
     </div>
 </div>

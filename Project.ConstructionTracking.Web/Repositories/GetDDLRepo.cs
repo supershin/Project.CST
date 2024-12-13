@@ -408,6 +408,46 @@ namespace Project.ConstructionTracking.Web.Repositories
                         .ToList();
                     return GetListDDLCompanyVenderInProject;
 
+                case "GetListDDLQCTypeByProject":
+
+                    var GetListDDLQCTypeByProject = (from u in _context.tm_Project
+                                                     join pmf in _context.tr_ProjectModelForm on u.ProjectID equals pmf.ProjectID
+                                                     join ft in _context.tm_FormType on pmf.FormTypeID equals ft.ID
+                                                     join tjoin in
+                                                        (from f in _context.tm_Form
+                                                         join fql in _context.tr_Form_QCCheckList on f.ID equals fql.FormID into tfqlGroup
+                                                         from fql in tfqlGroup.DefaultIfEmpty()
+                                                         join qcl in _context.tm_QC_CheckList on fql.CheckListID equals qcl.ID
+                                                         join e in _context.tm_Ext on qcl.QCTypeID equals e.ID
+                                                         select new
+                                                         {
+                                                             QcCheckListID = qcl.ID,
+                                                             QcTypeID = qcl.QCTypeID,
+                                                             QcTypeName = e.Name,
+                                                             FormQcCheckList = fql.ID,
+                                                             FormID = fql.FormID,
+                                                             FormTypeID = f.FormTypeID
+                                                         })
+                                                     on ft.ID equals tjoin.FormTypeID
+                                                     where u.ProjectID == Model.GuID
+                                                           && u.FlagActive == true
+                                                           && tjoin.QcTypeID != 17
+                                                     select new GetDDL
+                                                     {
+                                                         Value = tjoin.QcTypeID,
+                                                         Text = tjoin.QcTypeName,
+                                                         Value2 = tjoin.QcTypeID == 12 ? 1 :
+                                                                    tjoin.QcTypeID == 13 ? 2 :
+                                                                    tjoin.QcTypeID == 14 ? 3 :
+                                                                    tjoin.QcTypeID == 26 ? 4 :
+                                                                    tjoin.QcTypeID == 15 ? 5 :
+                                                                    tjoin.QcTypeID == 16 ? 6 : 999
+                                                     })
+                                                    .Distinct()
+                                                    .OrderBy(x => x.Value2)
+                                                    .ToList();
+                    return GetListDDLQCTypeByProject;
+
                 default:
 
                 return new List<GetDDL>();

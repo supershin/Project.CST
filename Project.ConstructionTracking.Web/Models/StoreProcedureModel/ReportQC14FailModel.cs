@@ -16,6 +16,7 @@
         public int? QCTypeID { get; set; }
         public string? QCTypeName { get; set; }
         public int? ChecklistID { get; set; }
+        public int? ParentID { get; set; }
         public string? ChecklistName { get; set; }
         public string? AllQC { get; set; }
         public string? AllQCFail { get; set; }

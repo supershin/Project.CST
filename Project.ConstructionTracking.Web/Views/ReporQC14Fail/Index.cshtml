@@ -141,13 +141,26 @@
             selectizeProject.setValue(selectedProjectId);
             document.getElementById('selectedProjectId').value = selectedProjectId;
             $.ajax({
-                url: baseUrl + 'ReportAverageNumberofPassedInspections/GetDDLVenderByProject',
+                url: baseUrl + 'ReporQC14Fail/GetDDLVenderByProject',
                 data: { ProjectId: selectedProjectId },
                 success: function (data) {
                     data.forEach(item => {
                         selectizeCompanyVendor.addOption({ Value: item.Value, Text: item.Text });
                     });
                     selectizeCompanyVendor.enable(); // Enable dropdown after data load
+                },
+                error: function () {
+                    console.log('Failed to load data for Company Vendor dropdown.');
+                }
+            });
+            $.ajax({
+                url: baseUrl + 'ReporQC14Fail/GetDDLQCTypeByProject',
+                data: { ProjectId: selectedProjectId },
+                success: function (data) {
+                    data.forEach(item => {
+                        selectizeSelecteQC.addOption({ Value: item.Value, Text: item.Text });
+                    });
+                    selectizeSelecteQC.enable(); // Enable dropdown after data load
                 },
                 error: function () {
                     console.log('Failed to load data for Company Vendor dropdown.');
@@ -166,8 +179,26 @@
             maxItems: 1
         });
 
+        const ddlSelecteQC = $('#ddlselecteQC').selectize({
+            valueField: 'Value',
+            labelField: 'Text',
+            searchField: 'Text',
+            options: [], // Placeholder for options
+            create: false, // Disable creation of new options
+            placeholder: 'ทั้งหมด', // Placeholder text
+            maxItems: null, // Allow multiple selections
+            onChange: function (values) {
+                // Update the hidden input field with selected values (comma-separated)
+                $('#ddlselecteQCId').val(values.join(','));
+            }
+        });
+
         const selectizeCompanyVendor = ddlCompanyVendor[0].selectize;
         selectizeCompanyVendor.disable();
+
+
+        const selectizeSelecteQC = ddlSelecteQC[0].selectize;
+        selectizeSelecteQC.disable();
 
         selectizeProject.on('change', function (value) {
             document.getElementById('selectedProjectId').value = value;
@@ -176,9 +207,13 @@
             selectizeCompanyVendor.clearOptions();
             selectizeCompanyVendor.disable();
 
+            selectizeSelecteQC.clear();
+            selectizeSelecteQC.clearOptions();
+            selectizeSelecteQC.disable();
+
             if (value) {
                 $.ajax({
-                    url: baseUrl + 'ReportAverageNumberofPassedInspections/GetDDLVenderByProject',
+                    url: baseUrl + 'ReporQC14Fail/GetDDLVenderByProject',
                     data: { ProjectId: value },
                     success: function (data) {
                         data.forEach(item => {
@@ -190,62 +225,39 @@
                         console.log('Failed to load data for Company Vendor dropdown.');
                     }
                 });
+
+                $.ajax({
+                    url: baseUrl + 'ReporQC14Fail/GetDDLQCTypeByProject',
+                    data: { ProjectId: value },
+                    success: function (data) {
+                        data.forEach(item => {
+                            selectizeSelecteQC.addOption({ Value: item.Value, Text: item.Text });
+                        });
+                        selectizeSelecteQC.enable(); // Enable dropdown after data load
+                    },
+                    error: function () {
+                        console.log('Failed to load data for QC dropdown.');
+                    }
+                });
+
+
             }
         });
+
+
+
     });
 
-    function calculateTableTotals() {
-        const table = document.querySelector('.custom-table'); // Select the table
-        if (!table) return; // Exit if the table is not present
-
-        const tbodyRows = table.querySelectorAll('tbody tr'); // All rows in tbody
-        const totalRow = document.getElementById('totalRow'); // The summary row
-
-        // Clear previous total row cells (except the label cell)
-        while (totalRow.cells.length > 1) {
-            totalRow.deleteCell(1);
-        }
-
-        // Initialize sums for each column that needs to be calculated
-        const columnSums = Array.from({ length: 10 }, () => 0); // Adjust the number of columns to sum
-
-        // Loop through each row in the table body
-        tbodyRows.forEach(row => {
-            const cells = row.querySelectorAll('td'); // Get all cells in the row
-            cells.forEach((cell, index) => {
-                if (index >= 3 && index <= 12) { // Indices for the columns to calculate
-                    const value = parseFloat(cell.textContent) || 0; // Parse value or default to 0
-                    columnSums[index - 3] += value; // Sum values (adjust index to match columnSums array)
-                }
-            });
-        });
-
-        // Populate the total row
-        columnSums.forEach((sum, index) => {
-            const totalCell = document.createElement('td');
-
-            // Display sum as integer if it has no decimals, otherwise show 2 decimal places
-            if (sum % 1 === 0) {
-                totalCell.textContent = sum === 0 ? "" : sum.toFixed(0); // Integer
-            } else {
-                totalCell.textContent = sum.toFixed(2); // Decimal
-            }
-
-            totalCell.style.textAlign = 'center'; // Align totals to the center
-            totalRow.appendChild(totalCell);
-        });
-    }
-
-    // Initial calculation on page load
-    document.addEventListener('DOMContentLoaded', calculateTableTotals);
-
-    // Reapply the calculation script after AJAX updates
     function OnclickSearch() {
         // Retrieve filter values
         const projectId = document.getElementById('selectedProjectId').value || "";
         const companyVendorId = document.getElementById('ddlcompanyvender').value || "";
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
+
+        // Retrieve selected QC types from Selectize
+        const qcTypeSelectize = $('#ddlselecteQC')[0].selectize;
+        const qcTypeIDs = qcTypeSelectize.getValue(); // Get selected values (array)
 
         // Validate required fields
         if (!projectId) {
@@ -257,17 +269,17 @@
 
         // AJAX Request to the Controller
         $.ajax({
-            url: baseUrl + 'ReportAverageNumberofPassedInspections/OnclickSearch',
+            url: baseUrl + 'ReporQC14Fail/OnclickSearch',
             type: 'POST',
             data: {
                 projectId: projectId,
                 CompanyvenderID: companyVendorId,
+                qctypeIDs: qcTypeIDs.join(','), // Convert array to comma-separated string
                 startdate: startDate,
                 enddate: endDate
             },
             success: function (data) {
                 $('#PartialTableReport').html(data); // Update the partial view
-                calculateTableTotals(); // Reapply total calculation after the partial view is updated
                 Swal.close();
             },
             error: function (error) {
@@ -286,6 +298,9 @@
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
 
+        const qcTypeSelectize = $('#ddlselecteQC')[0].selectize;
+        const qcTypeIDs = qcTypeSelectize.getValue();
+
         if (!projectId) {
             showAlertandClose('กรุณาเลือกโครงการการตรวจเพื่อทำการ Export');
             return;
@@ -293,7 +308,7 @@
 
         showLoadingScreen();
 
-        const exportUrl = `ReportAverageNumberofPassedInspections/ExportToExcel?projectId=${encodeURIComponent(projectId)}&companyVendorId=${encodeURIComponent(companyVendorId)}&startdate=${encodeURIComponent(startDate)}&enddate=${encodeURIComponent(endDate)}`;
+        const exportUrl = `ReporQC14Fail/ExportToExcel?projectId=${encodeURIComponent(projectId)}&companyVendorId=${encodeURIComponent(companyVendorId)}&qctypeIDs=${encodeURIComponent(qcTypeIDs)}&startdate=${encodeURIComponent(startDate)}&enddate=${encodeURIComponent(endDate)}`;
 
         fetch(exportUrl)
             .then(response => {
@@ -309,7 +324,7 @@
                 Swal.close();
                 const link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
-                link.download = `รายงานค่าเฉลี่ยจำนวนครั้งที่ตรวจผ่าน.xlsx`;
+                link.download = `รายการที่ตรวจไม่ผ่านช่วงQC1_4.xlsx`;
                 link.click();
             })
             .catch(error => {
