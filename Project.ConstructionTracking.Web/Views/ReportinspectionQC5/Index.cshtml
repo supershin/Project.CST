@@ -2,9 +2,9 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
 }
-@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.ReportQC14FailModel>
+@model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.ReportinspectionQC5Model>
 <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
-<title>รายการที่ตรวจไม่ผ่านช่วง QC 1-4</title>
+<title>รายงานการตรวจ QC5</title>
 <style>
     .card {
         border: none;
@@ -36,7 +36,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <h1>รายการที่ตรวจไม่ผ่านช่วง QC 1-4</h1>
+                <h1>รายงานการตรวจ QC5</h1>
             </div>
         </div>
     </div>
@@ -56,13 +56,6 @@
                                 <option value="">ทั้งหมด</option>
                             </select>
                             <input type="hidden" id="companyvenderId">
-                        </div>
-                        <div class="col-6 col-sm-3 mb-2">
-                            <label for="ddlselecteQC" class="form-label">เลือก QC</label>
-                            <select id="ddlselecteQC">
-                                <option value="">ทั้งหมด</option>
-                            </select>
-                            <input type="hidden" id="ddlselecteQCId">
                         </div>
                         <div class="col-6 col-sm-2 mb-2">
                             <label for="startDate" class="form-label">วันที่ตรวจตั้งแต่</label>
@@ -91,16 +84,15 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
 <script type="text/javascript">
 
     document.addEventListener('DOMContentLoaded', function () {
 
         const desktopNavItem = document.getElementById('nav-Report');
         const ReportProjectProgressNavItem = document.getElementById('nav-Report-QC-Group');
-        const ReportQCOverviewNavItem = document.getElementById('nav-Report-QC14-Fails);
+        const ReportQCOverviewNavItem = document.getElementById('nav-Report-inspection-QC5');
 
-        if (desktopNavItem) {
+        if (desktopNavItem){
             desktopNavItem.classList.add('active');
         }
         if (ReportProjectProgressNavItem) {
@@ -141,26 +133,13 @@
             selectizeProject.setValue(selectedProjectId);
             document.getElementById('selectedProjectId').value = selectedProjectId;
             $.ajax({
-                url: baseUrl + 'ReporQC14Fail/GetDDLVenderByProject',
+                url: baseUrl + 'ReportinspectionQC5/GetDDLVenderByProject',
                 data: { ProjectId: selectedProjectId },
                 success: function (data) {
                     data.forEach(item => {
                         selectizeCompanyVendor.addOption({ Value: item.Value, Text: item.Text });
                     });
                     selectizeCompanyVendor.enable(); // Enable dropdown after data load
-                },
-                error: function () {
-                    console.log('Failed to load data for Company Vendor dropdown.');
-                }
-            });
-            $.ajax({
-                url: baseUrl + 'ReporQC14Fail/GetDDLQCTypeByProject',
-                data: { ProjectId: selectedProjectId },
-                success: function (data) {
-                    data.forEach(item => {
-                        selectizeSelecteQC.addOption({ Value: item.Value, Text: item.Text });
-                    });
-                    selectizeSelecteQC.enable(); // Enable dropdown after data load
                 },
                 error: function () {
                     console.log('Failed to load data for Company Vendor dropdown.');
@@ -179,26 +158,8 @@
             maxItems: 1
         });
 
-        const ddlSelecteQC = $('#ddlselecteQC').selectize({
-            valueField: 'Value',
-            labelField: 'Text',
-            searchField: 'Text',
-            options: [], // Placeholder for options
-            create: false, // Disable creation of new options
-            placeholder: 'ทั้งหมด', // Placeholder text
-            maxItems: null, // Allow multiple selections
-            onChange: function (values) {
-                // Update the hidden input field with selected values (comma-separated)
-                $('#ddlselecteQCId').val(values.join(','));
-            }
-        });
-
         const selectizeCompanyVendor = ddlCompanyVendor[0].selectize;
         selectizeCompanyVendor.disable();
-
-
-        const selectizeSelecteQC = ddlSelecteQC[0].selectize;
-        selectizeSelecteQC.disable();
 
         selectizeProject.on('change', function (value) {
             document.getElementById('selectedProjectId').value = value;
@@ -207,13 +168,9 @@
             selectizeCompanyVendor.clearOptions();
             selectizeCompanyVendor.disable();
 
-            selectizeSelecteQC.clear();
-            selectizeSelecteQC.clearOptions();
-            selectizeSelecteQC.disable();
-
             if (value) {
                 $.ajax({
-                    url: baseUrl + 'ReporQC14Fail/GetDDLVenderByProject',
+                    url: baseUrl + 'ReportinspectionQC5/GetDDLVenderByProject',
                     data: { ProjectId: value },
                     success: function (data) {
                         data.forEach(item => {
@@ -225,39 +182,17 @@
                         console.log('Failed to load data for Company Vendor dropdown.');
                     }
                 });
-
-                $.ajax({
-                    url: baseUrl + 'ReporQC14Fail/GetDDLQCTypeByProject',
-                    data: { ProjectId: value },
-                    success: function (data) {
-                        data.forEach(item => {
-                            selectizeSelecteQC.addOption({ Value: item.Value, Text: item.Text });
-                        });
-                        selectizeSelecteQC.enable(); // Enable dropdown after data load
-                    },
-                    error: function () {
-                        console.log('Failed to load data for QC dropdown.');
-                    }
-                });
-
-
             }
         });
-
-
-
     });
 
+    // Reapply the calculation script after AJAX updates
     function OnclickSearch() {
         // Retrieve filter values
         const projectId = document.getElementById('selectedProjectId').value || "";
         const companyVendorId = document.getElementById('ddlcompanyvender').value || "";
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
-
-        // Retrieve selected QC types from Selectize
-        const qcTypeSelectize = $('#ddlselecteQC')[0].selectize;
-        const qcTypeIDs = qcTypeSelectize.getValue(); // Get selected values (array)
 
         // Validate required fields
         if (!projectId) {
@@ -269,12 +204,11 @@
 
         // AJAX Request to the Controller
         $.ajax({
-            url: baseUrl + 'ReporQC14Fail/OnclickSearch',
+            url: baseUrl + 'ReportinspectionQC5/OnclickSearch',
             type: 'POST',
             data: {
                 projectId: projectId,
                 CompanyvenderID: companyVendorId,
-                qctypeIDs: qcTypeIDs.join(','), // Convert array to comma-separated string
                 startdate: startDate,
                 enddate: endDate
             },
@@ -298,17 +232,14 @@
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
 
-        const qcTypeSelectize = $('#ddlselecteQC')[0].selectize;
-        const qcTypeIDs = qcTypeSelectize.getValue();
-
         if (!projectId) {
-            showAlertandClose('กรุณาเลือกโครงการการตรวจเพื่อทำการ Export');
+                showAlertandClose('กรุณาเลือกโครงการการตรวจเพื่อทำการ Export');
             return;
         }
 
         showLoadingScreen();
 
-        const exportUrl = `ReporQC14Fail/ExportToExcel?projectId=${encodeURIComponent(projectId)}&companyVendorId=${encodeURIComponent(companyVendorId)}&qctypeIDs=${encodeURIComponent(qcTypeIDs)}&startdate=${encodeURIComponent(startDate)}&enddate=${encodeURIComponent(endDate)}`;
+        const exportUrl = `ReportinspectionQC5/ExportToExcel?projectId=${encodeURIComponent(projectId)}&companyVendorId=${encodeURIComponent(companyVendorId)}&startdate=${encodeURIComponent(startDate)}&enddate=${encodeURIComponent(endDate)}`;
 
         fetch(exportUrl)
             .then(response => {
@@ -317,14 +248,14 @@
                     showAlertandClose('Export Excel ไม่สำเร็จ');
                     throw new Error('Error occurred during file download.');
                 }
-                Swal.close();
+                    Swal.close();
                 return response.blob();
             })
             .then(blob => {
                 Swal.close();
                 const link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
-                link.download = `รายการที่ตรวจไม่ผ่านช่วงQC1_4.xlsx`;
+                link.download = `รายงานการตรวจ_QC5.xlsx`;
                 link.click();
             })
             .catch(error => {

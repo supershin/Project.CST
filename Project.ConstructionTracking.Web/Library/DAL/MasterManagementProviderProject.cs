@@ -57,6 +57,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
 
         public abstract List<ReportQC14FailModel> sp_get_report_qc1_4fail(ReportQC14FailModel EN);
 
+        public abstract List<ReportinspectionQC5Model> sp_get_report_inspection_QC5(ReportinspectionQC5Model EN);
+
         #region __ Reader __
         public static List<ProjectModel> SP_Get_Project_ListReader(IDataReader reader)
         {
@@ -586,6 +588,39 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.CNTUnit = Commons.FormatExtension.NullTo2decimalplaces(reader["CNTUnit"]);
             return Entity;
         }
+
+
+        public static List<ReportinspectionQC5Model> sp_get_report_inspection_QC5ListReader(IDataReader reader)
+        {
+            List<ReportinspectionQC5Model> list = new List<ReportinspectionQC5Model>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_report_inspection_QC5_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static ReportinspectionQC5Model sp_get_report_inspection_QC5_Reader(IDataReader reader, int index)
+        {
+            ReportinspectionQC5Model Entity = new ReportinspectionQC5Model();
+
+            Entity.index = index;
+            Entity.ProjectID = Commons.FormatExtension.NullToString(reader["ProjectID"]);
+            Entity.ProjectName = Commons.FormatExtension.NullToString(reader["ProjectName"]);
+            Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.ModelTypeName = Commons.FormatExtension.NullToString(reader["ModelTypeName"]);
+            Entity.CompanyVendorName = Commons.FormatExtension.NullToString(reader["CompanyVendorName"]);
+            Entity.MAXSeq = Commons.FormatExtension.NullToString(reader["MAXSeq"]);
+            Entity.FirstDateCheck = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["FirstDateCheck"]);
+            Entity.DatePass = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["DatePass"]);
+            Entity.CNTMajorDefect = Commons.FormatExtension.NullToString(reader["CNTMajorDefect"]);
+            Entity.CNTDefect = Commons.FormatExtension.NullToString(reader["CNTDefect"]);
+            return Entity;
+        }
+
         #endregion
     }
 }
