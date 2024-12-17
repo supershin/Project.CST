@@ -180,7 +180,9 @@ namespace Project.ConstructionTracking.Web.Controllers
                             bool isSpecialRow = item.ParentID == 0 &&
                                                 string.IsNullOrEmpty(item.AllQC) &&
                                                 string.IsNullOrEmpty(item.AllQCFail) &&
-                                                string.IsNullOrEmpty(item.CNTUnit);
+                                                string.IsNullOrEmpty(item.CNTUnit) &&
+                                                item.QCTypeID != 12 && 
+                                                item.QCTypeID != 14;
 
                             if (isFirstRow)
                             {
