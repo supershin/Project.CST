@@ -184,7 +184,7 @@
 
         $("#unit-mapping-pe").click(() => {
             var data = {
-                projectID: defaultValueProjectID
+                projectID: $("#dropdown-select-project").val()
             }
 
             unit.GetPEfromProject(data, defaultValueProjectID)
