@@ -34,7 +34,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             var en = new ReportQC14FailModel
             {
                 act = "ReporQC1-4Fail",
-                project_id = "0CC60DA9-9AC5-4DF6-871E-B10FB0257B4B",
+                project_id = projectId,
                 unit_id = "",
                 unit_status = "",
                 build_status = "",
