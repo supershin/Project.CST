@@ -45,34 +45,34 @@
             <div class="card" id="card-filter">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12 col-sm-3 mb-2">
+                        <div class="col-12 col-sm-4 mb-2">
                             <label for="ddlproject" class="form-label">โครงการ<span style="color: red;">*</span></label>
                             <input type="text" id="ddlproject" placeholder="ค้นหาโครงการ...">
                             <input type="hidden" id="selectedProjectId" />
                         </div>
-                        <div class="col-6 col-sm-3 mb-2">
+                        <div class="col-6 col-sm-4 mb-2">
                             <label for="ddlcompanyvender" class="form-label">บริษัทผู้รับเหมา</label>
                             <select id="ddlcompanyvender">
                                 <option value="">ทั้งหมด</option>
                             </select>
                             <input type="hidden" id="companyvenderId">
                         </div>
-                        <div class="col-6 col-sm-3 mb-2">
+                        <div class="col-6 col-sm-4 mb-2">
                             <label for="ddlselecteQC" class="form-label">เลือก QC</label>
                             <select id="ddlselecteQC">
                                 <option value="">ทั้งหมด</option>
                             </select>
                             <input type="hidden" id="ddlselecteQCId">
                         </div>
-                        <div class="col-6 col-sm-2 mb-2">
+                        <div class="col-6 col-sm-4 mb-2">
                             <label for="startDate" class="form-label">วันที่ตรวจตั้งแต่</label>
                             <input type="text" id="startDate" placeholder="ค้นหาโดยวันที่(เริ่มต้น)" class="form-control">
                         </div>
-                        <div class="col-6 col-sm-2 mb-2">
+                        <div class="col-6 col-sm-4 mb-2">
                             <label for="endDate" class="form-label">วันที่ตรวจจนถึง</label>
                             <input type="text" id="endDate" placeholder="ค้นหาโดยวันที่(สิ้นสุด)" class="form-control">
                         </div>
-                        <div class="col-12 col-sm-2 mb-2" style="padding-top : 1.6rem;">
+                        <div class="col-12 col-sm-4 mb-2" style="padding-top : 1.6rem;">
                             <button class="btn btn-primary w-100" id="searchButton" onclick="OnclickSearch()">
                                 <i class="fas fa-search"></i> ค้นหา
                             </button>
@@ -98,7 +98,7 @@
 
         const desktopNavItem = document.getElementById('nav-Report');
         const ReportProjectProgressNavItem = document.getElementById('nav-Report-QC-Group');
-        const ReportQCOverviewNavItem = document.getElementById('nav-Report-QC14-Fails);
+        const ReportQCOverviewNavItem = document.getElementById('nav-Report-QC14-Fails');
 
         if (desktopNavItem) {
             desktopNavItem.classList.add('active');
