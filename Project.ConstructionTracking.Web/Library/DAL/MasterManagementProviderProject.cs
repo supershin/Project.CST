@@ -59,6 +59,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
 
         public abstract List<ReportinspectionQC5Model> sp_get_report_inspection_QC5(ReportinspectionQC5Model EN);
 
+        public abstract List<ReportinspectionQC5DefectModel> sp_get_report_inspection_QC5_Defect(ReportinspectionQC5DefectModel EN);
+
         #region __ Reader __
         public static List<ProjectModel> SP_Get_Project_ListReader(IDataReader reader)
         {
@@ -618,6 +620,40 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.DatePass = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["DatePass"]);
             Entity.CNTMajorDefect = Commons.FormatExtension.NullToString(reader["CNTMajorDefect"]);
             Entity.CNTDefect = Commons.FormatExtension.NullToString(reader["CNTDefect"]);
+            return Entity;
+        }
+
+
+        public static List<ReportinspectionQC5DefectModel> sp_get_report_inspection_QC5_DefectListReader(IDataReader reader)
+        {
+            List<ReportinspectionQC5DefectModel> list = new List<ReportinspectionQC5DefectModel>();
+            int index = 1;
+            while ((reader.Read()))
+            {
+                list.Add(sp_get_report_inspection_QC5_Defect_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static ReportinspectionQC5DefectModel sp_get_report_inspection_QC5_Defect_Reader(IDataReader reader, int index)
+        {
+            ReportinspectionQC5DefectModel Entity = new ReportinspectionQC5DefectModel();
+
+            Entity.index = index;
+            Entity.ProjectName = Commons.FormatExtension.NullToString(reader["ProjectName"]);
+            Entity.UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.CompanyVendorName = Commons.FormatExtension.NullToString(reader["CompanyVendorName"]);
+            Entity.ActionDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["ActionDate"]);
+            Entity.DefectAreaName = Commons.FormatExtension.NullToString(reader["DefectAreaName"]);
+            Entity.DefectTypeName = Commons.FormatExtension.NullToString(reader["DefectTypeName"]);
+            Entity.DefectDescription = Commons.FormatExtension.NullToString(reader["DefectDescription"]);
+            Entity.IsMajorDefect = Commons.FormatExtension.NullToString(reader["IsMajorDefect"]);
+            Entity.StatusPresent = Commons.FormatExtension.NullToString(reader["StatusPresent"]);
+            Entity.SeqPass = Commons.FormatExtension.NullToString(reader["SeqPass"]);
+            Entity.QCUser = Commons.FormatExtension.NullToString(reader["QCUser"]);
+            Entity.Remark = Commons.FormatExtension.NullToString(reader["Remark"]);
             return Entity;
         }
 
