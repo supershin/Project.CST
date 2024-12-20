@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.MFormModel;
 using Project.ConstructionTracking.Web.Models.StoreProcedureModel;
 using System.Collections.Generic;
 using System.Data;
@@ -60,6 +61,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
         public abstract List<ReportinspectionQC5Model> sp_get_report_inspection_QC5(ReportinspectionQC5Model EN);
 
         public abstract List<ReportinspectionQC5DefectModel> sp_get_report_inspection_QC5_Defect(ReportinspectionQC5DefectModel EN);
+
+        public abstract Boolean sp_iud_masterform(CloneMasterFormModel en, ref CloneMasterFormModel enStatus);
 
         #region __ Reader __
         public static List<ProjectModel> SP_Get_Project_ListReader(IDataReader reader)

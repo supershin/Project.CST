@@ -109,6 +109,10 @@
             form.DeleteFormType(model);
         })
 
+        $('#clone-formtype').click(() => {   
+            form.CloneFormType($('#formTypeID').val());
+        })
+
         form.AjaxGrid();
     },
     AjaxGrid: function () {
@@ -185,6 +189,15 @@
                         $('#partial-confirm-delete-FT').modal('show');
                         
                     });
+                    $(document).on('click', "button[data-action='form-clone']", function (e) {
+
+                        var formTypeId = $(e.currentTarget).attr('data-id');
+
+                        $('#formTypeID').val(formTypeId);
+
+                        $('#partial-confirm-clone-FT').modal('show');
+
+                    });
 
                 }
             },
@@ -207,6 +220,11 @@
                         html += '<span>';
                         html += '<button  data-action="form-detail" data-id="' + data.ID + '" class="btn bg-blue-lt btn-icon btn-rounded" style="margin-right:10px;">';
                         html += '<i class="fa-solid fa-list-check"></i>';
+                        html += '</button>';
+                        html += '</span>';
+                        html += '<span>';
+                        html += '<button  data-action="form-clone" data-id="' + data.ID + '" class="btn bg-yellow-lt btn-icon btn-rounded" style="margin-right:10px;">';
+                        html += '<i class="fa-regular fa-copy"></i>';
                         html += '</button>';
                         html += '</span>';
                         html += '<span>';
@@ -290,6 +308,40 @@
             },
             error: function (xhr, status, error) {
                 // do something
+                alert(" Coding Error ")
+            },
+        });
+        return false;
+    },
+    CloneFormType: function (FormTypeID) {
+        console.log(FormTypeID);
+        $.ajax({
+            url: baseUrl + 'MasterForm/CloningMasterForm',
+            type: 'post',
+            dataType: 'json',
+            data: { FormTypeID: FormTypeID },
+            success: function (resp) {
+                if (resp.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: resp.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "ทำรายการไม่สำเร็จ",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
                 alert(" Coding Error ")
             },
         });

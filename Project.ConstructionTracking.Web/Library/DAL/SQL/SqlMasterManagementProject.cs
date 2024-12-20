@@ -5,6 +5,7 @@ using Project.ConstructionTracking.Web.Models;
 using System.Collections.Generic;
 using System.Data;
 using Project.ConstructionTracking.Web.Models.StoreProcedureModel;
+using Project.ConstructionTracking.Web.Models.MFormModel;
 
 namespace Project.ConstructionTracking.Web.Library.DAL.SQL
 {
@@ -829,5 +830,59 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                 }
             }
         }
+
+        public override bool sp_iud_masterform(CloneMasterFormModel en, ref CloneMasterFormModel enStatus)
+        {
+            bool isSuccess = false;
+
+            using (SqlConnection sqlCon = new SqlConnection(ConnectionString))
+            {
+                SqlCommand sqlCmd = new SqlCommand("sp_iud_masterform", sqlCon)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                sqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = en.act;
+                sqlCmd.Parameters.Add(new SqlParameter("@formtype_id", SqlDbType.Int)).Value = en.formtype_id;
+                sqlCmd.Parameters.Add(new SqlParameter("@user_id", SqlDbType.NVarChar)).Value = en.user_id;
+
+                // Output parameters
+                SqlParameter statusIdParam = new SqlParameter("@status_id", SqlDbType.Int)
+                {
+                    Direction = ParameterDirection.Output
+                };
+                SqlParameter statusMessageParam = new SqlParameter("@status_message", SqlDbType.NVarChar, -1)
+                {
+                    Direction = ParameterDirection.Output
+                };
+                sqlCmd.Parameters.Add(statusIdParam);
+                sqlCmd.Parameters.Add(statusMessageParam);
+
+                try
+                {
+                    sqlCon.Open();
+                    sqlCmd.ExecuteNonQuery();
+
+                    // Retrieve output values
+                    enStatus.res_status_id = (int)statusIdParam.Value;
+                    enStatus.res_status_massage = statusMessageParam.Value.ToString();
+
+                    isSuccess = enStatus.res_status_id == 1;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Error executing sp_iud_masterform:", ex);
+                    enStatus.res_status_id = 0;
+                    enStatus.res_status_massage = ex.Message;
+                    isSuccess = false;
+                }
+                finally
+                {
+                    sqlCon.Close();
+                }
+            }
+
+            return isSuccess;
+        }
+
     }
 }
