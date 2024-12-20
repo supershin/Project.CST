@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
@@ -184,36 +185,47 @@ namespace Project.ConstructionTracking.Web.Repositories
         public EditProjectResp EditProject(EditProjectModel model)
         {
             bool verify = VerifyFormTypeUsing(model.ProjectID);
-            if (verify) throw new Exception("ข้อมูลโครงการถูกใช้งานแล้ว");
+            //if (verify) throw new Exception("ข้อมูลโครงการถูกใช้งานแล้ว");
 
             EditProjectResp resp = new EditProjectResp();
             ModelForm modelForm = new ModelForm();
 
-            tm_Project? edit = _context.tm_Project
-                            .Where(o => o.ProjectID == model.ProjectID
-                            && o.FlagActive == true).FirstOrDefault();
-
-            if (edit == null) throw new Exception("ไม่พบข้อมูลโครงการ");
-            edit.BUID = model.BUID;
-            edit.ProjectTypeID = model.ProjectTypeID;
-            edit.ProjectCode = model.ProjectCode;
-            edit.ProjectName = model.ProjectName;
-            edit.UpdateDate = DateTime.Now;
-            edit.UpdateBy = model.RequestUserID;
-
-            _context.tm_Project.Update(edit);
-
-            resp = new EditProjectResp()
+            if (verify == false)
             {
-                BUID = (int)edit.BUID,
-                ProjectTypeID = (int)edit.ProjectTypeID,
-                ProjectID = edit.ProjectID,
-                ProjectCode = edit.ProjectCode,
-                ProjectName = edit.ProjectName,
-                ModelMapping = new List<ModelForm>()
-            };
+                
+                //ModelForm modelForm = new ModelForm();
 
-            if(model.ModelMapping != null)
+                tm_Project? edit = _context.tm_Project
+                                .Where(o => o.ProjectID == model.ProjectID
+                                && o.FlagActive == true).FirstOrDefault();
+
+                if (edit == null) throw new Exception("ไม่พบข้อมูลโครงการ");
+                edit.BUID = model.BUID;
+                edit.ProjectTypeID = model.ProjectTypeID;
+                edit.ProjectCode = model.ProjectCode;
+                edit.ProjectName = model.ProjectName;
+                edit.UpdateDate = DateTime.Now;
+                edit.UpdateBy = model.RequestUserID;
+
+                _context.tm_Project.Update(edit);
+
+                resp = new EditProjectResp()
+                {
+                    BUID = (int)edit.BUID,
+                    ProjectTypeID = (int)edit.ProjectTypeID,
+                    ProjectID = edit.ProjectID,
+                    ProjectCode = edit.ProjectCode,
+                    ProjectName = edit.ProjectName,
+                    ModelMapping = new List<ModelForm>()
+                };
+            }
+            else
+            {
+                resp = new EditProjectResp();
+            }
+
+
+            if (model.ModelMapping != null)
             {
                 foreach (var list in model.ModelMapping)
                 {
@@ -222,10 +234,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                                             && o.ModelTypeID == list.ModelID
                                             && o.FlagActive == true)
                                             .FirstOrDefault();
-                    if(editModel == null)
+                    if (editModel == null)
                     {
                         tr_ProjectModelForm? createNew = new tr_ProjectModelForm();
-                        createNew.ProjectID = edit.ProjectID;
+                        createNew.ProjectID = model.ProjectID;
                         createNew.ModelTypeID = list.ModelID;
                         createNew.FormTypeID = list.FormTypeID;
                         createNew.FlagActive = true;
@@ -246,14 +258,13 @@ namespace Project.ConstructionTracking.Web.Repositories
                             editModel.UpdateBy = model.RequestUserID;
 
                             _context.tr_ProjectModelForm.Update(editModel);
+                            //modelForm = new ModelForm()
+                            //{
+                            //    ModelID = editModel.ID,
+                            //    FormTypeID = (int)editModel.FormTypeID
+                            //};
 
-                            modelForm = new ModelForm()
-                            {
-                                ModelID = editModel.ID,
-                                FormTypeID = (int)editModel.FormTypeID
-                            };
-
-                            resp.ModelMapping.Add(modelForm);
+                            //resp.ModelMapping.Add(modelForm);
                         }
                     }
                 }

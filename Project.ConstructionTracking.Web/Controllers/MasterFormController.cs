@@ -88,6 +88,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 FormTypeResp resp = _masterForm.ActionFormType(model);
                 if (resp == null) throw new Exception("เกิดข้อผิดพลาดในการอัพเดทประเภทฟอร์ม");
 
@@ -113,6 +118,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                var userID = Request.Cookies["CST.ID"];
+                var RoleID = Request.Cookies["CST.Role"];
+                model.RequestUserID = Guid.Parse(userID);
+                model.RequestRoleID = Int32.Parse(RoleID);
+
                 FormTypeResp delete = _masterForm.ActionFormType(model);
                 if (delete == null) throw new Exception("เกิดข้อผิดพลาดในการลบประเภทฟอร์ม");
 
