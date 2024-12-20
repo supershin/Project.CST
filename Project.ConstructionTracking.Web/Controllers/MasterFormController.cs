@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Project.ConstructionTracking.Web.Commons;
+using Project.ConstructionTracking.Web.Library.DAL;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.MFormModel;
+using Project.ConstructionTracking.Web.Models.StoreProcedureModel;
 using Project.ConstructionTracking.Web.Services;
 using PackageModel = Project.ConstructionTracking.Web.Models.MFormModel.PackageModel;
 
@@ -17,10 +20,12 @@ namespace Project.ConstructionTracking.Web.Controllers
     public class MasterFormController : BaseController
     {
         private readonly IMasterFormService _masterForm;
+        private readonly MasterManagementProviderProject _MasterFormIUDProvider;
 
-        public MasterFormController(IMasterFormService masterForm)
+        public MasterFormController(IMasterFormService masterForm, MasterManagementProviderProject MasterFormIUDProvider)
         {
             _masterForm = masterForm;
+            _MasterFormIUDProvider = MasterFormIUDProvider;
         }
 
         public IActionResult Index()
@@ -595,6 +600,52 @@ namespace Project.ConstructionTracking.Web.Controllers
                 });
             }
         }
+
+
+        [HttpPost]
+        public JsonResult CloningMasterForm(int FormTypeID)
+        {
+            try
+            {
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                var en = new CloneMasterFormModel
+                {
+                    act = "CloneForm",
+                    formtype_id = FormTypeID,
+                    user_id = Commons.FormatExtension.NullToString(userid),
+                };
+
+                var enStatus = new CloneMasterFormModel();
+
+                bool result = _MasterFormIUDProvider.sp_iud_masterform(en, ref enStatus);
+
+                if (result && enStatus.res_status_id == 1)
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        message = enStatus.res_status_massage,
+                    });
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = enStatus.res_status_massage ?? "Unknown error occurred.",
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message,
+                });
+            }
+        }
+
     }
 }
 

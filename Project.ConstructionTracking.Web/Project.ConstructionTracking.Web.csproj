@@ -12,14 +12,12 @@
     <Folder Include="Data\" />
     <Folder Include="Upload\" />
     <Folder Include="wwwroot\lib\datatable\" />
-    <Folder Include="Views\MasterForm\" />
     <Folder Include="Views\MasterProject\" />
     <Folder Include="Models\MProjectModel\" />
     <Folder Include="wwwroot\js\master\" />
     <Folder Include="Views\MasterUnit\" />
     <Folder Include="Views\MasterCompany\" />
     <Folder Include="Views\MasterUser\" />
-    <Folder Include="Models\MFormModel\" />
     <Folder Include="Models\MCompanyModel\" />
     <Folder Include="Models\MUnitModel\" />
     <Folder Include="Models\MUserModel\" />
