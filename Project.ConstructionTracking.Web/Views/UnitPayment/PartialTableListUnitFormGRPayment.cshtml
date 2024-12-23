@@ -41,16 +41,6 @@
                                        @item.GRNO
                                     </a>
                                 </td>
-
-                                <script>
-                                    function copyToClipboard(text) {
-                                        navigator.clipboard.writeText(text).then(() => {
-                                            // alert('Copied: ' + text);
-                                        }).catch(err => {
-                                            console.error('Could not copy text: ', err);
-                                        });
-                                    }
-                                </script>
                                 <td><span class="text-primary">@item.PercentPayment %</span></td>
                                 <td>@item.Remark</td>
                                 <td>
@@ -86,3 +76,13 @@
         </div>
     </div>
 </div>
+
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            // alert('Copied: ' + text);
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+        });
+    }
+</script>
