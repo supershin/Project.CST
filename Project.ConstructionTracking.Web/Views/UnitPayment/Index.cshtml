@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
+    var DDLExtStatusGrPayment = ViewBag.DDLExtStatusGrPayment;
 }
 @model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.WorkPeriodModel>
 
@@ -55,7 +56,7 @@
             <div class="card" id="card-filter">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12 col-sm-4 mb-2">
+                        <div class="col-6 col-sm-3 mb-2">
                             <select id="DDLProjectID">
                                 <option value="">กรุณาเลือก</option>
                                 @foreach (var item in ViewBag.DDLProject)
@@ -65,10 +66,21 @@
                             </select>
                             <input type="hidden" id="selectedProjectId">
                         </div>
-                        <div class="col-8 col-sm-6 mb-2">
+                        <div class="col-6 col-sm-3 mb-2">
                             <input type="text" id="txtunitsearch" placeholder="ค้นหา Unit..." class="form-control">
                         </div>
-                        <div class="col-4 col-sm-2 mb-2">
+                        <div class="col-6 col-sm-3 mb-2">
+                            <div class="mb-3">
+                                <select class="form-select" id="DDLStatusGrPayment">
+                                    <option value="">ทั้งหมด</option>
+                                    @foreach (var item in DDLExtStatusGrPayment)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 col-sm-3 mb-2">
                             <button class="btn btn-primary w-100" id="searchButton">
                                 <i class="fas fa-search"></i> ค้นหา
                             </button>

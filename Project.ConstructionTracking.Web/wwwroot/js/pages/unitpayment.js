@@ -348,6 +348,7 @@ function onClickClearinputsaveGR() {
 async function searchByProjectAndUnit() {
 
     const selectedProjectId = document.getElementById('DDLProjectID').value;
+    const selectedStatusGrPayment = document.getElementById('DDLStatusGrPayment').value;
     const unitSearchValue = document.getElementById('txtunitsearch').value;
 
     showLoadingScreen();
@@ -357,7 +358,8 @@ async function searchByProjectAndUnit() {
         type: 'POST',
         data: {
             projectId: selectedProjectId,
-            unitSearch: unitSearchValue
+            unitSearch: unitSearchValue,
+            status: selectedStatusGrPayment
         },
         success: function (result) {
 

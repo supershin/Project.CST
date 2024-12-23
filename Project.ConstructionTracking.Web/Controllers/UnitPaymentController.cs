@@ -36,6 +36,11 @@ namespace Project.ConstructionTracking.Web.Controllers
             List<GetDDL> ListExtPayment = _getDDLService.GetDDLList(ExtPaymentModel);
             ViewBag.DDLPercentPayment = ListExtPayment;
 
+
+            var ExtStatusGrPayment = new GetDDL { Act = "Ext", ID = SystemConstant.Ext_Type.StatusGrPayment };
+            List<GetDDL> ListExtStatusGrPayment = _getDDLService.GetDDLList(ExtStatusGrPayment);
+            ViewBag.DDLExtStatusGrPayment = ListExtStatusGrPayment;
+
             var userID = Request.Cookies["CST.ID"];
 
             var en = new WorkPeriodModel
@@ -283,7 +288,7 @@ namespace Project.ConstructionTracking.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult SearchClick(string projectId, string unitSearch)
+        public IActionResult SearchClick(string projectId, string unitSearch, string status)
         {
 
             var userID = Request.Cookies["CST.ID"];
@@ -293,7 +298,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 act = "Getworkperiodlist",
                 project_id = projectId == null ? "" : projectId,
                 unit_id = unitSearch == null ? "" : unitSearch,
-                unit_status = "",
+                unit_status = status == null ? "" : status,
                 user_id = userID
 
             };
