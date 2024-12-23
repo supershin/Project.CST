@@ -25,8 +25,32 @@
                         {
                             <tr>
                                 <td>@index</td> 
-                                <td><a href="#!" class="text-reset" tabindex="-1">@item.PONO</a></td>
-                                <td><a href="#!" class="text-reset" tabindex="-1">@item.GRNO</a></td>
+                                <td>
+                                    <a href="javascript:void(0);" 
+                                       class="text-reset" 
+                                       tabindex="-1" 
+                                       onclick="copyToClipboard('@item.PONO')">
+                                       @item.PONO
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="javascript:void(0);" 
+                                       class="text-reset" 
+                                       tabindex="-1" 
+                                       onclick="copyToClipboard('@item.GRNO')">
+                                       @item.GRNO
+                                    </a>
+                                </td>
+
+                                <script>
+                                    function copyToClipboard(text) {
+                                        navigator.clipboard.writeText(text).then(() => {
+                                            // alert('Copied: ' + text);
+                                        }).catch(err => {
+                                            console.error('Could not copy text: ', err);
+                                        });
+                                    }
+                                </script>
                                 <td><span class="text-primary">@item.PercentPayment %</span></td>
                                 <td>@item.Remark</td>
                                 <td>

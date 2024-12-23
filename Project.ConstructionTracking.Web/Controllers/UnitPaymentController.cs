@@ -147,6 +147,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                     // Insert the new GR payment if all validations pass
                     Model.UserID = userid;
+                    Model.ApplicationPath = _hosting.ContentRootPath;
                     returnmessage = _UnitFormPaymentService.InsertNewGRPayment(Model);
 
                     var ChkFilters = new GetDDL { Act = "GetListUnitFormPayment2", GuID = Model.UnitFormID };
@@ -240,6 +241,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                         if (CheckPercentPayment[0].Value == SystemConstant.Ext.SyncFail)
                         {
                             Model.UserID = userid;
+                            Model.ApplicationPath = _hosting.ContentRootPath;
                             returnmessage = _UnitFormPaymentService.SyncGRPayment(Model);
 
                             var ChkFilters = new GetDDL { Act = "GetListUnitFormPayment2", GuID = Model.UnitFormID };

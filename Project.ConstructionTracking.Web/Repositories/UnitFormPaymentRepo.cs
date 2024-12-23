@@ -192,43 +192,57 @@ namespace Project.ConstructionTracking.Web.Repositories
                 {
 
                     var queryfileData = from t1 in _context.tr_Document
-                                join t2 in _context.tm_Resource
-                                on t1.ResourceID equals t2.ID into t2Group
-                                from t2 in t2Group.DefaultIfEmpty()
-                                where t1.UnitFormID == Model.UnitFormID
-                                select new
-                                {
-                                    UnitFormPDF = t2.FilePath
-                                };
+                                        join t2 in _context.tm_Resource
+                                            on t1.ResourceID equals t2.ID into t2Group
+                                        from t2 in t2Group.DefaultIfEmpty()
+                                        where t1.UnitFormID == Model.UnitFormID
+                                        select new
+                                        {
+                                            UnitFormPDF = t2.FilePath
+                                        };
 
-
-                    // 1) Call the GRVenderrportal API
-                    //    Example: We assume 'UploadFileAsync' or a similar method 
-                    //    returns a status code (200 = success) and message.
+                    // Prepare request model for GRVenderrportal
                     var request = new RequestPostModel.GRVenderrportal.Sends
                     {
                         grno = Model.GRNO,
                         pono = Model.PONO,
-                        // If you have files to send, populate this collection:
-                        // fileData = Model.Files or an empty list if no files, e.g.:
                         fileData = new List<IFormFile>()
                     };
 
+                    // Combine each path with model.ApplicationPath, convert to IFormFile
+                    foreach (var item in queryfileData)
+                    {
+                        if (!string.IsNullOrEmpty(item.UnitFormPDF))
+                        {
+                            // e.g. "C:\myApp\wwwroot" + "Upload\temp\DocumentNo.pdf"
+                            string fullPath = Path.Combine(Model.ApplicationPath, item.UnitFormPDF);
+
+                            if (File.Exists(fullPath))
+                            {
+                                IFormFile file = FormatExtension.CreateFormFileFromPath(fullPath);
+                                request.fileData.Add(file);
+                            }
+                            else
+                            {
+                                // Handle the case if file does not exist
+                                // Optionally log or skip
+                            }
+                        }
+                    }
+
+                    // 1) Call the GRVenderrportal API
                     var apiResponse = _VenderrportalService.UploadFileAsync(request).GetAwaiter().GetResult();
 
                     // 2) Decide syncStatusID (31=success, 32=fail) based on API response
                     int syncStatusID;
-                    string syncMessage;
 
                     if (apiResponse.status == 200)
                     {
                         syncStatusID = 31; // success
-                        syncMessage = "ทำการ Sync สำเร็จ";
-                    }
+                    }                  
                     else
                     {
                         syncStatusID = 32; // failure
-                        syncMessage = "ทำการ Sync ไม่สำเร็จ";
                     }
 
                     // 3) Create and save a new tr_UnitFormPayment record
@@ -243,7 +257,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         Remark = Model.Remark,
                         PercentPayment = Model.PercentPayment,
                         SyncStatusID = syncStatusID,
-                        SyncMessage = syncMessage,
+                        SyncMessage = apiResponse?.message,
                         FlagActive = true,
                         CreateBy = Model.UserID,
                         CreateDate = DateTime.Now,
@@ -338,12 +352,65 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 try
                 {
+
                     var tbUnitFormPayment = _context.tr_UnitFormPayment.FirstOrDefault(d => d.ID == Model.ID);
 
                     if (tbUnitFormPayment != null)
                     {
-                        tbUnitFormPayment.SyncStatusID = 31;
-                        tbUnitFormPayment.SyncMessage = "ทำการ Sync สำเร็จ";
+                        // Prepare request model for GRVenderrportal
+                        var request = new RequestPostModel.GRVenderrportal.Sends
+                        {
+                            grno = tbUnitFormPayment.GRNO,
+                            pono = tbUnitFormPayment.PONO,
+                            fileData = new List<IFormFile>()
+                        };
+
+
+                        var queryfileData = from t1 in _context.tr_Document
+                                            join t2 in _context.tm_Resource
+                                                on t1.ResourceID equals t2.ID into t2Group
+                                            from t2 in t2Group.DefaultIfEmpty()
+                                            where t1.UnitFormID == Model.UnitFormID
+                                            select new
+                                            {
+                                                UnitFormPDF = t2.FilePath
+                                            };
+
+                        foreach (var item in queryfileData)
+                        {
+                            if (!string.IsNullOrEmpty(item.UnitFormPDF))
+                            {
+                                string fullPath = Path.Combine(Model.ApplicationPath, item.UnitFormPDF);
+
+                                if (File.Exists(fullPath))
+                                {
+                                    IFormFile file = FormatExtension.CreateFormFileFromPath(fullPath);
+                                    request.fileData.Add(file);
+                                }
+                                else
+                                {
+                                    // Handle the case if file does not exist
+                                    // Optionally log or skip
+                                }
+                            }
+                        }
+
+                        var apiResponse = _VenderrportalService.UploadFileAsync(request).GetAwaiter().GetResult();
+
+                        int syncStatusID;
+
+                        if (apiResponse.status == 200)
+                        {
+                            syncStatusID = 31; // success
+                        }
+                        else
+                        {
+                            syncStatusID = 32; // failure
+
+                        }
+
+                        tbUnitFormPayment.SyncStatusID = syncStatusID;
+                        tbUnitFormPayment.SyncMessage = apiResponse.message;
                         tbUnitFormPayment.UpdateDate = DateTime.Now;
                         tbUnitFormPayment.UpdateBy = Model.UserID;
                         _context.tr_UnitFormPayment.Update(tbUnitFormPayment);

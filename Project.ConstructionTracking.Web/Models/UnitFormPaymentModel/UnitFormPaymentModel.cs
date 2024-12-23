@@ -28,6 +28,7 @@
             public int? SyncStatusID { get; set; }
             public string? SyncMessage { get; set; }
             public Guid? UserID { get; set; }
+            public string? ApplicationPath { get; set; }
         }
 
         public class getListUnitFormGRPaymentTable

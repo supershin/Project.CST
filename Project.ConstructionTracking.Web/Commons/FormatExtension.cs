@@ -344,5 +344,15 @@ namespace Project.ConstructionTracking.Web.Commons
                 return resizedImageStream;
             }
         }
+
+
+        public static IFormFile CreateFormFileFromPath(string filePath)
+        {
+            // Open the file stream
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+            // Return an IFormFile
+            return new FormFile(fileStream, 0, fileStream.Length, "fileData", Path.GetFileName(filePath));
+        }
     }
 }
