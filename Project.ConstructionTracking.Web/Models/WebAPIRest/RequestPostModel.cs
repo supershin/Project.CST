@@ -6,14 +6,14 @@
         {
             public class Sends
             {
-                public string? GRNO { get; set; }
-                public string? PONO { get; set; }
-                public string? Remark { get; set; }
+                public string? grno { get; set; }
+                public string? pono { get; set; }
+                public List<IFormFile> fileData { get; set; } = new List<IFormFile>();
             }
             public class Responds
             {
-                public int? SyncStatusID { get; set; }
-                public string? SyncMessage { get; set; }
+                public int? status { get; set; }
+                public string? message { get; set; }
             }
         }
     }

@@ -6,6 +6,8 @@ using Project.ConstructionTracking.Web.Library.DAL;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Repositories;
 using Project.ConstructionTracking.Web.Services;
+using static Project.ConstructionTracking.Web.Infras.Services.WebAPIRestService;
+using static Project.ConstructionTracking.Web.Infras.Repositories.WebAPIRestRepo;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,6 +98,9 @@ builder.Services.AddScoped<IUnitFormPaymentRepo, UnitFormPaymentRepo>();
 
 // Add the new services for SQL and data access
 builder.Services.AddScoped<MasterManagementProviderProject, SqlMasterManagementProject>();
+
+builder.Services.AddScoped<IGRVenderrportalService, GRVenderrportalService>();
+builder.Services.AddScoped<IGRVenderrportalRepo, GRVenderrportalRepo>();
 
 
 var app = builder.Build();

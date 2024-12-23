@@ -4,9 +4,11 @@ using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Models.UnitFormPaymentModel;
+using Project.ConstructionTracking.Web.Models.WebAPIRest;
 using Project.ConstructionTracking.Web.Services;
 using QuestPDF.Infrastructure;
 using System.Transactions;
+using static Project.ConstructionTracking.Web.Infras.Services.WebAPIRestService;
 using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
 using static Project.ConstructionTracking.Web.Models.UnitFormPaymentModel.UnitFormPaymentModel;
 
@@ -17,11 +19,13 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         private readonly ContructionTrackingDbContext _context;
         private readonly IGetDDLService _getDDLService;
+        private readonly IGRVenderrportalService _VenderrportalService;
 
-        public UnitFormPaymentRepo(ContructionTrackingDbContext context, IGetDDLService getDDLService)
+        public UnitFormPaymentRepo(ContructionTrackingDbContext context, IGetDDLService getDDLService , IGRVenderrportalService VenderrportalService)
         {
             _context = context;
             _getDDLService = getDDLService;
+            _VenderrportalService = VenderrportalService;
         }
          
 
@@ -94,6 +98,84 @@ namespace Project.ConstructionTracking.Web.Repositories
         }
 
 
+        //public string InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
+        //{
+        //    string returnUrlDoc = string.Empty;
+
+        //    var transactionOptions = new TransactionOptions
+        //    {
+        //        IsolationLevel = IsolationLevel.ReadCommitted,
+        //        Timeout = TimeSpan.FromMinutes(5)
+        //    };
+
+        //    using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+        //    {
+        //        try
+        //        {
+        //            // Generate a random number to decide SyncStatusID
+        //            Random random = new Random();
+        //            int syncStatusID = random.Next(0, 2) == 0 ? 31 : 32; // Randomly sets to 31 or 32
+        //            string syncMessage = syncStatusID == 31 ? "ทำการ Sync สำเร็จ" : "ทำการ Sync ไม่สำเร็จ"; // Set SyncMessage based on SyncStatusID
+
+
+        //            // Introduce delay based on SyncStatusID
+        //            if (syncStatusID == 31)
+        //            {
+        //                System.Threading.Thread.Sleep(4000); // 4-second delay
+        //            }
+        //            else
+        //            {
+        //                System.Threading.Thread.Sleep(8000); // 8-second delay
+        //            }
+
+        //            var newGRPayment = new tr_UnitFormPayment
+        //            {
+        //                ID = Guid.NewGuid(),
+        //                ProjectID = Model.ProjectID,
+        //                UnitID = Model.UnitID,
+        //                UnitFormID = Model.UnitFormID,
+        //                GRNO = Model.GRNO,
+        //                PONO = Model.PONO,
+        //                Remark = Model.Remark,
+        //                PercentPayment = Model.PercentPayment,
+        //                //SyncStatusID = Model.SyncStatusID,
+        //                //SyncMessage = Model.SyncMessage,
+        //                SyncStatusID = syncStatusID, // Assign the randomly chosen value
+        //                SyncMessage = syncMessage, // Assign the corresponding SyncMessage
+        //                FlagActive = true,
+        //                CreateBy = Model.UserID,
+        //                CreateDate = DateTime.Now,
+        //                UpdateBy = Model.UserID,
+        //                UpdateDate = DateTime.Now,
+        //            };
+        //            _context.tr_UnitFormPayment.Add(newGRPayment);
+        //            _context.SaveChanges();
+
+        //            var Filters = new GetDDL { Act = "GetListUnitFormPayment", GuID = Model.UnitFormID };
+        //            List<GetDDL> CheckPercentPayment = _getDDLService.GetDDLList(Filters);
+        //            decimal totalValuedecimalSum = CheckPercentPayment?.Where(x => x.Valuedecimal.HasValue).Sum(x => x.Valuedecimal.Value) ?? 0;
+
+
+        //            if (totalValuedecimalSum + Model.PercentPayment > 100)
+        //            {
+        //                returnUrlDoc = "บันทึกข้อมูลสำเร็จ";
+        //            }
+        //            else
+        //            {
+        //                returnUrlDoc = "บันทึกข้อมูลครบ100%";
+        //            }
+
+        //            scope.Complete();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            throw new Exception("เกิดเหตุขัดข้องบันทึกไม่สำเร็จ", ex);
+        //        }
+        //    }
+
+        //    return returnUrlDoc;
+        //}
+
         public string InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
         {
             string returnUrlDoc = string.Empty;
@@ -108,22 +190,48 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 try
                 {
-                    // Generate a random number to decide SyncStatusID
-                    Random random = new Random();
-                    int syncStatusID = random.Next(0, 2) == 0 ? 31 : 32; // Randomly sets to 31 or 32
-                    string syncMessage = syncStatusID == 31 ? "ทำการ Sync สำเร็จ" : "ทำการ Sync ไม่สำเร็จ"; // Set SyncMessage based on SyncStatusID
+
+                    var queryfileData = from t1 in _context.tr_Document
+                                join t2 in _context.tm_Resource
+                                on t1.ResourceID equals t2.ID into t2Group
+                                from t2 in t2Group.DefaultIfEmpty()
+                                where t1.UnitFormID == Model.UnitFormID
+                                select new
+                                {
+                                    UnitFormPDF = t2.FilePath
+                                };
 
 
-                    // Introduce delay based on SyncStatusID
-                    if (syncStatusID == 31)
+                    // 1) Call the GRVenderrportal API
+                    //    Example: We assume 'UploadFileAsync' or a similar method 
+                    //    returns a status code (200 = success) and message.
+                    var request = new RequestPostModel.GRVenderrportal.Sends
                     {
-                        System.Threading.Thread.Sleep(4000); // 4-second delay
+                        grno = Model.GRNO,
+                        pono = Model.PONO,
+                        // If you have files to send, populate this collection:
+                        // fileData = Model.Files or an empty list if no files, e.g.:
+                        fileData = new List<IFormFile>()
+                    };
+
+                    var apiResponse = _VenderrportalService.UploadFileAsync(request).GetAwaiter().GetResult();
+
+                    // 2) Decide syncStatusID (31=success, 32=fail) based on API response
+                    int syncStatusID;
+                    string syncMessage;
+
+                    if (apiResponse.status == 200)
+                    {
+                        syncStatusID = 31; // success
+                        syncMessage = "ทำการ Sync สำเร็จ";
                     }
                     else
                     {
-                        System.Threading.Thread.Sleep(8000); // 8-second delay
+                        syncStatusID = 32; // failure
+                        syncMessage = "ทำการ Sync ไม่สำเร็จ";
                     }
 
+                    // 3) Create and save a new tr_UnitFormPayment record
                     var newGRPayment = new tr_UnitFormPayment
                     {
                         ID = Guid.NewGuid(),
@@ -134,10 +242,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                         PONO = Model.PONO,
                         Remark = Model.Remark,
                         PercentPayment = Model.PercentPayment,
-                        //SyncStatusID = Model.SyncStatusID,
-                        //SyncMessage = Model.SyncMessage,
-                        SyncStatusID = syncStatusID, // Assign the randomly chosen value
-                        SyncMessage = syncMessage, // Assign the corresponding SyncMessage
+                        SyncStatusID = syncStatusID,
+                        SyncMessage = syncMessage,
                         FlagActive = true,
                         CreateBy = Model.UserID,
                         CreateDate = DateTime.Now,
@@ -147,11 +253,16 @@ namespace Project.ConstructionTracking.Web.Repositories
                     _context.tr_UnitFormPayment.Add(newGRPayment);
                     _context.SaveChanges();
 
-                    var Filters = new GetDDL { Act = "GetListUnitFormPayment", GuID = Model.UnitFormID };
+                    // 4) Check the total payment percentage
+                    var Filters = new GetDDL
+                    {
+                        Act = "GetListUnitFormPayment",
+                        GuID = Model.UnitFormID
+                    };
                     List<GetDDL> CheckPercentPayment = _getDDLService.GetDDLList(Filters);
                     decimal totalValuedecimalSum = CheckPercentPayment?.Where(x => x.Valuedecimal.HasValue).Sum(x => x.Valuedecimal.Value) ?? 0;
 
-
+                    // 5) Decide return message based on total percentage
                     if (totalValuedecimalSum + Model.PercentPayment > 100)
                     {
                         returnUrlDoc = "บันทึกข้อมูลสำเร็จ";
@@ -161,6 +272,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         returnUrlDoc = "บันทึกข้อมูลครบ100%";
                     }
 
+                    // Commit the transaction
                     scope.Complete();
                 }
                 catch (Exception ex)
