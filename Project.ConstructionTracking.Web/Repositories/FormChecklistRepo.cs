@@ -25,9 +25,9 @@ public class FormChecklistRepo : IFormChecklistRepo
                       from unit in units.DefaultIfEmpty()
                       join t2sub in _context.tm_Ext on unit.UnitStatusID equals t2sub.ID into gj
                       from subT2 in gj.DefaultIfEmpty()
-                      join t3 in _context.tr_ProjectModelForm on t1.ProjectID equals t3.ProjectID into projectModelForms
-                      from projectModelForm in projectModelForms.DefaultIfEmpty()
-                      join t4 in _context.tm_Form on projectModelForm.FormTypeID equals t4.FormTypeID into forms
+                      //join t3 in _context.tr_ProjectModelForm on t1.ProjectID equals t3.ProjectID into projectModelForms
+                      //from projectModelForm in projectModelForms.DefaultIfEmpty()
+                      join t4 in _context.tm_Form on filterData.FormID equals t4.ID into forms
                       from form in forms.DefaultIfEmpty()
                       join t5 in _context.tm_FormGroup on form.ID equals t5.FormID into formGroups
                       from formGroup in formGroups.DefaultIfEmpty()
