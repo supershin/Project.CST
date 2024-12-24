@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Project.ConstructionTracking.Web.Commons;
@@ -447,6 +448,78 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                     .OrderBy(x => x.Value2)
                                                     .ToList();
                     return GetListDDLQCTypeByProject;
+
+                case "CheckUnitPayment":
+                    {
+                        // Step 1: Find the 'currentSort' of the row with the given @ID
+                        int? currentSort =
+                            (from uf in _context.tr_UnitForm
+                             join fm in _context.tm_Form on uf.FormID equals fm.ID into fmJoin
+                             from fm in fmJoin.DefaultIfEmpty()
+                             where uf.UnitID == Model.GuID
+                                   && uf.FlagActive == true
+                                   && uf.ID == Model.GuID2
+                             select fm.Sort
+                            )
+                            .FirstOrDefault(); // could be null if not found
+
+                        // Step 2: Build subquery grouping payments by UnitFormID
+                        var paymentCounts =
+                            from p in _context.tr_UnitFormPayment
+                            where p.SyncStatusID == SystemConstant.Ext.SyncSuccess && p.FlagActive == true
+                            group p by p.UnitFormID into g
+                            select new
+                            {
+                                UnitFormID = g.Key,
+                                CNTPayment = g.Count()
+                            };
+
+                        // Step 3: Combine everything, picking only one record via FirstOrDefault
+                        var singleItem =
+                            (from uf in _context.tr_UnitForm
+                             join fm in _context.tm_Form on uf.FormID equals fm.ID into fmJoin
+                             from fm in fmJoin.DefaultIfEmpty() // left join
+                             join pc in paymentCounts
+                                 on uf.ID equals pc.UnitFormID into pcJoin
+                             from pc in pcJoin.DefaultIfEmpty() // left join to subquery
+                             where uf.UnitID == Model.GuID
+                                   && uf.FlagActive == true
+                                   && fm.Sort < currentSort  
+                             orderby fm.Sort descending    
+                             select new GetDDL
+                             {
+                                 ValueGuid = uf.ID,
+                                 Value = fm.Sort,
+                                 Value2 = (int?)pc.CNTPayment ?? 0,  // handle null w/ ?? 0
+                                 Value3 = uf.StatusID,
+                             })
+                            .FirstOrDefault(); // single result or null
+
+                        // If no record found, return empty list
+                        if (singleItem == null)
+                        {
+                            return new List<GetDDL>();
+                        }
+
+                        // Otherwise, wrap the single item in a list
+                        return new List<GetDDL> { singleItem };
+                    }
+
+                case "CheckSortUnitform":
+                    // Suppose you have a parameter Guid id = someId;
+
+                    var SortUnitform =
+                        from uf in _context.tr_UnitForm
+                        join fm in _context.tm_Form
+                            on uf.FormID equals fm.ID into fmJoin
+                        from fm in fmJoin.DefaultIfEmpty() // Left join
+                        where uf.ID == Model.GuID && uf.FlagActive == true
+                        select new GetDDL
+                        {
+                            Value = fm.Sort
+                        };
+
+                    return SortUnitform.ToList();
 
                 default:
 

@@ -5,8 +5,10 @@
         public string? Act { get; set; }
         public int? ID { get; set; }
         public Guid? GuID { get; set; }
+        public Guid? GuID2 { get; set; }
         public int? Value { get; set; }
         public int? Value2 { get; set; }
+        public int? Value3 { get; set; }
         public decimal? Valuedecimal { get; set; }
         public string? Text { get; set; }
         public string? Text2 { get; set; }

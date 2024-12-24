@@ -7,6 +7,7 @@ using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Models.UnitFormPaymentModel;
 using Project.ConstructionTracking.Web.Commons;
 using Microsoft.CodeAnalysis;
+using System;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
@@ -148,6 +149,33 @@ namespace Project.ConstructionTracking.Web.Controllers
                     {
                         returnmessage = "ไม่สามารถเบิกงวดงานเกิน 100% ได้";
                         return Json(new { success = false, message = returnmessage });
+                    }
+
+                    var CheckSortUnitform = new GetDDL { Act = "CheckSortUnitform", GuID = Model.UnitFormID };
+                    List<GetDDL> SortUnitform = _getDDLService.GetDDLList(CheckSortUnitform);
+
+                    var ChkItem = SortUnitform.FirstOrDefault();
+                    if (ChkItem != null && ChkItem.Value > 1 )
+                    {
+                        var CheckUnitPayment = new GetDDL { Act = "CheckUnitPayment", GuID = Model.UnitID, GuID2 = Model.UnitFormID };
+                        List<GetDDL> ResCheckUnitPayment = _getDDLService.GetDDLList(CheckUnitPayment);
+
+                        // Retrieve the single item (or null if empty)
+                        var singleItem = ResCheckUnitPayment.FirstOrDefault();
+
+                        if (singleItem != null)
+                        {
+                            if (singleItem.Value3 != 4 && singleItem.Value3 != 11)
+                            {
+                                returnmessage = (singleItem.Value3 > 5) ? "งวดงานก่อนหน้ายังไม่ผ่านการปลดล็อค" : "งวดงานก่อนหน้ายังไม่ผ่าน";
+                                return Json(new { success = false, message = returnmessage });
+                            }
+                            else if (singleItem.Value2 < 1)
+                            {
+                                returnmessage = "ไม่สามารเบิกข้ามงวดได้";
+                                return Json(new { success = false, message = returnmessage });
+                            }
+                        }
                     }
 
                     // Insert the new GR payment if all validations pass
