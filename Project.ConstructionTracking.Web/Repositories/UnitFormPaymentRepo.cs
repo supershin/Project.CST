@@ -201,20 +201,35 @@ namespace Project.ConstructionTracking.Web.Repositories
                                             UnitFormPDF = t2.FilePath
                                         };
 
-                    // Prepare request model for GRVenderrportal
+                    var queryQCfileData = from t1 in _context.tr_UnitForm
+                                          join rawT2 in _context.tr_Form_QCCheckList on t1.FormID equals rawT2.FormID into t2Join
+                                          from t2 in t2Join.DefaultIfEmpty()
+                                          join rawT3 in _context.tr_QC_UnitCheckList.Where(x => x.UnitID == Model.UnitID && x.QCStatusID == 1) on t2.CheckListID equals rawT3.CheckListID into t3Join
+                                          from t3 in t3Join.DefaultIfEmpty()
+                                          join rawT4 in _context.tr_Document on t3.ID equals rawT4.QCUnitCheckListID into t4Join
+                                          from t4 in t4Join.DefaultIfEmpty()
+                                          join rawT5 in _context.tm_Resource on t4.ResourceID equals rawT5.ID into t5Join
+                                          from t5 in t5Join.DefaultIfEmpty()
+                                          where t1.UnitID == Model.UnitID && t1.ID == Model.UnitFormID
+
+                                          select new
+                                          {
+                                            UnitQCPDF = t5.FilePath
+                                          };
+
                     var request = new RequestPostModel.GRVenderrportal.Sends
                     {
                         grno = Model.GRNO,
                         pono = Model.PONO,
+                        remark = Model.Remark,
                         fileData = new List<IFormFile>()
                     };
 
-                    // Combine each path with model.ApplicationPath, convert to IFormFile
+                    // ----- Add file data from queryfileData -----
                     foreach (var item in queryfileData)
                     {
                         if (!string.IsNullOrEmpty(item.UnitFormPDF))
                         {
-                            // e.g. "C:\myApp\wwwroot" + "Upload\temp\DocumentNo.pdf"
                             string fullPath = Path.Combine(Model.ApplicationPath, item.UnitFormPDF);
 
                             if (File.Exists(fullPath))
@@ -222,13 +237,24 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 IFormFile file = FormatExtension.CreateFormFileFromPath(fullPath);
                                 request.fileData.Add(file);
                             }
-                            else
+                        }
+                    }
+
+                    // ----- Add file data from queryQCfileData -----
+                    foreach (var item in queryQCfileData)
+                    {
+                        if (!string.IsNullOrEmpty(item.UnitQCPDF))
+                        {
+                            string fullPath = Path.Combine(Model.ApplicationPath, item.UnitQCPDF);
+
+                            if (File.Exists(fullPath))
                             {
-                                // Handle the case if file does not exist
-                                // Optionally log or skip
+                                IFormFile file = FormatExtension.CreateFormFileFromPath(fullPath);
+                                request.fileData.Add(file);
                             }
                         }
                     }
+
 
                     // 1) Call the GRVenderrportal API
                     var apiResponse = _VenderrportalService.UploadFileAsync(request).GetAwaiter().GetResult();
