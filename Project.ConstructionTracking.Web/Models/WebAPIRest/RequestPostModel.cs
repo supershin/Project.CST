@@ -8,6 +8,7 @@
             {
                 public string? grno { get; set; }
                 public string? pono { get; set; }
+                public string? remark { get; set; }
                 public List<IFormFile> fileData { get; set; } = new List<IFormFile>();
             }
             public class Responds

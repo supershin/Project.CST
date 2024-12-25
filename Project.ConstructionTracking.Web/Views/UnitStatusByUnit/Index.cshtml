@@ -3,11 +3,6 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
-    var UnitCode = "";
-    if (Model != null && Model.Count > 0 && Model[0] != null)
-    {
-        UnitCode = Model[0].UnitCode;
-    }
 }
 
 <style>
@@ -73,9 +68,7 @@
                         <h1>หน้าจอ Unit status แสดงราย Unit (show on website)</h1>
                     </div>
                     <div class="align-items-right">
-                        @*                      <button id="toggleButton" class="status-dot bg-transparent" onclick="openCollapse()">
-                        <i class="fas fa-arrow-down animated-arrow fa-xl" style="color: #f7f7f7;"></i>
-                        </button>*@
+
                     </div>
                 </div>
             </div>

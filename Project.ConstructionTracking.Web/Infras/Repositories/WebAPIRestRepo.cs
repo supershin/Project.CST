@@ -11,11 +11,18 @@ namespace Project.ConstructionTracking.Web.Infras.Repositories
         }
         public class GRVenderrportalRepo : IGRVenderrportalRepo
         {
-            private const string ApiUrl = "https://aswinno.assetwise.co.th/OBLUAT/api/APIQC/upload";
-            private const string AswApiKey = "YXN3b2JsYXBpOmFzd29ibGFwaUAyMDI0";  // Provide the real key
+            private readonly string _apiUrl;
+            private readonly string _aswApiKey;
+
+            public GRVenderrportalRepo(IConfiguration configuration)
+            {
+                _apiUrl = configuration["ThirdPartyApis:AswinnoAPI:ApiUrl"];
+                _aswApiKey = configuration["ThirdPartyApis:AswinnoAPI:AswApiKey"];
+            }
 
             public async Task<RequestPostModel.GRVenderrportal.Responds> UploadFileAsync(RequestPostModel.GRVenderrportal.Sends request)
             {
+
                 // Prepare the response model
                 var responds = new RequestPostModel.GRVenderrportal.Responds
                 {
@@ -28,7 +35,7 @@ namespace Project.ConstructionTracking.Web.Infras.Repositories
                     using (var client = new HttpClient())
                     {
                         // Add the ASWApiKey header
-                        client.DefaultRequestHeaders.Add("ASWApiKey", AswApiKey);
+                        client.DefaultRequestHeaders.Add("ASWApiKey", _aswApiKey);
 
                         // Use multipart/form-data
                         using (var form = new MultipartFormDataContent())
@@ -60,9 +67,11 @@ namespace Project.ConstructionTracking.Web.Infras.Repositories
                             }
                             form.Add(new StringContent(request.grno ?? ""), "grno");
                             form.Add(new StringContent(request.pono ?? ""), "pono");
+                            form.Add(new StringContent(request.remark ?? ""), "remark");
+
 
                             // 3) Post the form to the external API
-                            var response = await client.PostAsync(ApiUrl, form);
+                            var response = await client.PostAsync(_apiUrl, form);
                             var responseContent = await response.Content.ReadAsStringAsync();
 
                             if (response.IsSuccessStatusCode)

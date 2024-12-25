@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project.ConstructionTracking.Web.Library.DAL;
+using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.StoreProcedureModel;
 using Project.ConstructionTracking.Web.Services;
 
@@ -26,7 +27,12 @@ namespace Project.ConstructionTracking.Web.Controllers
             };
 
             List<UnitFormStatusModel> unitstatuslists = _unitstatusProvider.sp_get_UnitFormStatusByUnit(en);
-        
+
+            if (unitstatuslists != null && unitstatuslists.Count > 0 && unitstatuslists[0] != null)
+            {
+                ViewBag.UnitCode = unitstatuslists[0].UnitCode;
+            }
+
             return View(unitstatuslists);
         }
     }
