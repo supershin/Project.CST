@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Library.DAL;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.StoreProcedureModel;
@@ -9,12 +10,18 @@ namespace Project.ConstructionTracking.Web.Controllers
     public class UnitStatusByUnitController : BaseController
     {
         private readonly MasterManagementProviderProject _unitstatusProvider;
-        public UnitStatusByUnitController(MasterManagementProviderProject unitstatusProvider)
+        private readonly IGetDDLService _getDDLService;
+
+        public UnitStatusByUnitController(MasterManagementProviderProject unitstatusProvider, IGetDDLService getDDLService)
         {
             _unitstatusProvider = unitstatusProvider;
+            _getDDLService = getDDLService;
         }
         public IActionResult Index(string ProjectID, string UnitID)
         {
+            var ddlModel = new GetDDL { Act = "ProjectAdmin" , GuID = FormatExtension.ConvertStringToGuid(ProjectID) };
+            List<GetDDL> ListProject = _getDDLService.GetDDLList(ddlModel);
+            ViewBag.ProjectName = ListProject?[0]?.Text ?? "";
 
             var en = new UnitFormStatusModel
             {

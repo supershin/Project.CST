@@ -88,6 +88,10 @@ namespace Project.ConstructionTracking.Web.Controllers
             {
                 return RedirectToAction("Index", "SummaryUnitQC", new { projectId, projectName, unitId});
             }
+            else if (RoleID == SystemConstant.UserRole.ADMIN.ToString())
+            {
+                return RedirectToAction("Index", "SummaryUnitForm", new { unitId, projectId, projectName, UnitCode, UnitStatusName });
+            }
             else
             {
                 return RedirectToAction("Index", "Unitlist", new { projectId, projectName, unitId });
