@@ -413,11 +413,12 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         private bool VerifyFormTypeUsing(int formTypeID)
         {
-            bool query = (from pmf in _context.tr_ProjectModelForm
-                         join u in _context.tm_Unit on pmf.ModelTypeID equals u.ModelTypeID
-                         join uf in _context.tr_UnitForm on u.UnitID equals uf.UnitID
-                         where pmf.FormTypeID == formTypeID
-                         select new { pmf, u, uf }
+            bool query = (from tf in _context.tm_Form
+                         join uf in _context.tr_UnitForm on tf.ID equals uf.FormID
+                         where tf.FormTypeID == formTypeID
+                            && uf.FlagActive == true
+                            && uf != null
+                          select new { tf, uf }
                         ).Any();
 
             return query;

@@ -388,6 +388,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         {
                             grno = tbUnitFormPayment.GRNO,
                             pono = tbUnitFormPayment.PONO,
+                            remark = tbUnitFormPayment.Remark,
                             fileData = new List<IFormFile>()
                         };
 
@@ -396,11 +397,27 @@ namespace Project.ConstructionTracking.Web.Repositories
                                             join t2 in _context.tm_Resource
                                                 on t1.ResourceID equals t2.ID into t2Group
                                             from t2 in t2Group.DefaultIfEmpty()
-                                            where t1.UnitFormID == Model.UnitFormID
+                                            where t1.UnitFormID == tbUnitFormPayment.UnitFormID
                                             select new
                                             {
                                                 UnitFormPDF = t2.FilePath
                                             };
+
+                        var queryQCfileData = from t1 in _context.tr_UnitForm
+                                              join rawT2 in _context.tr_Form_QCCheckList on t1.FormID equals rawT2.FormID into t2Join
+                                              from t2 in t2Join.DefaultIfEmpty()
+                                              join rawT3 in _context.tr_QC_UnitCheckList.Where(x => x.UnitID == tbUnitFormPayment.UnitID && x.QCStatusID == 1) on t2.CheckListID equals rawT3.CheckListID into t3Join
+                                              from t3 in t3Join.DefaultIfEmpty()
+                                              join rawT4 in _context.tr_Document on t3.ID equals rawT4.QCUnitCheckListID into t4Join
+                                              from t4 in t4Join.DefaultIfEmpty()
+                                              join rawT5 in _context.tm_Resource on t4.ResourceID equals rawT5.ID into t5Join
+                                              from t5 in t5Join.DefaultIfEmpty()
+                                              where t1.UnitID == tbUnitFormPayment.UnitID && t1.ID == tbUnitFormPayment.UnitFormID
+
+                                              select new
+                                              {
+                                                  UnitQCPDF = t5.FilePath
+                                              };
 
                         foreach (var item in queryfileData)
                         {
@@ -417,6 +434,20 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 {
                                     // Handle the case if file does not exist
                                     // Optionally log or skip
+                                }
+                            }
+                        }
+
+                        foreach (var item in queryQCfileData)
+                        {
+                            if (!string.IsNullOrEmpty(item.UnitQCPDF))
+                            {
+                                string fullPath = Path.Combine(Model.ApplicationPath, item.UnitQCPDF);
+
+                                if (File.Exists(fullPath))
+                                {
+                                    IFormFile file = FormatExtension.CreateFormFileFromPath(fullPath);
+                                    request.fileData.Add(file);
                                 }
                             }
                         }
