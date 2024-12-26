@@ -1,4 +1,5 @@
-﻿using Project.ConstructionTracking.Web.Models.UnitFormPaymentModel;
+﻿using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.UnitFormPaymentModel;
 
 namespace Project.ConstructionTracking.Web.Services
 {
@@ -8,10 +9,12 @@ namespace Project.ConstructionTracking.Web.Services
 
         List<UnitFormPaymentModel.getListUnitFormGRPaymentTable> GetListUnitFormGRPaymentTable(UnitFormPaymentModel.getListUnitFormGRPaymentTable Model);
 
-        string InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model);
+        UnitPaymentMail getUnitFormSendmMailDetail(Guid UnitFormID);
+
+        int InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model);
 
         string RemoveGRPayment(UnitFormPaymentModel.IUDGRPayment Model);
 
-        string SyncGRPayment(UnitFormPaymentModel.IUDGRPayment Model);
+        int SyncGRPayment(UnitFormPaymentModel.IUDGRPayment Model);
     }
 }

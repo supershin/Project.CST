@@ -133,6 +133,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 }
 
                 string returnmessage = "";
+                int syncStatusID = 0;
                 int RoleID = int.TryParse(Request.Cookies["CST.Role"], out var tempRoleInt) ? tempRoleInt : -1;
 
                 if (RoleID == SystemConstant.UserRole.ADMIN)
@@ -186,7 +187,28 @@ namespace Project.ConstructionTracking.Web.Controllers
                     // Insert the new GR payment if all validations pass
                     Model.UserID = userid;
                     Model.ApplicationPath = _hosting.ContentRootPath;
-                    returnmessage = _UnitFormPaymentService.InsertNewGRPayment(Model);
+
+                    syncStatusID = _UnitFormPaymentService.InsertNewGRPayment(Model);
+                    if (syncStatusID == 31) {
+                        try
+                        {
+                            //var ModelPaymentMail = new UnitPaymentMail { 
+                            //       VendorFullName = "Sittikron Handsome"
+                            //      ,VendorEmail = "firsty.shabby@gmail.com"
+                            //      ,ProjectName = "Test"
+                            //      ,UnitCode = "A3021"
+                            //};
+
+                            UnitPaymentMail ModelPaymentMail = _UnitFormPaymentService.getUnitFormSendmMailDetail(FormatExtension.AsGuid(Model.UnitFormID));
+
+                            UnitPaymentSendMailData(ModelPaymentMail);
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                    }
+
 
                     var ChkFilters = new GetDDL { Act = "GetListUnitFormPayment2", GuID = Model.UnitFormID };
                     List<GetDDL> CheckBackPercentPayment = _getDDLService.GetDDLList(ChkFilters);
@@ -266,6 +288,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             try
             {
                 string returnmessage = "";
+                int syncStatusID = 0;
                 int RoleID = int.TryParse(Request.Cookies["CST.Role"], out var tempRoleInt) ? tempRoleInt : -1;
                 if (RoleID == SystemConstant.UserRole.ADMIN)
                 {
@@ -280,8 +303,19 @@ namespace Project.ConstructionTracking.Web.Controllers
                         {
                             Model.UserID = userid;
                             Model.ApplicationPath = _hosting.ContentRootPath;
-                            returnmessage = _UnitFormPaymentService.SyncGRPayment(Model);
+                            syncStatusID = _UnitFormPaymentService.SyncGRPayment(Model);
+                            if (syncStatusID == 31)
+                            {
+                                try
+                                {
+                                    UnitPaymentMail ModelPaymentMail = _UnitFormPaymentService.getUnitFormSendmMailDetail(FormatExtension.AsGuid(Model.UnitFormID));
+                                    UnitPaymentSendMailData(ModelPaymentMail);
+                                }
+                                catch (Exception)
+                                {
 
+                                }
+                            }
                             var ChkFilters = new GetDDL { Act = "GetListUnitFormPayment2", GuID = Model.UnitFormID };
                             List<GetDDL> CheckBackPercentPayment = _getDDLService.GetDDLList(ChkFilters);
                             decimal ChktotalValuedecimalSum = CheckBackPercentPayment?.Where(x => x.Valuedecimal.HasValue).Sum(x => x.Valuedecimal.Value) ?? 0;
@@ -340,23 +374,6 @@ namespace Project.ConstructionTracking.Web.Controllers
             return PartialView("PartialTable", UnitFormpaymentlist);
         }
 
-
-        [HttpGet]
-        public void UnitPaymentSendMail(UnitPaymentMail model)
-        {
-            try
-            {
-                model = new UnitPaymentMail();
-                model.VendorFullName = "Siripoj Handsome";
-                model.VendorEmail = "siripoj@assetwise.co.th";
-                model.ProjectName = "Test";
-                model.UnitCode = "A3021";
-                UnitPaymentSendMailData(model);
-            }
-            catch (Exception)
-            {
-            }
-        }
         private void UnitPaymentSendMailData(UnitPaymentMail model)
         {
             string template = RenderRazorViewtoString(this, "Template_UnitPayment_SendMail", model);
@@ -369,7 +386,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             email.PORT = Convert.ToInt32(_config["Email:PORT"]);
             if (!string.IsNullOrEmpty(model.VendorEmail.ToStringNullable()))
                 email.To = new List<string> { model.VendorEmail };
-            email.Subject = _config["Email:Subject:FORGOT_PASSWORD"];
+            email.Subject = _config["Email:Subject:HEADER_TEXT"];
             email.Body = template;
 
             (new MailService()).SendMail(email);

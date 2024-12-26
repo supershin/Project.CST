@@ -9,10 +9,12 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         List<UnitFormPaymentModel.getListUnitFormGRPaymentTable> GetListUnitFormGRPaymentTable(UnitFormPaymentModel.getListUnitFormGRPaymentTable Model);
 
-        string InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model);
+        UnitPaymentMail getUnitFormSendmMailDetail(Guid UnitFormID);
+
+        int InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model);
 
         string RemoveGRPayment(UnitFormPaymentModel.IUDGRPayment Model);
 
-        string SyncGRPayment(UnitFormPaymentModel.IUDGRPayment Model);
+        int SyncGRPayment(UnitFormPaymentModel.IUDGRPayment Model);
     }
 }

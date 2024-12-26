@@ -31,7 +31,13 @@ namespace Project.ConstructionTracking.Web.Services
         }
 
 
-        public string InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
+        public UnitPaymentMail getUnitFormSendmMailDetail(Guid UnitFormID)
+        {
+            var UnitFormSendmMailDetail = _IUnitFormPaymentRepo.getUnitFormSendmMailDetail(UnitFormID);
+            return UnitFormSendmMailDetail;
+        }
+
+        public int InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
         {
             try
             {
@@ -57,7 +63,7 @@ namespace Project.ConstructionTracking.Web.Services
         }
 
 
-        public string SyncGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
+        public int SyncGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
         {
             try
             {

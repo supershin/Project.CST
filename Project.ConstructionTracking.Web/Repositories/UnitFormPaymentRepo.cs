@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.EntityFrameworkCore;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
@@ -98,6 +99,35 @@ namespace Project.ConstructionTracking.Web.Repositories
         }
 
 
+        public UnitPaymentMail getUnitFormSendmMailDetail(Guid UnitFormID)
+        {
+
+            var result = (from t1 in _context.tr_UnitForm
+                          join t2 in _context.tm_Vendor on t1.VendorID equals t2.ID into vendorJoin
+                          from t2 in vendorJoin.DefaultIfEmpty()
+                          join t3 in _context.tr_CompanyVendor on t2.ID equals t3.VendorID into companyVendorJoin
+                          from t3 in companyVendorJoin.DefaultIfEmpty()
+                          join t4 in _context.tm_CompanyVendor on t3.CompanyVendorID equals t4.ID into companyVendorNameJoin
+                          from t4 in companyVendorNameJoin.DefaultIfEmpty()
+                          join t5 in _context.tm_Project on t1.ProjectID equals t5.ProjectID into projectJoin
+                          from t5 in projectJoin.DefaultIfEmpty()
+                          join t6 in _context.tm_Unit on t1.UnitID equals t6.UnitID into unitJoin
+                          from t6 in unitJoin.DefaultIfEmpty()
+                          where t1.ID == UnitFormID
+                          select new UnitPaymentMail
+                          {
+                              //VendorFullName = t2.Name,
+                              VendorFullName = t4.Name,
+                              //VendorEmail = t2.Email,
+                              VendorEmail = "siripoj@assetwise.co.th",
+                              ProjectName = t5.ProjectName,
+                              UnitCode = t6.UnitCode
+                          }).FirstOrDefault();
+
+            return result;
+        }
+
+
         //public string InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
         //{
         //    string returnUrlDoc = string.Empty;
@@ -176,9 +206,9 @@ namespace Project.ConstructionTracking.Web.Repositories
         //    return returnUrlDoc;
         //}
 
-        public string InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
+        public int InsertNewGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
         {
-            string returnUrlDoc = string.Empty;
+            int returnUrlDoc = 0;
 
             var transactionOptions = new TransactionOptions
             {
@@ -293,24 +323,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                     _context.tr_UnitFormPayment.Add(newGRPayment);
                     _context.SaveChanges();
 
-                    // 4) Check the total payment percentage
-                    var Filters = new GetDDL
-                    {
-                        Act = "GetListUnitFormPayment",
-                        GuID = Model.UnitFormID
-                    };
-                    List<GetDDL> CheckPercentPayment = _getDDLService.GetDDLList(Filters);
-                    decimal totalValuedecimalSum = CheckPercentPayment?.Where(x => x.Valuedecimal.HasValue).Sum(x => x.Valuedecimal.Value) ?? 0;
-
-                    // 5) Decide return message based on total percentage
-                    if (totalValuedecimalSum + Model.PercentPayment > 100)
-                    {
-                        returnUrlDoc = "บันทึกข้อมูลสำเร็จ";
-                    }
-                    else
-                    {
-                        returnUrlDoc = "บันทึกข้อมูลครบ100%";
-                    }
+                    returnUrlDoc = syncStatusID;
 
                     // Commit the transaction
                     scope.Complete();
@@ -364,9 +377,9 @@ namespace Project.ConstructionTracking.Web.Repositories
         }
 
 
-        public string SyncGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
+        public int SyncGRPayment(UnitFormPaymentModel.IUDGRPayment Model)
         {
-            string returnUrlDoc = string.Empty;
+            int returnUrlDoc = 0;
 
             var transactionOptions = new TransactionOptions
             {
@@ -471,11 +484,12 @@ namespace Project.ConstructionTracking.Web.Repositories
                         tbUnitFormPayment.UpdateDate = DateTime.Now;
                         tbUnitFormPayment.UpdateBy = Model.UserID;
                         _context.tr_UnitFormPayment.Update(tbUnitFormPayment);
+
+                        returnUrlDoc = syncStatusID;
                     }
+
                     _context.SaveChanges();
-
-                    returnUrlDoc = "Sync ข้อมูลสำเร็จ";
-
+                   
                     scope.Complete();
                 }
                 catch (Exception ex)
@@ -486,5 +500,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return returnUrlDoc;
         }
+
     }
 }
