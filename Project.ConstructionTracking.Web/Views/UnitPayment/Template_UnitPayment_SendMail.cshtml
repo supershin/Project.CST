@@ -1,0 +1,90 @@
+﻿@model UnitPaymentMail
+@{
+
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .email-header {
+            background-color: #1d0e71;
+            color: white;
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .email-body {
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+            .email-body p {
+                margin: 0 0 10px;
+            }
+
+        .email-footer {
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            color: #777;
+        }
+
+            .email-footer a {
+                color: #4caf50;
+                text-decoration: none;
+            }
+
+        .button {
+            display: inline-block;
+            background-color: #4caf50;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h1>Construction Quality Tracking</h1>
+        </div>
+        <div class="email-body">
+            <p>เรียน @Model.VendorFullName</p>
+            <p>ทางเราขอแจ้งให้ทราบว่าเอกสารที่เกี่ยวข้องกับการตรวจงวดงาน และ เอกสาร QC ได้ดำเนินการส่งมอบเอกสารไปที่ระบบ <a href="https://aswinno.assetwise.co.th/vendorportal">Online Billine(วางบิลออนไลน์)</a> สำเร็จเรียบร้อยแล้ว โดยมีรายละเอียดดังนี้:</p>
+            <ul>
+                <li><strong>โครงการ:</strong> @Model.ProjectName</li>
+                <li><strong>เลขที่แปลง:</strong> @Model.UnitCode</li>
+            </ul>
+            <p>ขั้นตอนต่อไปท่านสามาถเข้าระบบ <a href="https://aswinno.assetwise.co.th/vendorportal">Online Billine(วางบิลออนไลน์)</a> เพื่อทำการแนบเอกสารอื่นๆต่อไป หากมีคำถามหรือต้องการข้อมูลเพิ่มเติม</strong></p>
+        </div>
+        <div class="email-footer">
+            <p>Best Regard,</p>
+            <p>Construction Quality Tracking</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore.Storage;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Services;
@@ -37,6 +39,29 @@ namespace Project.ConstructionTracking.Web.Controllers
             ViewBag.UserName = userName;
             ViewBag.UserRole = userRole;
         }
+
+        #region Protected function
+        protected string RenderRazorViewtoString(Controller controller, string viewName, object model = null)
+        {
+            controller.ViewData.Model = model;
+            using (var sw = new StringWriter())
+            {
+                IViewEngine? viewEngine = controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
+                ViewEngineResult viewEngineResult = viewEngine.FindView(controller.ControllerContext, viewName, false);
+                ViewContext viewContext = new ViewContext
+                (
+                    controller.ControllerContext,
+                    viewEngineResult.View,
+                    controller.ViewData,
+                    controller.TempData,
+                    sw,
+                    new HtmlHelperOptions()
+                );
+                viewEngineResult.View.RenderAsync(viewContext);
+                return sw.GetStringBuilder().ToString();
+            }
+        }
+        #endregion
     }
 
 }

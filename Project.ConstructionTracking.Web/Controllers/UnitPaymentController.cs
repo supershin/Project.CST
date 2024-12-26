@@ -8,6 +8,8 @@ using Project.ConstructionTracking.Web.Models.UnitFormPaymentModel;
 using Project.ConstructionTracking.Web.Commons;
 using Microsoft.CodeAnalysis;
 using System;
+using NuGet.Protocol.Plugins;
+using Project.ConstructionTracking.Web.Infras.Services;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
@@ -17,23 +19,26 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IGetDDLService _getDDLService;
         private readonly IUnitFormPaymentService _UnitFormPaymentService;
         private readonly IHostEnvironment _hosting;
+        private readonly IConfiguration _config;
 
-        public UnitPaymentController(MasterManagementProviderProject unitstatusProvider, IGetDDLService getDDLService , IUnitFormPaymentService UnitFormPaymentService, IHostEnvironment hosting)
+        public UnitPaymentController(MasterManagementProviderProject unitstatusProvider, IGetDDLService getDDLService, IUnitFormPaymentService UnitFormPaymentService, IHostEnvironment hosting,
+            IConfiguration configuration)
         {
             _unitstatusProvider = unitstatusProvider;
             _getDDLService = getDDLService;
             _UnitFormPaymentService = UnitFormPaymentService;
             _hosting = hosting;
+            _config = configuration;
         }
         public IActionResult Index()
         {
-            
+
             var ddlModel = new GetDDL { Act = "ProjectAdmin" };
             List<GetDDL> ListProject = _getDDLService.GetDDLList(ddlModel);
             ViewBag.DDLProject = ListProject;
 
 
-            var ExtPaymentModel = new GetDDL { Act = "Ext" , ID = SystemConstant.Ext_Type.PercentPayment };
+            var ExtPaymentModel = new GetDDL { Act = "Ext", ID = SystemConstant.Ext_Type.PercentPayment };
             List<GetDDL> ListExtPayment = _getDDLService.GetDDLList(ExtPaymentModel);
             ViewBag.DDLPercentPayment = ListExtPayment;
 
@@ -117,7 +122,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                     return Json(new { success = false, message = "กรุณาระบุ GR" });
                 }
 
-                if (string.IsNullOrWhiteSpace(Model.PONO)) 
+                if (string.IsNullOrWhiteSpace(Model.PONO))
                 {
                     return Json(new { success = false, message = "กรุณาระบุ PO" });
                 }
@@ -155,7 +160,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                     List<GetDDL> SortUnitform = _getDDLService.GetDDLList(CheckSortUnitform);
 
                     var ChkItem = SortUnitform.FirstOrDefault();
-                    if (ChkItem != null && ChkItem.Value > 1 )
+                    if (ChkItem != null && ChkItem.Value > 1)
                     {
                         var CheckUnitPayment = new GetDDL { Act = "CheckUnitPayment", GuID = Model.UnitID, GuID2 = Model.UnitFormID };
                         List<GetDDL> ResCheckUnitPayment = _getDDLService.GetDDLList(CheckUnitPayment);
@@ -333,6 +338,41 @@ namespace Project.ConstructionTracking.Web.Controllers
             List<WorkPeriodModel> UnitFormpaymentlist = _unitstatusProvider.sp_get_workperiod(en);
 
             return PartialView("PartialTable", UnitFormpaymentlist);
+        }
+
+
+        [HttpGet]
+        public void UnitPaymentSendMail(UnitPaymentMail model)
+        {
+            try
+            {
+                model = new UnitPaymentMail();
+                model.VendorFullName = "Siripoj Handsome";
+                model.VendorEmail = "siripoj@assetwise.co.th";
+                model.ProjectName = "Test";
+                model.UnitCode = "A3021";
+                UnitPaymentSendMailData(model);
+            }
+            catch (Exception)
+            {
+            }
+        }
+        private void UnitPaymentSendMailData(UnitPaymentMail model)
+        {
+            string template = RenderRazorViewtoString(this, "Template_UnitPayment_SendMail", model);
+            var email = new EmailModel();
+            email.Host = _config["Email:HOST"];
+            email.From = _config["Email:FROM"];
+            email.Sender = _config["Email:SENDER"];
+            email.Username = _config["Email:USER_NAME"];
+            email.Password = _config["Email:PASSWORD"];
+            email.PORT = Convert.ToInt32(_config["Email:PORT"]);
+            if (!string.IsNullOrEmpty(model.VendorEmail.ToStringNullable()))
+                email.To = new List<string> { model.VendorEmail };
+            email.Subject = _config["Email:Subject:FORGOT_PASSWORD"];
+            email.Body = template;
+
+            (new MailService()).SendMail(email);
         }
     }
 }
