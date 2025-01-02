@@ -1,5 +1,6 @@
 ﻿using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
+using Project.ConstructionTracking.Web.Models.SendMail;
 using Project.ConstructionTracking.Web.Repositories;
 
 namespace Project.ConstructionTracking.Web.Services
@@ -23,6 +24,12 @@ namespace Project.ConstructionTracking.Web.Services
         {
             var FormGroupDetail = _IFormGroupRepo.GetFormGroupDetail(unitFormId);
             return FormGroupDetail;
+        }
+
+        public List<PERequesModel> GetListPERequesSendEmailData(Guid unitFormId)
+        {
+            var ListPERequesData = _IFormGroupRepo.GetListPERequesSendEmailData(unitFormId);
+            return ListPERequesData;
         }
 
         public bool ValidateUserSubmit(Guid? UserID, Guid? UnitID)

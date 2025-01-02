@@ -1,4 +1,5 @@
-﻿using Humanizer.Localisation;
+﻿using DocumentFormat.OpenXml.InkML;
+using Humanizer.Localisation;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,8 @@ using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
+using Project.ConstructionTracking.Web.Models.QC5CheckModel;
+using Project.ConstructionTracking.Web.Models.SendMail;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
@@ -205,6 +208,51 @@ namespace Project.ConstructionTracking.Web.Repositories
                 FileDate = fileDate
             };
         }
+        public List<PERequesModel> GetListPERequesSendEmailData(Guid unitFormId)
+        {
+              var result = (from t1 in _context.tr_UnitForm
+                            join t2 in _context.tr_ProjectPermission on t1.ProjectID equals t2.ProjectID into t2Group
+                                from t2 in t2Group.DefaultIfEmpty()
+                            join t3 in _context.tm_User on t2.UserID equals t3.ID into t3Group
+                                from t3 in t3Group.DefaultIfEmpty()
+                            join t4 in _context.tm_Project on t1.ProjectID equals t4.ProjectID into t4Group
+                                from t4 in t4Group.DefaultIfEmpty()
+                            join t5 in _context.tm_Unit on t1.UnitID equals t5.UnitID into t5Group
+                            from t5 in t5Group.DefaultIfEmpty()
+                            join t6 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PE } equals new { t6.UnitFormID, t6.RoleID } into t6Group
+                                from t6 in t6Group.DefaultIfEmpty()
+                            join t7 in _context.tm_User on t6.UpdateBy equals t7.ID into t7Group
+                                from t7 in t7Group.DefaultIfEmpty()
+                            join t8 in _context.tm_Form on t1.FormID equals t8.ID into t8Group
+                            from t8 in t8Group.DefaultIfEmpty()
+                            where t1.ID == unitFormId
+                            && t1.FlagActive == true 
+                            && (t2 == null || t2.FlagActive == true)
+                            && (t3 == null || t3.RoleID == 2)
+                            select new PERequesModel
+                            {
+                                PMFullName = t3 != null ? t3.FirstName + " " + t3.LastName : null,
+                                FormName = t8 != null ? t8.Name + " " + t8.Description : null,
+                                PEFullName = t7 != null ? t7.FirstName + " " + t7.LastName : null,
+                                ActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(t6.ActionDate),
+                                ProjectName = t4.ProjectName,
+                                UnitCode = t5.UnitCode,
+                                //PMEmail = t3.Email
+                                PMEmail = "firsty.shabby@gmail.com",
+                                ListPERequesPassCondition = (from pc in _context.tr_UnitFormPassCondition
+                                                             join gn in _context.tm_FormGroup on pc.GroupID equals gn.ID into gnGroup
+                                                             from gn in gnGroup.DefaultIfEmpty()
+                                                             where pc.UnitFormID == t1.ID && pc.FlagActive == true  
+                                                             select new PERequesPassConditionModel
+                                                             {
+                                                                 FormGroupName = gn.Name,
+                                                                 RemarkPassCodition = pc.PE_Remark
+                                                             }).ToList()
+                            }).ToList();
+
+              return result;
+        }
+
         public bool ValidateUserSubmit(Guid? UserID , Guid? UnitID)
         {
             var ProjectPermission = _context.tr_PE_Unit.Where(Pp => Pp.UnitID == UnitID && Pp.UserID == UserID).FirstOrDefault();

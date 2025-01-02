@@ -1,5 +1,6 @@
 ﻿using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
+using Project.ConstructionTracking.Web.Models.SendMail;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -7,6 +8,7 @@ namespace Project.ConstructionTracking.Web.Repositories
     {
         List<FormGroupModel> GetFormGroupList(FormGroupModel Model);
         FormGroupModel.FormGroupDetail GetFormGroupDetail(Guid? unitFormId);
+        List<PERequesModel> GetListPERequesSendEmailData(Guid unitFormId);
         bool ValidateUserSubmit(Guid? UserID, Guid? ProjectID);
         void SubmitSaveFormGroup(FormGroupModel.FormGroupIUDModel model);
     }
