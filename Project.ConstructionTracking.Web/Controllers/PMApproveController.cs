@@ -2,7 +2,9 @@
 using Microsoft.Data.SqlClient.Server;
 using Newtonsoft.Json;
 using Project.ConstructionTracking.Web.Commons;
+using Project.ConstructionTracking.Web.Infras.Services;
 using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.SendMail;
 using Project.ConstructionTracking.Web.Services;
 using static Project.ConstructionTracking.Web.Commons.SystemConstant;
 using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
@@ -15,11 +17,13 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IPMApproveService _PMApproveService;
         private readonly IHostEnvironment _hosting;
         private readonly IGetDDLService _getDDLService;
-        public PMApproveController(IPMApproveService PMApproveService, IHostEnvironment hosting, IGetDDLService getDDLService)
+        private readonly IConfiguration _config;
+        public PMApproveController(IPMApproveService PMApproveService, IHostEnvironment hosting, IGetDDLService getDDLService, IConfiguration config)
         {
             _PMApproveService = PMApproveService;
             _hosting = hosting;
             _getDDLService = getDDLService;
+            _config = config;
         }
 
         public IActionResult Index(Guid unitId, int formId ,string comeFrom)
@@ -123,9 +127,27 @@ namespace Project.ConstructionTracking.Web.Controllers
                 model.ApplicationPath = _hosting.ContentRootPath;
                 model.UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
                 model.RoleID = int.TryParse(Request.Cookies["CST.Role"], out var tempRoleInt) ? tempRoleInt : -1;
-
                 string returnUrlDoc = _PMApproveService.SaveOrUpdateUnitFormAction(model);
+                if (model.ActionType == "submit") 
+                {
+                    PMRespond listPERequesData = _PMApproveService.GetPMRespondSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));
 
+                    string template = RenderRazorViewtoString(this, "Template_PM_Respond_SendMail", listPERequesData);
+                    var email = new EmailModel();
+                    email.Host = _config["Email:HOST"];
+                    email.From = _config["Email:FROM"];
+                    email.Sender = _config["Email:SENDER"];
+                    email.Username = _config["Email:USER_NAME"];
+                    email.Password = _config["Email:PASSWORD"];
+                    email.PORT = Convert.ToInt32(_config["Email:PORT"]);
+                    if (!string.IsNullOrEmpty(listPERequesData.PEEmail))
+                        email.To = new List<string> { listPERequesData.PEEmail};
+                    email.Subject = _config["Email:Subject:HEADER_TEXT"];
+                    email.Body = template;
+
+                    (new MailService()).SendMail(email);
+
+                }
                 return Ok(new { success = true, pdfPath = returnUrlDoc });
             }
             catch (Exception ex)

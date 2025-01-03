@@ -117,6 +117,12 @@
             public const int PM_Reject_Unlock = 12;
         }
 
+        public static class Unit_Form_PC_Status
+        {
+            public const int PM_Approve = 6;
+            public const int PM_Reject = 7;
+        }
+
         public static class CheckList_Status
         {
             public const int PASS = 9;

@@ -86,54 +86,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 
         [HttpPost]
         public IActionResult UpdateSaveGrade(FormGroupModel.FormGroupIUDModel model)
-        {
-            //try
-            //{
-            //    var userID = Request.Cookies["CST.ID"];
-            //    var RoleID = Request.Cookies["CST.Role"];
-            //    model.userID = Guid.Parse(userID);
-            //    model.RoleID = int.Parse(RoleID);
-            //    model.ApplicationPath = _hosting.ContentRootPath;
-            //    _FormGroupService.SubmitSaveFormGroup(model);
-            //    if (model.Act == "save")
-            //    {
-            //        // Retrieve the data list
-            //        List<PERequesModel> listPERequesData = _FormGroupService.GetListPERequesSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));
-
-            //        // Render the email template
-            //        string template = RenderRazorViewtoString(this, "Template_UnitPayment_SendMail", listPERequesData);
-
-            //        // Configure email
-            //        var email = new EmailModel
-            //        {
-            //            Host = _config["Email:HOST"],
-            //            From = _config["Email:FROM"],
-            //            Sender = _config["Email:SENDER"],
-            //            Username = _config["Email:USER_NAME"],
-            //            Password = _config["Email:PASSWORD"],
-            //            PORT = Convert.ToInt32(_config["Email:PORT"]),
-            //            Subject = _config["Email:Subject:HEADER_TEXT"],
-            //            Body = template
-            //        };
-
-            //        // Send email to all recipients in the list
-            //        foreach (var request in listPERequesData)
-            //        {
-            //            if (!string.IsNullOrEmpty(request.PMEmail))
-            //            {
-            //                email.To = new List<string> { request.PMEmail };
-            //                (new MailService()).SendMail(email);
-            //            }
-            //        }
-
-            //        return Ok(new { success = true, message = model.FormGrade });
-            //    }
-            //    return Ok(new { success = true, message = model.FormGrade });
-            //}
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(new { success = false, message = "บันทึกข้อมูลไม่สำเร็จ: " + ex.Message });
-            //}
+        {          
             try
             {
                 var userID = Request.Cookies["CST.ID"];
@@ -143,7 +96,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 model.ApplicationPath = _hosting.ContentRootPath;
                 _FormGroupService.SubmitSaveFormGroup(model);
 
-                if (model.Act == "save")
+                if (model.Act == "submit")
                 {
                     // Retrieve the data list
                     List<PERequesModel> listPERequesData = _FormGroupService.GetListPERequesSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));

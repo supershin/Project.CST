@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@model Project.ConstructionTracking.Web.Models.SendMail.PMRespond
+@{
+
+    Layout = null;
+}
+
+<!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
@@ -60,12 +66,21 @@
             margin-top: 20px;
         }
 
-        .status {
+        .statusReject {
             background-color: #ffe6e6;
             text-align: center;
             padding: 10px;
             border-radius: 5px;
             color: #f44336;
+            margin-bottom: 15px;
+        }
+
+        .statusApprove {
+            background-color: #4caf50;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
             margin-bottom: 15px;
         }
 
@@ -79,6 +94,22 @@
             margin-bottom: 15px;
             line-height: 1.5;
         }
+
+        .pcdetailApprove {
+            background-color: #4caf50;
+            padding: 1px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .pcdetailReject {
+            background-color: #ffe6e6;
+            padding: 1px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            color: #b71c1c;
+        }
     </style>
 </head>
 <body>
@@ -87,22 +118,65 @@
             <h1>Construction Quality Tracking</h1>
         </div>
         <div class="email-body">
-            <div class="status">
-                <h2>สถานะการตรวจ: <span>❌ PM ไม่อนุมัติ</span></h2>
-            </div>
-            <p>เรียน (PE) ตรวจงาน ขันแข็ง</p>
+            @if (Model.StatusID == SystemConstant.Unit_Form_Status.PM_Reject)
+            {
+                <div class="statusReject">
+                    <h2>สถานะการตรวจ: <span>❌ @Model.StatusName</span></h2>
+                </div>
+            }
+            else if (Model.StatusID == SystemConstant.Unit_Form_Status.PM_Approve || Model.StatusID == SystemConstant.Unit_Form_Status.PM_Sendto_PJM)
+            {
+                <div class="statusApprove">
+                        <h2>สถานะการตรวจ: <span>✅ @Model.StatusName</span></h2>
+                </div>
+            }
+
+            <p>เรียน (PE) @Model.PEFullname</p>
             <p>ทางเราขอแจ้งให้ทราบผลการตรวจงวดงาน โดยมีรายละเอียดดังนี้:</p>
             <ul>
-                <li><strong>ชื่องวดงาน:</strong> งวดที่ 1 งานคานชั้นล่าง</li>
-                <li><strong>PM ตรวจ:</strong> ตรวจงาน ระเอียด</li>
-                <li><strong>เวลาที่ตรวจ:</strong> 12 Jan 2025 11:35 </li>
-                <li><strong>โครงการ:</strong> เอสต้า ซีรีนิตี้ บรมราชชนนี</li>
-                <li><strong>เลขที่แปลง:</strong> AA001</li>
+                <li><strong>ชื่องวดงาน:</strong> @Model.FormName</li>
+                <li><strong>PM ตรวจ:</strong> @Model.PMFullname</li>
+                <li><strong>เวลาที่ตรวจ:</strong> @Model.ActionDate</li>
+                <li><strong>โครงการ:</strong> @Model.ProjectName</li>
+                <li><strong>เลขที่แปลง:</strong> @Model.UnitCode</li>
             </ul>
-            <div class="remark">
-                <strong>หมายเหตุ:</strong> งานคานชั้นล่างไม่ได้มาตรฐานที่กำหนด โปรดปรับปรุงการเทปูนให้เรียบร้อยและตรวจสอบโครงสร้างก่อนส่งตรวจใหม่
-            </div>
-            <p>ขั้นตอนต่อไปท่านสามาถเข้าระบบ <a href="https://aswinno.assetwise.co.th/vendorportal">Construction Quality Tracking</a> เพื่อตรวจสอบข้อมูลเพิ่มเติมหรือตรวจงวดงานในครั้งงวดถัดไป</strong></p>
+            @if (Model.StatusID == SystemConstant.Unit_Form_Status.PM_Reject)
+            {
+                <div class="remark">
+                    <strong>หมายเหตุ:</strong> @Model.PMRemark
+                </div>
+            }
+            @if (Model.ListPMRespondPassCondition.Count > 0)
+            {
+                <p>รายการงานที่ผ่านแบบมีเงื่อนมีดังนี้</p>
+                foreach (var item in Model.ListPMRespondPassCondition)
+                {
+                    @if (item.PCStatusID == SystemConstant.Unit_Form_PC_Status.PM_Approve)
+                    {
+                        <div class="pcdetailApprove">
+                            <ul>
+                            <li><strong>ชื่องาน:</strong> @item.FormGroupName</li>
+                            <li><strong>สถานะ:</strong> @item.PCStatusName</li>
+                            <li><strong>เหตุผล(PE):</strong> @item.RemarkPEPassCodition</li>
+                            <li><strong>เหตุผล(PM):</strong> @item.RemarkPMPassCodition</li>
+                            </ul>
+                        </div>
+                    }
+                    else if (item.PCStatusID == SystemConstant.Unit_Form_PC_Status.PM_Reject)
+                    {
+                      <div class="pcdetailReject">
+                        <ul>
+                            <li><strong>ชื่องาน:</strong> @item.FormGroupName</li>
+                            <li><strong>สถานะ:</strong> @item.PCStatusName</li>
+                            <li><strong>เหตุผล(PE):</strong> @item.RemarkPEPassCodition</li>
+                            <li><strong>เหตุผล(PM):</strong> @item.RemarkPMPassCodition</li>
+                        </ul>
+                     </div>
+                    }
+                }
+            }
+
+            <p>ขั้นตอนต่อไปท่านสามาถเข้าระบบ <a href="https://cqt.assetwise.co.th/cqt">Construction Quality Tracking</a> เพื่อตรวจสอบข้อมูลเพิ่มเติมหรือตรวจงวดงานในครั้งงวดถัดไป</strong></p>
         </div>
         <div class="email-footer">
             <p>Best Regard,</p>

@@ -1,4 +1,5 @@
 ﻿using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.SendMail;
 using Project.ConstructionTracking.Web.Repositories;
 
 namespace Project.ConstructionTracking.Web.Services
@@ -28,6 +29,12 @@ namespace Project.ConstructionTracking.Web.Services
         {
             var ListImage = _IPMApprovelistRepo.GetImage(model);
             return ListImage;
+        }
+
+        public PMRespond GetPMRespondSendEmailData(Guid unitFormId)
+        {
+            var PMRespondSendEmailData = _IPMApprovelistRepo.GetPMRespondSendEmailData(unitFormId);
+            return PMRespondSendEmailData;
         }
 
         public string SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model)

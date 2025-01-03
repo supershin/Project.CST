@@ -1,4 +1,5 @@
 ﻿using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.SendMail;
 
 namespace Project.ConstructionTracking.Web.Services
 {
@@ -7,6 +8,7 @@ namespace Project.ConstructionTracking.Web.Services
         List<PMApproveModel> GetPMApproveFormList();
         ApproveFormcheckModel GetApproveFormcheck(ApproveFormcheckModel model);
         List<UnitFormResourceModel> GetImage(UnitFormResourceModel model);
+        PMRespond GetPMRespondSendEmailData(Guid unitFormId);
         string SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model);
     }
 }

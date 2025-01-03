@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient.Server;
+﻿using DocumentFormat.OpenXml.InkML;
+using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Project.ConstructionTracking.Web.Commons;
@@ -6,6 +7,7 @@ using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
+using Project.ConstructionTracking.Web.Models.SendMail;
 using Project.ConstructionTracking.Web.Services;
 using QuestPDF.Infrastructure;
 using System;
@@ -423,7 +425,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 {
                                     passCondition.PM_Remark = passConditionModel.Remark + ' ' + FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
                                 }
-                                else
+                                else if (passConditionModel.Remark == "")
                                 {
                                     passCondition.PM_Remark = "";
                                 }
@@ -501,6 +503,62 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 throw new Exception("ปลิ้น PDF ไม่สำเร็จ", ex);
             }
+        }
+
+        public PMRespond GetPMRespondSendEmailData(Guid unitFormId)
+        {
+              var result =  (from t1 in _context.tr_UnitForm
+                             join t2 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PE } equals new { t2.UnitFormID, t2.RoleID } into t2Group
+                             from t2 in t2Group.DefaultIfEmpty()
+                             join t3 in _context.tm_User on t2.UpdateBy equals t3.ID into t3Group
+                             from t3 in t3Group.DefaultIfEmpty()
+                             join t4 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PM } equals new { t4.UnitFormID, t4.RoleID } into t4Group
+                             from t4 in t4Group.DefaultIfEmpty()
+                             join t5 in _context.tm_User on t4.UpdateBy equals t5.ID into t5Group from t5 in t5Group.DefaultIfEmpty()
+                             join t6 in _context.tm_UnitFormStatus on t1.StatusID equals t6.ID into t6Group
+                             from t6 in t6Group.DefaultIfEmpty()
+                             join t7 in _context.tm_Project on t1.ProjectID equals t7.ProjectID into t7Group
+                             from t7 in t7Group.DefaultIfEmpty()
+                             join t8 in _context.tm_Unit on t1.UnitID equals t8.UnitID into t8Group
+                             from t8 in t8Group.DefaultIfEmpty()
+                             join t9 in _context.tm_Form on t1.FormID equals t9.ID into t9Group
+                             from t9 in t9Group.DefaultIfEmpty()
+                             join t10 in _context.tr_PE_Unit on t1.UnitID equals t10.UnitID into t10Group
+                             from t10 in t10Group.DefaultIfEmpty()
+                             join t11 in _context.tm_User on t10.UserID equals t11.ID into t11Group
+                             from t11 in t11Group.DefaultIfEmpty()
+                             where t1.ID == unitFormId
+                             select new PMRespond
+                             {
+                                 StatusName = t6.Name ?? string.Empty,
+                                 StatusID = t1.StatusID,
+                                 PEFullname = (t3.FirstName ?? string.Empty) + " " + (t3.LastName ?? string.Empty),
+                                 FormName = t9 != null ? (t9.Name ?? string.Empty) + " " + (t9.Description ?? string.Empty) : string.Empty,
+                                 PMFullname = t5 != null ? (t5.FirstName ?? string.Empty) + " " + (t5.LastName ?? string.Empty) : string.Empty,
+                                 ActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(t4.ActionDate),
+                                 ProjectName = t7.ProjectName ?? string.Empty,
+                                 UnitCode = t8.UnitCode ?? string.Empty,
+                                 PMRemark = t4.Remark ?? string.Empty,
+                                 //PEEmail = t11.Email ?? string.Empty,
+                                 //PEEmail = "firsty.shabby@gmail.com",
+                                 PEEmail = "siripoj@assetwise.co.th",
+                                 ListPMRespondPassCondition = (from pc in _context.tr_UnitFormPassCondition
+                                                               join gn in _context.tm_FormGroup on pc.GroupID equals gn.ID into gnGroup
+                                                               from gn in gnGroup.DefaultIfEmpty()
+                                                               join stn in _context.tr_RoleActionStatus on pc.StatusID equals stn.ID into stnGroup
+                                                               from stn in stnGroup.DefaultIfEmpty()
+                                                               where pc.UnitFormID == t1.ID && pc.FlagActive == true
+                                                               select new PMRespondPassConditionModel
+                                                               {
+                                                                  FormGroupName = gn.Name,
+                                                                  PCStatusID = pc.StatusID,
+                                                                  PCStatusName = stn.Name,
+                                                                  RemarkPEPassCodition = pc.PE_Remark,
+                                                                  RemarkPMPassCodition = pc.PM_Remark
+                                                               }).ToList()
+                             }).FirstOrDefault();
+
+             return result;
         }
 
         private void UpdateUnitForm(Guid? unitformID, string? actiontype, int? StatusID, Guid? userID)
