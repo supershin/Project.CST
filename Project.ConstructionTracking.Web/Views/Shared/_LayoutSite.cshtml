@@ -609,7 +609,36 @@
                                     </div>
                                 </div>
                             </li>
-
+                            <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-map-question">
+                                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                          <path d="M15 20l-6 -3l-6 3v-13l6 -3l6 3l6 -3v7.5" />
+                                          <path d="M9 4v13" />
+                                          <path d="M15 7v5.5" />
+                                          <path d="M19 22v.01" />
+                                          <path d="M19 19a2.003 2.003 0 0 0 .914 -3.782a1.98 1.98 0 0 0 -2.414 .483" />
+                                        </svg>
+                                        <span class="nav-link-title">
+                                            User Manual
+                                        </span>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <div class="dropdown-menu-columns">
+                                            <div class="dropdown-menu-column">
+                                                <a class="dropdown-item" href="javascript:void(0);" onclick="downloadFile('Adminusermanual');">
+                                                    คู่มือ Admin การ set up ระบบ
+                                                </a>
+                                                <a class="dropdown-item" href="javascript:void(0);" onclick="downloadFile('PESEPMusermanual');">
+                                                    คู่มือ PE SE PM
+                                                </a>
+                                                <a class="dropdown-item" href="javascript:void(0);" onclick="downloadFile('QCusermanual');">
+                                                    คู่มือ QC
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
                             @if (ViewBag.UserRole == SystemConstant.UserRole.ADMIN.ToString() || ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
                              {
                                 <li class="nav-item dropdown">
@@ -740,6 +769,19 @@
     <script src="~/lib/core-ui/dist/libs/nouislider/dist/nouislider.min.js?1692870487" defer></script>
 
     <script> 
+
+        function downloadFile(act) {
+            // Construct the URL using BaseUrl
+            const url = baseUrl + `DownloadFile/DownloadFile?act=${act}`;
+        
+            // Create an anchor element for triggering the download
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = ''; // Optional: Let the server define the file name
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
 
         function openModalChat(UnitFormID, FormID, FormName , Unitcode) {
             // Store the UnitFormID, FormID, and RoleID in hidden inputs
