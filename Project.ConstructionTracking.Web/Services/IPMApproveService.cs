@@ -9,6 +9,7 @@ namespace Project.ConstructionTracking.Web.Services
         ApproveFormcheckModel GetApproveFormcheck(ApproveFormcheckModel model);
         List<UnitFormResourceModel> GetImage(UnitFormResourceModel model);
         PMRespond GetPMRespondSendEmailData(Guid unitFormId);
+        List<PMRequestModel> GetListPMRequesSendEmailData(Guid unitFormId);
         string SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model);
     }
 }

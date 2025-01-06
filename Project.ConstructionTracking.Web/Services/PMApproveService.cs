@@ -24,6 +24,11 @@ namespace Project.ConstructionTracking.Web.Services
             var PMApproveData = _IPMApprovelistRepo.GetApproveFormcheck(model);
             return PMApproveData;
         }
+        public List<PMRequestModel> GetListPMRequesSendEmailData(Guid unitFormId)
+        {
+            var ListPMRequestData = _IPMApprovelistRepo.GetListPMRequesSendEmailData(unitFormId);
+            return ListPMRequestData;
+        }
 
         public List<UnitFormResourceModel> GetImage(UnitFormResourceModel model)
         {

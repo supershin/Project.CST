@@ -10,7 +10,7 @@
         public string? ActionDatePM { get; set; }
         public string? ProjectName { get; set; }
         public string? UnitCode { get; set; }
-        public string? PMEmail { get; set; }
+        public string? PJMEmail { get; set; }
         public List<PMRequesPassConditionModel>? ListPMRequesPassCondition { get; set; }
     }
     public class PMRequesPassConditionModel

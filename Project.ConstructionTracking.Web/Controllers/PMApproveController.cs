@@ -130,9 +130,9 @@ namespace Project.ConstructionTracking.Web.Controllers
                 string returnUrlDoc = _PMApproveService.SaveOrUpdateUnitFormAction(model);
                 if (model.ActionType == "submit") 
                 {
-                    PMRespond listPERequesData = _PMApproveService.GetPMRespondSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));
+                    PMRespond PMRespondData = _PMApproveService.GetPMRespondSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));
 
-                    string template = RenderRazorViewtoString(this, "Template_PM_Respond_SendMail", listPERequesData);
+                    string template = RenderRazorViewtoString(this, "Template_PM_Respond_SendMail", PMRespondData);
                     var email = new EmailModel();
                     email.Host = _config["Email:HOST"];
                     email.From = _config["Email:FROM"];
@@ -140,12 +140,39 @@ namespace Project.ConstructionTracking.Web.Controllers
                     email.Username = _config["Email:USER_NAME"];
                     email.Password = _config["Email:PASSWORD"];
                     email.PORT = Convert.ToInt32(_config["Email:PORT"]);
-                    if (!string.IsNullOrEmpty(listPERequesData.PEEmail))
-                        email.To = new List<string> { listPERequesData.PEEmail};
+                    if (!string.IsNullOrEmpty(PMRespondData.PEEmail))
+                        email.To = new List<string> { PMRespondData.PEEmail};
                     email.Subject = _config["Email:Subject:HEADER_TEXT"];
                     email.Body = template;
 
                     (new MailService()).SendMail(email);
+
+                    if (model.UnitFormStatus == SystemConstant.Unit_Form_Status.PM_Sendto_PJM)
+                    {
+                        List<PMRequestModel> listPMRequesData = _PMApproveService.GetListPMRequesSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));
+
+                        var emailConfig = new EmailModel
+                        {
+                            Host = _config["Email:HOST"],
+                            From = _config["Email:FROM"],
+                            Sender = _config["Email:SENDER"],
+                            Username = _config["Email:USER_NAME"],
+                            Password = _config["Email:PASSWORD"],
+                            PORT = Convert.ToInt32(_config["Email:PORT"]),
+                            Subject = _config["Email:Subject:HEADER_TEXT"]
+                        };
+
+                        foreach (var request in listPMRequesData)
+                        {
+                            if (!string.IsNullOrEmpty(request.PJMEmail))
+                            {
+                                string template2 = RenderRazorViewtoString(this, "Template_PM_Request_SendMail", request);
+                                emailConfig.To = new List<string> { request.PJMEmail };
+                                emailConfig.Body = template2;
+                                (new MailService()).SendMail(emailConfig);
+                            }
+                        }
+                    }
 
                 }
                 return Ok(new { success = true, pdfPath = returnUrlDoc });
