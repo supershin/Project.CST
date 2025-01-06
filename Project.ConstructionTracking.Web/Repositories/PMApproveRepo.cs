@@ -561,6 +561,59 @@ namespace Project.ConstructionTracking.Web.Repositories
              return result;
         }
 
+        public List<PMRequestModel> GetListPMRequesSendEmailData(Guid unitFormId)
+        {
+            var result = (from t1 in _context.tr_UnitForm
+                          join t2 in _context.tr_ProjectPermission on t1.ProjectID equals t2.ProjectID into t2Group
+                          from t2 in t2Group.DefaultIfEmpty()
+                          join t3 in _context.tm_User on t2.UserID equals t3.ID into t3Group
+                          from t3 in t3Group.DefaultIfEmpty()
+                          join t4 in _context.tm_Project on t1.ProjectID equals t4.ProjectID into t4Group
+                          from t4 in t4Group.DefaultIfEmpty()
+                          join t5 in _context.tm_Unit on t1.UnitID equals t5.UnitID into t5Group
+                          from t5 in t5Group.DefaultIfEmpty()
+                          join t6 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PE } equals new { t6.UnitFormID, t6.RoleID } into t6Group
+                          from t6 in t6Group.DefaultIfEmpty()
+                          join t7 in _context.tm_User on t6.UpdateBy equals t7.ID into t7Group
+                          from t7 in t7Group.DefaultIfEmpty()
+                          join t6pm in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PM } equals new { t6pm.UnitFormID, t6pm.RoleID } into t6pmGroup
+                          from t6pm in t6pmGroup.DefaultIfEmpty()
+                          join t7pm in _context.tm_User on t6pm.UpdateBy equals t7pm.ID into t7pmGroup
+                          from t7pm in t7Group.DefaultIfEmpty()
+                          join t8 in _context.tm_Form on t1.FormID equals t8.ID into t8Group
+                          from t8 in t8Group.DefaultIfEmpty()
+                          where t1.ID == unitFormId
+                          && t1.FlagActive == true
+                          && (t2 == null || t2.FlagActive == true)
+                          && (t3 == null || t3.RoleID == SystemConstant.UserRole.PJM)
+                          select new PMRequestModel
+                          {
+                              PJMFullName = (t3.FirstName ?? string.Empty) + " " + (t3.LastName ?? string.Empty),
+                              FormName = t8 != null ? t8.Name + " " + t8.Description : null,
+                              PEFullName = (t7.FirstName ?? string.Empty) + " " + (t7.LastName ?? string.Empty),
+                              ActionDatePE = FormatExtension.FormatDateToDayMonthNameYearTime(t6.ActionDate),
+                              PMFullName = (t7pm.FirstName ?? string.Empty) + " " + (t7pm.LastName ?? string.Empty),
+                              ActionDatePM = FormatExtension.FormatDateToDayMonthNameYearTime(t6pm.ActionDate),
+                              ProjectName = t4.ProjectName,
+                              UnitCode = t5.UnitCode,
+                              //PMEmail = t3.Email
+                              PMEmail = "firsty.shabby@gmail.com",
+                              //PMEmail = "siripoj@assetwise.co.th",  
+                              ListPMRequesPassCondition = (from pc in _context.tr_UnitFormPassCondition
+                                                           join gn in _context.tm_FormGroup on pc.GroupID equals gn.ID into gnGroup
+                                                           from gn in gnGroup.DefaultIfEmpty()
+                                                           where pc.UnitFormID == t1.ID && pc.FlagActive == true
+                                                           select new PMRequesPassConditionModel
+                                                           {
+                                                               FormGroupName = gn.Name,
+                                                               RemarkPassCoditionPE = pc.PE_Remark,
+                                                               RemarkPassCoditionPM = pc.PM_Remark
+                                                           }).ToList()
+                          }).ToList();
+
+            return result;
+        }
+
         private void UpdateUnitForm(Guid? unitformID, string? actiontype, int? StatusID, Guid? userID)
         {
 
