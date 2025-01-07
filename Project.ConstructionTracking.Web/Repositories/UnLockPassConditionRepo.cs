@@ -1,8 +1,10 @@
-﻿using Microsoft.Data.SqlClient.Server;
+﻿using DocumentFormat.OpenXml.InkML;
+using Microsoft.Data.SqlClient.Server;
 using Newtonsoft.Json.Linq;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.SendMail;
 using System.Text.RegularExpressions;
 using System.Transactions;
 using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
@@ -151,6 +153,38 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
+        public List<PERequesUnlockModel> GetImage(int PC_ID , Guid UnitFormID)
+        {
+            var unitFormPassConditionData = (from t1 in _context.tr_UnitFormPassCondition
+                                             join t2 in _context.tr_UnitFormUnLockPassCondition on new { t1.UnitFormID, PassConditionID = (int)t1.ID, RoleID = (int?)SystemConstant.UserRole.PE } equals new { t2.UnitFormID, t2.PassConditionID, t2.RoleID } into t2Group
+                                             from t2 in t2Group.DefaultIfEmpty()
+                                             join t3 in _context.tr_UnitForm on t1.UnitFormID equals t3.ID
+                                             join t4 in _context.tr_ProjectPermission on t3.ProjectID equals t4.ProjectID
+                                             join t5 in _context.tm_User on t4.UserID equals t5.ID
+                                             join t6 in _context.tm_Form on t3.FormID equals t6.ID
+                                             join t7 in _context.tm_FormGroup on t1.GroupID equals t7.ID
+                                             join t8 in _context.tm_User on t2.UpdateBy equals t8.ID into t8Group
+                                             from t8 in t8Group.DefaultIfEmpty()
+                                             join t9 in _context.tm_Project on t3.ProjectID equals t9.ProjectID
+                                             join t10 in _context.tm_Unit on t3.UnitID equals t10.UnitID
+                                             where t1.UnitFormID == UnitFormID
+                                                && t1.ID == PC_ID
+                                                && t5.RoleID == SystemConstant.UserRole.PM
+                                             select new PERequesUnlockModel
+                                             {
+                                                 PMFullname = (t5.FirstName ?? string.Empty) + " " + (t5.LastName ?? string.Empty),
+                                                 FormName = (t6.Name ?? string.Empty) + " " + (t7.Name ?? string.Empty),
+                                                 PEFullname = (t8.FirstName ?? string.Empty) + " " + (t8.LastName ?? string.Empty),
+                                                 ActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(t2.ActionDate),
+                                                 ProjectName = t9.ProjectName ?? string.Empty,
+                                                 UnitCode = t10.UnitCode ?? string.Empty,
+                                                 PERemark = t2.Remark ?? string.Empty,
+                                                 Email = t5.Email ?? string.Empty
+                                             }).ToList();
+
+            return unitFormPassConditionData;
+        }
+
         public void RequestUnlock(UnLockPassConditionModel.UpdateUnlockPC model)
         {
             var transactionOptions = new TransactionOptions
@@ -163,7 +197,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 try
                 {
-                    if (model.RoleID == 1)
+                    if (model.RoleID == SystemConstant.UserRole.PE)
                     {
                         PERequestUnlock(model);
                     }
