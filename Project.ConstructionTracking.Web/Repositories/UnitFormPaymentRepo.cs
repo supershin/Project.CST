@@ -118,8 +118,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                           {
                               //VendorFullName = t2.Name,
                               VendorFullName = t4.Name,
-                              //VendorEmail = t2.Email,
-                              VendorEmail = "siripoj@assetwise.co.th",
+                              VendorEmail = t2.Email,
+                              //VendorEmail = "siripoj@assetwise.co.th",
                               ProjectName = t5.ProjectName,
                               UnitCode = t6.UnitCode
                           }).FirstOrDefault();

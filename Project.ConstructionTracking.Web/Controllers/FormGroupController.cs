@@ -17,6 +17,7 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IHostEnvironment _hosting;
         private readonly IPMApproveService _PMApproveService;
         private readonly IConfiguration _config;
+        private readonly string _ConstructionQualityTracking;
         public FormGroupController(IFormGroupService FormGroupService, IGetDDLService getDDLService, IHostEnvironment hosting , IFormChecklistService formChecklistService , IPMApproveService PMApproveService , IConfiguration configuration)
         {
             _FormGroupService = FormGroupService;
@@ -25,6 +26,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             _FormChecklistService = formChecklistService;
             _PMApproveService = PMApproveService;
             _config = configuration;
+            _ConstructionQualityTracking = configuration["ConstructionQualityTracking:Url"];
         }
 
         public IActionResult Index(int FormID, Guid unitId , string comeFrom)
@@ -98,6 +100,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                 if (model.Act == "submit")
                 {
+                    ViewBag.ConstructionQualityTrackingUrl = _ConstructionQualityTracking;
                     // Retrieve the data list
                     List<PERequesModel> listPERequesData = _FormGroupService.GetListPERequesSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));
 

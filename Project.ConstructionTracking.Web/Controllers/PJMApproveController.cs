@@ -2,7 +2,9 @@
 using Microsoft.Data.SqlClient.Server;
 using Newtonsoft.Json;
 using Project.ConstructionTracking.Web.Commons;
+using Project.ConstructionTracking.Web.Infras.Services;
 using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.SendMail;
 using Project.ConstructionTracking.Web.Services;
 using System.Text.RegularExpressions;
 using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
@@ -16,12 +18,18 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IPMApproveService _PMApproveService;
         private readonly IHostEnvironment _hosting;
         private readonly IGetDDLService _getDDLService;
-        public PJMApproveController(IPJMApproveService PJMApproveService, IHostEnvironment hosting, IPMApproveService pMApproveService, IGetDDLService getDDLService)
+        private readonly IConfiguration _config;
+        private readonly string _VendorPortal;
+        private readonly string _ConstructionQualityTracking;
+        public PJMApproveController(IPJMApproveService PJMApproveService, IHostEnvironment hosting, IPMApproveService pMApproveService, IGetDDLService getDDLService, IConfiguration config)
         {
             _PJMApproveService = PJMApproveService;
             _hosting = hosting;
             _PMApproveService = pMApproveService;
             _getDDLService = getDDLService;
+            _config = config;
+            _VendorPortal = config["VendorPortal:Url"];
+            _ConstructionQualityTracking = config["ConstructionQualityTracking:Url"];
         }
         public IActionResult Index(Guid UnitFormID)
         {
@@ -70,6 +78,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             return View(ListChecklistPJMApprove);
         }
 
+
         [HttpPost]
         public IActionResult SaveOrSubmit(PJMApproveModel.PJMApproveIU model)
         {
@@ -85,6 +94,40 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                 // Get the document URL if available
                 string returnUrlDoc = _PJMApproveService.SaveOrUpdateUnitFormAction(model);
+
+                if (model.ActionType == "submit")
+                {
+                    ViewBag.ConstructionQualityTrackingUrl = _ConstructionQualityTracking;
+
+                    List<PJMRespondModel> listPJMRespondData = _PJMApproveService.GetPJMRespondSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));
+
+                    var emailConfig = new EmailModel
+                    {
+                        Host = _config["Email:HOST"],
+                        From = _config["Email:FROM"],
+                        Sender = _config["Email:SENDER"],
+                        Username = _config["Email:USER_NAME"],
+                        Password = _config["Email:PASSWORD"],
+                        PORT = Convert.ToInt32(_config["Email:PORT"]),
+                        Subject = _config["Email:Subject:HEADER_TEXT"]
+                    };
+
+                    foreach (var request in listPJMRespondData)
+                    {
+                        if (!string.IsNullOrEmpty(request.Email))
+                        {
+                            // Render template for the current PM
+                            string template = RenderRazorViewtoString(this, "Template_PJM_Respond_SendMail", request);
+
+                            // Send the email
+                            emailConfig.To = new List<string> { request.Email };
+                            emailConfig.Body = template;
+                            (new MailService()).SendMail(emailConfig);
+                        }
+                    }
+
+                }
+
 
                 return Ok(new { success = true, pdfPath = returnUrlDoc });
             }

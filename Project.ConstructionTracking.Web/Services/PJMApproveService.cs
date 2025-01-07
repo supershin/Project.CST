@@ -1,5 +1,7 @@
 ﻿using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.SendMail;
 using Project.ConstructionTracking.Web.Repositories;
+using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
 
 namespace Project.ConstructionTracking.Web.Services
 {
@@ -26,6 +28,11 @@ namespace Project.ConstructionTracking.Web.Services
             var ListImageUnlock = _IPJMApproveRepo.GetImageUnlock(filterData);
             return ListImageUnlock;
         }
+        public List<PJMRespondModel> GetPJMRespondSendEmailData(Guid unitFormId)
+        {
+            var ListPJMRespond = _IPJMApproveRepo.GetPJMRespondSendEmailData(unitFormId);
+            return ListPJMRespond;
+        }
         public string SaveOrUpdateUnitFormAction(PJMApproveModel.PJMApproveIU model)
         {
             try
@@ -37,7 +44,6 @@ namespace Project.ConstructionTracking.Web.Services
                 throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
             }
         }
-
 
     }
 }

@@ -1,9 +1,7 @@
-﻿@model Project.ConstructionTracking.Web.Models.SendMail.PMRespond
+﻿@model Project.ConstructionTracking.Web.Models.SendMail.PJMRespondModel
 @{
-
     Layout = null;
 }
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -110,6 +108,7 @@
             margin-bottom: 15px;
             color: #b71c1c;
         }
+
     </style>
 </head>
 <body>
@@ -118,65 +117,66 @@
             <h1>Construction Quality Tracking</h1>
         </div>
         <div class="email-body">
-            @if (Model.StatusID == SystemConstant.Unit_Form_Status.PM_Reject)
+            @if (Model.StatusID == SystemConstant.Unit_Form_Status.PJM_Reject)
             {
                 <div class="statusReject">
                     <h2>สถานะการตรวจ: <span>❌ @Model.StatusName</span></h2>
                 </div>
             }
-            else if (Model.StatusID == SystemConstant.Unit_Form_Status.PM_Approve || Model.StatusID == SystemConstant.Unit_Form_Status.PM_Sendto_PJM)
+            else if (Model.StatusID == SystemConstant.Unit_Form_Status.PJM_Approve)
             {
                 <div class="statusApprove">
-                        <h2>สถานะการตรวจ: <span>✅ @Model.StatusName</span></h2>
+                    <h2>สถานะการตรวจ: <span>✅ @Model.StatusName</span></h2>
                 </div>
             }
-
-            <p>เรียน (PE) @Model.PEFullname</p>
+            <p>เรียน @Model.Fullname</p>
             <p>ทางเราขอแจ้งให้ทราบผลการตรวจงวดงาน โดยมีรายละเอียดดังนี้:</p>
             <ul>
                 <li><strong>ชื่องวดงาน:</strong> @Model.FormName</li>
-                <li><strong>PM ตรวจ:</strong> @Model.PMFullname</li>
-                <li><strong>เวลาที่ตรวจ:</strong> @Model.ActionDate</li>
+                <li><strong>PJM ตรวจ:</strong> @Model.PJMFullName</li>
+                <li><strong>เวลาที่ตรวจ:</strong> @Model.PJMActionDate</li>
                 <li><strong>โครงการ:</strong> @Model.ProjectName</li>
                 <li><strong>เลขที่แปลง:</strong> @Model.UnitCode</li>
             </ul>
-            @if (Model.StatusID == SystemConstant.Unit_Form_Status.PM_Reject)
+
+            @if (Model.StatusID == SystemConstant.Unit_Form_Status.PJM_Reject)
             {
                 <div class="remark">
-                    <strong>หมายเหตุ:</strong> @Model.PMRemark
+                    <strong>หมายเหตุ:</strong> @Model.PJMRemark
                 </div>
             }
-            @if (Model.ListPMRespondPassCondition.Count > 0)
+            @if (Model.ListPJMRespondPassCondition.Count > 0)
             {
                 <p>รายการงานที่ผ่านแบบมีเงื่อนมีดังนี้</p>
-                foreach (var item in Model.ListPMRespondPassCondition)
+                foreach (var item in Model.ListPJMRespondPassCondition)
                 {
-                    @if (item.PCStatusID == SystemConstant.Unit_Form_PC_Status.PM_Approve)
+                    @if (item.PCStatusID == SystemConstant.Unit_Form_PC_Status.PJM_Approve)
                     {
                         <div class="pcdetailApprove">
                             <ul>
-                            <li><strong>ชื่องาน:</strong> @item.FormGroupName</li>
-                            <li><strong>สถานะ:</strong> @item.PCStatusName</li>
-                            <li><strong>เหตุผล(PE):</strong> @item.RemarkPEPassCodition</li>
-                            <li><strong>เหตุผล(PM):</strong> @item.RemarkPMPassCodition</li>
+                                <li><strong>ชื่องาน:</strong> @item.FormGroupName</li>
+                                <li><strong>สถานะ:</strong> @item.PCStatusName</li>
+                                <li><strong>เหตุผล(PE):</strong> @item.RemarkPEPassCodition</li>
+                                <li><strong>เหตุผล(PM):</strong> @item.RemarkPMPassCodition</li>
                             </ul>
                         </div>
                     }
-                    else if (item.PCStatusID == SystemConstant.Unit_Form_PC_Status.PM_Reject)
+                    else if (item.PCStatusID == SystemConstant.Unit_Form_PC_Status.PJM_Reject)
                     {
-                      <div class="pcdetailReject">
-                        <ul>
-                            <li><strong>ชื่องาน:</strong> @item.FormGroupName</li>
-                            <li><strong>สถานะ:</strong> @item.PCStatusName</li>
-                            <li><strong>เหตุผล(PE):</strong> @item.RemarkPEPassCodition</li>
-                            <li><strong>เหตุผล(PM):</strong> @item.RemarkPMPassCodition</li>
-                        </ul>
-                     </div>
+                        <div class="pcdetailReject">
+                            <ul>
+                                <li><strong>ชื่องาน:</strong> @item.FormGroupName</li>
+                                <li><strong>สถานะ:</strong> @item.PCStatusName</li>
+                                <li><strong>เหตุผล(PE):</strong> @item.RemarkPEPassCodition</li>
+                                <li><strong>เหตุผล(PM):</strong> @item.RemarkPMPassCodition</li>
+                                <li><strong>เหตุผล(PJM):</strong> @item.RemarkPJMPassCodition</li>
+                            </ul>
+                        </div>
                     }
                 }
             }
 
-            <p>ขั้นตอนต่อไปท่านสามาถเข้าระบบ <a href="@ViewBag.ConstructionQualityTrackingUrl">Construction Quality Tracking</a> เพื่อตรวจสอบข้อมูลเพิ่มเติมหรือตรวจงวดงานในครั้งงวดถัดไป</strong></p>
+            <p>ขั้นตอนต่อไปท่านสามาถเข้าระบบ <a href="@ViewBag.ConstructionQualityTrackingUrl">Construction Quality Tracking</a> เพื่อตรวจสอบข้อมูลเพิ่มเติมหรือตรวจงวดงานในครั้งงวดถัดไป</p>
         </div>
         <div class="email-footer">
             <p>Best Regard,</p>

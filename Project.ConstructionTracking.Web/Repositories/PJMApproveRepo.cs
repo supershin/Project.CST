@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.EntityFrameworkCore;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
+using Project.ConstructionTracking.Web.Models.SendMail;
 using Project.ConstructionTracking.Web.Services;
 using System;
 using System.Transactions;
@@ -256,6 +258,67 @@ namespace Project.ConstructionTracking.Web.Repositories
             return returnUrlDoc;
         }
 
+        public List<PJMRespondModel> GetPJMRespondSendEmailData(Guid unitFormId)
+        {
+            var result = (from t1 in _context.tr_UnitForm
+                          join t2 in _context.tr_ProjectPermission on t1.ProjectID equals t2.ProjectID
+                          join t3 in _context.tm_User on t2.UserID equals t3.ID
+                          join t4 in _context.tr_PE_Unit on new { UserID = (Guid?)t3.ID, t1.UnitID } equals new { t4.UserID, t4.UnitID } into t4Group
+                          from t4 in t4Group.DefaultIfEmpty()
+                          join t5 in _context.tm_Project on t1.ProjectID equals t5.ProjectID into t5Group
+                          from t5 in t5Group.DefaultIfEmpty()
+                          join t6 in _context.tm_Unit on t1.UnitID equals t6.UnitID into t6Group
+                          from t6 in t6Group.DefaultIfEmpty()
+                          join t7 in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PJM } equals new { t7.UnitFormID, t7.RoleID } into t7Group
+                          from t7 in t7Group.DefaultIfEmpty()
+                          join t8 in _context.tm_User on t7.UpdateBy equals t8.ID into t8Group
+                          from t8 in t8Group.DefaultIfEmpty()
+                          join t9 in _context.tm_Form on t1.FormID equals t9.ID into t9Group
+                          from t9 in t9Group.DefaultIfEmpty()
+                          join t10 in _context.tm_UnitFormStatus on t1.StatusID equals t10.ID into t10Group
+                          from t10 in t10Group.DefaultIfEmpty()
+                          where t1.ID == unitFormId
+                                && t1.FlagActive == true
+                                && t2.FlagActive == true
+                                && t3.FlagActive == true
+                                && (t3.RoleID == SystemConstant.UserRole.PE || t3.RoleID == SystemConstant.UserRole.PM)
+                                && (t3.RoleID != SystemConstant.UserRole.PE || t4 != null)
+                          select new PJMRespondModel
+                          {
+                              StatusID = t1.StatusID,
+                              StatusName = t10.Name,
+                              Fullname = t3.RoleID == 1
+                                            ? "(PE) " + t3.FirstName + " " + t3.LastName
+                                            : t3.RoleID == 2
+                                            ? "(PM) " + t3.FirstName + " " + t3.LastName
+                                            : t3.FirstName + " " + t3.LastName,
+                              FormName = t9 != null ? t9.Name + " " + t9.Description : null,
+                              PJMFullName = t8.FirstName + " " + t8.LastName,
+                              PJMActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(t7.ActionDate),
+                              PJMRemark = t7.Remark,
+                              ProjectName = t5.ProjectName,
+                              UnitCode = t6.UnitCode,
+                              Email = t3.Email,
+                              //Email = "firsty.shabby@gmail.com",
+                              ListPJMRespondPassCondition = (from pc in _context.tr_UnitFormPassCondition
+                                                            join gn in _context.tm_FormGroup on pc.GroupID equals gn.ID into gnGroup
+                                                            from gn in gnGroup.DefaultIfEmpty()
+                                                            join stn in _context.tr_RoleActionStatus on pc.StatusID equals stn.ID into stnGroup
+                                                            from stn in stnGroup.DefaultIfEmpty()
+                                                            where pc.UnitFormID == t1.ID && pc.FlagActive == true
+                                                            select new PJMRespondPassConditionModel
+                                                            {
+                                                                FormGroupName = gn.Name,
+                                                                PCStatusID = pc.StatusID,
+                                                                PCStatusName = stn.Name,
+                                                                RemarkPEPassCodition = pc.PE_Remark,
+                                                                RemarkPMPassCodition = pc.PM_Remark,
+                                                                RemarkPJMPassCodition = pc.PJM_Remark,
+                                                            }).ToList()
+                          }).ToList();
+
+            return result;
+        }
 
         private string GenerateAndSavePDF(DataToGenerateModel model, Guid? UserID)
         {

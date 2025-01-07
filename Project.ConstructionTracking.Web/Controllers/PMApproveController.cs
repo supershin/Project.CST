@@ -18,12 +18,14 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IHostEnvironment _hosting;
         private readonly IGetDDLService _getDDLService;
         private readonly IConfiguration _config;
+        private readonly string _ConstructionQualityTracking;
         public PMApproveController(IPMApproveService PMApproveService, IHostEnvironment hosting, IGetDDLService getDDLService, IConfiguration config)
         {
             _PMApproveService = PMApproveService;
             _hosting = hosting;
             _getDDLService = getDDLService;
             _config = config;
+            _ConstructionQualityTracking = config["ConstructionQualityTracking:Url"];
         }
 
         public IActionResult Index(Guid unitId, int formId ,string comeFrom)
@@ -130,6 +132,8 @@ namespace Project.ConstructionTracking.Web.Controllers
                 string returnUrlDoc = _PMApproveService.SaveOrUpdateUnitFormAction(model);
                 if (model.ActionType == "submit") 
                 {
+                    ViewBag.ConstructionQualityTrackingUrl = _ConstructionQualityTracking;
+
                     PMRespond PMRespondData = _PMApproveService.GetPMRespondSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));
 
                     string template = RenderRazorViewtoString(this, "Template_PM_Respond_SendMail", PMRespondData);

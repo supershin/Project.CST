@@ -539,9 +539,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                                  ProjectName = t7.ProjectName ?? string.Empty,
                                  UnitCode = t8.UnitCode ?? string.Empty,
                                  PMRemark = t4.Remark ?? string.Empty,
-                                 //PEEmail = t11.Email ?? string.Empty,
+                                 PEEmail = t11.Email ?? string.Empty,
                                  //PEEmail = "firsty.shabby@gmail.com",
-                                 PEEmail = "siripoj@assetwise.co.th",
+                                 //PEEmail = "siripoj@assetwise.co.th",
                                  ListPMRespondPassCondition = (from pc in _context.tr_UnitFormPassCondition
                                                                join gn in _context.tm_FormGroup on pc.GroupID equals gn.ID into gnGroup
                                                                from gn in gnGroup.DefaultIfEmpty()
@@ -578,10 +578,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                           from t7 in t7Group.DefaultIfEmpty()
                           join t6pm in _context.tr_UnitFormAction on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PM } equals new { t6pm.UnitFormID, t6pm.RoleID } into t6pmGroup
                           from t6pm in t6pmGroup.DefaultIfEmpty()
-                          join t7pm in _context.tm_User on t6pm.UpdateBy equals t7pm.ID into t7pmGroup
-                          from t7pm in t7Group.DefaultIfEmpty()
                           join t8 in _context.tm_Form on t1.FormID equals t8.ID into t8Group
                           from t8 in t8Group.DefaultIfEmpty()
+                          join t9 in _context.tm_User on t6pm.UpdateBy equals t9.ID into t9Group
+                          from t9 in t9Group.DefaultIfEmpty()
                           where t1.ID == unitFormId
                           && t1.FlagActive == true
                           && (t2 == null || t2.FlagActive == true)
@@ -592,7 +592,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               FormName = t8 != null ? t8.Name + " " + t8.Description : null,
                               PEFullName = (t7.FirstName ?? string.Empty) + " " + (t7.LastName ?? string.Empty),
                               ActionDatePE = FormatExtension.FormatDateToDayMonthNameYearTime(t6.ActionDate),
-                              PMFullName = (t7pm.FirstName ?? string.Empty) + " " + (t7pm.LastName ?? string.Empty),
+                              PMFullName = (t9.FirstName ?? string.Empty) + " " + (t9.LastName ?? string.Empty),
                               ActionDatePM = FormatExtension.FormatDateToDayMonthNameYearTime(t6pm.ActionDate),
                               ProjectName = t4.ProjectName,
                               UnitCode = t5.UnitCode,

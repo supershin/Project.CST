@@ -20,6 +20,7 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IUnitFormPaymentService _UnitFormPaymentService;
         private readonly IHostEnvironment _hosting;
         private readonly IConfiguration _config;
+        private readonly string _VendorPortal;
 
         public UnitPaymentController(MasterManagementProviderProject unitstatusProvider, IGetDDLService getDDLService, IUnitFormPaymentService UnitFormPaymentService, IHostEnvironment hosting,
             IConfiguration configuration)
@@ -29,6 +30,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             _UnitFormPaymentService = UnitFormPaymentService;
             _hosting = hosting;
             _config = configuration;
+            _VendorPortal = configuration["VendorPortal:Url"];
         }
         public IActionResult Index()
         {
@@ -376,6 +378,8 @@ namespace Project.ConstructionTracking.Web.Controllers
 
         private void UnitPaymentSendMailData(UnitPaymentMail model)
         {
+            ViewBag.VendorPortalUrl = _VendorPortal;
+
             string template = RenderRazorViewtoString(this, "Template_UnitPayment_SendMail", model);
             var email = new EmailModel();
             email.Host = _config["Email:HOST"];

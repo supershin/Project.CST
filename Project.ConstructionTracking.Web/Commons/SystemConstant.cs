@@ -121,6 +121,8 @@
         {
             public const int PM_Approve = 6;
             public const int PM_Reject = 7;
+            public const int PJM_Approve = 8;
+            public const int PJM_Reject = 9;
         }
 
         public static class CheckList_Status
