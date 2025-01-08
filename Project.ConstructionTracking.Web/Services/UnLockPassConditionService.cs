@@ -1,5 +1,7 @@
 ﻿using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.SendMail;
 using Project.ConstructionTracking.Web.Repositories;
+using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
 using static Project.ConstructionTracking.Web.Models.UnLockPassConditionModel;
 
 namespace Project.ConstructionTracking.Web.Services
@@ -30,6 +32,7 @@ namespace Project.ConstructionTracking.Web.Services
             var ListGetImage = _IUnLockPassConditionRepo.GetImage(filterData);
             return ListGetImage;
         }
+
         public void RequestUnlock(UnLockPassConditionModel.UpdateUnlockPC model)
         {
             try
@@ -42,5 +45,16 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
+        public List<PERequesUnlockModel> PERequestUnlockSendMail(int PC_ID, Guid UnitFormID)
+        {
+            var ListPERequestUnlockSendMailData = _IUnLockPassConditionRepo.PERequestUnlockSendMail(PC_ID,UnitFormID);
+            return ListPERequestUnlockSendMailData;
+        }
+
+        public PMRespondUnlockModel PMRespondUnlockSendMail(int PC_ID, Guid UnitFormID)
+        {
+            var PMRespondUnlockSendMailData = _IUnLockPassConditionRepo.PMRespondUnlockSendMail(PC_ID, UnitFormID);
+            return PMRespondUnlockSendMailData;
+        }
     }
 }

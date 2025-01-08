@@ -117,6 +117,22 @@
             public const int PM_Reject_Unlock = 12;
         }
 
+        public static class Unit_Form_Role_Status
+        {
+            public const int PE_Approve = 1;
+            public const int PE_Reject = 2;
+            public const int PE_Not_have_this_job = 3;
+            public const int PM_Approve = 4;
+            public const int PM_Reject = 5;
+            public const int PM_Sendto_PJM = 6;
+            public const int PM_Reject_Sendto_PJM = 7;
+            public const int PJM_Approve = 8;
+            public const int PJM_Reject = 9;
+            public const int PE_REQ_Unlock = 12;
+            public const int PM_Approve_Unlock = 13;
+            public const int PM_Reject_Unlock = 14;
+        }
+
         public static class Unit_Form_PC_Status
         {
             public const int PM_Approve = 6;

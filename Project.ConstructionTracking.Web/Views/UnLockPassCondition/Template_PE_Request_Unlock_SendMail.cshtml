@@ -1,6 +1,8 @@
-﻿@{
+﻿@model Project.ConstructionTracking.Web.Models.SendMail.PERequesUnlockModel
+@{
     Layout = null;
 }
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -89,20 +91,20 @@
             <div class="status">
                 <h2>ขออนุมัติการขอปลดล็อต 🔓</h2>
             </div>
-            <p>เรียน (PM) ตรวจงาน ขันแข็ง</p>
+            <p>เรียน (PM) @Model.PMFullname</p>
             <p>ทางเราขอแจ้งให้ท่านทราบการขออนุมัติการขอปลดล็อต โดยมีรายละเอียดดังนี้:</p>
             <ul>
-                <li><strong>ชื่องวดงาน:</strong> งวดที่ 1 งานคานชั้นล่าง</li>
-                <li><strong>ชื่องาน:</strong> งานคานชั้นล่าง</li>
-                <li><strong>PE ขอปลดล็อต:</strong> ตรวจงาน ระเอียด</li>
-                <li><strong>เวลาที่ขอปลดล็อต:</strong> 12 Jan 2025 11:35 </li>
-                <li><strong>โครงการ:</strong> เอสต้า ซีรีนิตี้ บรมราชชนนี</li>
-                <li><strong>เลขที่แปลง:</strong> AA001</li>
+                <li><strong>ชื่องวดงาน:</strong> @Model.FormName</li>
+                <li><strong>ชื่องาน:</strong> @Model.GroupName</li>
+                <li><strong>PE ขอปลดล็อต:</strong> @Model.PEFullname</li>
+                <li><strong>เวลาที่ตรวจ:</strong> @Model.ActionDate</li>
+                <li><strong>โครงการ:</strong> @Model.ProjectName</li>
+                <li><strong>เลขที่แปลง:</strong> @Model.UnitCode</li>
             </ul>
             <div class="remark">
-                <strong>เหตุผลขอปลดล็อค:</strong> งานคานชั้นล่างไม่ได้มาตรฐานที่กำหนด โปรดปรับปรุงการเทปูนให้เรียบร้อยและตรวจสอบโครงสร้างก่อนส่งตรวจใหม่
+                <strong>เหตุผลขอปลดล็อค:</strong> @Model.PERemark
             </div>
-            <p>ขั้นตอนต่อไปท่านสามาถเข้าระบบ <a href="https://aswinno.assetwise.co.th/vendorportal">Construction Quality Tracking</a> เพื่อตรวจสอบข้อมูลเพิ่มเติมหรือตรวจงวดงานในครั้งงวดถัดไป</strong></p>
+            <p>ขั้นตอนต่อไปท่านสามาถเข้าระบบ <a href="@ViewBag.ConstructionQualityTrackingUrl">Construction Quality Tracking</a> เพื่อตรวจสอบข้อมูลเพิ่มเติมหรือตรวจงวดงานในครั้งงวดถัดไป</strong></p>
         </div>
         <div class="email-footer">
             <p>Best Regard,</p>

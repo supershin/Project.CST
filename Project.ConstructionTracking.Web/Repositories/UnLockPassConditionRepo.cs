@@ -153,7 +153,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
-        public List<PERequesUnlockModel> GetImage(int PC_ID , Guid UnitFormID)
+        public List<PERequesUnlockModel> PERequestUnlockSendMail(int PC_ID , Guid UnitFormID)
         {
             var unitFormPassConditionData = (from t1 in _context.tr_UnitFormPassCondition
                                              join t2 in _context.tr_UnitFormUnLockPassCondition on new { t1.UnitFormID, PassConditionID = (int)t1.ID, RoleID = (int?)SystemConstant.UserRole.PE } equals new { t2.UnitFormID, t2.PassConditionID, t2.RoleID } into t2Group
@@ -173,16 +173,56 @@ namespace Project.ConstructionTracking.Web.Repositories
                                              select new PERequesUnlockModel
                                              {
                                                  PMFullname = (t5.FirstName ?? string.Empty) + " " + (t5.LastName ?? string.Empty),
-                                                 FormName = (t6.Name ?? string.Empty) + " " + (t7.Name ?? string.Empty),
+                                                 FormName = (t6.Name ?? string.Empty) + " " + (t6.Description ?? string.Empty),
+                                                 GroupName = (t7.Name ?? string.Empty),
                                                  PEFullname = (t8.FirstName ?? string.Empty) + " " + (t8.LastName ?? string.Empty),
                                                  ActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(t2.ActionDate),
                                                  ProjectName = t9.ProjectName ?? string.Empty,
                                                  UnitCode = t10.UnitCode ?? string.Empty,
                                                  PERemark = t2.Remark ?? string.Empty,
-                                                 Email = t5.Email ?? string.Empty
+                                                 //Email = t5.Email ?? string.Empty
+                                                 Email = "firsty.shabby@gmail.com"
                                              }).ToList();
 
             return unitFormPassConditionData;
+        }
+
+        public PMRespondUnlockModel PMRespondUnlockSendMail(int PC_ID, Guid UnitFormID)
+        {
+                  var result = (from t1 in _context.tr_UnitFormPassCondition
+                                join t2 in _context.tr_UnitFormUnLockPassCondition on new { t1.UnitFormID, PassConditionID = (int)t1.ID, RoleID = (int?)SystemConstant.UserRole.PM } equals new { t2.UnitFormID, t2.PassConditionID, t2.RoleID } into t2Group
+                                from t2 in t2Group.DefaultIfEmpty()
+                                join t3 in _context.tr_UnitForm on t1.UnitFormID equals t3.ID
+                                join t4 in _context.tr_PE_Unit on t3.UnitID equals t4.UnitID
+                                join t5 in _context.tm_User on t4.UserID equals t5.ID
+                                join t6 in _context.tm_Form on t3.FormID equals t6.ID
+                                join t7 in _context.tm_FormGroup on t1.GroupID equals t7.ID
+                                join t8 in _context.tm_User on t2.UpdateBy equals t8.ID into t8Group
+                                from t8 in t8Group.DefaultIfEmpty()
+                                join t9 in _context.tm_Project on t3.ProjectID equals t9.ProjectID
+                                join t10 in _context.tm_Unit on t3.UnitID equals t10.UnitID
+                                join t11 in _context.tr_RoleActionStatus on t2.StatusID equals t11.ID into t11Group
+                                from t11 in t11Group.DefaultIfEmpty()
+                                where t1.UnitFormID == UnitFormID
+                                && t1.ID == PC_ID
+                                && t5.RoleID == SystemConstant.UserRole.PE
+                                select new PMRespondUnlockModel
+                                {
+                                    PEFullname = (t5.FirstName ?? string.Empty) + " " + (t5.LastName ?? string.Empty),
+                                    FormName = (t6.Name ?? string.Empty) + " " + (t6.Description ?? string.Empty),
+                                    GroupName = (t7.Name ?? string.Empty),
+                                    PMFullname = (t8.FirstName ?? string.Empty) + " " + (t8.LastName ?? string.Empty),
+                                    StatusID = t2.StatusID,
+                                    StatusName = t11.Name ?? string.Empty,
+                                    ActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(t2.ActionDate),
+                                    ProjectName = t9.ProjectName ?? string.Empty,
+                                    UnitCode = t10.UnitCode ?? string.Empty,
+                                    PMRemark = t2.Remark ?? string.Empty,
+                                    //Email = t5.Email ?? string.Empty
+                                    Email = "firsty.shabby@gmail.com"
+                                }).FirstOrDefault();
+
+            return result;
         }
 
         public void RequestUnlock(UnLockPassConditionModel.UpdateUnlockPC model)

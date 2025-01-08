@@ -1,0 +1,153 @@
+﻿@model Project.ConstructionTracking.Web.Models.SendMail.PMRespondUnlockModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .email-header {
+            background-color: #1d0e71;
+            color: white;
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .email-body {
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .email-body p {
+            margin: 0 0 10px;
+        }
+
+        .email-footer {
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .email-footer a {
+            color: #4caf50;
+            text-decoration: none;
+        }
+
+        .statusReject {
+            background-color: #ffe6e6;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            color: #f44336;
+            margin-bottom: 15px;
+        }
+
+        .statusApprove {
+            background-color: #4caf50;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .remark {
+            background-color: #f4fc85;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+            .remark strong {
+                text-decoration: underline; /* Add underline */
+            }
+
+        /* Red style for reject remarks */
+        .remarkReject {
+            background-color: #ffe6e6; /* Light red background */
+            color: #d9534f; /* Red text */
+        }
+
+        /* Green style for approve remarks */
+        .remarkApprove {
+            background-color: #e6f7e6; /* Light green background */
+            color: #28a745; /* Green text */
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h1>Construction Quality Tracking</h1>
+        </div>
+        <div class="email-body">
+            @if (Model.StatusID == SystemConstant.Unit_Form_Role_Status.PM_Reject_Unlock)
+            {
+                <div class="statusReject">
+                    <h2>สถานะการตรวจ: <span>❌ @Model.StatusName</span></h2>
+                </div>
+            }
+            else if (Model.StatusID == SystemConstant.Unit_Form_Role_Status.PM_Approve_Unlock)
+            {
+                <div class="statusApprove">
+                    <h2>สถานะการตรวจ: <span>✅ @Model.StatusName</span></h2>
+                </div>
+            }
+            <p>เรียน (PE) @Model.PEFullname</p>
+            <p>ทางเราขอแจ้งให้ท่านทราบผลการขออนุมัติการขอปลดล็อต โดยมีรายละเอียดดังนี้:</p>
+            <ul>
+                <li><strong>ชื่องวดงาน:</strong> @Model.FormName</li>
+                <li><strong>ชื่องาน:</strong> @Model.GroupName</li>
+                <li><strong>PM ผู้ตรวจ:</strong> @Model.PMFullname</li>
+                <li><strong>เวลาที่ตรวจ:</strong> @Model.ActionDate</li>
+                <li><strong>โครงการ:</strong> @Model.ProjectName</li>
+                <li><strong>เลขที่แปลง:</strong> @Model.UnitCode</li>
+            </ul>
+            @if (Model.StatusID == SystemConstant.Unit_Form_Role_Status.PM_Reject_Unlock)
+            {
+                <div class="remarkReject">
+                    <strong>หมายเหตุ:</strong> @Model.PMRemark
+                </div>
+            }
+            else if (Model.StatusID == SystemConstant.Unit_Form_Role_Status.PM_Approve_Unlock)
+            {
+                <div class="remarkApprove">
+                    <strong>หมายเหตุ:</strong> @Model.PMRemark
+                </div>
+            }
+            <p>ขั้นตอนต่อไปท่านสามาถเข้าระบบ <a href="@ViewBag.ConstructionQualityTrackingUrl">Construction Quality Tracking</a> เพื่อตรวจสอบข้อมูลเพิ่มเติมหรือตรวจงวดงานในครั้งงวดถัดไป</strong></p>
+        </div>
+        <div class="email-footer">
+            <p>Best Regard,</p>
+            <p>Construction Quality Tracking</p>
+        </div>
+    </div>
+</body>
+</html>
