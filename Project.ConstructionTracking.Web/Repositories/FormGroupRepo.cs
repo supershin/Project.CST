@@ -237,8 +237,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 ActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(t6.ActionDate),
                                 ProjectName = t4.ProjectName,
                                 UnitCode = t5.UnitCode,
-                                PMEmail = t3.Email,
-                                //PMEmail = "firsty.shabby@gmail.com",
+                                //PMEmail = t3.Email,
+                                PMEmail = "Sittikron.P@assetwise.co.th",
                                 //PMEmail = "siripoj@assetwise.co.th",
                                 ListPERequesPassCondition = (from pc in _context.tr_UnitFormPassCondition
                                                              join gn in _context.tm_FormGroup on pc.GroupID equals gn.ID into gnGroup

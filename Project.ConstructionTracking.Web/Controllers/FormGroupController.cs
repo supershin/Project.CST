@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DocumentFormat.OpenXml.Presentation;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Infras.Services;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.SendMail;
 using Project.ConstructionTracking.Web.Services;
+using System;
 using System.Configuration;
 using System.Text.RegularExpressions;
+using static Project.ConstructionTracking.Web.Models.FormGroupModel;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
@@ -18,6 +22,7 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IPMApproveService _PMApproveService;
         private readonly IConfiguration _config;
         private readonly string _ConstructionQualityTracking;
+
         public FormGroupController(IFormGroupService FormGroupService, IGetDDLService getDDLService, IHostEnvironment hosting , IFormChecklistService formChecklistService , IPMApproveService PMApproveService , IConfiguration configuration)
         {
             _FormGroupService = FormGroupService;
@@ -98,11 +103,14 @@ namespace Project.ConstructionTracking.Web.Controllers
                 model.ApplicationPath = _hosting.ContentRootPath;
                 _FormGroupService.SubmitSaveFormGroup(model);
 
-                if (model.Act == "submit")
+                if (model.Act == "save")
                 {
                     ViewBag.ConstructionQualityTrackingUrl = _ConstructionQualityTracking;
                     // Retrieve the data list
                     List<PERequesModel> listPERequesData = _FormGroupService.GetListPERequesSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));
+
+                    var Filter = new GetDDL { Act = "CheckQCUnitformForsendMail", ID = model.FormID, GuID = model.UnitID, GuID2 = model.ProjectID };
+                    List<GetDDL> ListUser = _getDDLService.GetDDLList(Filter);
 
                     // Configure email settings
                     var emailConfig = new EmailModel
@@ -123,15 +131,25 @@ namespace Project.ConstructionTracking.Web.Controllers
                             // Render template for the current PM
                             string template = RenderRazorViewtoString(this, "Template_PE_Request_SendMail", request);
 
+                            var ccEmails = ListUser.Where(user => !string.IsNullOrEmpty(user.Text3)) // Ensure Text3 is not null or empty
+                                                   .Select(user => user.Text3).ToList();
+
                             // Send the email
                             emailConfig.To = new List<string> { request.PMEmail };
                             emailConfig.Body = template;
+                            emailConfig.CC = ccEmails ?? new List<string>();
+
                             (new MailService()).SendMail(emailConfig);
                         }
                     }
 
                     return Ok(new { success = true, message = model.FormGrade });
                 }
+                //else
+                //{
+                //    var Filter = new GetDDL { Act = "CheckQCUnitformForsendMail", ID = model.FormID , GuID = model.UnitID , GuID2 = model.ProjectID};
+                //    List<GetDDL> ListUser = _getDDLService.GetDDLList(Filter);
+                //}
 
                 return Ok(new { success = true, message = model.FormGrade });
             }

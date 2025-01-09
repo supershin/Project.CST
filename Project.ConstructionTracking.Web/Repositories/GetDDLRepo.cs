@@ -7,6 +7,7 @@ using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
 using QuestPDF.Infrastructure;
 using System.Linq;
+using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -102,15 +103,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                     return UserName.ToList();
 
                 case "ProjectAdmin":
-                    //var ListProjectAdmint = from t1 in _context.tm_Project
-                    //                        where t1.FlagActive == true
-                    //                        select new GetDDL
-                    //                        {
-                    //                            ValueGuid = t1.ProjectID,
-                    //                            Text = t1.ProjectName
-                    //                        };
-
-                    //return ListProjectAdmint.ToList();
 
                     var ListProjectAdmint = from t1 in _context.tm_Project
                                             where t1.FlagActive == true &&
@@ -374,23 +366,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                 case "GetListDDLCompanyVenderInProject":
 
-                    //var GetListDDLCompanyVenderInProject = _context.tm_Unit
-                    //        .Where(t1 => t1.ProjectID == Model.GuID && t1.CompanyVendorID != null)
-                    //        .Join(
-                    //            _context.tm_CompanyVendor,
-                    //            t1 => t1.CompanyVendorID,
-                    //            t2 => t2.ID,
-                    //            (t1, t2) => new GetDDL
-                    //            {
-                    //                Value = t1.CompanyVendorID,
-                    //                Text = t2.Name
-                    //            }
-                    //        )
-                    //        .Distinct()
-                    //        .ToList();
-
-                    //return GetListDDLCompanyVenderInProject;
-
                     var GetListDDLCompanyVenderInProject = _context.tm_Unit
                         .Where(t1 => t1.ProjectID == Model.GuID && t1.CompanyVendorID != null)
                         .Join(
@@ -520,6 +495,82 @@ namespace Project.ConstructionTracking.Web.Repositories
                         };
 
                     return SortUnitform.ToList();
+
+                case "CheckQCUnitformForsendMail":
+
+                    var CheckQCform = _context.tr_Form_QCCheckList.Where(d => d.FormID == Model.ID && d.FlagActive == true).ToList();
+
+                    if (CheckQCform.Count > 0)
+                    {
+                        //var CheckQCUnitform = from t1 in _context.tr_QC_UnitCheckList.Where(d => d.FlagActive == true && d.UnitID == Model.GuID)
+                        //                      join t2 in _context.tr_UnitForm.Where(f => f.FormID == Model.ID && f.FlagActive == true) on t1.UnitID equals t2.UnitID into t2Join
+                        //                      from t2 in t2Join.ToList()
+                        //                      join t3 in _context.tr_QC_UnitCheckList_Action on t2.ID equals t3.QCUnitCheckListID into t3Join
+                        //                      from t3 in t3Join.ToList()
+                        //                      join t4 in _context.tm_User.Where(u => u.FlagActive == true) on t3.UpdateBy equals t4.ID into t4Join
+                        //                      from t4 in t4Join.ToList()
+                        //                      select new 
+                        //                      { 
+                        //                          t1
+                        //                         ,t2
+                        //                         ,t3
+                        //                         ,t4
+                        //                      };
+
+                        // Query for CheckQCUnitform
+
+                        var CheckQCUnitformQuery = from t1 in _context.tr_QC_UnitCheckList
+                                                   .Where(d => d.FlagActive == true && d.UnitID == Model.GuID)
+                                                   join t2 in _context.tr_UnitForm
+                                                   .Where(f => f.FormID == Model.ID && f.FlagActive == true)
+                                                   on t1.UnitID equals t2.UnitID
+                                                   join t3 in _context.tr_QC_UnitCheckList_Action
+                                                   on t1.ID equals t3.QCUnitCheckListID
+                                                   join t4 in _context.tm_User
+                                                   .Where(u => u.FlagActive == true)
+                                                   on t3.UpdateBy equals t4.ID
+                                                   select new
+                                                   {
+                                                       t1,
+                                                       t2,
+                                                       t3,
+                                                       t4
+                                                   };
+
+                        var CheckQCUnitform = CheckQCUnitformQuery.ToList(); // Materialize the query
+
+                        if (CheckQCUnitform.Any()) 
+                        {
+                            var resultCheckQCUnitform = CheckQCUnitform.GroupBy(g => new { g.t4.FirstName , g.t4.LastName , g.t4.Email })
+                                                        .Select(g => new GetDDL
+                                                        {
+                                                            Text = g.Key.FirstName + ' ' + g.Key.LastName,
+                                                            Text2 = g.Key.Email,
+                                                            Text3 = "firsty.shabby@gmail.com"
+                                                        }).ToList();
+
+                            return resultCheckQCUnitform ;
+                        }
+                        else
+                        {
+                            var resultCheckQCUnitform2 = from t1 in _context.tr_ProjectPermission
+                                                         join t2 in _context.tm_User on t1.UserID equals t2.ID into t2Join
+                                                         from t2 in t2Join.ToList()
+                                                         where t1.ProjectID == Model.GuID2 && t1.FlagActive == true
+                                                         select new GetDDL
+                                                         {
+                                                             Text = t2.FirstName + ' ' + t2.LastName,
+                                                             Text2 = t2.Email
+                                                         };
+
+                            return resultCheckQCUnitform2.ToList();
+                        }
+                    }
+                    else
+                    {
+                        return new List<GetDDL>(); 
+                    }
+
 
                 default:
 

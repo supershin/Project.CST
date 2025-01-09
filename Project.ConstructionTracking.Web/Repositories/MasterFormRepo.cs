@@ -428,6 +428,7 @@ namespace Project.ConstructionTracking.Web.Repositories
         {
             // condition for check formtype using
             bool verify = VerifyFormTypeUsing((int)model.FormTypeID);
+            //bool verify = false;
 
             if (verify) throw new Exception("ข้อมูลประเภทฟอร์มถูกใช้งานแล้ว");
 
