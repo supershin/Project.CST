@@ -539,8 +539,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                                  ProjectName = t7.ProjectName ?? string.Empty,
                                  UnitCode = t8.UnitCode ?? string.Empty,
                                  PMRemark = t4.Remark ?? string.Empty,
-                                 //PEEmail = t11.Email ?? string.Empty,
-                                 PEEmail = "firsty.shabby@gmail.com",
+                                 PEEmail = t11.Email ?? string.Empty,
+                                 //PEEmail = "firsty.shabby@gmail.com",
                                  //PEEmail = "siripoj@assetwise.co.th",
                                  ListPMRespondPassCondition = (from pc in _context.tr_UnitFormPassCondition
                                                                join gn in _context.tm_FormGroup on pc.GroupID equals gn.ID into gnGroup
@@ -596,9 +596,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                               ActionDatePM = FormatExtension.FormatDateToDayMonthNameYearTime(t6pm.ActionDate),
                               ProjectName = t4.ProjectName,
                               UnitCode = t5.UnitCode,
-                              //PMEmail = t3.Email
-                              PJMEmail = "firsty.shabby@gmail.com",
-                              //PMEmail = "siripoj@assetwise.co.th",  
+                              PJMEmail = t3.Email,
+                              //PJMEmail = "firsty.shabby@gmail.com",
+                              //PJMEmail = "siripoj@assetwise.co.th",  
                               ListPMRequesPassCondition = (from pc in _context.tr_UnitFormPassCondition
                                                            join gn in _context.tm_FormGroup on pc.GroupID equals gn.ID into gnGroup
                                                            from gn in gnGroup.DefaultIfEmpty()

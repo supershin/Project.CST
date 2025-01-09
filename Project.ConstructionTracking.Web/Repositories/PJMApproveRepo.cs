@@ -298,8 +298,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                               PJMRemark = t7.Remark,
                               ProjectName = t5.ProjectName,
                               UnitCode = t6.UnitCode,
-                              //Email = t3.Email,
-                              Email = "firsty.shabby@gmail.com",
+                              Email = t3.Email,
+                              //Email = "firsty.shabby@gmail.com",
                               ListPJMRespondPassCondition = (from pc in _context.tr_UnitFormPassCondition
                                                             join gn in _context.tm_FormGroup on pc.GroupID equals gn.ID into gnGroup
                                                             from gn in gnGroup.DefaultIfEmpty()

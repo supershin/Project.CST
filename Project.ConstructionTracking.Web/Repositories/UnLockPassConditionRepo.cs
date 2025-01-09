@@ -180,8 +180,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                  ProjectName = t9.ProjectName ?? string.Empty,
                                                  UnitCode = t10.UnitCode ?? string.Empty,
                                                  PERemark = t2.Remark ?? string.Empty,
-                                                 //Email = t5.Email ?? string.Empty
-                                                 Email = "firsty.shabby@gmail.com"
+                                                 Email = t5.Email ?? string.Empty
+                                                 //Email = "firsty.shabby@gmail.com"
                                              }).ToList();
 
             return unitFormPassConditionData;
@@ -218,8 +218,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                                     ProjectName = t9.ProjectName ?? string.Empty,
                                     UnitCode = t10.UnitCode ?? string.Empty,
                                     PMRemark = t2.Remark ?? string.Empty,
-                                    //Email = t5.Email ?? string.Empty
-                                    Email = "firsty.shabby@gmail.com"
+                                    Email = t5.Email ?? string.Empty
+                                    //Email = "firsty.shabby@gmail.com"
                                 }).FirstOrDefault();
 
             return result;
