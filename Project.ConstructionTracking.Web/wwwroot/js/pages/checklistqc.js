@@ -399,7 +399,10 @@ function deleteImage(resourceId, detailId) {
                     Swal.close();
                     if (response.success) {
                         showSuccessAlert('ลบรูปภาพสำเร็จ', '', () => {
-                            window.location.reload();
+                            // Redirect to CheckListDetail with parameters from the response
+                            const controller = 'QCCheckList/CheckListDetail';
+                            const params = `id=${qcId}&qcchecklistid=${response.qcchecklistid}&seq=${response.seq}&qctypeid=${response.qctypeid}&projectid=${response.projectid}&unitid=${response.unitid}&iscreate=false`;
+                            window.location.href = `${baseUrl}${controller}?${params}`;
                         });
                     } else {
                         showErrorAlert('Error!', response.message);
