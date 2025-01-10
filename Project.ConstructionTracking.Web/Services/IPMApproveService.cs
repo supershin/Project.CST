@@ -10,6 +10,7 @@ namespace Project.ConstructionTracking.Web.Services
         List<UnitFormResourceModel> GetImage(UnitFormResourceModel model);
         PMRespond GetPMRespondSendEmailData(Guid unitFormId);
         List<PMRequestModel> GetListPMRequesSendEmailData(Guid unitFormId);
+        List<QCnotifyPMSubmit> GetListQCnotifyPMSubmitlData(int FormID, Guid UnitID, Guid ProjectID);
         string SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model);
     }
 }

@@ -502,23 +502,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     if (CheckQCform.Count > 0)
                     {
-                        //var CheckQCUnitform = from t1 in _context.tr_QC_UnitCheckList.Where(d => d.FlagActive == true && d.UnitID == Model.GuID)
-                        //                      join t2 in _context.tr_UnitForm.Where(f => f.FormID == Model.ID && f.FlagActive == true) on t1.UnitID equals t2.UnitID into t2Join
-                        //                      from t2 in t2Join.ToList()
-                        //                      join t3 in _context.tr_QC_UnitCheckList_Action on t2.ID equals t3.QCUnitCheckListID into t3Join
-                        //                      from t3 in t3Join.ToList()
-                        //                      join t4 in _context.tm_User.Where(u => u.FlagActive == true) on t3.UpdateBy equals t4.ID into t4Join
-                        //                      from t4 in t4Join.ToList()
-                        //                      select new 
-                        //                      { 
-                        //                          t1
-                        //                         ,t2
-                        //                         ,t3
-                        //                         ,t4
-                        //                      };
-
-                        // Query for CheckQCUnitform
-
                         var CheckQCUnitformQuery = from t1 in _context.tr_QC_UnitCheckList
                                                    .Where(d => d.FlagActive == true && d.UnitID == Model.GuID)
                                                    join t2 in _context.tr_UnitForm
@@ -546,7 +529,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                                                         {
                                                             Text = g.Key.FirstName + ' ' + g.Key.LastName,
                                                             Text2 = g.Key.Email,
-                                                            Text3 = "firsty.shabby@gmail.com"
+                                                            //Text3 = "firsty.shabby@gmail.com"
                                                         }).ToList();
 
                             return resultCheckQCUnitform ;

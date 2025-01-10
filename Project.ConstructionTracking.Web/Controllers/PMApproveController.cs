@@ -130,7 +130,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 model.UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
                 model.RoleID = int.TryParse(Request.Cookies["CST.Role"], out var tempRoleInt) ? tempRoleInt : -1;
                 string returnUrlDoc = _PMApproveService.SaveOrUpdateUnitFormAction(model);
-                if (model.ActionType == "submit") 
+                if (model.ActionType == "save") 
                 {
                     ViewBag.ConstructionQualityTrackingUrl = _ConstructionQualityTracking;
 
@@ -178,6 +178,20 @@ namespace Project.ConstructionTracking.Web.Controllers
                         }
                     }
 
+                    List<QCnotifyPMSubmit> listQCnotifyPMSubmitData = _PMApproveService.GetListQCnotifyPMSubmitlData(FormatExtension.Nulltoint(model.FormID), FormatExtension.ConvertStringToGuid(model.UnitID), FormatExtension.ConvertStringToGuid(model.ProjectID));
+
+                    foreach (var request in listQCnotifyPMSubmitData)
+                    {
+                        if (!string.IsNullOrEmpty(request.Email))
+                        {
+                            // Render template for the current PM
+                            string template2 = RenderRazorViewtoString(this, "Template_QC_Notify_PMSubmit", request);
+                            email.To = new List<string> { request.Email };
+                            email.Body = template2;
+
+                            (new MailService()).SendMail(email);
+                        }
+                    }
                 }
                 return Ok(new { success = true, pdfPath = returnUrlDoc });
             }

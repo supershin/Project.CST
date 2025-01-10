@@ -237,8 +237,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                                 ActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(t6.ActionDate),
                                 ProjectName = t4.ProjectName,
                                 UnitCode = t5.UnitCode,
-                                //PMEmail = t3.Email,
-                                PMEmail = "Sittikron.P@assetwise.co.th",
+                                PMEmail = t3.Email,
+                                //PMEmail = "Sittikron.P@assetwise.co.th",
                                 //PMEmail = "siripoj@assetwise.co.th",
                                 ListPERequesPassCondition = (from pc in _context.tr_UnitFormPassCondition
                                                              join gn in _context.tm_FormGroup on pc.GroupID equals gn.ID into gnGroup
@@ -253,6 +253,97 @@ namespace Project.ConstructionTracking.Web.Repositories
 
               return result;
         }
+        public List<QCnotifyPESubmit> GetListQCnotifyPESubmitlData(int FormID, Guid UnitID, Guid ProjectID)
+        {
+            var CheckQCform = _context.tr_Form_QCCheckList.Where(d => d.FormID == FormID && d.FlagActive == true).ToList();
+
+            if (CheckQCform.Count > 0)
+            {
+                var result = (from t1 in _context.tr_QC_UnitCheckList
+                              join t2 in _context.tr_Form_QCCheckList on t1.CheckListID equals t2.CheckListID into t2Group
+                              from t2 in t2Group.DefaultIfEmpty()
+                              join t3 in _context.tr_UnitForm on new { t1.UnitID, t1.ProjectID, t2.FormID } equals new { t3.UnitID, t3.ProjectID, t3.FormID } into t3Group
+                              from t3 in t3Group.DefaultIfEmpty()
+                              join t4 in _context.tr_QC_UnitCheckList_Action on t1.ID equals t4.QCUnitCheckListID into t4Group
+                              from t4 in t4Group.DefaultIfEmpty()
+                              join t5 in _context.tm_Ext on new { t1.QCTypeID, ExtTypeID = (int?)SystemConstant.Ext_Type.QCTypeID } equals new { QCTypeID = (int?)t5.ID, t5.ExtTypeID } into t5Group
+                              from t5 in t5Group.DefaultIfEmpty()
+                              join t6 in _context.tm_Form on t3.FormID equals t6.ID into t6Group
+                              from t6 in t6Group.DefaultIfEmpty()
+                              join t7 in _context.tm_Project on t1.ProjectID equals t7.ProjectID into t7Group
+                              from t7 in t7Group.DefaultIfEmpty()
+                              join t8 in _context.tm_Unit on t1.UnitID equals t8.UnitID into t8Group
+                              from t8 in t8Group.DefaultIfEmpty()
+                              join t9 in _context.tm_User on t4.UpdateBy equals t9.ID into t9Group
+                              from t9 in t9Group.DefaultIfEmpty()
+                              join t10 in _context.tr_UnitFormAction on t3.ID equals t10.UnitFormID into t10Group
+                              from t10 in t10Group.DefaultIfEmpty()
+                              join t11 in _context.tm_User on t10.UpdateBy equals t11.ID into t11Group
+                              from t11 in t11Group.DefaultIfEmpty()
+                              where t1.UnitID == UnitID
+                                    && t10.RoleID == SystemConstant.UserRole.PE
+                                    && t3.FormID == FormID
+                                    && t3.FormID != null
+                              select new QCnotifyPESubmit
+                              {
+                                  QCUserName = (t9.FirstName ?? string.Empty) + " " + (t9.LastName ?? string.Empty),
+                                  Email = t9.Email ?? string.Empty,
+                                  //Email = "Sittikron.P@assetwise.co.th",
+                                  ProjectName = t7.ProjectName ?? string.Empty,
+                                  UnitCode = t8.UnitCode ?? string.Empty,
+                                  PEUserName = (t11.FirstName ?? string.Empty) + " " + (t11.LastName ?? string.Empty),
+                                  FormName = (t6.Name ?? string.Empty) + " " + (t6.Description ?? string.Empty),
+                                  QCTypeName = t5.Name ?? string.Empty
+                              }).ToList();
+
+                if (result == null)
+                {
+                        result = (from t1 in _context.tr_UnitForm
+                                  join t2 in _context.tr_ProjectPermission.Where(t2 => t2.FlagActive == true) on t1.ProjectID equals t2.ProjectID into t2Group
+                                  from t2 in t2Group.DefaultIfEmpty()
+                                  join t3 in _context.tm_User on t2.UserID equals t3.ID into t3Group
+                                  from t3 in t3Group.DefaultIfEmpty()
+                                  join t4 in _context.tm_Project on t1.ProjectID equals t4.ProjectID into t4Group
+                                  from t4 in t4Group.DefaultIfEmpty()
+                                  join t5 in _context.tm_Unit on t1.UnitID equals t5.UnitID into t5Group
+                                  from t5 in t5Group.DefaultIfEmpty()
+                                  join t6 in _context.tr_UnitFormAction.Where(t6 => t6.RoleID == SystemConstant.UserRole.PE) on t1.ID equals t6.UnitFormID into t6Group
+                                  from t6 in t6Group.DefaultIfEmpty()
+                                  join t7 in _context.tm_User on t6.UpdateBy equals t7.ID into t7Group
+                                  from t7 in t7Group.DefaultIfEmpty()
+                                  join t8 in _context.tm_Form on t1.FormID equals t8.ID into t8Group
+                                  from t8 in t8Group.DefaultIfEmpty()
+                                  join t9 in _context.tr_Form_QCCheckList on t1.FormID equals t9.FormID into t9Group
+                                  from t9 in t9Group.DefaultIfEmpty()
+                                  join t10 in _context.tm_QC_CheckList on t9.CheckListID equals t10.ID into t10Group
+                                  from t10 in t10Group.DefaultIfEmpty()
+                                  join t11 in _context.tm_Ext.Where(t11 => t11.ExtTypeID == 7) on t10.QCTypeID equals t11.ID into t11Group
+                                  from t11 in t11Group.DefaultIfEmpty()
+                                  where t1.UnitID == UnitID
+                                        && t2.ProjectID == ProjectID
+                                        && t1.FormID == FormID
+                                        && t3.RoleID == SystemConstant.UserRole.QC
+                                  select new QCnotifyPESubmit
+                                  {
+                                      QCUserName = (t3.FirstName ?? string.Empty) + " " + (t3.LastName ?? string.Empty),
+                                      Email = t3.Email ?? string.Empty,
+                                      //Email = "Sittikron.P@assetwise.co.th",
+                                      ProjectName = t4.ProjectName ?? string.Empty,
+                                      UnitCode = t5.UnitCode ?? string.Empty,
+                                      PEUserName = (t7.FirstName ?? string.Empty) + " " + (t7.LastName ?? string.Empty),
+                                      FormName = (t8.Name ?? string.Empty) + " " + (t8.Description ?? string.Empty),
+                                      QCTypeName = t11.Name ?? string.Empty
+                                  }).ToList();
+                }
+
+                return result;
+            }
+            else
+            {
+                return new List<QCnotifyPESubmit>();
+            }
+        }
+
 
         public bool ValidateUserSubmit(Guid? UserID , Guid? UnitID)
         {

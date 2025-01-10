@@ -54,5 +54,10 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
+        public List<QCnotifyPMSubmit> GetListQCnotifyPMSubmitlData(int FormID, Guid UnitID, Guid ProjectID)
+        {
+            var ListQCnotifyPMSubmitData = _IPMApprovelistRepo.GetListQCnotifyPMSubmitlData(FormID , UnitID , ProjectID);
+            return ListQCnotifyPMSubmitData;
+        }
     }
 }

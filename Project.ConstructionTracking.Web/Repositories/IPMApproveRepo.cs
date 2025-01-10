@@ -8,6 +8,7 @@ namespace Project.ConstructionTracking.Web.Repositories
         List<PMApproveModel> GetPMApproveFormList();
         ApproveFormcheckModel GetApproveFormcheck(ApproveFormcheckModel model);
         List<PMRequestModel> GetListPMRequesSendEmailData(Guid unitFormId);
+        List<QCnotifyPMSubmit> GetListQCnotifyPMSubmitlData(int FormID, Guid UnitID, Guid ProjectID);
         List<UnitFormResourceModel> GetImage(UnitFormResourceModel model);
         PMRespond GetPMRespondSendEmailData(Guid unitFormId);
         string SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model);

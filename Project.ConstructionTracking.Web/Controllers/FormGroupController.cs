@@ -103,14 +103,11 @@ namespace Project.ConstructionTracking.Web.Controllers
                 model.ApplicationPath = _hosting.ContentRootPath;
                 _FormGroupService.SubmitSaveFormGroup(model);
 
-                if (model.Act == "save")
+                if (model.Act == "submit")
                 {
                     ViewBag.ConstructionQualityTrackingUrl = _ConstructionQualityTracking;
                     // Retrieve the data list
                     List<PERequesModel> listPERequesData = _FormGroupService.GetListPERequesSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));
-
-                    var Filter = new GetDDL { Act = "CheckQCUnitformForsendMail", ID = model.FormID, GuID = model.UnitID, GuID2 = model.ProjectID };
-                    List<GetDDL> ListUser = _getDDLService.GetDDLList(Filter);
 
                     // Configure email settings
                     var emailConfig = new EmailModel
@@ -130,14 +127,23 @@ namespace Project.ConstructionTracking.Web.Controllers
                         {
                             // Render template for the current PM
                             string template = RenderRazorViewtoString(this, "Template_PE_Request_SendMail", request);
-
-                            var ccEmails = ListUser.Where(user => !string.IsNullOrEmpty(user.Text3)) // Ensure Text3 is not null or empty
-                                                   .Select(user => user.Text3).ToList();
-
-                            // Send the email
                             emailConfig.To = new List<string> { request.PMEmail };
                             emailConfig.Body = template;
-                            emailConfig.CC = ccEmails ?? new List<string>();
+
+                            (new MailService()).SendMail(emailConfig);
+                        }
+                    }
+
+                    List<QCnotifyPESubmit> listQCnotifyPESubmitData = _FormGroupService.GetListQCnotifyPESubmitlData(FormatExtension.Nulltoint(model.FormID) , FormatExtension.ConvertStringToGuid(model.UnitID), FormatExtension.ConvertStringToGuid(model.ProjectID));
+
+                    foreach (var request in listQCnotifyPESubmitData)
+                    {
+                        if (!string.IsNullOrEmpty(request.Email))
+                        {
+                            // Render template for the current PM
+                            string template = RenderRazorViewtoString(this, "Template_QC_Notify_PESubmit", request);
+                            emailConfig.To = new List<string> { request.Email };
+                            emailConfig.Body = template;
 
                             (new MailService()).SendMail(emailConfig);
                         }
@@ -145,12 +151,6 @@ namespace Project.ConstructionTracking.Web.Controllers
 
                     return Ok(new { success = true, message = model.FormGrade });
                 }
-                //else
-                //{
-                //    var Filter = new GetDDL { Act = "CheckQCUnitformForsendMail", ID = model.FormID , GuID = model.UnitID , GuID2 = model.ProjectID};
-                //    List<GetDDL> ListUser = _getDDLService.GetDDLList(Filter);
-                //}
-
                 return Ok(new { success = true, message = model.FormGrade });
             }
             catch (Exception ex)

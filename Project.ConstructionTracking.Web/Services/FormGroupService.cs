@@ -50,5 +50,10 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
+        public List<QCnotifyPESubmit> GetListQCnotifyPESubmitlData(int FormID, Guid UnitID, Guid ProjectID)
+        {
+            var ListQCnotifyPESubmitData = _IFormGroupRepo.GetListQCnotifyPESubmitlData(FormID, UnitID , ProjectID);
+            return ListQCnotifyPESubmitData;
+        }
     }
 }

@@ -9,6 +9,7 @@ namespace Project.ConstructionTracking.Web.Repositories
         List<FormGroupModel> GetFormGroupList(FormGroupModel Model);
         FormGroupModel.FormGroupDetail GetFormGroupDetail(Guid? unitFormId);
         List<PERequesModel> GetListPERequesSendEmailData(Guid unitFormId);
+        List<QCnotifyPESubmit> GetListQCnotifyPESubmitlData(int FormID, Guid UnitID, Guid ProjectID);
         bool ValidateUserSubmit(Guid? UserID, Guid? ProjectID);
         void SubmitSaveFormGroup(FormGroupModel.FormGroupIUDModel model);
     }

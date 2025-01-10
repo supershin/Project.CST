@@ -1,0 +1,108 @@
+﻿@model Project.ConstructionTracking.Web.Models.SendMail.QCnotifyPESubmit
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Alert Template</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://cdn.assetwise.co.th/wp-content/uploads/2022/10/Vector-2.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #003366;
+            color: #333;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+        }
+        .email-header {
+            background-color: #003366;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .email-body {
+            padding: 30px;
+            color: #4a4a4a;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        .email-footer {
+            background-color: #f0f1f2;
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #6c757d;
+            border-top: 1px solid #ddd;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(90deg, #003366, #00509e);
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            text-align: center;
+        }
+        .btn:hover {
+            background: linear-gradient(90deg, #002244, #003366);
+        }
+        .highlight {
+            color: #003366;
+            font-weight: bold;
+        }
+        .highlight2 {
+            color: #e4d509;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        .highlight3 {
+            color: green;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            Construction Quality Tracking
+        </div>
+        <div class="email-body">
+            <p>เรียน <span class="highlight">(QC) @Model.QCUserName</span></p>
+            <p>เราขอแจ้งให้ท่านทราบว่า ตอนนี้ได้มีการส่งขออนุมัติการตรวจงวดงาน ที่ตรงกับการตรวจ QC ของท่านโดยมีรายระเอียดดังนี้:</p>
+            <p><strong>โครงการ:</strong> <span class="highlight"> @Model.ProjectName </span></p>
+            <p><strong>เลขที่แปลง: </strong> <span class="highlight">@Model.UnitCode</span></p>
+            <p><strong>PE ผู้ตรวจ:</strong> <span class="highlight"> @Model.PEUserName </span></p>
+            <p><strong>ชื่องวดงาน: </strong> <span class="highlight">@Model.FormName</span></p>
+            <p><strong>ตรงกับการการ :</strong> <span class="highlight2"> @Model.QCTypeName </span> ของท่าน</p>
+            <p>ขั้นตอนต่อไปท่านสามาถเข้าระบบ <a href="@ViewBag.ConstructionQualityTrackingUrl">Construction Quality Tracking</a> เพื่อตรวจสอบข้อมูลเพิ่มเติมหรือตรวจ QC รอบถัดไป</p>
+        </div>
+        <div class="email-footer">
+            <p>
+                Best Regard,<br>
+                Construction Quality Tracking
+            </p>
+        </div>
+    </div>
+</body>
+</html>
