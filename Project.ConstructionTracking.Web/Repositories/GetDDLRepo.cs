@@ -554,6 +554,21 @@ namespace Project.ConstructionTracking.Web.Repositories
                         return new List<GetDDL>(); 
                     }
 
+                case "GetdataQCUnitCheckList":
+
+                    var GetdataQCUnitCheckList =
+                        from T1 in _context.tr_QC_UnitCheckList
+                        where T1.ID == Model.GuID
+                        select new GetDDL
+                        {
+                            Value = T1.CheckListID,
+                            Value2 = T1.Seq,
+                            Value3 = T1.QCTypeID,
+                            ValueGuid = T1.ProjectID,
+                            ValueGuid2 = T1.UnitID                          
+                        };
+
+                    return GetdataQCUnitCheckList.ToList();
 
                 default:
 

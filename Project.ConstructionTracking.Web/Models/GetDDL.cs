@@ -15,6 +15,7 @@
         public string? Text3 { get; set; }
         public string? searchTerm { get; set; }
         public Guid? ValueGuid { get; set; }
+        public Guid? ValueGuid2 { get; set; }
         public Guid? UserID { get; set; }
     }
 }

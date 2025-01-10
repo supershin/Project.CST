@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Models.QCModel;
 using Project.ConstructionTracking.Web.Services;
@@ -155,14 +156,6 @@ namespace Project.ConstructionTracking.Web.Controllers
                 throw new Exception("โปรดระบุลายเซ็นต์");
         }
 
-        //private void validateUnitPEAndCompanyvender(Guid unitID)
-        //{
-
-
-        //    if (string.IsNullOrEmpty(unitID))
-        //        throw new Exception("โปรดระบุลายเซ็นต์");
-        //}
-
         [HttpPost]
         public IActionResult DeleteImage(Guid qcID, int? detailID, Guid resourceID)
         {
@@ -173,7 +166,17 @@ namespace Project.ConstructionTracking.Web.Controllers
                 var result = _qcCheckListService.DeleteImage(qcID, detailID, resourceID, user);
                 if (result)
                 {
-                    return Ok(new { success = true, message = "Image deleted successfully." });
+                    var filterModel = new GetDDL { Act = "GetdataQCUnitCheckList", GuID = qcID};
+                    List<GetDDL> DataQCUnitChecklist = _getDDLService.GetDDLList(filterModel);
+
+                    return Ok(new { success = true
+                                  , message = "Image deleted successfully."
+                                  , qcchecklistid = DataQCUnitChecklist[0].Value
+                                  , seq = DataQCUnitChecklist[0].Value2
+                                  , qctypeid = DataQCUnitChecklist[0].Value3
+                                  , projectid = DataQCUnitChecklist[0].ValueGuid
+                                  , unitid = DataQCUnitChecklist[0].ValueGuid2
+                    });
                 }
                 else
                 {
