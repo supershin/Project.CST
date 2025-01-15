@@ -208,6 +208,7 @@
                     transform: translateX(-50%);
                 }
     } */
+
     </style>
 
     <meta charset="utf-8" />
@@ -446,9 +447,23 @@
                                     </span>
                                 </a>
                             </li>
+                            <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "ProjectBluePrint" ? "active" : "")" id="nav-ProjectBluePrint">
+                                <a class="nav-link" asp-controller="ProjectBluePrint" asp-action="Index">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-map-2">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M12 18.5l-3 -1.5l-6 3v-13l6 -3l6 3l6 -3v7.5" />
+                                        <path d="M9 4v13" />
+                                        <path d="M15 7v5.5" />
+                                        <path d="M21.121 20.121a3 3 0 1 0 -4.242 0c.418 .419 1.125 1.045 2.121 1.879c1.051 -.89 1.759 -1.516 2.121 -1.879z" />
+                                        <path d="M19 18v.01" />
+                                    </svg>
+                                    <span class="nav-link-title">
+                                        แผนผังโครงการ
+                                    </span>
+                                </a>
+                            </li>
                             @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
                             {
-                                @* <li class="nav-item"> *@
                                 <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "MyTaskPM" ? "active" : "")" id="nav-MyTaskPM">
                                     <a class="nav-link" asp-controller="MyTaskPM" asp-action="Index">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list-check">
@@ -465,7 +480,6 @@
                                         </span>
                                     </a>
                                 </li>
-
                             }
                             @if (ViewBag.UserRole == SystemConstant.UserRole.PJM.ToString())
                             {
@@ -630,13 +644,11 @@
                               }
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-map-question">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-book-2">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M15 20l-6 -3l-6 3v-13l6 -3l6 3l6 -3v7.5" />
-                                        <path d="M9 4v13" />
-                                        <path d="M15 7v5.5" />
-                                        <path d="M19 22v.01" />
-                                        <path d="M19 19a2.003 2.003 0 0 0 .914 -3.782a1.98 1.98 0 0 0 -2.414 .483" />
+                                        <path d="M19 4v16h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12z" />
+                                        <path d="M19 16h-12a2 2 0 0 0 -2 2" />
+                                        <path d="M9 8h6" />
                                     </svg>
                                     <span class="nav-link-title">
                                         User Manual

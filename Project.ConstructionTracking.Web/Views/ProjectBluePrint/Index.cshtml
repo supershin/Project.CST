@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+}
+@model dynamic
+<style>
+    .selectize-control {
+        margin-top: 10px;
+    }
+</style>
+
+<title>แผนผังโครงการ</title>
+<div class="page-wrapper">
+    <div class="container mt-4">
+        <h1>Interactive Village Blueprint</h1>
+        <!-- Upload Blueprint Image -->
+        <form method="post" enctype="multipart/form-data" asp-action="UploadBlueprint" asp-controller="Home">
+            <div class="mb-3">
+                <label for="imageFile" class="form-label">Upload Blueprint:</label>
+                <input type="file" class="form-control" id="imageFile" name="imageFile" required>
+            </div>
+            <button id="uploadButton" class="btn btn-primary">Upload Blueprint</button>
+        </form>
+        <div class="btn-group mt-3" role="group">
+            <button type="button" id="markerTool" class="btn btn-outline-primary" onclick="switchTool('marker')">Marker Tool</button>
+            <button type="button" id="polygonTool" class="btn btn-outline-primary" onclick="switchTool('polygon')">Polygon Tool</button>
+            <button type="button" id="undoButton" class="btn btn-outline-danger" onclick="undoLastAction()">Undo</button>
+        </div>
+
+        <!-- Canvas to Edit Blueprint -->
+        <div class="mt-4 canvas-container">
+            <canvas id="blueprintCanvas" class="border"></canvas>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="unitModal" tabindex="-1" aria-labelledby="unitModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="unitModalLabel">เลือกแปลง</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select id="unitDropdown" class="form-select"></select>
+                    <button id="modalSaveButton" class="btn btn-primary mt-3">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section scripts {
+    <script src="~/js/Pages/Blueprint.js?ver=@DateTime.Now.Ticks"></script>
+    <script>
+        $(document).ready(function () {
+            setActiveNav()           
+        });
+    </script>
+}
