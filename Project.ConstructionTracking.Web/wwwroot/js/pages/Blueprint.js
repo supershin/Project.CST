@@ -1,7 +1,8 @@
-﻿const uploadButton = document.getElementById("uploadButton");
-const fileInput = document.getElementById("imageFile");
+﻿/*const uploadButton = document.getElementById("uploadButton");*/
+/*const fileInput = document.getElementById("imageFile");*/
 let canvas, ctx;
 let backgroundImage;
+/*let PathbackgroundImage;*/
 
 // Store markers and polygons
 let markers = [];
@@ -41,9 +42,8 @@ function switchTool(tool) {
 }
 
 // ✅ Upload Blueprint Image
-uploadButton.addEventListener("click", (event) => {
-    event.preventDefault();
-
+function uploadBlueprint() {
+    const fileInput = document.getElementById("imageFile");
     const file = fileInput.files[0];
     if (!file) {
         alert("Please select a blueprint image to upload.");
@@ -60,13 +60,18 @@ uploadButton.addEventListener("click", (event) => {
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
+                // Save the uploaded image path for later use
+/*                PathbackgroundImage = data.imagePath;*/
+
+                // Load the uploaded image onto the canvas
                 loadCanvas(data.imagePath);
             } else {
                 alert(data.message);
             }
         })
-        .catch((err) => console.error(err));
-});
+        .catch((err) => console.error("Error uploading blueprint:", err));
+}
+
 
 // ✅ Load Canvas with the Uploaded Image
 function loadCanvas(imagePath) {
@@ -116,7 +121,9 @@ function addMarker(x, y) {
 
     loadDropdownOptions(() => {
         const selectedText = unitDropdown.options[unitDropdown.selectedIndex].text;
-        markers.push({ x: tempX, y: tempY, name: selectedText });
+        const selectedID = unitDropdown.options[unitDropdown.selectedIndex].value;
+        markers.push({ x: tempX, y: tempY, name: selectedText, UnitID: selectedID });
+        debugger
         drawCanvas();
     });
 
@@ -143,7 +150,8 @@ function addPolygonPoint(x, y) {
 function completePolygon() {
     loadDropdownOptions(() => {
         const selectedText = unitDropdown.options[unitDropdown.selectedIndex].text;
-        polygons.push({ points: [...currentPolygon], name: selectedText });
+        const selectedID = unitDropdown.options[unitDropdown.selectedIndex].value;
+        polygons.push({ points: [...currentPolygon], name: selectedText, UnitID: selectedID });
         currentPolygon = [];
         drawCanvas();
     });
@@ -167,9 +175,9 @@ function loadDropdownOptions(callback) {
             });
 
             // When the Save button is clicked
-            modalSaveButton.onclick = () => {
-                callback();  // Execute the save function
+            modalSaveButton.onclick = () => {              
                 unitModal.hide();  // Close the modal using Bootstrap's hide() method
+                callback();  // Execute the save function
             };
         })
         .catch(error => console.error("Error fetching unit list:", error));
@@ -240,3 +248,97 @@ function undoLastAction() {
 
     drawCanvas();
 }
+
+// ✅ SaveBlueprintElements
+function saveBlueprintElements() {
+    const elements = [];
+
+    // Add markers
+    markers.forEach(marker => {
+        elements.push({
+            ProjectID: "0CC60DA9-9AC5-4DF6-871E-B10FB0257B4B",
+            ElementType: 39,
+            Coordinates: [{ X: marker.x, Y: marker.y }],
+ /*           PathProjectImage = PathbackgroundImage,*/
+            UnitID: marker.UnitID,
+            UserID: "6616524D-8AFD-4925-B956-CB24F1F6DE7D"
+        });
+    });
+
+    // Add polygons
+    polygons.forEach(polygon => {
+        elements.push({
+            ProjectID: "0CC60DA9-9AC5-4DF6-871E-B10FB0257B4B",
+            ElementType: 40,
+            Coordinates: polygon.points,
+  /*          PathProjectImage = PathbackgroundImage,*/
+            UnitID: polygon.UnitID,
+            UserID: "6616524D-8AFD-4925-B956-CB24F1F6DE7D"
+        });
+    });
+
+    fetch(baseUrl + "ProjectBluePrint/SaveBlueprintElements", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(elements)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Data saved successfully!");
+        } else {
+            alert("Failed to save data.");
+        }
+    })
+    .catch(error => console.error("Error saving data:", error));
+}
+
+
+// ✅ Load Blueprint Elements
+function loadBlueprintElements() {
+    const canvas = document.getElementById("blueprintCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Reset markers and polygons
+    markers = [];
+    polygons = [];
+
+    // Set the background image
+    const image = new Image();
+    image.src = "/images/Screenshot 2025-01-14 101158.jpg"; // Hardcoded image path for now
+
+    image.onload = () => {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        ctx.drawImage(image, 0, 0);
+
+        // Fetch saved elements from the server
+        fetch(baseUrl + `ProjectBluePrint/GetBlueprintElements?projectId=0CC60DA9-9AC5-4DF6-871E-B10FB0257B4B`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(element => {
+                    if (element.ElementTypeName === "Marker") {
+                        markers.push({
+                            x: element.Coordinates[0].X,
+                            y: element.Coordinates[0].Y,
+                            name: element.UnitName
+                        });
+                    } else if (element.ElementTypeName === "Polygon") {
+                        polygons.push({
+                            points: element.Coordinates.map(coord => ({
+                                x: coord.X,
+                                y: coord.Y
+                            })), // Ensure coordinates are mapped properly
+                            name: element.UnitName
+                        });
+                    }
+                });
+
+                drawCanvas(); // Redraw the canvas with updated elements
+            })
+            .catch(error => console.error("Error loading blueprint elements:", error));
+    };
+}
+

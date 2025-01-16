@@ -1,16 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.ProjectBluePrint;
+using Project.ConstructionTracking.Web.Repositories;
 using Project.ConstructionTracking.Web.Services;
+using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
+using static Project.ConstructionTracking.Web.Models.ProjectBluePrint.ProjectBluePrintModel;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
     public class ProjectBluePrintController : BaseController
     {
         private readonly IGetDDLService _getDDLService;
-
-        public ProjectBluePrintController(IGetDDLService getDDLService)
+        private readonly IProjectBluePrintService _ProjectBluePrintService;
+        public ProjectBluePrintController(IGetDDLService getDDLService, IProjectBluePrintService ProjectBluePrintService)
         {
             _getDDLService = getDDLService;
+            _ProjectBluePrintService = ProjectBluePrintService;
         }
 
         public IActionResult Index()
@@ -49,6 +55,35 @@ namespace Project.ConstructionTracking.Web.Controllers
             List<GetDDL> ListUnit = _getDDLService.GetDDLList(ddlModel);
             return Json(ListUnit);
         }
+
+        [HttpPost]
+        public IActionResult SaveBlueprintElements([FromBody] List<ProjectBluePrintModel.BlueprintElementModel> elements)
+        {
+            if (elements == null || !elements.Any())
+            {
+                return Json(new { success = false, message = "No elements to save." });
+            }
+
+            try
+            {
+                _ProjectBluePrintService.SaveBlueprintElements(elements);
+
+                return Json(new { success = true, message = "Blueprint elements saved successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetBlueprintElements(Guid projectId)
+        {
+            List<ProjectBluePrintModel.BlueprintElementModel> listBlueprintElement = _ProjectBluePrintService.GetListProjectBlueprintElements(projectId);
+
+            return Json(listBlueprintElement);
+        }
+
 
     }
 }

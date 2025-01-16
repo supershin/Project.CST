@@ -14,10 +14,10 @@ namespace Project.ConstructionTracking.Web.Data
         public int DefectTypeID { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime CreateDate { get; set; }
-        public int? CreateBy { get; set; }
+        public int CreateBy { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime UpdateDate { get; set; }
-        public int? UpdateBy { get; set; }
+        public int UpdateBy { get; set; }
 
         [ForeignKey("DefectAreaID")]
         [InverseProperty("tm_DefectAreaType_Mapping")]

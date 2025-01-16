@@ -156,7 +156,7 @@ namespace Project.ConstructionTracking.Web.Repositories
         public List<PERequesUnlockModel> PERequestUnlockSendMail(int PC_ID , Guid UnitFormID)
         {
             var unitFormPassConditionData = (from t1 in _context.tr_UnitFormPassCondition
-                                             join t2 in _context.tr_UnitFormUnLockPassCondition on new { t1.UnitFormID, PassConditionID = (int)t1.ID, RoleID = (int?)SystemConstant.UserRole.PE } equals new { t2.UnitFormID, t2.PassConditionID, t2.RoleID } into t2Group
+                                             join t2 in _context.tr_UnitFormUnLockPassCondition on new { t1.UnitFormID, PassConditionID = (int?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PE } equals new { t2.UnitFormID, t2.PassConditionID, t2.RoleID } into t2Group
                                              from t2 in t2Group.DefaultIfEmpty()
                                              join t3 in _context.tr_UnitForm on t1.UnitFormID equals t3.ID
                                              join t4 in _context.tr_ProjectPermission on t3.ProjectID equals t4.ProjectID
@@ -190,7 +190,7 @@ namespace Project.ConstructionTracking.Web.Repositories
         public PMRespondUnlockModel PMRespondUnlockSendMail(int PC_ID, Guid UnitFormID)
         {
                   var result = (from t1 in _context.tr_UnitFormPassCondition
-                                join t2 in _context.tr_UnitFormUnLockPassCondition on new { t1.UnitFormID, PassConditionID = (int)t1.ID, RoleID = (int?)SystemConstant.UserRole.PM } equals new { t2.UnitFormID, t2.PassConditionID, t2.RoleID } into t2Group
+                                join t2 in _context.tr_UnitFormUnLockPassCondition on new { t1.UnitFormID, PassConditionID = (int?)t1.ID, RoleID = (int?)SystemConstant.UserRole.PM } equals new { t2.UnitFormID, t2.PassConditionID, t2.RoleID } into t2Group
                                 from t2 in t2Group.DefaultIfEmpty()
                                 join t3 in _context.tr_UnitForm on t1.UnitFormID equals t3.ID
                                 join t4 in _context.tr_PE_Unit on t3.UnitID equals t4.UnitID

@@ -36,9 +36,6 @@ namespace Project.ConstructionTracking.Web.Data
         [ForeignKey("QCUnitCheckListID")]
         [InverseProperty("tr_QC_UnitCheckList_Detail")]
         public virtual tr_QC_UnitCheckList? QCUnitCheckList { get; set; }
-        [ForeignKey("StatusID")]
-        [InverseProperty("tr_QC_UnitCheckList_Detail")]
-        public virtual tm_Ext? Status { get; set; }
         [InverseProperty("QCUnitCheckListDetail")]
         public virtual ICollection<tr_QC_UnitCheckList_Resource> tr_QC_UnitCheckList_Resource { get; set; }
     }

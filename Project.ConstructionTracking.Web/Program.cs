@@ -102,6 +102,8 @@ builder.Services.AddScoped<MasterManagementProviderProject, SqlMasterManagementP
 builder.Services.AddScoped<IGRVenderrportalService, GRVenderrportalService>();
 builder.Services.AddScoped<IGRVenderrportalRepo, GRVenderrportalRepo>();
 
+builder.Services.AddScoped<IProjectBluePrintService, ProjectBluePrintService>();
+builder.Services.AddScoped<IProjectBluePrintRepo, ProjectBluePrintRepo>();
 
 var app = builder.Build();
 
