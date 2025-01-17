@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutSite.cshtml";
+    var ListDDLProject = ViewBag.ListDDLProject;
 }
 @model dynamic
 <style>
@@ -8,6 +9,118 @@
     .card {
         border: none;
         border-radius: 10px;
+    }
+
+    /* Hover Zoom Effect */
+    .card-img-container {
+        overflow: hidden;
+        position: relative;
+    }
+
+    .card-img-top {
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card-img-container:hover .card-img-top {
+        transform: scale(1.1); /* Zooms the image */
+    }
+
+    /* Remove Button Styling */
+    .del-button {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(255, 0, 0, 0.8);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 14px;
+        width: 24px;
+        height: 24px;
+        line-height: 18px;
+        text-align: center;
+        padding: 0;
+        z-index: 10;
+        /* White Shadow */
+        box-shadow: 0 2px 4px rgba(255, 255, 255, 0.6);
+        transition: background 0.2s ease-in-out;
+    }
+
+    .del-button:hover {
+        background: rgba(255, 0, 0, 1);
+    }
+
+    /* Add More Image Button */
+    .add-image-button {
+        background-color: rgba(0, 123, 255, 0.8); /* Bootstrap Primary Color */
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out, transform 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .add-image-button:hover {
+        background-color: rgba(0, 123, 255, 1);
+        transform: scale(1.05);
+    }
+
+    .drop-zone {
+        border: 2px dashed #007bff;
+        border-radius: 5px;
+        padding: 6px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .drop-zone-text {
+        margin-bottom: 10px;
+    }
+
+    .drop-zone-input {
+        display: none;
+    }
+
+    .preview-container {
+        margin-top: 10px;
+    }
+
+    .preview-image {
+        position: relative;
+        display: inline-block;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        max-width: 100px;
+        max-height: 100px;
+    }
+
+    .preview-image img {
+        max-width: 100%;
+        max-height: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        display: block;
+    }
+
+    .remove-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: rgba(255, 0, 0, 0.8);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 14px;
+        width: 24px;
+        height: 24px;
+        line-height: 18px;
+        text-align: center;
+        padding: 0;
     }
 
 </style>
@@ -32,7 +145,61 @@
             </div>
         </div>
     </div>
+  
+    <div class="container mt-4">          
+        <div class="form-label"><h1>แผนผังโครงการทั้งหมด</h1></div>
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <select id="projectSelect" class="form-select" onchange="handleProjectChange()">
+                    <option value="">-- เลือกทั้งหมด --</option>
+                    @foreach (var item in ListDDLProject)
+                    {
+                        <option value="@item.ValueGuid">@item.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div id="projectImageContainer" class="mt-4"></div>
+    </div>
 
+    <div id="partialContainer" class="container mt-4" style="display: none;">
+        <partial name="PartialTableListImageProjectBluePrint" />
+    </div>
+
+    <!-- Modal Structure -->
+    <div class="modal fade" id="uploadImageModal" tabindex="-1" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadImageModalLabel">เพิ่มรูปภาพ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="drop-zone" class="form-label">เลือกรูปภาพ</label>
+                            <div id="drop-zone" class="drop-zone">
+                                <p class="drop-zone-text">
+                                    <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                </p>
+                                <input type="file" id="file-input" class="drop-zone-input" multiple>
+                                <div id="preview-container" class="row preview-container"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    <button type="button" class="btn btn-primary">บันทึก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+ 
 
     <div class="container mt-4">
         <h1>Interactive Village Blueprint</h1>
@@ -71,7 +238,7 @@
         </div>
     </div>
 
-        <!-- Save Button -->
+    <!-- Save Button -->
     <div class="mt-3">
         <button id="saveBlueprintButton" class="btn btn-success" onclick="saveBlueprintElements()">Save Blueprint</button>
         <button id="loadBlueprintButton" class="btn btn-primary ms-2" onclick="loadBlueprintElements()">Load Blueprint</button>
@@ -87,6 +254,93 @@
     <script>
         $(document).ready(function () {
             setActiveNav();
+        });
+    </script>
+    <script>
+        // Add delete functionality
+        document.addEventListener("DOMContentLoaded", () => {
+            const deleteButtons = document.querySelectorAll(".remove-button");
+
+            deleteButtons.forEach((button) => {
+                button.addEventListener("click", (event) => {
+                    const card = event.target.closest(".col");
+                    card.remove(); // Removes the card element from the DOM
+                });
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var dropZone = document.getElementById("drop-zone");
+            var fileInput = document.getElementById("file-input");
+            var previewContainer = document.getElementById("preview-container");
+            var filesArray = [];
+
+            dropZone.addEventListener("click", function (e) {
+                if (e.target.classList.contains("remove-button")) {
+                    return;
+                }
+                fileInput.click();
+            });
+
+            fileInput.addEventListener("change", function () {
+                if (fileInput.files.length) {
+                    addFilesToPreview(fileInput.files);
+                }
+            });
+
+            dropZone.addEventListener("dragover", function (e) {
+                e.preventDefault();
+                dropZone.classList.add("drop-zone--over");
+            });
+
+            dropZone.addEventListener("dragleave", function () {
+                dropZone.classList.remove("drop-zone--over");
+            });
+
+            dropZone.addEventListener("drop", function (e) {
+                e.preventDefault();
+                addFilesToPreview(e.dataTransfer.files);
+            });
+
+            function addFilesToPreview(files) {
+                Array.from(files).forEach(file => {
+                    if (!filesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
+                        filesArray.push(file);
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = function (event) {
+                            const img = document.createElement("img");
+                            img.src = event.target.result;
+                            const previewImage = document.createElement("div");
+                            previewImage.className = "col-4 preview-image";
+
+                            const removeButton = document.createElement("button");
+                            removeButton.className = "remove-button";
+                            removeButton.innerHTML = "&times;";
+                            removeButton.addEventListener("click", function (e) {
+                                e.stopPropagation();
+                                filesArray = filesArray.filter(f => f !== file);
+                                updateFileInput();
+                                previewImage.remove();
+                            });
+
+                            previewImage.appendChild(img);
+                            previewImage.appendChild(removeButton);
+                            previewContainer.appendChild(previewImage);
+                        };
+                    }
+                });
+                updateFileInput();
+            }
+
+            function updateFileInput() {
+
+                fileInput.value = '';
+
+                const dataTransfer = new DataTransfer();
+                filesArray.forEach(file => dataTransfer.items.add(file));
+                fileInput.files = dataTransfer.files;
+            }
         });
     </script>
 }

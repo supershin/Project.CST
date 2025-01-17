@@ -6,5 +6,7 @@ namespace Project.ConstructionTracking.Web.Services
     {
         public List<ProjectBluePrintModel.BlueprintElementModel> GetListProjectBlueprintElements(Guid ProjectID);
         void SaveBlueprintElements(List<ProjectBluePrintModel.BlueprintElementModel> elements);
+        void InsertImageProjectFloorPlan(ProjectBluePrintModel.InsertImageProjectFloorPlanModel mode);
+        public List<ProjectBluePrintModel.GetListImageProjectFloorPlanModel> GetListImageProjectFloorPlan(Guid ProjectID);
     }
 }

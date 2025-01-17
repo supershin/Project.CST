@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
+using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Models.ProjectBluePrint;
 using Project.ConstructionTracking.Web.Repositories;
 using Project.ConstructionTracking.Web.Services;
@@ -21,6 +25,11 @@ namespace Project.ConstructionTracking.Web.Controllers
 
         public IActionResult Index()
         {
+            var ddlModel = new GetDDL { Act = "ProjectAdmin" };
+            List<GetDDL> ListProject = _getDDLService.GetDDLList(ddlModel);
+            ViewBag.ListDDLProject = ListProject;
+
+
             return View();
         }
 
@@ -83,6 +92,27 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             return Json(listBlueprintElement);
         }
+
+        //[HttpPost]
+        //public IActionResult GetListImageProjectFloorPlan([FromBody] Guid ProjectID)
+        //{
+
+        //    List<ProjectBluePrintModel.GetListImageProjectFloorPlanModel> ListImageProjectFloorPlan = _ProjectBluePrintService.GetListImageProjectFloorPlan(ProjectID);
+
+        //    return PartialView("PartialTableListImageProjectBluePrint", ListImageProjectFloorPlan);
+        //}
+        [HttpGet]
+        public IActionResult GetListImageProjectFloorPlan(Guid ProjectID)
+        {
+            if (ProjectID == Guid.Empty)
+            {
+                return BadRequest("Invalid Project ID.");
+            }
+
+            var listImageProjectFloorPlan = _ProjectBluePrintService.GetListImageProjectFloorPlan(ProjectID);
+            return PartialView("PartialTableListImageProjectBluePrint", listImageProjectFloorPlan);
+        }
+
 
 
     }

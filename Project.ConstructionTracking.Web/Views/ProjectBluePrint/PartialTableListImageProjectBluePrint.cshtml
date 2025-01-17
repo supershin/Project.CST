@@ -1,0 +1,25 @@
+﻿@model List<Project.ConstructionTracking.Web.Models.ProjectBluePrint.ProjectBluePrintModel.GetListImageProjectFloorPlanModel>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row row-cols-3 row-cols-md-4 row-cols-lg-6 g-3">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card position-relative">
+                    <button class="del-button">&times;</button>
+                    <div class="card-img-container">
+                        <img src="@item.FilePath" class="card-img-top" alt="@item.FileName">
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="col d-flex align-items-center justify-content-center">
+            <button class="add-image-button" data-bs-toggle="modal" data-bs-target="#uploadImageModal">เพิ่มรูปภาพ</button>
+        </div>
+    </div>
+}
+else
+{
+    <p class="text-center">ไม่มีข้อมูลรูปภาพ</p>
+}

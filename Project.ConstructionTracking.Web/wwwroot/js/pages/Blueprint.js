@@ -342,3 +342,80 @@ function loadBlueprintElements() {
     };
 }
 
+
+
+
+//async function handleProjectChange() {
+//    const projectSelect = document.getElementById("projectSelect");
+//    const projectId = projectSelect.value; // Get selected project ID
+//    const container = document.getElementById("projectImageContainer"); // Target container for fetched data
+//    const partialContainer = document.getElementById("partialContainer"); // Container for the partial view
+
+//    if (!projectId) {
+//        // If no project is selected, hide the partial container and clear other content
+//        partialContainer.style.display = "none";
+//        container.innerHTML = "<p class='text-center'>กรุณาเลือกโครงการ</p>";
+//        return;
+//    }
+
+//    try {
+//        // Show the partial container
+//        partialContainer.style.display = "block";
+
+//        console.log(projectId)
+//        // Fetch the partial view
+//        const response = await fetch(baseUrl + "ProjectBluePrint/GetListImageProjectFloorPlan", {
+//            method: "POST",
+//            headers: {
+//                "Content-Type": "application/json",
+//            },
+//            body: JSON.stringify({ ProjectID: projectId }), // Send the selected project ID as JSON
+//        });
+
+//        if (!response.ok) {
+//            throw new Error("Failed to fetch data.");
+//        }
+
+//        const html = await response.text(); // Wait for the response text
+//        container.innerHTML = html; // Update the container with the fetched partial
+//    } catch (error) {
+//        console.error("Error fetching data:", error);
+//        container.innerHTML = "<p class='text-danger'>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>";
+//    }
+//}
+
+
+function handleProjectChange() {
+    const projectSelect = $("#projectSelect");
+    const projectId = projectSelect.val(); // Get selected project ID
+    const container = $("#projectImageContainer"); // Target container for fetched data
+    const partialContainer = $("#partialContainer"); // Container for the partial view
+
+    if (!projectId) {
+        // If no project is selected, hide the partial container and clear other content
+        partialContainer.hide();
+        container.html("<p class='text-center'>กรุณาเลือกโครงการ</p>");
+        return;
+    }
+
+    // Show the partial container
+    partialContainer.show();
+
+    $.ajax({
+        url: `${baseUrl}ProjectBluePrint/GetListImageProjectFloorPlan`,
+        type: "GET", // Use HTTP GET method
+        data: { ProjectID: projectId }, // Send the project ID as query parameters
+        success: function (html) {
+            container.html(html); // Update the container with the fetched partial
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching data:", error);
+            container.html("<p class='text-danger'>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>");
+        },
+    });
+}
+
+
+
+
+

@@ -14,10 +14,41 @@ namespace Project.ConstructionTracking.Web.Services
             _IProjectBluePrintRepo = IProjectBluePrintRepo;
         }
 
+        public List<ProjectBluePrintModel.GetListImageProjectFloorPlanModel> GetListImageProjectFloorPlan(Guid ProjectID)
+        {
+            var ListImageProjectFloorPlan = _IProjectBluePrintRepo.GetListImageProjectFloorPlan(ProjectID);
+            return ListImageProjectFloorPlan;
+        }
+
         public List<ProjectBluePrintModel.BlueprintElementModel> GetListProjectBlueprintElements(Guid ProjectID)
         {
             var ListProjectBlueprintElements = _IProjectBluePrintRepo.GetListProjectBlueprintElements(ProjectID);
             return ListProjectBlueprintElements;
+        }
+
+        public void InsertImageProjectFloorPlan(ProjectBluePrintModel.InsertImageProjectFloorPlanModel mode)
+        {
+            if (mode == null)
+            {
+                throw new ArgumentException("ไม่พบข้อมูล");
+            }
+            TransactionOptions options = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TimeSpan.FromMinutes(10) 
+            };
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, options))
+            {
+                try
+                {
+                    _IProjectBluePrintRepo.InsertImageProjectFloorPlan(mode);
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("เกิดข้อผิดพลาดขณะบันทึกรูปาพแผนผังของโครการ", ex);
+                }
+            }
         }
 
         public void SaveBlueprintElements(List<ProjectBluePrintModel.BlueprintElementModel> elements)
