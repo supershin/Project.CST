@@ -163,8 +163,12 @@
     </div>
 
     <div id="partialContainer" class="container mt-4" style="display: none;">
-        <partial name="PartialTableListImageProjectBluePrint" />
+        <!-- The partial content will be dynamically loaded here -->
     </div>
+
+  @*<div id="partialContainerShowImageProjectFloorPlan" class="container mt-4" style="display: none;">
+        <!-- The partial content will be dynamically loaded ImageProjectFloorPlan here -->
+    </div> *@
 
     <!-- Modal Structure -->
     <div class="modal fade" id="uploadImageModal" tabindex="-1" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
@@ -190,25 +194,20 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
-                    <button type="button" class="btn btn-primary">บันทึก</button>
+                    <button type="button" class="btn btn-primary" onclick="onClickInsertImageProjectFloorPlan()">บันทึก</button>
                 </div>
             </div>
         </div>
     </div>
 
-
-
-
- 
-
     <div class="container mt-4">
-        <h1>Interactive Village Blueprint</h1>
+        <h1>แก้ไขแผนผังโครงการ</h1>
         <!-- Upload Blueprint Image -->
-        <div class="mb-3">
+        @*<div class="mb-3">
             <label for="imageFile" class="form-label">Upload Blueprint:</label>
             <input type="file" class="form-control" id="imageFile" name="imageFile" required>
             <button id="uploadButton" class="btn btn-primary mt-3" onclick="uploadBlueprint()">Upload Blueprint</button>
-        </div>
+        </div> *@
 
         <div class="btn-group mt-3" role="group">
             <button type="button" id="markerTool" class="btn btn-outline-primary" onclick="switchTool('marker')">Marker Tool</button>
@@ -219,6 +218,12 @@
         <!-- Canvas to Edit Blueprint -->
         <div class="mt-4 canvas-container">
             <canvas id="blueprintCanvas" class="border"></canvas>
+        </div>
+
+        <!-- Save Button -->
+        <div class="mt-3">
+            <button id="saveBlueprintButton" class="btn btn-success" onclick="saveBlueprintElements()">Save Blueprint</button>
+            <button id="loadBlueprintButton" class="btn btn-primary ms-2" onclick="loadBlueprintElements()">Load Blueprint</button>
         </div>
 
     </div>
@@ -236,16 +241,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Save Button -->
-    <div class="mt-3">
-        <button id="saveBlueprintButton" class="btn btn-success" onclick="saveBlueprintElements()">Save Blueprint</button>
-        <button id="loadBlueprintButton" class="btn btn-primary ms-2" onclick="loadBlueprintElements()">Load Blueprint</button>
-    </div>
-
-    <div class="mt-4 canvas-container">
-        <canvas id="blueprintCanvasShow" class="border"></canvas>
     </div>
 
 </div>
@@ -267,80 +262,6 @@
                     card.remove(); // Removes the card element from the DOM
                 });
             });
-        });
-
-        document.addEventListener("DOMContentLoaded", function () {
-            var dropZone = document.getElementById("drop-zone");
-            var fileInput = document.getElementById("file-input");
-            var previewContainer = document.getElementById("preview-container");
-            var filesArray = [];
-
-            dropZone.addEventListener("click", function (e) {
-                if (e.target.classList.contains("remove-button")) {
-                    return;
-                }
-                fileInput.click();
-            });
-
-            fileInput.addEventListener("change", function () {
-                if (fileInput.files.length) {
-                    addFilesToPreview(fileInput.files);
-                }
-            });
-
-            dropZone.addEventListener("dragover", function (e) {
-                e.preventDefault();
-                dropZone.classList.add("drop-zone--over");
-            });
-
-            dropZone.addEventListener("dragleave", function () {
-                dropZone.classList.remove("drop-zone--over");
-            });
-
-            dropZone.addEventListener("drop", function (e) {
-                e.preventDefault();
-                addFilesToPreview(e.dataTransfer.files);
-            });
-
-            function addFilesToPreview(files) {
-                Array.from(files).forEach(file => {
-                    if (!filesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
-                        filesArray.push(file);
-                        const reader = new FileReader();
-                        reader.readAsDataURL(file);
-                        reader.onload = function (event) {
-                            const img = document.createElement("img");
-                            img.src = event.target.result;
-                            const previewImage = document.createElement("div");
-                            previewImage.className = "col-4 preview-image";
-
-                            const removeButton = document.createElement("button");
-                            removeButton.className = "remove-button";
-                            removeButton.innerHTML = "&times;";
-                            removeButton.addEventListener("click", function (e) {
-                                e.stopPropagation();
-                                filesArray = filesArray.filter(f => f !== file);
-                                updateFileInput();
-                                previewImage.remove();
-                            });
-
-                            previewImage.appendChild(img);
-                            previewImage.appendChild(removeButton);
-                            previewContainer.appendChild(previewImage);
-                        };
-                    }
-                });
-                updateFileInput();
-            }
-
-            function updateFileInput() {
-
-                fileInput.value = '';
-
-                const dataTransfer = new DataTransfer();
-                filesArray.forEach(file => dataTransfer.items.add(file));
-                fileInput.files = dataTransfer.files;
-            }
         });
     </script>
 }

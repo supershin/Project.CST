@@ -6,6 +6,7 @@ using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Models.ProjectBluePrint;
+using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Repositories;
 using Project.ConstructionTracking.Web.Services;
 using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
@@ -17,10 +18,12 @@ namespace Project.ConstructionTracking.Web.Controllers
     {
         private readonly IGetDDLService _getDDLService;
         private readonly IProjectBluePrintService _ProjectBluePrintService;
-        public ProjectBluePrintController(IGetDDLService getDDLService, IProjectBluePrintService ProjectBluePrintService)
+        private readonly IHostEnvironment _hosting;
+        public ProjectBluePrintController(IGetDDLService getDDLService, IProjectBluePrintService ProjectBluePrintService, IHostEnvironment hosting)
         {
             _getDDLService = getDDLService;
             _ProjectBluePrintService = ProjectBluePrintService;
+            _hosting = hosting;
         }
 
         public IActionResult Index()
@@ -93,14 +96,6 @@ namespace Project.ConstructionTracking.Web.Controllers
             return Json(listBlueprintElement);
         }
 
-        //[HttpPost]
-        //public IActionResult GetListImageProjectFloorPlan([FromBody] Guid ProjectID)
-        //{
-
-        //    List<ProjectBluePrintModel.GetListImageProjectFloorPlanModel> ListImageProjectFloorPlan = _ProjectBluePrintService.GetListImageProjectFloorPlan(ProjectID);
-
-        //    return PartialView("PartialTableListImageProjectBluePrint", ListImageProjectFloorPlan);
-        //}
         [HttpGet]
         public IActionResult GetListImageProjectFloorPlan(Guid ProjectID)
         {
@@ -113,7 +108,22 @@ namespace Project.ConstructionTracking.Web.Controllers
             return PartialView("PartialTableListImageProjectBluePrint", listImageProjectFloorPlan);
         }
 
-
+        [HttpPost]
+        public IActionResult InsertImageProjectFloorPlan(InsertImageProjectFloorPlanModel model)
+        {
+            try
+            {
+                model.UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                model.ApplicationPath = _hosting.ContentRootPath;
+                _ProjectBluePrintService.InsertImageProjectFloorPlan(model);
+                return Json(new { success = true, message = "บันทึกข้อมูลสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                // Return error response with the exception message
+                return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
+            }
+        }
 
     }
 }

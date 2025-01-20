@@ -1,9 +1,7 @@
-﻿/*const uploadButton = document.getElementById("uploadButton");*/
-/*const fileInput = document.getElementById("imageFile");*/
-let canvas, ctx;
+﻿let canvas, ctx;
 let backgroundImage;
-/*let PathbackgroundImage;*/
-
+let SelectedProjectID;
+let ClickProjectFloorPlanID;
 // Store markers and polygons
 let markers = [];
 let polygons = [];
@@ -60,10 +58,6 @@ function uploadBlueprint() {
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
-                // Save the uploaded image path for later use
-/*                PathbackgroundImage = data.imagePath;*/
-
-                // Load the uploaded image onto the canvas
                 loadCanvas(data.imagePath);
             } else {
                 alert(data.message);
@@ -71,7 +65,6 @@ function uploadBlueprint() {
         })
         .catch((err) => console.error("Error uploading blueprint:", err));
 }
-
 
 // ✅ Load Canvas with the Uploaded Image
 function loadCanvas(imagePath) {
@@ -161,9 +154,7 @@ function completePolygon() {
 
 // ✅ Load Dropdown Options
 function loadDropdownOptions(callback) {
-    const PROJECT_ID = "0CC60DA9-9AC5-4DF6-871E-B10FB0257B4B";
-
-    fetch(baseUrl + `ProjectBluePrint/GetDDLUnitList?projectId=${PROJECT_ID}`)
+    fetch(baseUrl + `ProjectBluePrint/GetDDLUnitList?projectId=${SelectedProjectID}`)
         .then(response => response.json())
         .then(data => {
             unitDropdown.innerHTML = "";
@@ -183,7 +174,6 @@ function loadDropdownOptions(callback) {
         .catch(error => console.error("Error fetching unit list:", error));
 }
 
-
 // ✅ Draw Canvas
 function drawCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -201,16 +191,17 @@ function drawCanvas() {
 function drawMarkers() {
     markers.forEach(marker => {
         ctx.beginPath();
-        ctx.arc(marker.x, marker.y, 5, 0, Math.PI * 2);
+        ctx.arc(marker.x, marker.y, 8, 0, Math.PI * 2); // Increased radius from 5 to 8
         ctx.fillStyle = "red";
         ctx.fill();
         ctx.closePath();
 
-        ctx.font = "12px Arial";
+        ctx.font = "14px Arial"; // Increased font size from 12px to 14px
         ctx.fillStyle = "black";
-        ctx.fillText(marker.name, marker.x + 8, marker.y - 8);
+        ctx.fillText(marker.name, marker.x + 10, marker.y - 10); // Adjusted text position for better alignment
     });
 }
+
 
 // ✅ Draw Polygons
 function drawPolygon(polygon, color) {
@@ -256,10 +247,9 @@ function saveBlueprintElements() {
     // Add markers
     markers.forEach(marker => {
         elements.push({
-            ProjectID: "0CC60DA9-9AC5-4DF6-871E-B10FB0257B4B",
+            ProjectFloorPlanID: ClickProjectFloorPlanID,
             ElementType: 39,
             Coordinates: [{ X: marker.x, Y: marker.y }],
- /*           PathProjectImage = PathbackgroundImage,*/
             UnitID: marker.UnitID,
             UserID: "6616524D-8AFD-4925-B956-CB24F1F6DE7D"
         });
@@ -268,10 +258,9 @@ function saveBlueprintElements() {
     // Add polygons
     polygons.forEach(polygon => {
         elements.push({
-            ProjectID: "0CC60DA9-9AC5-4DF6-871E-B10FB0257B4B",
+            ProjectFloorPlanID: ClickProjectFloorPlanID,
             ElementType: 40,
             Coordinates: polygon.points,
-  /*          PathProjectImage = PathbackgroundImage,*/
             UnitID: polygon.UnitID,
             UserID: "6616524D-8AFD-4925-B956-CB24F1F6DE7D"
         });
@@ -305,108 +294,60 @@ function loadBlueprintElements() {
     markers = [];
     polygons = [];
 
-    // Set the background image
-    const image = new Image();
-    image.src = "/images/Screenshot 2025-01-14 101158.jpg"; // Hardcoded image path for now
+    fetch(baseUrl + `ProjectBluePrint/GetBlueprintElements?projectId=${ClickProjectFloorPlanID}`)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(element => {
+                if (element.ElementTypeName === "Marker") {
+                    markers.push({
+                        x: element.Coordinates[0].X,
+                        y: element.Coordinates[0].Y,
+                        name: element.UnitName,
+                        UnitID: element.UnitID
+                    });
+                } else if (element.ElementTypeName === "Polygon") {
+                    polygons.push({
+                        points: element.Coordinates.map(coord => ({
+                            x: coord.X,
+                            y: coord.Y
+                        })), // Ensure coordinates are mapped properly
+                        name: element.UnitName,
+                        UnitID: element.UnitID
+                    });
+                }
+            });
 
-    image.onload = () => {
-        canvas.width = image.width;
-        canvas.height = image.height;
-        ctx.drawImage(image, 0, 0);
-
-        // Fetch saved elements from the server
-        fetch(baseUrl + `ProjectBluePrint/GetBlueprintElements?projectId=0CC60DA9-9AC5-4DF6-871E-B10FB0257B4B`)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(element => {
-                    if (element.ElementTypeName === "Marker") {
-                        markers.push({
-                            x: element.Coordinates[0].X,
-                            y: element.Coordinates[0].Y,
-                            name: element.UnitName
-                        });
-                    } else if (element.ElementTypeName === "Polygon") {
-                        polygons.push({
-                            points: element.Coordinates.map(coord => ({
-                                x: coord.X,
-                                y: coord.Y
-                            })), // Ensure coordinates are mapped properly
-                            name: element.UnitName
-                        });
-                    }
-                });
-
-                drawCanvas(); // Redraw the canvas with updated elements
-            })
-            .catch(error => console.error("Error loading blueprint elements:", error));
-    };
+            drawCanvas(); // Redraw the canvas with updated elements
+        })
+        .catch(error => console.error("Error loading blueprint elements:", error));
 }
 
-
-
-
-//async function handleProjectChange() {
-//    const projectSelect = document.getElementById("projectSelect");
-//    const projectId = projectSelect.value; // Get selected project ID
-//    const container = document.getElementById("projectImageContainer"); // Target container for fetched data
-//    const partialContainer = document.getElementById("partialContainer"); // Container for the partial view
-
-//    if (!projectId) {
-//        // If no project is selected, hide the partial container and clear other content
-//        partialContainer.style.display = "none";
-//        container.innerHTML = "<p class='text-center'>กรุณาเลือกโครงการ</p>";
-//        return;
-//    }
-
-//    try {
-//        // Show the partial container
-//        partialContainer.style.display = "block";
-
-//        console.log(projectId)
-//        // Fetch the partial view
-//        const response = await fetch(baseUrl + "ProjectBluePrint/GetListImageProjectFloorPlan", {
-//            method: "POST",
-//            headers: {
-//                "Content-Type": "application/json",
-//            },
-//            body: JSON.stringify({ ProjectID: projectId }), // Send the selected project ID as JSON
-//        });
-
-//        if (!response.ok) {
-//            throw new Error("Failed to fetch data.");
-//        }
-
-//        const html = await response.text(); // Wait for the response text
-//        container.innerHTML = html; // Update the container with the fetched partial
-//    } catch (error) {
-//        console.error("Error fetching data:", error);
-//        container.innerHTML = "<p class='text-danger'>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>";
-//    }
-//}
-
-
+// ✅ Selecte onchange DDL Project
 function handleProjectChange() {
     const projectSelect = $("#projectSelect");
     const projectId = projectSelect.val(); // Get selected project ID
     const container = $("#projectImageContainer"); // Target container for fetched data
     const partialContainer = $("#partialContainer"); // Container for the partial view
+    SelectedProjectID = projectId;
 
     if (!projectId) {
         // If no project is selected, hide the partial container and clear other content
         partialContainer.hide();
-        container.html("<p class='text-center'>กรุณาเลือกโครงการ</p>");
+        container.empty().html("<p class='text-center'>กรุณาเลือกโครงการ</p>");
         return;
-    }
-
-    // Show the partial container
-    partialContainer.show();
+    }    
 
     $.ajax({
         url: `${baseUrl}ProjectBluePrint/GetListImageProjectFloorPlan`,
         type: "GET", // Use HTTP GET method
         data: { ProjectID: projectId }, // Send the project ID as query parameters
+        beforeSend: function () {
+            // Clear the container before the request
+            container.empty();
+        },
         success: function (html) {
             container.html(html); // Update the container with the fetched partial
+            partialContainer.show();
         },
         error: function (xhr, status, error) {
             console.error("Error fetching data:", error);
@@ -415,7 +356,178 @@ function handleProjectChange() {
     });
 }
 
+// ✅ Dropzone insert new image of Project Blue print
+document.addEventListener("DOMContentLoaded", function () {
+    var dropZone = document.getElementById("drop-zone");
+    var fileInput = document.getElementById("file-input");
+    var previewContainer = document.getElementById("preview-container");
+    var filesArray = [];
+
+    dropZone.addEventListener("click", function (e) {
+        if (e.target.classList.contains("remove-button")) {
+            return;
+        }
+        fileInput.click();
+    });
+
+    fileInput.addEventListener("change", function () {
+        if (fileInput.files.length) {
+            addFilesToPreview(fileInput.files);
+        }
+    });
+
+    dropZone.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        dropZone.classList.add("drop-zone--over");
+    });
+
+    dropZone.addEventListener("dragleave", function () {
+        dropZone.classList.remove("drop-zone--over");
+    });
+
+    dropZone.addEventListener("drop", function (e) {
+        e.preventDefault();
+        addFilesToPreview(e.dataTransfer.files);
+    });
+
+    function addFilesToPreview(files) {
+        Array.from(files).forEach(file => {
+            if (!filesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
+                filesArray.push(file);
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function (event) {
+                    const img = document.createElement("img");
+                    img.src = event.target.result;
+                    const previewImage = document.createElement("div");
+                    previewImage.className = "col-4 preview-image";
+
+                    const removeButton = document.createElement("button");
+                    removeButton.className = "remove-button";
+                    removeButton.innerHTML = "&times;";
+                    removeButton.addEventListener("click", function (e) {
+                        e.stopPropagation();
+                        filesArray = filesArray.filter(f => f !== file);
+                        updateFileInput();
+                        previewImage.remove();
+                    });
+
+                    previewImage.appendChild(img);
+                    previewImage.appendChild(removeButton);
+                    previewContainer.appendChild(previewImage);
+                };
+            }
+        });
+        updateFileInput();
+    }
+
+    function updateFileInput() {
+
+        fileInput.value = '';
+
+        const dataTransfer = new DataTransfer();
+        filesArray.forEach(file => dataTransfer.items.add(file));
+        fileInput.files = dataTransfer.files;
+    }
+});
+
+// ✅ On Click Insert New Image Project Floor Plan
+function onClickInsertImageProjectFloorPlan() {
+    var files = $('#file-input')[0].files;
+    var formData = new FormData();
+    formData.append('ProjectID', SelectedProjectID);
+
+    // Rescale images before uploading
+    if (files.length > 0) {
+        var promises = [];
+
+        for (var i = 0; i < files.length; i++) {
+            promises.push(resizeImage(files[i], 1255, 665));
+        }
+
+        Promise.all(promises).then(function (resizedFiles) {
+            // Append resized images to FormData
+            for (var j = 0; j < resizedFiles.length; j++) {
+                formData.append('Images', resizedFiles[j], resizedFiles[j].name);
+            }
+
+            showLoadingAlert();
+
+            // Perform the AJAX request
+            $.ajax({
+                url: baseUrl + 'ProjectBluePrint/InsertImageProjectFloorPlan',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    Swal.close();
+                    if (response.success) {
+                        showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
+                            // Reload or update UI if necessary
+                        });
+                    } else {
+                        showErrorAlert('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.close();
+                    showErrorAlert('เกิดข้อผิดพลาด!', error);
+                }
+            });
+        }).catch(function (error) {
+            console.error('Error resizing images:', error);
+        });
+    }
+}
 
 
+function resizeImage(file, targetWidth, targetHeight) {
+    return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+
+        reader.onload = function (event) {
+            var img = new Image();
+            img.onload = function () {
+                var canvas = document.createElement('canvas');
+                var ctx = canvas.getContext('2d');
+
+                // Set canvas size to target dimensions
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+
+                // Draw the image to the canvas with the new size
+                ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+                // Convert the canvas back to a Blob
+                canvas.toBlob(function (blob) {
+                    // Resolve with a File object to maintain file properties
+                    var resizedFile = new File([blob], file.name, { type: file.type });
+                    resolve(resizedFile);
+                }, file.type);
+            };
+
+            img.onerror = function () {
+                reject('Failed to load image for resizing');
+            };
+
+            img.src = event.target.result;
+        };
+
+        reader.onerror = function () {
+            reject('Failed to read file for resizing');
+        };
+
+        reader.readAsDataURL(file);
+    });
+}
+
+
+// ✅ Click Open Show Image Project Floor Plan
+function onClickOpenShowImageProjectFloorPlan(imagePath, ProjectFloorPlanID) {
+    ClickProjectFloorPlanID = ProjectFloorPlanID;
+    loadCanvas(imagePath);
+    loadBlueprintElements()
+}
 
 

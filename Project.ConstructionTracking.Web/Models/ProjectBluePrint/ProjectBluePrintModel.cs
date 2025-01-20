@@ -4,7 +4,7 @@
     {
         public class BlueprintElementModel
         {
-            public Guid ProjectID { get; set; }
+            public Guid ProjectFloorPlanID { get; set; }
             public int ElementType { get; set; } // "Marker" or "Polygon"
             public string? ElementTypeName { get; set; }
             public List<PointModel>? Coordinates { get; set; }
@@ -30,6 +30,7 @@
 
         public class GetListImageProjectFloorPlanModel
         {
+            public Guid? ProjectFloorPlanID { get; set; }
             public Guid? ResourceID { get; set; }
             public string? FileName { get; set; }
             public string? FilePath { get; set; }

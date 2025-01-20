@@ -20,9 +20,9 @@ namespace Project.ConstructionTracking.Web.Services
             return ListImageProjectFloorPlan;
         }
 
-        public List<ProjectBluePrintModel.BlueprintElementModel> GetListProjectBlueprintElements(Guid ProjectID)
+        public List<ProjectBluePrintModel.BlueprintElementModel> GetListProjectBlueprintElements(Guid ProjectFloorPlanID)
         {
-            var ListProjectBlueprintElements = _IProjectBluePrintRepo.GetListProjectBlueprintElements(ProjectID);
+            var ListProjectBlueprintElements = _IProjectBluePrintRepo.GetListProjectBlueprintElements(ProjectFloorPlanID);
             return ListProjectBlueprintElements;
         }
 
