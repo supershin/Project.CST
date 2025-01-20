@@ -39,33 +39,6 @@ function switchTool(tool) {
     console.log(`Active tool: ${tool}`);
 }
 
-// ✅ Upload Blueprint Image
-function uploadBlueprint() {
-    const fileInput = document.getElementById("imageFile");
-    const file = fileInput.files[0];
-    if (!file) {
-        alert("Please select a blueprint image to upload.");
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append("imageFile", file);
-
-    fetch(baseUrl + "ProjectBluePrint/UploadBlueprint", {
-        method: "POST",
-        body: formData,
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) {
-                loadCanvas(data.imagePath);
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch((err) => console.error("Error uploading blueprint:", err));
-}
-
 // ✅ Load Canvas with the Uploaded Image
 function loadCanvas(imagePath) {
     canvas = document.getElementById("blueprintCanvas");
@@ -85,15 +58,35 @@ function loadCanvas(imagePath) {
     initCanvasInteraction();
 }
 
+function removeMarker(marker) {
+    const confirmRemove = confirm(`Do you want to remove "${marker.name}"?`);
+    if (confirmRemove) {
+        markers = markers.filter(m => m !== marker);
+        drawCanvas(); 
+    }
+}
+
 // ✅ Initialize Canvas Interaction
 function initCanvasInteraction() {
+
     canvas.addEventListener("click", (event) => {
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
         if (activeTool === "marker") {
-            addMarker(x, y);
+            // Check if the click is on an existing marker
+            const clickedMarker = markers.find(marker => {
+                const dx = x - marker.x;
+                const dy = y - marker.y;
+                return Math.sqrt(dx * dx + dy * dy) <= 8; // Match marker radius
+            });
+
+            if (clickedMarker) {
+                removeMarker(clickedMarker); // Remove the clicked marker
+            } else {
+                addMarker(x, y); // Add a new marker if none was clicked
+            }
         } else if (activeTool === "polygon") {
             addPolygonPoint(x, y);
         }
@@ -116,7 +109,6 @@ function addMarker(x, y) {
         const selectedText = unitDropdown.options[unitDropdown.selectedIndex].text;
         const selectedID = unitDropdown.options[unitDropdown.selectedIndex].value;
         markers.push({ x: tempX, y: tempY, name: selectedText, UnitID: selectedID });
-        debugger
         drawCanvas();
     });
 
@@ -191,14 +183,14 @@ function drawCanvas() {
 function drawMarkers() {
     markers.forEach(marker => {
         ctx.beginPath();
-        ctx.arc(marker.x, marker.y, 8, 0, Math.PI * 2); // Increased radius from 5 to 8
+        ctx.arc(marker.x, marker.y, 12, 0, Math.PI * 2); // Increased radius from 5 to 8
         ctx.fillStyle = "red";
         ctx.fill();
         ctx.closePath();
 
-        ctx.font = "14px Arial"; // Increased font size from 12px to 14px
+        ctx.font = "14px Arial"; 
         ctx.fillStyle = "black";
-        ctx.fillText(marker.name, marker.x + 10, marker.y - 10); // Adjusted text position for better alignment
+        ctx.fillText(marker.name, marker.x + 10, marker.y - 10);
     });
 }
 
@@ -324,6 +316,8 @@ function loadBlueprintElements() {
 
 // ✅ Selecte onchange DDL Project
 function handleProjectChange() {
+    const partialContainerOpenShowImageProjectFloorPlan = $("#partialContainerOpenShowImageProjectFloorPlan"); // Container for the partial view
+    partialContainerOpenShowImageProjectFloorPlan.hide();
     const projectSelect = $("#projectSelect");
     const projectId = projectSelect.val(); // Get selected project ID
     const container = $("#projectImageContainer"); // Target container for fetched data
@@ -431,6 +425,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+
 // ✅ On Click Insert New Image Project Floor Plan
 function onClickInsertImageProjectFloorPlan() {
     var files = $('#file-input')[0].files;
@@ -464,7 +459,8 @@ function onClickInsertImageProjectFloorPlan() {
                     Swal.close();
                     if (response.success) {
                         showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', function () {
-                            // Reload or update UI if necessary
+                            handleProjectChange()
+                            document.getElementById('ClickCloseInsertImageProjectFloorPlan').click();
                         });
                     } else {
                         showErrorAlert('บันทึกข้อมูลไม่สำเร็จ', response.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -526,8 +522,28 @@ function resizeImage(file, targetWidth, targetHeight) {
 // ✅ Click Open Show Image Project Floor Plan
 function onClickOpenShowImageProjectFloorPlan(imagePath, ProjectFloorPlanID) {
     ClickProjectFloorPlanID = ProjectFloorPlanID;
+
+    // Clear the canvas and reset markers and polygons
+    if (canvas) {
+        // Remove old canvas events by cloning and replacing the canvas element
+        const newCanvas = canvas.cloneNode(true);
+        canvas.parentNode.replaceChild(newCanvas, canvas);
+        canvas = newCanvas;
+    }
+
+    // Reset markers and polygons
+    markers = [];
+    polygons = [];
+    currentPolygon = [];
+
+    // Load the new canvas and blueprint elements
     loadCanvas(imagePath);
-    loadBlueprintElements()
+    loadBlueprintElements();
+    const partialContainerOpenShowImageProjectFloorPlan = $("#partialContainerOpenShowImageProjectFloorPlan"); // Container for the partial view
+    partialContainerOpenShowImageProjectFloorPlan.show();
 }
+
+
+
 
 
