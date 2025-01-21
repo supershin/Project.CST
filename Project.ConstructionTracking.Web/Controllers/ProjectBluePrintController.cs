@@ -32,7 +32,6 @@ namespace Project.ConstructionTracking.Web.Controllers
             List<GetDDL> ListProject = _getDDLService.GetDDLList(ddlModel);
             ViewBag.ListDDLProject = ListProject;
 
-
             return View();
         }
 
@@ -120,10 +119,25 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
             catch (Exception ex)
             {
-                // Return error response with the exception message
                 return Json(new { success = false, message = $"ผิดพลาด : {ex.Message}" });
             }
         }
+
+
+        [HttpPost]
+        public IActionResult RemoveImageProjectFloorPlan(RemoveImageProjectFloorPlanModel model)
+        {
+            try
+            {
+                _ProjectBluePrintService.RemoveImageProjectFloorPlan(model);
+                return Ok(new { success = true, message = "ลบรูปภาพสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = "An error occurred: " + ex.Message });
+            }
+        }
+
 
     }
 }

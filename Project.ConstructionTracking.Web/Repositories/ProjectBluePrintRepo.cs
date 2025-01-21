@@ -193,13 +193,26 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
+        public void RemoveImageProjectFloorPlan(ProjectBluePrintModel.RemoveImageProjectFloorPlanModel model)
+        {
+            var ProjectFloorPlan = _context.tr_ProjectFloorPlan.FirstOrDefault(p => p.ID == model.ProjectFloorPlanID);
+
+            if (ProjectFloorPlan != null)
+            {
+                ProjectFloorPlan.FlagActive = false;
+                ProjectFloorPlan.UpdateBy = model.UserID;
+                ProjectFloorPlan.UpdateDate = DateTime.Now;
+                _context.SaveChanges();
+            }
+        }
+
         public List<ProjectBluePrintModel.GetListImageProjectFloorPlanModel> GetListImageProjectFloorPlan(Guid ProjectID)
         {
 
             var query = from floorPlan in _context.tr_ProjectFloorPlan
                         join resource in _context.tm_Resource on floorPlan.ResourceID equals resource.ID into resourceJoin
                         from resource in resourceJoin.DefaultIfEmpty()
-                        where floorPlan.ProjectID == ProjectID && resource.FlagActive == true
+                        where floorPlan.ProjectID == ProjectID && resource.FlagActive == true && floorPlan.FlagActive == true
                         select new GetListImageProjectFloorPlanModel
                         {
                             ProjectFloorPlanID = floorPlan.ID,

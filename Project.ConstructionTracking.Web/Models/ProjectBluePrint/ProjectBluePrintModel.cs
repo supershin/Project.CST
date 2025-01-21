@@ -36,5 +36,10 @@
             public string? FilePath { get; set; }
         }
 
+        public class RemoveImageProjectFloorPlanModel
+        {
+            public Guid ProjectFloorPlanID { get; set; }
+            public Guid UserID { get; set; }
+        }
     }
 }

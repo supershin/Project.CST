@@ -1,4 +1,5 @@
-﻿using Project.ConstructionTracking.Web.Models.ProjectBluePrint;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Project.ConstructionTracking.Web.Models.ProjectBluePrint;
 using Project.ConstructionTracking.Web.Repositories;
 using System.Transactions;
 using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
@@ -51,6 +52,18 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
+        public void RemoveImageProjectFloorPlan(ProjectBluePrintModel.RemoveImageProjectFloorPlanModel model)
+        {
+            try
+            {
+                _IProjectBluePrintRepo.RemoveImageProjectFloorPlan(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+            }
+        }
+
         public void SaveBlueprintElements(List<ProjectBluePrintModel.BlueprintElementModel> elements)
         {
             if (elements == null || !elements.Any())
@@ -82,6 +95,8 @@ namespace Project.ConstructionTracking.Web.Services
                 }
             } // TransactionScope is disposed here
         }
+
+
 
     }
 }

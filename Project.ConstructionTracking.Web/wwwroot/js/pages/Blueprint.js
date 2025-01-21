@@ -34,10 +34,26 @@ function setActiveNav() {
 }
 
 // ✅ Tool Selection
+//function switchTool(tool) {
+//    activeTool = tool;
+//    console.log(`Active tool: ${tool}`);
+//}
 function switchTool(tool) {
     activeTool = tool;
+
+    // Remove the "active" class from all tool buttons
+    Object.values(toolButtons).forEach(button => {
+        button.classList.remove("btn-primary");
+        button.classList.add("btn-outline-primary");
+    });
+
+    // Add the "active" class to the selected tool
+    toolButtons[tool].classList.remove("btn-outline-primary");
+    toolButtons[tool].classList.add("btn-primary");
+
     console.log(`Active tool: ${tool}`);
 }
+
 
 // ✅ Load Canvas with the Uploaded Image
 function loadCanvas(imagePath) {
@@ -243,7 +259,7 @@ function saveBlueprintElements() {
             ElementType: 39,
             Coordinates: [{ X: marker.x, Y: marker.y }],
             UnitID: marker.UnitID,
-            UserID: "6616524D-8AFD-4925-B956-CB24F1F6DE7D"
+            UserID: id
         });
     });
 
@@ -254,7 +270,7 @@ function saveBlueprintElements() {
             ElementType: 40,
             Coordinates: polygon.points,
             UnitID: polygon.UnitID,
-            UserID: "6616524D-8AFD-4925-B956-CB24F1F6DE7D"
+            UserID: id
         });
     });
 
@@ -338,6 +354,7 @@ function handleProjectChange() {
         beforeSend: function () {
             // Clear the container before the request
             container.empty();
+            switchTool('marker')
         },
         success: function (html) {
             container.html(html); // Update the container with the fetched partial
@@ -542,6 +559,39 @@ function onClickOpenShowImageProjectFloorPlan(imagePath, ProjectFloorPlanID) {
     const partialContainerOpenShowImageProjectFloorPlan = $("#partialContainerOpenShowImageProjectFloorPlan"); // Container for the partial view
     partialContainerOpenShowImageProjectFloorPlan.show();
 }
+
+// ✅ Click Remove Image Project Floor Plan
+function ClickremoveImageProjectFloorPlan(projectFloorPlanID) {
+    const confirmRemove = confirm("Are you sure you want to remove this image?");
+    if (confirmRemove) {
+        const formData = new FormData();
+        formData.append("ProjectFloorPlanID", projectFloorPlanID);
+        formData.append("UserID", id);
+
+        $.ajax({
+            url: `${baseUrl}ProjectBluePrint/RemoveImageProjectFloorPlan`,
+            type: "POST",
+            data: formData,
+            processData: false, 
+            contentType: false, 
+            success: function (response) {
+                if (response.success) {
+                    showSuccessAlert('สำเร็จ!', 'ลบรูปภาพสำเร็จ', function () {
+                        handleProjectChange();
+                    });
+                } else {
+                    showErrorAlert('เกิดข้อผิดพลาด!', response.message || 'ไม่สามารถลบรูปภาพได้');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error removing image:", error);
+                showErrorAlert('เกิดข้อผิดพลาด!', 'ไม่สามารถลบรูปภาพได้');
+            }
+        });
+    }
+}
+
+
 
 
 
