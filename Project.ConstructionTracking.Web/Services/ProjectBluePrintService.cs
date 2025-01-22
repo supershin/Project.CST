@@ -64,6 +64,18 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
+        public void RemoveMarkerProjectBluePrint(ProjectBluePrintModel.RemoveMarkerProjectBluePrintModel model)
+        {
+            try
+            {
+                _IProjectBluePrintRepo.RemoveMarkerProjectBluePrint(model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("บันทึกลงฐานข้อมูลไม่สำเร็จ", ex);
+            }
+        }
+
         public void SaveBlueprintElements(List<ProjectBluePrintModel.BlueprintElementModel> elements)
         {
             if (elements == null || !elements.Any())
@@ -95,8 +107,6 @@ namespace Project.ConstructionTracking.Web.Services
                 }
             } // TransactionScope is disposed here
         }
-
-
 
     }
 }

@@ -41,5 +41,10 @@
             public Guid ProjectFloorPlanID { get; set; }
             public Guid UserID { get; set; }
         }
+        public class RemoveMarkerProjectBluePrintModel
+        {
+            public Guid UnitID { get; set; }
+            public Guid UserID { get; set; }
+        }
     }
 }

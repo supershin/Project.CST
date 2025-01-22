@@ -17,19 +17,20 @@ let tempX, tempY;
 // ✅ Tool Buttons
 const toolButtons = {
     marker: document.getElementById("markerTool"),
-    polygon: document.getElementById("polygonTool"),
-    undo: document.getElementById("undoButton")
+    /*polygon: document.getElementById("polygonTool"),*/
+    /*undo: document.getElementById("undoButton")*/
 };
 
 // ✅ Set Active Navigation
 function setActiveNav() {
-    const navItems = document.querySelectorAll('.nav-item');
+    const desktopNavItem = document.getElementById('nav-Setting');
+    const ListNavItem = document.getElementById('nav-Setting-Project-Floor-Plan');
 
-    navItems.forEach(item => item.classList.remove('active'));
-
-    const activeItem = document.getElementById('nav-ProjectBluePrint');
-    if (activeItem) {
-        activeItem.classList.add('active');
+    if (desktopNavItem) {
+        desktopNavItem.classList.add('active');
+    }
+    if (ListNavItem) {
+        ListNavItem.classList.add('active');
     }
 }
 
@@ -47,7 +48,7 @@ function switchTool(tool) {
     toolButtons[tool].classList.remove("btn-outline-primary");
     toolButtons[tool].classList.add("btn-primary");
 
-    console.log(`Active tool: ${tool}`);
+    /*console.log(`Active tool: ${tool}`);*/
 }
 
 
@@ -79,7 +80,9 @@ function removeMarker(marker) {
         'ยกเลิก',
         function () {
             markers = markers.filter(m => m !== marker);
-            drawCanvas(); 
+            drawCanvas();
+            /*console.log(marker.UnitID);*/
+            RemoveMarkerProjectBluePrint(marker.UnitID);
         }
     );
 }
@@ -101,6 +104,7 @@ function initCanvasInteraction() {
             });
 
             if (clickedMarker) {
+                /*console.log("Marker clicked:", clickedMarker);*/
                 removeMarker(clickedMarker); // Remove the clicked marker
             } else {
                 addMarker(x, y); // Add a new marker if none was clicked
@@ -111,11 +115,12 @@ function initCanvasInteraction() {
     });
 
     // Keyboard shortcut for Undo (Ctrl + Z)
-    document.addEventListener("keydown", (event) => {
-        if (event.ctrlKey && event.key === "z") {
-            undoLastAction();
-        }
-    });
+    //document.addEventListener("keydown", (event) => {
+    //    if (event.ctrlKey && event.key === "z") {
+    //        undoLastAction();
+    //    }
+    //});
+
 }
 
 // ✅ Add Marker
@@ -124,14 +129,22 @@ function addMarker(x, y) {
     tempY = y;
 
     loadDropdownOptions(() => {
-        const selectedText = unitDropdown.options[unitDropdown.selectedIndex].text;
-        const selectedID = unitDropdown.options[unitDropdown.selectedIndex].value;
-        markers.push({ x: tempX, y: tempY, name: selectedText, UnitID: selectedID });
-        drawCanvas();
-    });
+        /*debugger*/
+        const unitSelectize = $('#unitDropdown')[0].selectize; // Get the Selectize instance
+        const selectedText = unitSelectize.getItem(unitSelectize.getValue()).text(); // Get the selected item's text
 
-    unitModal.show();
+        const selectedID = unitSelectize.getValue(); // Get the selected value
+        if (!selectedID) { 
+            showErrorAlert('เกิดข้อผิดพลาด!', 'กรุณาเลือกแปลงก่อนบันทึก');
+            return; 
+        }
+
+        markers.push({ x: tempX, y: tempY, name: selectedText, UnitID: selectedID });
+        drawCanvas(); 
+        saveBlueprintElements(); 
+    });
 }
+
 
 // ✅ Add Polygon Point
 function addPolygonPoint(x, y) {
@@ -163,26 +176,117 @@ function completePolygon() {
 }
 
 // ✅ Load Dropdown Options
-function loadDropdownOptions(callback) {
-    fetch(baseUrl + `ProjectBluePrint/GetDDLUnitList?projectId=${SelectedProjectID}`)
-        .then(response => response.json())
-        .then(data => {
-            unitDropdown.innerHTML = "";
-            data.forEach(unit => {
-                const option = document.createElement("option");
-                option.value = unit.ValueGuid;
-                option.textContent = unit.Text;
-                unitDropdown.appendChild(option);
-            });
+//function loadDropdownOptions(callback) {
+//    fetch(baseUrl + `ProjectBluePrint/GetDDLUnitList?projectId=${SelectedProjectID}`)
+//        .then(response => response.json())
+//        .then(data => {
+//            unitDropdown.innerHTML = "";
+//            data.forEach(unit => {
+//                const option = document.createElement("option");
+//                option.value = unit.ValueGuid;
+//                option.textContent = unit.Text;
+//                unitDropdown.appendChild(option);
+//            });
 
-            // When the Save button is clicked
-            modalSaveButton.onclick = () => {              
-                unitModal.hide();  // Close the modal using Bootstrap's hide() method
-                callback();  // Execute the save function
+//            // When the Save button is clicked
+//            modalSaveButton.onclick = () => {
+//                unitModal.hide();  // Close the modal using Bootstrap's hide() method
+//                callback();  // Execute the save function
+//            };
+//        })
+//        .catch(error => console.error("Error fetching unit list:", error));
+//}
+//function loadDropdownOptions(callback) {
+//    // Initialize Selectize instance safely
+//    const selectizeInstance = $('#unitDropdown').data('selectize');
+//    if (!selectizeInstance) {
+//        console.error('Selectize instance not found on #unitDropdown.');
+//        return;
+//    }
+
+//    $.ajax({
+//        url: `${baseUrl}ProjectBluePrint/GetDDLUnitList`,
+//        type: 'GET',
+//        data: { projectId: SelectedProjectID },
+//        success: function (data) {
+//            selectizeInstance.clearOptions(); // Clear existing options
+//            //selectizeInstance.addOption({ value: '', text: 'กรุณาเลือก' }); // Add default option
+
+//            // Populate Selectize with fetched options
+//            data.forEach(unit => {
+//                selectizeInstance.addOption({ value: unit.ValueGuid, text: unit.Text });
+//            });
+
+//            selectizeInstance.setValue(''); // Reset to the default value
+
+//            $('#unitModal').modal('show');
+
+//            // Bind the Save button click handler
+//            document.getElementById('modalSaveButton').onclick = () => {
+//                const selectedValue = selectizeInstance.getValue(); // Get selected value
+//                if (callback) callback(selectedValue); // Pass the selected value to the callback
+//                $('#unitModal').modal('hide'); // Hide the modal
+//            };
+//        },
+//        error: function (xhr, status, error) {
+//            console.error('Error fetching unit list:', error);
+//            showErrorAlert('เกิดข้อผิดพลาด!', 'ไม่สามารถโหลดข้อมูลได้');
+//        }
+//    });
+//}
+
+function loadDropdownOptions(callback) {
+    const selectizeInstance = $('#unitDropdown').data('selectize');
+    if (!selectizeInstance) {
+        console.error('Selectize instance not found on #unitDropdown.');
+        return;
+    }
+
+    const promise = new Promise((resolve, reject) => {
+        $.ajax({
+            url: `${baseUrl}ProjectBluePrint/GetDDLUnitList`,
+            type: 'GET',
+            data: { projectId: SelectedProjectID },
+            success: function (data) {
+                try {
+                    selectizeInstance.clearOptions();
+
+                    data.forEach(unit => {
+                        selectizeInstance.addOption({ value: unit.ValueGuid, text: unit.Text });
+                    });
+
+                    selectizeInstance.setValue(''); 
+
+                    resolve(); 
+                } catch (error) {
+                    reject(error); 
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching unit list:', error);
+                reject(new Error('Error fetching unit list.'));
+            }
+        });
+    });
+
+    promise
+        .then(() => {
+            $('#unitModal').modal('show');
+            document.getElementById('modalSaveButton').onclick = () => {
+                const selectedValue = selectizeInstance.getValue(); 
+                if (callback) callback(selectedValue); 
+                $('#unitModal').modal('hide');
+                selectizeInstance.setValue(''); 
             };
         })
-        .catch(error => console.error("Error fetching unit list:", error));
+        .catch(error => {
+            console.error('Error populating Selectize:', error);
+            showErrorAlert('เกิดข้อผิดพลาด!', 'ไม่สามารถโหลดข้อมูลได้');
+        });
 }
+
+
+
 
 // ✅ Draw Canvas
 function drawCanvas() {
@@ -546,6 +650,7 @@ function resizeImage(file, targetWidth, targetHeight) {
 
 // ✅ Click Open Show Image Project Floor Plan
 function onClickOpenShowImageProjectFloorPlan(imagePath, ProjectFloorPlanID) {
+ /*   debugger*/
     ClickProjectFloorPlanID = ProjectFloorPlanID;
 
     // Clear any previously active image
@@ -582,7 +687,7 @@ function onClickOpenShowImageProjectFloorPlan(imagePath, ProjectFloorPlanID) {
 
 
 // ✅ Click Remove Image Project Floor Plan
-function ClickremoveImageProjectFloorPlan(projectFloorPlanID, userId) {
+function ClickremoveImageProjectFloorPlan(projectFloorPlanID) {
     showConfirmationAlert(
         'ยืนยันการลบ',
         'คุณต้องการลบรูปภาพนี้ใช่หรือไม่?',
@@ -615,7 +720,6 @@ function ClickremoveImageProjectFloorPlan(projectFloorPlanID, userId) {
                 },
                 error: function (xhr, status, error) {
                     Swal.close();
-                    console.error("Error response:", xhr.responseText);
                     showErrorAlert('เกิดข้อผิดพลาด!', error || 'ไม่สามารถลบรูปภาพได้');
                 }
             });
@@ -623,6 +727,35 @@ function ClickremoveImageProjectFloorPlan(projectFloorPlanID, userId) {
     );
 }
 
+
+function RemoveMarkerProjectBluePrint(UnitID) {
+    showLoadingAlert('กำลังลบรูปภาพ...', 'กรุณารอสักครู่');
+
+    const formData = new FormData();
+    formData.append("UnitID", UnitID);
+    formData.append("UserID", id);
+
+    $.ajax({
+        url: `${baseUrl}ProjectBluePrint/RemoveMarkerProjectBluePrint`,
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            Swal.close();
+            if (response.success) {
+                showSuccessAlert('สำเร็จ!', 'ลบ Marker สำเร็จ', function () {
+                });
+            } else {
+                showErrorAlert('เกิดข้อผิดพลาด!', response.message || 'ไม่สามารถลบ Marker ได้');
+            }
+        },
+        error: function (xhr, status, error) {
+            Swal.close();
+            showErrorAlert('เกิดข้อผิดพลาด!', error || 'ไม่สามารถลบรูปภาพได้');
+        }
+    });
+}
 
 
 

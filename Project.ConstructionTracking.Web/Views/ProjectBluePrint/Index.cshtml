@@ -207,7 +207,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="unitModal" tabindex="-1" aria-labelledby="unitModalLabel" aria-hidden="true">
+@*     <div class="modal fade" id="unitModal" tabindex="-1" aria-labelledby="unitModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -220,14 +220,41 @@
                 </div>
             </div>
         </div>
+    </div> *@
+
+    <div class="modal fade" id="unitModal" tabindex="-1" aria-labelledby="unitModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="unitModalLabel">เลือกแปลง</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select id="unitDropdown">
+                    </select>
+                    <button id="modalSaveButton" class="btn btn-primary mt-3">Save</button>
+                </div>
+            </div>
+        </div>
     </div>
+
+
 
 </div>
 @section scripts {
+    <link href="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.default.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js"></script>
     <script src="~/js/Pages/Blueprint.js?ver=@DateTime.Now.Ticks"></script>
     <script>
         $(document).ready(function () {
             setActiveNav();
+            document.getElementById('markerTool').style.display = 'none';
+            $('#unitDropdown').selectize({
+                create: false,
+                placeholder: 'กรุณาเลือก',
+                maxItems: 1,
+            });
         });
     </script>
     <script>
@@ -242,5 +269,24 @@
                 });
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const unitModal = $('#unitModal');
+            const modalTriggerButton = document.querySelector('[data-bs-target="#unitModal"]'); // Update this selector based on your modal trigger button
+
+            // Handle modal shown event
+            unitModal.on('shown.bs.modal', function () {
+                const unitSelectize = $('#unitDropdown')[0].selectize;
+                unitSelectize.focus(); // Focus the dropdown when the modal opens
+            });
+
+            // Handle modal hidden event
+            unitModal.on('hidden.bs.modal', function () {
+                if (modalTriggerButton) {
+                    modalTriggerButton.focus(); // Return focus to the trigger button
+                }
+            });
+        });
+
     </script>
 }

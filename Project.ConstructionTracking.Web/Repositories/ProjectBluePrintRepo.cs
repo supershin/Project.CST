@@ -205,6 +205,18 @@ namespace Project.ConstructionTracking.Web.Repositories
                 _context.SaveChanges();
             }
         }
+        public void RemoveMarkerProjectBluePrint(ProjectBluePrintModel.RemoveMarkerProjectBluePrintModel model)
+        {
+            var ProjectBluePrint = _context.tr_ProjectBluePrint.FirstOrDefault(p => p.UnitID == model.UnitID && p.FlagActive == true);
+
+            if (ProjectBluePrint != null)
+            {
+                ProjectBluePrint.FlagActive = false;
+                ProjectBluePrint.UpdateBy = model.UserID;
+                ProjectBluePrint.UpdateDate = DateTime.Now;
+                _context.SaveChanges();
+            }
+        }
 
         public List<ProjectBluePrintModel.GetListImageProjectFloorPlanModel> GetListImageProjectFloorPlan(Guid ProjectID)
         {

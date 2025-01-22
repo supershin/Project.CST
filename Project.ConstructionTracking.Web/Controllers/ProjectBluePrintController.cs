@@ -1,15 +1,8 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
-using Newtonsoft.Json;
-using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Models;
-using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Models.ProjectBluePrint;
-using Project.ConstructionTracking.Web.Models.QC5CheckModel;
-using Project.ConstructionTracking.Web.Repositories;
 using Project.ConstructionTracking.Web.Services;
-using static Project.ConstructionTracking.Web.Models.PJMApproveModel;
 using static Project.ConstructionTracking.Web.Models.ProjectBluePrint.ProjectBluePrintModel;
 
 namespace Project.ConstructionTracking.Web.Controllers
@@ -62,7 +55,7 @@ namespace Project.ConstructionTracking.Web.Controllers
         [HttpGet]
         public IActionResult GetDDLUnitList(Guid projectId)
         {
-            var ddlModel = new GetDDL { Act = "Unit", ValueGuid = projectId };
+            var ddlModel = new GetDDL { Act = "UnitForInsertBluePrint", ValueGuid = projectId };
             List<GetDDL> ListUnit = _getDDLService.GetDDLList(ddlModel);
             return Json(ListUnit);
         }
@@ -123,7 +116,6 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
-
         [HttpPost]
         public IActionResult RemoveImageProjectFloorPlan(RemoveImageProjectFloorPlanModel model)
         {
@@ -138,6 +130,18 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
-
+        [HttpPost]
+        public IActionResult RemoveMarkerProjectBluePrint(RemoveMarkerProjectBluePrintModel model)
+        {
+            try
+            {
+                _ProjectBluePrintService.RemoveMarkerProjectBluePrint(model);
+                return Ok(new { success = true, message = "ลบรูปภาพสำเร็จ" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = "An error occurred: " + ex.Message });
+            }
+        }
     }
 }

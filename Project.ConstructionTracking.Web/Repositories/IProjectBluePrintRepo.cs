@@ -11,5 +11,6 @@ namespace Project.ConstructionTracking.Web.Repositories
         void InsertImageProjectFloorPlan(ProjectBluePrintModel.InsertImageProjectFloorPlanModel mode);
         public List<ProjectBluePrintModel.GetListImageProjectFloorPlanModel> GetListImageProjectFloorPlan(Guid ProjectID);
         void RemoveImageProjectFloorPlan(ProjectBluePrintModel.RemoveImageProjectFloorPlanModel model);
+        void RemoveMarkerProjectBluePrint(ProjectBluePrintModel.RemoveMarkerProjectBluePrintModel model);
     }
 }
