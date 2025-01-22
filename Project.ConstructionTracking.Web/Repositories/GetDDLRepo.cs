@@ -573,10 +573,10 @@ namespace Project.ConstructionTracking.Web.Repositories
                 case "UnitForInsertBluePrint":
                     var UnitForInsertBluePrint = from unit in _context.tm_Unit
                                  join blueprint in _context.tr_ProjectBluePrint
-                                 on unit.UnitID equals blueprint.UnitID into blueprintGroup
-                                 from subBlueprint in blueprintGroup.DefaultIfEmpty() // LEFT JOIN
+                                 on new { unit.UnitID, FlagActive = (bool)true } equals new { blueprint.UnitID, blueprint.FlagActive } into blueprints
+                                 from subBlueprint in blueprints.DefaultIfEmpty()
                                  where unit.ProjectID == Model.ValueGuid
-                                       && subBlueprint == null // Exclude matching UnitID
+                                 && subBlueprint == null // Exclude matching UnitID
                                  orderby unit.UnitCode
                                  select new GetDDL
                                  {
