@@ -34,10 +34,6 @@ function setActiveNav() {
 }
 
 // ✅ Tool Selection
-//function switchTool(tool) {
-//    activeTool = tool;
-//    console.log(`Active tool: ${tool}`);
-//}
 function switchTool(tool) {
     activeTool = tool;
 
@@ -75,11 +71,17 @@ function loadCanvas(imagePath) {
 }
 
 function removeMarker(marker) {
-    const confirmRemove = confirm(`Do you want to remove "${marker.name}"?`);
-    if (confirmRemove) {
-        markers = markers.filter(m => m !== marker);
-        drawCanvas(); 
-    }
+    showConfirmationAlert(
+        'ยืนยันการลบ',
+        'คุณต้องการลบ Marker นี้ใช่หรือไม่?',
+        'warning',
+        'ใช่',
+        'ยกเลิก',
+        function () {
+            markers = markers.filter(m => m !== marker);
+            drawCanvas(); 
+        }
+    );
 }
 
 // ✅ Initialize Canvas Interaction
@@ -250,6 +252,8 @@ function undoLastAction() {
 
 // ✅ SaveBlueprintElements
 function saveBlueprintElements() {
+    showLoadingAlert('กำลังบันทึก...', 'กรุณารอสักครู่');
+
     const elements = [];
 
     // Add markers
@@ -283,13 +287,17 @@ function saveBlueprintElements() {
     })
     .then(response => response.json())
     .then(data => {
+        Swal.close(); // Ensure the loading alert is closed
         if (data.success) {
-            alert("Data saved successfully!");
+            showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ');
         } else {
-            alert("Failed to save data.");
+            showErrorAlert('เกิดข้อผิดพลาด!', data.message || 'ไม่สามารถบันทึกข้อมูลได้');
         }
     })
-    .catch(error => console.error("Error saving data:", error));
+    .catch(error => {
+        Swal.close();
+        showErrorAlert('เกิดข้อผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
+    });
 }
 
 
@@ -540,9 +548,19 @@ function resizeImage(file, targetWidth, targetHeight) {
 function onClickOpenShowImageProjectFloorPlan(imagePath, ProjectFloorPlanID) {
     ClickProjectFloorPlanID = ProjectFloorPlanID;
 
+    // Clear any previously active image
+    document.querySelectorAll(".card-img-container").forEach(container => {
+        container.classList.remove("active");
+    });
+
+    // Add the active class to the clicked image container
+    const clickedImageContainer = event.target.closest(".card-img-container");
+    if (clickedImageContainer) {
+        clickedImageContainer.classList.add("active");
+    }
+
     // Clear the canvas and reset markers and polygons
     if (canvas) {
-        // Remove old canvas events by cloning and replacing the canvas element
         const newCanvas = canvas.cloneNode(true);
         canvas.parentNode.replaceChild(newCanvas, canvas);
         canvas = newCanvas;
@@ -556,40 +574,55 @@ function onClickOpenShowImageProjectFloorPlan(imagePath, ProjectFloorPlanID) {
     // Load the new canvas and blueprint elements
     loadCanvas(imagePath);
     loadBlueprintElements();
+
+    // Show the partial container
     const partialContainerOpenShowImageProjectFloorPlan = $("#partialContainerOpenShowImageProjectFloorPlan"); // Container for the partial view
     partialContainerOpenShowImageProjectFloorPlan.show();
 }
 
-// ✅ Click Remove Image Project Floor Plan
-function ClickremoveImageProjectFloorPlan(projectFloorPlanID) {
-    const confirmRemove = confirm("Are you sure you want to remove this image?");
-    if (confirmRemove) {
-        const formData = new FormData();
-        formData.append("ProjectFloorPlanID", projectFloorPlanID);
-        formData.append("UserID", id);
 
-        $.ajax({
-            url: `${baseUrl}ProjectBluePrint/RemoveImageProjectFloorPlan`,
-            type: "POST",
-            data: formData,
-            processData: false, 
-            contentType: false, 
-            success: function (response) {
-                if (response.success) {
-                    showSuccessAlert('สำเร็จ!', 'ลบรูปภาพสำเร็จ', function () {
-                        handleProjectChange();
-                    });
-                } else {
-                    showErrorAlert('เกิดข้อผิดพลาด!', response.message || 'ไม่สามารถลบรูปภาพได้');
+// ✅ Click Remove Image Project Floor Plan
+function ClickremoveImageProjectFloorPlan(projectFloorPlanID, userId) {
+    showConfirmationAlert(
+        'ยืนยันการลบ',
+        'คุณต้องการลบรูปภาพนี้ใช่หรือไม่?',
+        'warning',
+        'ใช่',
+        'ยกเลิก',
+        function () {
+
+            showLoadingAlert('กำลังลบรูปภาพ...', 'กรุณารอสักครู่');
+
+            const formData = new FormData();
+            formData.append("ProjectFloorPlanID", projectFloorPlanID);
+            formData.append("UserID", id);
+
+            $.ajax({
+                url: `${baseUrl}ProjectBluePrint/RemoveImageProjectFloorPlan`,
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    Swal.close();
+                    if (response.success) {
+                        showSuccessAlert('สำเร็จ!', 'ลบรูปภาพสำเร็จ', function () {
+                            handleProjectChange(); // Refresh project data
+                        });
+                    } else {
+                        showErrorAlert('เกิดข้อผิดพลาด!', response.message || 'ไม่สามารถลบรูปภาพได้');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.close();
+                    console.error("Error response:", xhr.responseText);
+                    showErrorAlert('เกิดข้อผิดพลาด!', error || 'ไม่สามารถลบรูปภาพได้');
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error removing image:", error);
-                showErrorAlert('เกิดข้อผิดพลาด!', 'ไม่สามารถลบรูปภาพได้');
-            }
-        });
-    }
+            });
+        }
+    );
 }
+
 
 
 
