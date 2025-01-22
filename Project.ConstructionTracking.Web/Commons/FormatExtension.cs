@@ -1,6 +1,9 @@
 ﻿using HeyRed.Mime;
 using Microsoft.VisualBasic;
+using System.Drawing.Drawing2D;
+using System.Drawing;
 using System.Globalization;
+using System.Drawing.Imaging;
 
 namespace Project.ConstructionTracking.Web.Commons
 {
@@ -342,6 +345,41 @@ namespace Project.ConstructionTracking.Web.Commons
                 resizedImageStream.Seek(0, SeekOrigin.Begin); // Reset stream position
 
                 return resizedImageStream;
+            }
+        }
+
+        /// <summary>
+        /// Resizes the image from the provided stream to the specified dimensions
+        /// and returns a stream containing the resized image.
+        /// </summary>
+        /// <param name="imageStream">The input stream containing the original image.</param>
+        /// <param name="targetWidth">The desired width of the resized image.</param>
+        /// <param name="targetHeight">The desired height of the resized image.</param>
+        /// <returns>A MemoryStream containing the resized image.</returns>
+        public static MemoryStream RescaleImage(Stream imageStream, int targetWidth, int targetHeight)
+        {
+            // Load the original image from the stream
+            using (var originalImage = Image.FromStream(imageStream))
+            {
+                // Create a new Bitmap for the resized image
+                var resizedImage = new Bitmap(targetWidth, targetHeight);
+
+                // Resize the image
+                using (var graphics = Graphics.FromImage(resizedImage))
+                {
+                    graphics.CompositingQuality = CompositingQuality.HighQuality;
+                    graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    graphics.SmoothingMode = SmoothingMode.HighQuality;
+
+                    // Draw the scaled image
+                    graphics.DrawImage(originalImage, 0, 0, targetWidth, targetHeight);
+                }
+
+                // Save the resized image to a MemoryStream
+                var resizedStream = new MemoryStream();
+                resizedImage.Save(resizedStream, ImageFormat.Jpeg);
+                resizedStream.Seek(0, SeekOrigin.Begin); // Reset the stream position
+                return resizedStream;
             }
         }
 

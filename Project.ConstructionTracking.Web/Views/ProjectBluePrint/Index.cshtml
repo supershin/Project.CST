@@ -1,0 +1,292 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+    var ListDDLProject = ViewBag.ListDDLProject;
+}
+@model dynamic
+<style>
+
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    /* Hover Zoom Effect */
+    .card-img-container {
+        overflow: hidden;
+        position: relative;
+    }
+
+     /* Active Image Border */
+    .card-img-container.active {
+        border: 3px solid blue;
+        border-radius: 5px; /* Optional: to make it look nice */
+    }
+
+    .card-img-top {
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card-img-container:hover .card-img-top {
+        transform: scale(1.1); /* Zooms the image */
+    }
+
+    /* Remove Button Styling */
+    .del-button {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(255, 0, 0, 0.8);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 14px;
+        width: 24px;
+        height: 24px;
+        line-height: 18px;
+        text-align: center;
+        padding: 0;
+        z-index: 10;
+        /* White Shadow */
+        box-shadow: 0 2px 4px rgba(255, 255, 255, 0.6);
+        transition: background 0.2s ease-in-out;
+    }
+
+    .del-button:hover {
+        background: rgba(255, 0, 0, 1);
+    }
+
+    /* Add More Image Button */
+    .add-image-button {
+        background-color: rgba(0, 123, 255, 0.8); /* Bootstrap Primary Color */
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out, transform 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .add-image-button:hover {
+        background-color: rgba(0, 123, 255, 1);
+        transform: scale(1.05);
+    }
+
+    .drop-zone {
+        border: 2px dashed #007bff;
+        border-radius: 5px;
+        padding: 6px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .drop-zone-text {
+        margin-bottom: 10px;
+    }
+
+    .drop-zone-input {
+        display: none;
+    }
+
+    .preview-container {
+        margin-top: 10px;
+    }
+
+    .preview-image {
+        position: relative;
+        display: inline-block;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        max-width: 100px;
+        max-height: 100px;
+    }
+
+    .preview-image img {
+        max-width: 100%;
+        max-height: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        display: block;
+    }
+
+    .remove-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: rgba(255, 0, 0, 0.8);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 14px;
+        width: 24px;
+        height: 24px;
+        line-height: 18px;
+        text-align: center;
+        padding: 0;
+    }
+
+</style>
+
+<title>แผนผังโครงการ</title>
+<div class="page-wrapper">
+
+    <div class="page-header">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-home-heart">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M21 12l-9 -9l-9 9h2v7a2 2 0 0 0 2 2h6" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.39 0 .754 .112 1.061 .304" />
+                        <path d="M19 21.5l2.518 -2.58a1.74 1.74 0 0 0 0 -2.413a1.627 1.627 0 0 0 -2.346 0l-.168 .172l-.168 -.172a1.627 1.627 0 0 0 -2.346 0a1.74 1.74 0 0 0 0 2.412l2.51 2.59z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="card-body d-flex justify-content-center align-items-center">
+                <h1 class="m-0 text-center">แผนผังโครงการ</h1>
+            </div>
+        </div>
+    </div>
+  
+    <div class="container mt-4">          
+        <div class="form-label"><h1>แผนผังโครงการทั้งหมด</h1></div>
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <select id="projectSelect" class="form-select" onchange="handleProjectChange()">
+                    <option value="">-- เลือกทั้งหมด --</option>
+                    @foreach (var item in ListDDLProject)
+                    {
+                        <option value="@item.ValueGuid">@item.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div id="projectImageContainer" class="mt-4"></div>
+    </div>
+
+    <div id="partialContainer" class="container mt-4" style="display: none;">
+        <!-- The partial content will be dynamically loaded here -->
+    </div>
+
+    <div id="partialContainerOpenShowImageProjectFloorPlan" class="container mt-4" style="display: none;">
+        <!-- The partial content will be dynamically loaded here -->
+        <partial name="PartialCanvasImageProjectBluePrint" />
+    </div>
+
+    <!-- Modal Structure -->
+    <div class="modal fade" id="uploadImageModal" tabindex="-1" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadImageModalLabel">เพิ่มรูปภาพ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="drop-zone" class="form-label">เลือกรูปภาพ</label>
+                            <div id="drop-zone" class="drop-zone">
+                                <p class="drop-zone-text">
+                                    <i class="fa fa-camera" style="font-size: 24px; color: #007bff;"></i>
+                                </p>
+                                <input type="file" id="file-input" class="drop-zone-input" multiple>
+                                <div id="preview-container" class="row preview-container"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="ClickCloseInsertImageProjectFloorPlan" data-bs-dismiss="modal">ปิด</button>
+                    <button type="button" class="btn btn-primary" onclick="onClickInsertImageProjectFloorPlan()">บันทึก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@*     <div class="modal fade" id="unitModal" tabindex="-1" aria-labelledby="unitModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="unitModalLabel">เลือกแปลง</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select id="unitDropdown" class="form-select"></select>
+                    <button id="modalSaveButton" class="btn btn-primary mt-3">Save</button>
+                </div>
+            </div>
+        </div>
+    </div> *@
+
+    <div class="modal fade" id="unitModal" tabindex="-1" aria-labelledby="unitModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="unitModalLabel">เลือกแปลง</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select id="unitDropdown">
+                    </select>
+                    <button id="modalSaveButton" class="btn btn-primary mt-3">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+@section scripts {
+    <link href="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.default.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js"></script>
+    <script src="~/js/Pages/Blueprint.js?ver=@DateTime.Now.Ticks"></script>
+    <script>
+        $(document).ready(function () {
+            setActiveNav();
+            document.getElementById('markerTool').style.display = 'none';
+            $('#unitDropdown').selectize({
+                create: false,
+                placeholder: 'กรุณาเลือก',
+                maxItems: 1,
+            });
+        });
+    </script>
+    <script>
+        // Add delete functionality
+        document.addEventListener("DOMContentLoaded", () => {
+            const deleteButtons = document.querySelectorAll(".remove-button");
+
+            deleteButtons.forEach((button) => {
+                button.addEventListener("click", (event) => {
+                    const card = event.target.closest(".col");
+                    card.remove(); // Removes the card element from the DOM
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const unitModal = $('#unitModal');
+            const modalTriggerButton = document.querySelector('[data-bs-target="#unitModal"]'); // Update this selector based on your modal trigger button
+
+            // Handle modal shown event
+            unitModal.on('shown.bs.modal', function () {
+                const unitSelectize = $('#unitDropdown')[0].selectize;
+                unitSelectize.focus(); // Focus the dropdown when the modal opens
+            });
+
+            // Handle modal hidden event
+            unitModal.on('hidden.bs.modal', function () {
+                if (modalTriggerButton) {
+                    modalTriggerButton.focus(); // Return focus to the trigger button
+                }
+            });
+        });
+
+    </script>
+}

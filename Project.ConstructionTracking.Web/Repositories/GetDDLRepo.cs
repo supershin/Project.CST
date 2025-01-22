@@ -570,6 +570,23 @@ namespace Project.ConstructionTracking.Web.Repositories
 
                     return GetdataQCUnitCheckList.ToList();
 
+                case "UnitForInsertBluePrint":
+                    var UnitForInsertBluePrint = from unit in _context.tm_Unit
+                                 join blueprint in _context.tr_ProjectBluePrint
+                                 on unit.UnitID equals blueprint.UnitID into blueprintGroup
+                                 from subBlueprint in blueprintGroup.DefaultIfEmpty() // LEFT JOIN
+                                 where unit.ProjectID == Model.ValueGuid
+                                       && subBlueprint == null // Exclude matching UnitID
+                                 orderby unit.UnitCode
+                                 select new GetDDL
+                                 {
+                                     ValueGuid = unit.UnitID,
+                                     Text = unit.UnitCode
+                                 };
+
+
+                    return UnitForInsertBluePrint.ToList();
+
                 default:
 
                 return new List<GetDDL>();

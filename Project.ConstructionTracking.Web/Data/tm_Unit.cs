@@ -11,6 +11,7 @@ namespace Project.ConstructionTracking.Web.Data
         public tm_Unit()
         {
             tr_PE_Unit = new HashSet<tr_PE_Unit>();
+            tr_ProjectBluePrint = new HashSet<tr_ProjectBluePrint>();
             tr_QC_UnitCheckList = new HashSet<tr_QC_UnitCheckList>();
             tr_UnitForm = new HashSet<tr_UnitForm>();
             tr_UnitFormPayment = new HashSet<tr_UnitFormPayment>();
@@ -58,6 +59,8 @@ namespace Project.ConstructionTracking.Web.Data
         public DateTime? EndDate { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
+        public DateTime? TransferDueDate { get; set; }
+        [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
         public Guid? CreateBy { get; set; }
         [Column(TypeName = "datetime")]
@@ -84,6 +87,8 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual tm_Vendor? Vendor { get; set; }
         [InverseProperty("Unit")]
         public virtual ICollection<tr_PE_Unit> tr_PE_Unit { get; set; }
+        [InverseProperty("Unit")]
+        public virtual ICollection<tr_ProjectBluePrint> tr_ProjectBluePrint { get; set; }
         [InverseProperty("Unit")]
         public virtual ICollection<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; }
         [InverseProperty("Unit")]

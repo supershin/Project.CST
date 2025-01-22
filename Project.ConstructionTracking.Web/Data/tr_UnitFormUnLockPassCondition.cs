@@ -6,12 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Project.ConstructionTracking.Web.Data
 {
+    [Keyless]
     public partial class tr_UnitFormUnLockPassCondition
     {
-        [Key]
         public int ID { get; set; }
         public Guid? UnitFormID { get; set; }
-        public int PassConditionID { get; set; }
+        public int? PassConditionID { get; set; }
         public int? RoleID { get; set; }
         public int? StatusID { get; set; }
         [StringLength(500)]
