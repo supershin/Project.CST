@@ -88,11 +88,15 @@ namespace Project.ConstructionTracking.Web.Services
 
 			resp.AnotherValue = new GetValueSetModel()
 			{
-				QCName = anotherValue.QCName,
-				QCNumber = anotherValue.QCNumber,
-				PEID = anotherValue.PEID,
-				PEName = anotherValue.PEName
-			};
+                //QCName = anotherValue.QCName,
+                //QCNumber = anotherValue.QCNumber,
+                //PEID = anotherValue.PEID,
+                //PEName = anotherValue.PEName
+                QCName = anotherValue?.QCName ?? string.Empty,
+                QCNumber = anotherValue?.QCNumber ?? string.Empty,
+                PEID = anotherValue?.PEID ?? Guid.Empty,
+                PEName = anotherValue?.PEName ?? string.Empty
+            };
 
 			return resp;
 		}
