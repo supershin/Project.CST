@@ -11,6 +11,7 @@
             public string PathProjectImage { get; set; }
             public Guid UnitID { get; set; }
             public string? UnitName { get; set; }
+            public int? UnitStatus { get; set; }
             public Guid UserID { get; set; }
         }
 

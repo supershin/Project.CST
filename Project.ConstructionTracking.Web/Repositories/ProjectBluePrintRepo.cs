@@ -38,7 +38,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                             ElementTypeName = ext.Name,
                             Coordinates = JsonConvert.DeserializeObject<List<PointModel>>(blueprint.Coordinates),
                             UnitName = unit.UnitCode,
-                            UnitID  = unit.UnitID
+                            UnitID  = unit.UnitID,
+                            UnitStatus = unit.UnitStatusID
 
                          }).ToList();
 

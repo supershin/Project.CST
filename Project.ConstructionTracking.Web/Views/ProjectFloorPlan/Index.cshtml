@@ -30,6 +30,18 @@
         transform: scale(1.1); /* Zooms the image */
     }
 
+#partialContainerOpenShowImageProjectFloorPlan {
+    position: relative; /* Markers are positioned relative to this container */
+    overflow: hidden; /* Prevent markers from spilling outside the container */
+}
+
+.marker-icon {
+    pointer-events: auto; /* Enable interactivity */
+    z-index: 10; /* Ensure markers appear above the canvas */
+}
+
+
+
 </style>
 <title>แผนผังโครงการ</title>
 <div class="page-wrapper">
@@ -55,7 +67,7 @@
         <div class="row">
             <div class="col-12 col-md-6">
                 <select id="projectSelect" class="form-select" onchange="handleProjectChange()">
-                    <option value="">-- เลือกทั้งหมด --</option>
+                    <option value="">-- กรุณาเลือกโครงการ --</option>
                     @foreach (var item in ListDDLProject)
                     {
                         <option value="@item.ValueGuid">@item.Text</option>
@@ -65,7 +77,10 @@
         </div>
         <div id="projectImageContainer" class="mt-4"></div>
     </div>
-
+    <div id="partialContainerOpenShowImageProjectFloorPlan" class="container mt-4" style="display: none;">
+        <!-- The partial content will be dynamically loaded here -->
+        <partial name="PartialCanvasShowImageProjectBluePrint" />
+    </div>
 </div>
 
 @section scripts {
@@ -73,36 +88,191 @@
         $(document).ready(function () {
 
         });
+        let canvas, ctx;
+        let backgroundImage;
+        let markers = [];
+        let tempX, tempY;
+        let ClickProjectFloorPlanID;
 
         function handleProjectChange() {
-            const projectSelect = $("#projectSelect");
-            const projectId = projectSelect.val(); // Get selected project ID
-            const container = $("#projectImageContainer"); // Target container for fetched data
-            const partialContainer = $("#partialContainer"); // Container for the partial view
+            $("#partialContainerOpenShowImageProjectFloorPlan").hide();
 
-            if (!projectId) {
-                // If no project is selected, hide the partial container and clear other content
+            const projectSelect = $("#projectSelect");
+            const projectId = projectSelect.val(); 
+            const container = $("#projectImageContainer");
+            const partialContainer = $("#partialContainer");
+
+            if (projectId !== "") {
+                $.ajax({
+                    url: `${baseUrl}ProjectFloorPlan/GetListImageProjectFloorPlan`,
+                    type: "GET",
+                    data: { ProjectID: projectId },
+                    beforeSend: function () {
+                        container.empty();
+                    },
+                    success: function (html) {
+                        container.html(html);
+                        partialContainer.show();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching data:", error);
+                        container.html("<p class='text-danger'>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>");
+                    },
+                });
+            }
+            else 
+            {
                 partialContainer.hide();
-                container.empty().html("<p class='text-center'>กรุณาเลือกโครงการ</p>");
+                container.empty().html("");
                 return;
             }
+        }
 
-            $.ajax({
-                url: `${baseUrl}ProjectFloorPlan/GetListImageProjectFloorPlan`,
-                type: "GET", // Use HTTP GET method
-                data: { ProjectID: projectId }, // Send the project ID as query parameters
-                beforeSend: function () {
-                    container.empty();
-                },
-                success: function (html) {
-                    container.html(html); // Update the container with the fetched partial
-                    partialContainer.show();
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error fetching data:", error);
-                    container.html("<p class='text-danger'>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>");
-                },
+        function loadCanvas(imagePath) {
+            canvas = document.getElementById("blueprintCanvas");
+            ctx = canvas.getContext("2d");
+
+            const image = new Image();
+            image.src = imagePath;
+
+            image.onload = () => {
+                canvas.width = image.width;
+                canvas.height = image.height;
+                ctx.drawImage(image, 0, 0);
+
+                backgroundImage = image;
+            };
+        }
+
+        function onClickOpenShowImageProjectFloorPlan(imagePath, ProjectFloorPlanID) {
+
+            ClickProjectFloorPlanID = ProjectFloorPlanID;
+
+            document.querySelectorAll(".card-img-container").forEach(container => {
+                container.classList.remove("active");
+            });
+
+            const clickedImageContainer = event.target.closest(".card-img-container");
+            if (clickedImageContainer) {
+                clickedImageContainer.classList.add("active");
+            }
+
+            if (canvas) {
+                const newCanvas = canvas.cloneNode(true);
+                canvas.parentNode.replaceChild(newCanvas, canvas);
+                canvas = newCanvas;
+            }
+
+            loadCanvas(imagePath);
+            loadBlueprintElements();
+
+            $("#partialContainerOpenShowImageProjectFloorPlan").show();
+        }
+
+        function loadBlueprintElements() {
+            const canvas = document.getElementById("blueprintCanvas");
+            const ctx = canvas.getContext("2d");
+
+            markers = []; // Reset
+
+            fetch(baseUrl + `ProjectBluePrint/GetBlueprintElements?projectId=${ClickProjectFloorPlanID}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(element => {
+                        if (element.ElementTypeName === "Marker") {
+                            markers.push({
+                                x: element.Coordinates[0].X,
+                                y: element.Coordinates[0].Y,
+                                name: element.UnitName,
+                                UnitID: element.UnitID,
+                                UnitStatus: element.UnitStatus
+                            });
+                        }
+                    });
+
+                    drawCanvas(); // Redraw the canvas with updated elements
+                })
+                .catch(error => console.error("Error loading blueprint elements:", error));
+        }
+
+        function drawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (backgroundImage) {
+                ctx.drawImage(backgroundImage, 0, 0);
+            }
+            drawMarkers();
+        }
+
+        function drawMarkers() {
+            markers.forEach(marker => {
+                ctx.beginPath();
+                ctx.arc(marker.x, marker.y, 12, 0, Math.PI * 2); 
+                ctx.fillStyle = "red";
+                ctx.fill();
+                ctx.closePath();
             });
         }
+
+//         function drawMarkers() {
+//             markers.forEach(marker => {
+//         if (marker.UnitStatus === 3) {
+//             Draw a green star
+//             drawStar(ctx, marker.x, marker.y, 5, 10, 5, "green");
+//         } else if (marker.UnitStatus === 4) {
+//             Draw a blue star
+//             drawStar(ctx, marker.x, marker.y, 5, 10, 5, "blue");
+//         } else if (marker.UnitStatus === 5) {
+//             Draw a red circle
+//             ctx.beginPath();
+//             ctx.arc(marker.x, marker.y, 12, 0, Math.PI * 2);
+//             ctx.fillStyle = "red";
+//             ctx.fill();
+//             ctx.closePath();
+//         } else if (marker.UnitStatus === 6) {
+//             Draw a black user icon
+//             ctx.font = "24px FontAwesome"; Ensure FontAwesome is included in your project
+//             ctx.fillStyle = "black";
+//             ctx.textAlign = "center";
+//             ctx.textBaseline = "middle";
+//             ctx.fillText("\uf007", marker.x, marker.y); Unicode for "user" icon in Font Awesome
+//         }
+
+//         Draw the marker name next to the shape
+//         ctx.font = "14px Arial";
+//         ctx.fillStyle = "black";
+//         ctx.fillText(marker.name, marker.x + 15, marker.y - 10);
+//     });
+// }
+
+// Helper function to draw a star
+// function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius, color) {
+//     const step = Math.PI / spikes;
+//     let rotation = Math.PI / 2 * 3;
+
+//     ctx.beginPath();
+//     ctx.moveTo(cx, cy - outerRadius);
+
+//     for (let i = 0; i < spikes; i++) {
+//         const x = cx + Math.cos(rotation) * outerRadius;
+//         const y = cy + Math.sin(rotation) * outerRadius;
+//         ctx.lineTo(x, y);
+//         rotation += step;
+
+//         const xInner = cx + Math.cos(rotation) * innerRadius;
+//         const yInner = cy + Math.sin(rotation) * innerRadius;
+//         ctx.lineTo(xInner, yInner);
+//         rotation += step;
+//     }
+
+//     ctx.closePath();
+//     ctx.fillStyle = color;
+//     ctx.fill();
+// }
+
+
+
+
+
     </script>
 }
