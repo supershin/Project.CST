@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Project.ConstructionTracking.Web.Library.DAL;
 using Project.ConstructionTracking.Web.Models;
+using Project.ConstructionTracking.Web.Models.ProjectBluePrint;
+using Project.ConstructionTracking.Web.Models.StoreProcedureModel;
 using Project.ConstructionTracking.Web.Services;
 
 namespace Project.ConstructionTracking.Web.Controllers
@@ -9,12 +12,16 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IGetDDLService _getDDLService;
         private readonly IProjectBluePrintService _ProjectBluePrintService;
         private readonly IHostEnvironment _hosting;
-        public ProjectFloorPlanController(IGetDDLService getDDLService, IProjectBluePrintService ProjectBluePrintService, IHostEnvironment hosting)
+        private readonly MasterManagementProviderProject _ReportProjectFloorPlanProvider;
+
+        public ProjectFloorPlanController(IGetDDLService getDDLService, IProjectBluePrintService ProjectBluePrintService, IHostEnvironment hosting, MasterManagementProviderProject ReportProjectFloorPlanProvider)
         {
             _getDDLService = getDDLService;
             _ProjectBluePrintService = ProjectBluePrintService;
             _hosting = hosting;
+            _ReportProjectFloorPlanProvider = ReportProjectFloorPlanProvider;
         }
+
         public IActionResult Index()
         {
             var ddlModel = new GetDDL { Act = "ProjectAdmin" };
@@ -23,6 +30,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             return View();
         }
+
         [HttpGet]
         public IActionResult GetListImageProjectFloorPlan(Guid ProjectID)
         {
@@ -33,6 +41,22 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             var listImageProjectFloorPlan = _ProjectBluePrintService.GetListImageProjectFloorPlan(ProjectID);
             return PartialView("PartialTableListImageProjectBluePrint", listImageProjectFloorPlan);
+        }
+
+        public IActionResult GetBlueprintElements(Guid ProjectFloorPlanID)
+        {
+
+            List<ReportProjectFloorPlanModel> ListdataReportProjectFloorPlan = new List<ReportProjectFloorPlanModel>();
+
+            var EN = new ReportProjectFloorPlanModel
+            {
+                act = "ReportProjectFloorPlan",
+                project_floor_plan_id = Commons.FormatExtension.NullToString(ProjectFloorPlanID)
+            };
+
+            ListdataReportProjectFloorPlan = _ReportProjectFloorPlanProvider.sp_get_report_ProjectFloorPlan(EN);
+
+            return Json(ListdataReportProjectFloorPlan);
         }
     }
 }

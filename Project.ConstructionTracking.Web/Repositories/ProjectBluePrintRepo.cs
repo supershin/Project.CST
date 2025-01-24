@@ -206,6 +206,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 _context.SaveChanges();
             }
         }
+
         public void RemoveMarkerProjectBluePrint(ProjectBluePrintModel.RemoveMarkerProjectBluePrintModel model)
         {
             var ProjectBluePrint = _context.tr_ProjectBluePrint.FirstOrDefault(p => p.UnitID == model.UnitID && p.FlagActive == true);

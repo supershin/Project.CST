@@ -30,16 +30,53 @@
         transform: scale(1.1); /* Zooms the image */
     }
 
-#partialContainerOpenShowImageProjectFloorPlan {
-    position: relative; /* Markers are positioned relative to this container */
-    overflow: hidden; /* Prevent markers from spilling outside the container */
-}
+    #partialContainerOpenShowImageProjectFloorPlan {
+        position: relative; /* Markers are positioned relative to this container */
+        overflow: hidden; /* Prevent markers from spilling outside the container */
+    }
 
-.marker-icon {
-    pointer-events: auto; /* Enable interactivity */
-    z-index: 10; /* Ensure markers appear above the canvas */
-}
+    .marker-icon {
+        pointer-events: auto; /* Enable interactivity */
+        z-index: 10; /* Ensure markers appear above the canvas */
+    }
 
+    /* Modal container */
+    #markerModal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4); /* Black with opacity */
+    }
+
+    /* Modal content */
+    #modalContent {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 40%;
+        border-radius: 10px;
+    }
+
+    /* Close button */
+    #closeButton {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    #closeButton:hover,
+    #closeButton:focus {
+        color: black;
+        text-decoration: none;
+    }
 
 
 </style>
@@ -81,24 +118,35 @@
         <!-- The partial content will be dynamically loaded here -->
         <partial name="PartialCanvasShowImageProjectBluePrint" />
     </div>
+    <!-- Modal Structure -->
+    <div id="markerModal">
+        <div id="modalContent">
+            <span id="closeButton">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalDescription"></p>
+        </div>
+    </div>
+
+
+
 </div>
 
 @section scripts {
     <script>
         $(document).ready(function () {
-
+            // Your existing initialization code (if any)
         });
+
         let canvas, ctx;
         let backgroundImage;
         let markers = [];
-        let tempX, tempY;
         let ClickProjectFloorPlanID;
 
         function handleProjectChange() {
             $("#partialContainerOpenShowImageProjectFloorPlan").hide();
 
             const projectSelect = $("#projectSelect");
-            const projectId = projectSelect.val(); 
+            const projectId = projectSelect.val();
             const container = $("#projectImageContainer");
             const partialContainer = $("#partialContainer");
 
@@ -119,9 +167,7 @@
                         container.html("<p class='text-danger'>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>");
                     },
                 });
-            }
-            else 
-            {
+            } else {
                 partialContainer.hide();
                 container.empty().html("");
                 return;
@@ -141,11 +187,16 @@
                 ctx.drawImage(image, 0, 0);
 
                 backgroundImage = image;
+                drawCanvas(); // Ensure the canvas is drawn after loading the image
             };
+
+            // Add event listener for mouse movements
+            canvas.addEventListener('mousemove', handleMouseMove);
+            // Add event listener for click events
+            canvas.addEventListener('click', handleCanvasClick);
         }
 
         function onClickOpenShowImageProjectFloorPlan(imagePath, ProjectFloorPlanID) {
-
             ClickProjectFloorPlanID = ProjectFloorPlanID;
 
             document.querySelectorAll(".card-img-container").forEach(container => {
@@ -170,12 +221,9 @@
         }
 
         function loadBlueprintElements() {
-            const canvas = document.getElementById("blueprintCanvas");
-            const ctx = canvas.getContext("2d");
-
             markers = []; // Reset
 
-            fetch(baseUrl + `ProjectBluePrint/GetBlueprintElements?projectId=${ClickProjectFloorPlanID}`)
+            fetch(`${baseUrl}ProjectFloorPlan/GetBlueprintElements?ProjectFloorPlanID=${ClickProjectFloorPlanID}`)
                 .then(response => response.json())
                 .then(data => {
                     data.forEach(element => {
@@ -207,71 +255,90 @@
         function drawMarkers() {
             markers.forEach(marker => {
                 ctx.beginPath();
-                ctx.arc(marker.x, marker.y, 12, 0, Math.PI * 2); 
-                ctx.fillStyle = "red";
+                ctx.arc(marker.x, marker.y, 12, 0, Math.PI * 2);
+
+                // Determine the fill color based on UnitStatus
+                let fillColor;
+                switch (marker.UnitStatus) {
+                    case 0:
+                        fillColor = 'grey';
+                        break;
+                    case 1:
+                        fillColor = 'green';
+                        break;
+                    case 2:
+                        fillColor = 'red';
+                        break;
+                    case 3:
+                        fillColor = 'yellow';
+                        break;
+                    default:
+                        fillColor = 'black'; // Default color if UnitStatus is undefined or not in the specified cases
+                }
+
+                ctx.fillStyle = fillColor;
                 ctx.fill();
                 ctx.closePath();
             });
         }
 
-//         function drawMarkers() {
-//             markers.forEach(marker => {
-//         if (marker.UnitStatus === 3) {
-//             Draw a green star
-//             drawStar(ctx, marker.x, marker.y, 5, 10, 5, "green");
-//         } else if (marker.UnitStatus === 4) {
-//             Draw a blue star
-//             drawStar(ctx, marker.x, marker.y, 5, 10, 5, "blue");
-//         } else if (marker.UnitStatus === 5) {
-//             Draw a red circle
-//             ctx.beginPath();
-//             ctx.arc(marker.x, marker.y, 12, 0, Math.PI * 2);
-//             ctx.fillStyle = "red";
-//             ctx.fill();
-//             ctx.closePath();
-//         } else if (marker.UnitStatus === 6) {
-//             Draw a black user icon
-//             ctx.font = "24px FontAwesome"; Ensure FontAwesome is included in your project
-//             ctx.fillStyle = "black";
-//             ctx.textAlign = "center";
-//             ctx.textBaseline = "middle";
-//             ctx.fillText("\uf007", marker.x, marker.y); Unicode for "user" icon in Font Awesome
-//         }
+        function handleMouseMove(event) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+            let hovering = false;
 
-//         Draw the marker name next to the shape
-//         ctx.font = "14px Arial";
-//         ctx.fillStyle = "black";
-//         ctx.fillText(marker.name, marker.x + 15, marker.y - 10);
-//     });
-// }
+            markers.forEach(marker => {
+                const dx = mouseX - marker.x;
+                const dy = mouseY - marker.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
 
-// Helper function to draw a star
-// function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius, color) {
-//     const step = Math.PI / spikes;
-//     let rotation = Math.PI / 2 * 3;
+                if (distance <= 12) { // Assuming marker radius is 12
+                    hovering = true;
+                }
+            });
 
-//     ctx.beginPath();
-//     ctx.moveTo(cx, cy - outerRadius);
+            canvas.style.cursor = hovering ? 'pointer' : 'default';
+        }
 
-//     for (let i = 0; i < spikes; i++) {
-//         const x = cx + Math.cos(rotation) * outerRadius;
-//         const y = cy + Math.sin(rotation) * outerRadius;
-//         ctx.lineTo(x, y);
-//         rotation += step;
+        function handleCanvasClick(event) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
 
-//         const xInner = cx + Math.cos(rotation) * innerRadius;
-//         const yInner = cy + Math.sin(rotation) * innerRadius;
-//         ctx.lineTo(xInner, yInner);
-//         rotation += step;
-//     }
+            markers.forEach(marker => {
+                const dx = mouseX - marker.x;
+                const dy = mouseY - marker.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
 
-//     ctx.closePath();
-//     ctx.fillStyle = color;
-//     ctx.fill();
-// }
+                if (distance <= 12) { // Assuming marker radius is 12
+                    openModal(marker);
+                }
+            });
+        }
 
+        function openModal(marker) {
+            const modal = document.getElementById("markerModal");
+            const modalTitle = document.getElementById("modalTitle");
+            const modalDescription = document.getElementById("modalDescription");
 
+            modalTitle.textContent = marker.name;
+            modalDescription.textContent = `Unit ID: ${marker.UnitID}\nUnit Status: ${marker.UnitStatus}`;
 
+            modal.style.display = "block";
+
+            const closeButton = document.getElementById("closeButton");
+
+            closeButton.onclick = function () {
+                modal.style.display = "none";
+            };
+
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            };
+        }
 
 
     </script>
