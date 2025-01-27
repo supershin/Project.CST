@@ -40,43 +40,121 @@
         z-index: 10; /* Ensure markers appear above the canvas */
     }
 
-    /* Modal container */
-    #markerModal {
-        display: none; /* Hidden by default */
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4); /* Black with opacity */
-    }
+/* Modal Styles */
+#markerModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
 
-    /* Modal content */
-    #modalContent {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 40%;
-        border-radius: 10px;
-    }
+#modalContent {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+    position: relative;
+}
 
-    /* Close button */
-    #closeButton {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-    }
+#closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
 
-    #closeButton:hover,
-    #closeButton:focus {
-        color: black;
-        text-decoration: none;
-    }
+#closeButton:hover,
+#closeButton:focus {
+    color: black;
+    text-decoration: none;
+}
+
+/* Footer Styles */
+#modalFooter {
+    text-align: center; /* Center the button */
+    margin-top: 20px;
+}
+
+#pillButton {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px; /* Pill shape */
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#pillButton:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#pillButton:active {
+    background-color: #004085;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+/* Card Styles */
+#statusCard {
+    display: flex; /* Align all items in one line */
+    padding: 10px 20px;
+    background-color: #f8f9fa; /* Light gray background */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    width: 300px auto; /* Set card width */
+    margin: 20px auto; /* Center the card horizontally */
+}
+
+/* Circle Styles */
+#circle {
+    width: 20px;
+    height: 20px;
+    background-color: gray; /* Gray circle */
+    border-radius: 50%; /* Makes it circular */
+    margin-right: 10px; /* Space between circle and text */
+}
+
+#circle1 {
+    width: 20px;
+    height: 20px;
+    background-color: yellow; /* yellow circle */
+    border-radius: 50%; /* Makes it circular */
+    margin-right: 10px; /* Space between circle and text */
+}
+
+#circle2 {
+    width: 20px;
+    height: 20px;
+    background-color: red; /* red circle */
+    border-radius: 50%; /* Makes it circular */
+    margin-right: 10px; /* Space between circle and text */
+}
+#circle3 {
+    width: 20px;
+    height: 20px;
+    background-color: green; /* green circle */
+    border-radius: 50%; /* Makes it circular */
+    margin-right: 10px; /* Space between circle and text */
+}
+
+/* Status Text Styles */
+#statusText {
+    font-size: 16px;
+    color: #000000; /* Muted black text */
+    font-weight: bold; /* Slightly bold for emphasis */
+}
 
 
 </style>
@@ -117,15 +195,72 @@
     <div id="partialContainerOpenShowImageProjectFloorPlan" class="container mt-4" style="display: none;">
         <!-- The partial content will be dynamically loaded here -->
         <partial name="PartialCanvasShowImageProjectBluePrint" />
-    </div>
-    <!-- Modal Structure -->
-    <div id="markerModal">
-        <div id="modalContent">
-            <span id="closeButton">&times;</span>
-            <h2 id="modalTitle"></h2>
-            <p id="modalDescription"></p>
+        <div id="statusCard" class="card">
+            <div class="row">
+                <div class="col-3">
+                    <div class="row">
+                        <div class="col-2">
+                                <div id="circle" class="circle"></div>
+                        </div>
+                         <div class="col-10">
+                                <span id="statusText">ยังไม่เริ่มตรวจ</span>
+                          </div>
+                     </div>
+                </div>
+                <div class="col-3">
+                    <div class="row">
+                        <div class="col-2">
+                                <div id="circle1" class="circle"> </div>
+                        </div>
+                         <div class="col-10">
+                                <span id="statusText">เริ่มมีการตรวจ</span>
+                          </div>
+                     </div>
+                </div>
+                <div class="col-3">
+                    <div class="row">
+                        <div class="col-2">
+                              <div id="circle2" class="circle"></div>
+                        </div>
+                         <div class="col-10">
+                              <span id="statusText">มีงวดที่ตรวจไม่ผ่าน</span>
+                          </div>
+                     </div>
+                </div>
+                <div class="col-3">
+                    <div class="row">
+                        <div class="col-2">
+                             <div id="circle3" class="circle"></div>
+                        </div>
+                         <div class="col-10">
+                              <span id="statusText">ตรวจครบทุกงวด</span>
+                          </div>
+                     </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Modal Structure -->
+    <div id="markerModal" class="modal">
+        <div id="modalContent" class="modal-content">
+            <span id="closeButton" class="close">&times;</span>
+            <h1 id="unitCode"></h1>
+            <p><strong>ประเภทบ้าน:</strong> <span id="modelTypeName"></span></p>
+            <p><strong>บริษัทผู้รับเหมา:</strong> <span id="companyVendorName"></span></p>
+            <p><strong>สถานะแปลง:</strong> <span id="unitStatusName"></span></p>
+            <p><strong>แผนที่เริ่ม:</strong> <span id="startDate"></span>  <strong>แผนที่เสร็จ:</strong> <span id="endDate"></span> </p>
+            <p><strong>แผนโอนตามสัญญา:</strong> <span id="transferDueDate"></span></p>
+            <p><strong>Delay Ahead:</strong> <span id="delayAhead"></span></p>
+            <p><strong>งวดที่ตรวจล่าสุด:</strong> <span id="formName"></span></p>
+            <!-- Footer -->
+            <div id="modalFooter">
+                <button id="pillButton" type="button" onclick="goToSummaryUnitForm()">ดูรายละเอียด</button>
+            </div>
+        </div>
+    </div>
+
+
 
 
 
@@ -134,15 +269,31 @@
 @section scripts {
     <script>
         $(document).ready(function () {
-            // Your existing initialization code (if any)
+            const desktopNavItem = document.getElementById('nav-Report');
+            const ReportProjectProgressNavItem = document.getElementById('nav-Report-Project-Floor-PlanByUnit');
+
+            if (desktopNavItem) {
+                desktopNavItem.classList.add('active'); // Make Desktop nav active
+            }
+            if (ReportProjectProgressNavItem) {
+                ReportProjectProgressNavItem.classList.add('active'); // Make Report Project PassCondition nav active
+            }
         });
 
         let canvas, ctx;
         let backgroundImage;
         let markers = [];
         let ClickProjectFloorPlanID;
+        let formID;
+        let unitId;
+        let projectId;
+        let projectName;
+        let UnitCode;
+        let UnitStatusName;
 
         function handleProjectChange() {
+            showLoadingAlert('กำลังโหลด...', 'กรุณารอสักครู่');
+
             $("#partialContainerOpenShowImageProjectFloorPlan").hide();
 
             const projectSelect = $("#projectSelect");
@@ -161,15 +312,18 @@
                     success: function (html) {
                         container.html(html);
                         partialContainer.show();
+                        Swal.close();
                     },
                     error: function (xhr, status, error) {
                         console.error("Error fetching data:", error);
                         container.html("<p class='text-danger'>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>");
+                        Swal.close();
                     },
                 });
             } else {
                 partialContainer.hide();
                 container.empty().html("");
+                Swal.close();
                 return;
             }
         }
@@ -197,6 +351,7 @@
         }
 
         function onClickOpenShowImageProjectFloorPlan(imagePath, ProjectFloorPlanID) {
+            showLoadingAlert('กำลังโหลด...', 'กรุณารอสักครู่');
             ClickProjectFloorPlanID = ProjectFloorPlanID;
 
             document.querySelectorAll(".card-img-container").forEach(container => {
@@ -218,6 +373,7 @@
             loadBlueprintElements();
 
             $("#partialContainerOpenShowImageProjectFloorPlan").show();
+            Swal.close();
         }
 
         function loadBlueprintElements() {
@@ -312,32 +468,61 @@
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance <= 12) { // Assuming marker radius is 12
-                    openModal(marker);
+                    unitId = marker.UnitID;
+                    fetchUnitDetails(marker);
                 }
             });
         }
 
-        function openModal(marker) {
-            const modal = document.getElementById("markerModal");
-            const modalTitle = document.getElementById("modalTitle");
-            const modalDescription = document.getElementById("modalDescription");
-
-            modalTitle.textContent = marker.name;
-            modalDescription.textContent = `Unit ID: ${marker.UnitID}\nUnit Status: ${marker.UnitStatus}`;
-
-            modal.style.display = "block";
-
-            const closeButton = document.getElementById("closeButton");
-
-            closeButton.onclick = function () {
-                modal.style.display = "none";
-            };
-
-            window.onclick = function (event) {
-                if (event.target == modal) {
-                    modal.style.display = "none";
+        function fetchUnitDetails(marker) {
+            showLoadingAlert('กำลังโหลด...', 'กรุณารอสักครู่');
+            $.ajax({
+                url: `${baseUrl}ProjectFloorPlan/GetUnitDetail`, // Replace 'YourControllerName' with the actual name
+                type: 'GET',
+                data: { UnitID: marker.UnitID },
+                success: function (data) {
+                    openModal(data);
+                    Swal.close();
+                },
+                error: function (error) {
+                    Swal.close();
+                    console.error("Error fetching unit details:", error);
+                    alert("An error occurred while fetching the unit details.");
                 }
-            };
+            });
+        }
+
+
+        function openModal(data) {
+            const modal = document.getElementById("markerModal");
+            formID = data.FormID;
+            projectId = data.ProjectID;
+            projectName = data.ProjectName;
+            UnitCode = data.UnitCode;
+            UnitStatusName = data.UnitStatusName;
+
+            document.getElementById("unitCode").textContent = data.UnitCode || "";
+            document.getElementById("modelTypeName").textContent = data.ModelTypeName || "";
+            document.getElementById("companyVendorName").textContent = data.CompanyVendorName || "";
+            document.getElementById("unitStatusName").textContent = data.UnitStatusName || "";
+            document.getElementById("startDate").textContent = data.StartDate || "ยังไม่ได้ระบุ";
+            document.getElementById("endDate").textContent = data.EndDate || "ยังไม่ได้ระบุ";
+            document.getElementById("transferDueDate").textContent = data.TransferDueDate || "ยังไม่ได้ระบุ";
+            document.getElementById("delayAhead").textContent = data.DelayAhead || "ตรวจทันตามแผน";
+            document.getElementById("formName").textContent = data.FormName || "";
+
+            // Show the modal
+            modal.style.display = "block";
+        }
+
+        document.getElementById("closeButton").onclick = function () {
+            const modal = document.getElementById("markerModal");
+            modal.style.display = "none";
+        };
+
+        function goToSummaryUnitForm() {
+            // Open in a new tab
+                window.open(baseUrl + `SummaryUnitForm/Index?unitId=${unitId}&projectId=${projectId}&projectName=${projectName}&UnitCode=${UnitCode}&UnitStatusName=${UnitStatusName}`, '_blank');
         }
 
 

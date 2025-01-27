@@ -941,5 +941,78 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                 }
             }
         }
+
+        public override ReportProjectFloorPlanByUnitModel sp_get_report_ProjectFloorPlanByUnit(ReportProjectFloorPlanByUnitModel EN)
+        {
+            using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
+            {
+                SqlCommand SqlCmd = new SqlCommand("sp_get_report", SqlCon);
+                try
+                {
+                    SqlCon.Open();
+                    SqlTransaction Trans = SqlCon.BeginTransaction();
+                    SqlCmd.Transaction = Trans;
+                    SqlCmd.CommandType = CommandType.StoredProcedure;
+
+                    // Adding parameters
+                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = EN.act ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@project_id", SqlDbType.NVarChar)).Value = EN.project_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = EN.unit_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = EN.unit_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@build_status", SqlDbType.NVarChar)).Value = EN.build_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@vender_id", SqlDbType.NVarChar)).Value = EN.vender_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@qctype_id", SqlDbType.NVarChar)).Value = EN.qctype_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@project_floor_plan_id", SqlDbType.NVarChar)).Value = EN.project_floor_plan_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@start_date", SqlDbType.NVarChar)).Value = EN.start_date ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@end_date", SqlDbType.NVarChar)).Value = EN.end_date ?? (object)DBNull.Value;
+
+                    switch (EN.act)
+                    {
+                        case "ReportProjectFloorPlanByUnit":
+                            using (var reader = SqlCmd.ExecuteReader())
+                            {
+                                // Use reader logic for multiple rows, return first row only
+                                var entities = sp_get_report_ProjectFloorPlanByUnitGetReader(reader);
+
+                                // Return the first entity or a new default if none found
+                                return entities.FirstOrDefault() ?? new ReportProjectFloorPlanByUnitModel();
+                            }
+
+                        default:
+                            return new ReportProjectFloorPlanByUnitModel();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log errors
+                    Log.Error("Stored name : sp_get_report");
+                    Log.Error("Parameters: {params}", new
+                    {
+                        EN.act,
+                        EN.unit_id,
+                        EN.project_id,
+                        EN.unit_status,
+                        EN.build_status,
+                        EN.vender_id,
+                        EN.qctype_id,
+                        EN.project_floor_plan_id,
+                        EN.start_date,
+                        EN.end_date
+                    });
+                    Log.Error(ex.ToString());
+                    Log.Error("=========== END ===========");
+
+                    return new ReportProjectFloorPlanByUnitModel();
+                }
+                finally
+                {
+                    SqlCmd.Dispose();
+                    SqlCon.Close();
+                    SqlCon.Dispose();
+                }
+            }
+        }
+
+
     }
 }

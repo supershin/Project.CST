@@ -58,5 +58,21 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             return Json(ListdataReportProjectFloorPlan);
         }
+
+        public IActionResult GetUnitDetail(Guid UnitID)
+        {
+
+           ReportProjectFloorPlanByUnitModel getdataReportProjectFloorPlan = new ReportProjectFloorPlanByUnitModel();
+
+            var EN = new ReportProjectFloorPlanByUnitModel
+            {
+                act = "ReportProjectFloorPlanByUnit",
+                unit_id = Commons.FormatExtension.NullToString(UnitID)
+            };
+
+            getdataReportProjectFloorPlan = _ReportProjectFloorPlanProvider.sp_get_report_ProjectFloorPlanByUnit(EN);
+
+            return Json(getdataReportProjectFloorPlan);
+        }
     }
 }

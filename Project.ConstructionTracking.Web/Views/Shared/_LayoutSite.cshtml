@@ -447,7 +447,7 @@
                                     </span>
                                 </a>
                             </li>
-                            <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "ProjectFloorPlan" ? "active" : "")" id="nav-ProjectFloorPlan">
+@*                             <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "ProjectFloorPlan" ? "active" : "")" id="nav-ProjectFloorPlan">
                                 <a class="nav-link" asp-controller="ProjectFloorPlan" asp-action="Index">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-map-2">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -461,7 +461,7 @@
                                         แผนผังโครงการ
                                     </span>
                                 </a>
-                            </li>
+                            </li> *@
                             @if (ViewBag.UserRole == SystemConstant.UserRole.PM.ToString())
                             {
                                 <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "MyTaskPM" ? "active" : "")" id="nav-MyTaskPM">
@@ -592,6 +592,9 @@
                                                     </a>
                                                 </div>
                                             </div>
+                                            <a class="dropdown-item" id="nav-Report-Project-Floor-PlanByUnit" asp-controller="ProjectFloorPlan" asp-action="Index">
+                                                รายงานแผนผังโครงการ
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.MFormModel;
 using Project.ConstructionTracking.Web.Models.StoreProcedureModel;
+using QuestPDF.Infrastructure;
 using System.Collections.Generic;
 using System.Data;
 
@@ -65,6 +66,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
         public abstract List<ReportinspectionQC5DefectModel> sp_get_report_inspection_QC5_Defect(ReportinspectionQC5DefectModel EN);
 
         public abstract List<ReportProjectFloorPlanModel> sp_get_report_ProjectFloorPlan(ReportProjectFloorPlanModel EN);
+
+        public abstract ReportProjectFloorPlanByUnitModel sp_get_report_ProjectFloorPlanByUnit(ReportProjectFloorPlanByUnitModel EN);
 
         public abstract Boolean sp_iud_masterform(CloneMasterFormModel en, ref CloneMasterFormModel enStatus);
 
@@ -685,6 +688,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
                 index = index,
                 ElementTypeName = Commons.FormatExtension.NullToString(reader["ElementTypeName"]),
                 Coordinates = DeserializeCoordinates(Commons.FormatExtension.NullToString(reader["Coordinates"])),
+                UnitID = Commons.FormatExtension.ConvertStringToGuid(reader["UnitID"]),
                 UnitName = Commons.FormatExtension.NullToString(reader["UnitName"]),
                 UnitStatus = Commons.FormatExtension.Nulltoint(reader["UnitStatus"]),
             };
@@ -707,6 +711,44 @@ namespace Project.ConstructionTracking.Web.Library.DAL
                 Console.WriteLine($"JSON deserialization error: {ex.Message}");
                 return null;
             }
+        }
+
+
+
+        public static List<ReportProjectFloorPlanByUnitModel> sp_get_report_ProjectFloorPlanByUnitGetReader(IDataReader reader)
+        {
+            var entities = new List<ReportProjectFloorPlanByUnitModel>();
+            int index = 1;
+
+            while (reader.Read())
+            {
+                entities.Add(sp_get_report_ProjectFloorPlanByUnit_Reader(reader, index));
+                index++;
+            }
+
+            reader.Close();
+            return entities;
+        }
+
+        private static ReportProjectFloorPlanByUnitModel sp_get_report_ProjectFloorPlanByUnit_Reader(IDataReader reader, int index)
+        {
+            var entity = new ReportProjectFloorPlanByUnitModel
+            {
+                UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]),
+                ModelTypeName = Commons.FormatExtension.NullToString(reader["ModelTypeName"]),
+                CompanyVendorName = Commons.FormatExtension.NullToString(reader["CompanyVendorName"]),
+                UnitStatusName = Commons.FormatExtension.NullToString(reader["UnitStatusName"]),
+                StartDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["StartDate"]),
+                EndDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["EndDate"]),
+                TransferDueDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["TransferDueDate"]),
+                DelayAhead = Commons.FormatExtension.NullTo2decimalplaces(reader["DelayAhead"]),
+                FormID = Commons.FormatExtension.Nulltoint(reader["FormID"]),
+                FormName = Commons.FormatExtension.NullToString(reader["FormName"]),
+                ProjectID = Commons.FormatExtension.ConvertStringToGuid(reader["ProjectID"]),
+                ProjectName = Commons.FormatExtension.NullToString(reader["ProjectName"])
+            };
+
+            return entity;
         }
 
 
