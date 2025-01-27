@@ -38,7 +38,8 @@ namespace Project.ConstructionTracking.Web.Repositories
                             ElementTypeName = ext.Name,
                             Coordinates = JsonConvert.DeserializeObject<List<PointModel>>(blueprint.Coordinates),
                             UnitName = unit.UnitCode,
-                            UnitID  = unit.UnitID
+                            UnitID  = unit.UnitID,
+                            UnitStatus = unit.UnitStatusID
 
                          }).ToList();
 
@@ -205,6 +206,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 _context.SaveChanges();
             }
         }
+
         public void RemoveMarkerProjectBluePrint(ProjectBluePrintModel.RemoveMarkerProjectBluePrintModel model)
         {
             var ProjectBluePrint = _context.tr_ProjectBluePrint.FirstOrDefault(p => p.UnitID == model.UnitID && p.FlagActive == true);

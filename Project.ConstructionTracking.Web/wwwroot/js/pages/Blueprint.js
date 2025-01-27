@@ -176,65 +176,6 @@ function completePolygon() {
 }
 
 // ✅ Load Dropdown Options
-//function loadDropdownOptions(callback) {
-//    fetch(baseUrl + `ProjectBluePrint/GetDDLUnitList?projectId=${SelectedProjectID}`)
-//        .then(response => response.json())
-//        .then(data => {
-//            unitDropdown.innerHTML = "";
-//            data.forEach(unit => {
-//                const option = document.createElement("option");
-//                option.value = unit.ValueGuid;
-//                option.textContent = unit.Text;
-//                unitDropdown.appendChild(option);
-//            });
-
-//            // When the Save button is clicked
-//            modalSaveButton.onclick = () => {
-//                unitModal.hide();  // Close the modal using Bootstrap's hide() method
-//                callback();  // Execute the save function
-//            };
-//        })
-//        .catch(error => console.error("Error fetching unit list:", error));
-//}
-//function loadDropdownOptions(callback) {
-//    // Initialize Selectize instance safely
-//    const selectizeInstance = $('#unitDropdown').data('selectize');
-//    if (!selectizeInstance) {
-//        console.error('Selectize instance not found on #unitDropdown.');
-//        return;
-//    }
-
-//    $.ajax({
-//        url: `${baseUrl}ProjectBluePrint/GetDDLUnitList`,
-//        type: 'GET',
-//        data: { projectId: SelectedProjectID },
-//        success: function (data) {
-//            selectizeInstance.clearOptions(); // Clear existing options
-//            //selectizeInstance.addOption({ value: '', text: 'กรุณาเลือก' }); // Add default option
-
-//            // Populate Selectize with fetched options
-//            data.forEach(unit => {
-//                selectizeInstance.addOption({ value: unit.ValueGuid, text: unit.Text });
-//            });
-
-//            selectizeInstance.setValue(''); // Reset to the default value
-
-//            $('#unitModal').modal('show');
-
-//            // Bind the Save button click handler
-//            document.getElementById('modalSaveButton').onclick = () => {
-//                const selectedValue = selectizeInstance.getValue(); // Get selected value
-//                if (callback) callback(selectedValue); // Pass the selected value to the callback
-//                $('#unitModal').modal('hide'); // Hide the modal
-//            };
-//        },
-//        error: function (xhr, status, error) {
-//            console.error('Error fetching unit list:', error);
-//            showErrorAlert('เกิดข้อผิดพลาด!', 'ไม่สามารถโหลดข้อมูลได้');
-//        }
-//    });
-//}
-
 function loadDropdownOptions(callback) {
     const selectizeInstance = $('#unitDropdown').data('selectize');
     if (!selectizeInstance) {
@@ -284,8 +225,6 @@ function loadDropdownOptions(callback) {
             showErrorAlert('เกิดข้อผิดพลาด!', 'ไม่สามารถโหลดข้อมูลได้');
         });
 }
-
-
 
 
 // ✅ Draw Canvas
