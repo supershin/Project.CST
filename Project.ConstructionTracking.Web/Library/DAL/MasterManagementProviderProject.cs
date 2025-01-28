@@ -69,6 +69,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
 
         public abstract ReportProjectFloorPlanByUnitModel sp_get_report_ProjectFloorPlanByUnit(ReportProjectFloorPlanByUnitModel EN);
 
+        public abstract List<ReportExportSyncOnlineBillingModel> sp_get_report_ExportSyncOnlineBilling(ReportExportSyncOnlineBillingModel EN);
+
         public abstract Boolean sp_iud_masterform(CloneMasterFormModel en, ref CloneMasterFormModel enStatus);
 
         #region __ Reader __
@@ -748,6 +750,43 @@ namespace Project.ConstructionTracking.Web.Library.DAL
                 ProjectName = Commons.FormatExtension.NullToString(reader["ProjectName"])
             };
 
+            return entity;
+        }
+
+
+
+        public static List<ReportExportSyncOnlineBillingModel> sp_get_report_ExportSyncOnlineBillingListReader(IDataReader reader)
+        {
+            List<ReportExportSyncOnlineBillingModel> list = new List<ReportExportSyncOnlineBillingModel>();
+            int index = 1;
+            while (reader.Read())
+            {
+                list.Add(sp_get_report_ExportSyncOnlineBilling_Reader(reader, index));
+                index++;
+            }
+            reader.Close();
+            return list;
+        }
+
+        private static ReportExportSyncOnlineBillingModel sp_get_report_ExportSyncOnlineBilling_Reader(IDataReader reader, int index)
+        {
+            ReportExportSyncOnlineBillingModel entity = new ReportExportSyncOnlineBillingModel
+            {
+                index = index,
+                ProjectName = Commons.FormatExtension.NullToString(reader["ProjectName"]),
+                UnitCode = Commons.FormatExtension.NullToString(reader["UnitCode"]),
+                FormName = Commons.FormatExtension.NullToString(reader["FormName"]),
+                GRNO = Commons.FormatExtension.NullToString(reader["GRNO"]),
+                PONO = Commons.FormatExtension.NullToString(reader["PONO"]),
+                CompanyVenderName = Commons.FormatExtension.NullToString(reader["CompanyVenderName"]),
+                VenderName = Commons.FormatExtension.NullToString(reader["VenderName"]),
+                PercentPayment = Commons.FormatExtension.NullTo2decimalplaces(reader["PercentPayment"]),
+                Remark = Commons.FormatExtension.NullToString(reader["Remark"]),
+                SyncStatusName = Commons.FormatExtension.NullToString(reader["SyncStatusName"]),
+                SyncMessage = Commons.FormatExtension.NullToString(reader["SyncMessage"]),
+                UpdateDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["UpdateDate"]),
+                UpdateBy = Commons.FormatExtension.NullToString(reader["UpdateBy"])
+            };
             return entity;
         }
 

@@ -6,7 +6,7 @@
         searchField: 'Text',
         create: false,
         sortField: 'text',
-        placeholder: 'กรุณาเลือกโครงการ', // Placeholder text
+        placeholder: 'ทั้งหมด', // Placeholder text
         maxItems: 1 // Single select
     });
 
@@ -382,4 +382,39 @@ function copyToClipboard(text) {
     }).catch(err => {
         console.error('Could not copy text: ', err);
     });
+}
+
+document.getElementById('Export').addEventListener('click', ExportToExcel);
+
+async function ExportToExcel() {
+
+    const selectedProjectId = document.getElementById('DDLProjectID').value;
+    const unitSearchValue = document.getElementById('txtunitsearch').value;
+
+    showLoadingScreen();
+
+    const exportUrl = `UnitPayment/ExportToExcel?projectId=${encodeURIComponent(selectedProjectId)}&unitSearch=${encodeURIComponent(unitSearchValue)}`;
+
+    fetch(exportUrl)
+        .then(response => {
+            if (!response.ok) {
+                Swal.close();
+                showAlertandClose('Export Excel ไม่สำเร็จ');
+                throw new Error('Error occurred during file download.');
+            }
+            Swal.close();
+            return response.blob();
+        })
+        .then(blob => {
+            Swal.close();
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `รายงานการSysn_online_billing.xlsx`;
+            link.click();
+        })
+        .catch(error => {
+            Swal.close();
+            console.error('Export failed:', error);
+            showAlertandClose('การส่งออกข้อมูลล้มเหลว');
+        });
 }

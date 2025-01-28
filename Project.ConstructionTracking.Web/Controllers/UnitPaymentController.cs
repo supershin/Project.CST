@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis;
 using System;
 using NuGet.Protocol.Plugins;
 using Project.ConstructionTracking.Web.Infras.Services;
+using ClosedXML.Excel;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
@@ -394,6 +395,119 @@ namespace Project.ConstructionTracking.Web.Controllers
             email.Body = template;
 
             (new MailService()).SendMail(email);
+        }
+
+        [HttpGet]
+        public IActionResult ExportToExcel(string projectId, string unitSearch)
+        {
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("รายงานการ Sysn Online Billing");
+
+                DateTime Datenow = DateTime.Now;
+
+                var ddlModel2 = new GetDDL { Act = "ProjectAdmin", GuID = Commons.FormatExtension.ConvertStringToGuid(projectId) };
+                List<GetDDL> ProjectName = _getDDLService.GetDDLList(ddlModel2);
+
+                // Add filter values
+                worksheet.Cell(1, 1).Value = "ตัวเลือกการค้นหา";
+                worksheet.Cell(2, 1).Value = "โครงการ :";
+                worksheet.Cell(2, 2).Value = ProjectName != null && ProjectName.Count > 0 ? ProjectName[0].Text : projectId == null ? "ทั้งหมด" : "ไม่พบชื่อโครงการนี้" ;
+                worksheet.Cell(3, 1).Value = "Exprort วันที่ :";
+                worksheet.Cell(3, 2).Value = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(Datenow); ;
+                worksheet.Range(1, 1, 1, 3).Merge();
+                worksheet.Range(2, 2, 2, 3).Merge();
+                worksheet.Range(3, 2, 3, 3).Merge();
+
+                // Row 1: Main headers
+                worksheet.Cell(4, 1).Value = "ลำดับ";
+                worksheet.Cell(4, 2).Value = "โครงการ";
+                worksheet.Cell(4, 3).Value = "แปลง";
+                worksheet.Cell(4, 4).Value = "งวดที่";
+                worksheet.Cell(4, 5).Value = "PO";
+                worksheet.Cell(4, 6).Value = "GR";
+                worksheet.Cell(4, 7).Value = "บริษัท";
+                worksheet.Cell(4, 8).Value = "ผู้รับเหมา";
+                worksheet.Cell(4, 9).Value = "เปอร์เซ็นต์";
+                worksheet.Cell(4, 10).Value = "หมายเหตุ";
+                worksheet.Cell(4, 11).Value = "สถานะ";
+                worksheet.Cell(4, 12).Value = "ข้อผิดพลาด";
+                worksheet.Cell(4, 13).Value = "วันที่บันทึกล่าสุด";
+                worksheet.Cell(4, 14).Value = "ผู้บันทึกล่าสุด";
+
+                // Define the header range properly
+                var headerRange = worksheet.Range(4, 1, 4, 14); // Corrected to include all columns in the range
+
+                // Style the header row
+                headerRange.Style.Font.Bold = true;
+                headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                headerRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                headerRange.Style.Fill.BackgroundColor = XLColor.LightGray; // Optional: Add a background color for clarity
+
+
+                var en = new ReportExportSyncOnlineBillingModel
+                {
+                    act = "ReportExportSyncOnlineBilling",
+                    project_id = projectId == null ? "" : projectId,
+                    unit_id = unitSearch == null ? "" : unitSearch,
+                };
+
+                List<ReportExportSyncOnlineBillingModel> reportData = _unitstatusProvider.sp_get_report_ExportSyncOnlineBilling(en);
+
+                if (reportData == null || reportData.Count == 0)
+                {
+                    // Handle the case with no data
+                    worksheet.Cell(5, 1).Value = "ไม่มีข้อมูล";
+                    worksheet.Range("A5:N5").Merge(); // Adjusted for 13 columns
+                    worksheet.Cell(6, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                    worksheet.Cell(6, 1).Style.Font.Bold = true;
+                }
+                else
+                {
+                    // Populate data rows
+                    int row = 5; // Starting row for data
+                    foreach (var item in reportData)
+                    {
+                        worksheet.Cell(row, 1).Value = item.index;
+                        worksheet.Cell(row, 2).Value = item.ProjectName;
+                        worksheet.Cell(row, 3).Value = item.UnitCode;
+                        worksheet.Cell(row, 4).Value = item.FormName;
+                        worksheet.Cell(row, 5).Value = item.GRNO;
+                        worksheet.Cell(row, 6).Value = item.PONO;
+                        worksheet.Cell(row, 7).Value = item.CompanyVenderName;
+                        worksheet.Cell(row, 8).Value = item.VenderName;
+                        worksheet.Cell(row, 9).Value = item.PercentPayment;
+                        worksheet.Cell(row, 10).Value = item.Remark;
+                        worksheet.Cell(row, 11).Value = item.SyncStatusName;
+                        worksheet.Cell(row, 12).Value = item.SyncMessage;
+                        worksheet.Cell(row, 13).Value = item.UpdateDate;
+                        worksheet.Cell(row, 14).Value = item.UpdateBy;
+
+                        worksheet.Range(row, 1, row, 14).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                        worksheet.Range(row, 1, row, 14).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+
+                        row++;
+                    }
+
+                }
+
+                // Adjust columns to fit the content
+                worksheet.Columns().AdjustToContents();
+
+
+                // Return the file
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    stream.Position = 0;
+                    return File(
+                        stream.ToArray(),
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        $"รายงานการSysn_online_billing.xlsx"
+                    );
+                }
+            }
         }
     }
 }

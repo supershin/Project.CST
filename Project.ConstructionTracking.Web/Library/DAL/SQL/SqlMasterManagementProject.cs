@@ -1013,6 +1013,52 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
             }
         }
 
+        public override List<ReportExportSyncOnlineBillingModel> sp_get_report_ExportSyncOnlineBilling(ReportExportSyncOnlineBillingModel EN)
+        {
+            using (SqlConnection SqlCon = new SqlConnection(ConnectionString))
+            {
+                SqlCommand SqlCmd = new SqlCommand("sp_get_workperiod", SqlCon);
+                try
+                {
+                    SqlCon.Open();
+                    SqlTransaction Trans = SqlCon.BeginTransaction();
+                    SqlCmd.Transaction = Trans;
+                    SqlCmd.CommandType = CommandType.StoredProcedure;
 
+                    SqlCmd.Parameters.Add(new SqlParameter("@act", SqlDbType.NVarChar)).Value = EN.act ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@project_id", SqlDbType.NVarChar)).Value = EN.project_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = EN.unit_id ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = EN.unit_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@user_id", SqlDbType.NVarChar)).Value = EN.user_id ?? (object)DBNull.Value;
+                    switch (EN.act)
+                    {
+                        case "ReportExportSyncOnlineBilling":
+                            return sp_get_report_ExportSyncOnlineBillingListReader(ExecuteReader(SqlCmd));
+
+                        default:
+                            return new List<ReportExportSyncOnlineBillingModel>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Stored name : sp_get_unitstatus");
+                    Log.Error("SEND pram1 Act (nvarchar) : {Act}", EN.act);
+                    Log.Error("SEND pram2 unit_id (nvarchar) : {Unit_id}", EN.unit_id);
+                    Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", EN.project_id);
+                    Log.Error("SEND pram4 unit_status (nvarchar) : {Unit_status}", EN.unit_status);
+                    Log.Error("SEND pram5 user_id (nvarchar) : {user_id}", EN.user_id);
+                    Log.Error(ex.ToString());
+                    Log.Error("=========== END ===========");
+
+                    return new List<ReportExportSyncOnlineBillingModel>();
+                }
+                finally
+                {
+                    SqlCmd.Dispose();
+                    SqlCon.Close();
+                    SqlCon.Dispose();
+                }
+            }
+        }
     }
 }

@@ -58,7 +58,7 @@
                     <div class="row">
                         <div class="col-6 col-sm-3 mb-2">
                             <select id="DDLProjectID">
-                                <option value="">กรุณาเลือก</option>
+                                <option value="">ทั้งหมด</option>
                                 @foreach (var item in ViewBag.DDLProject)
                                 {
                                     <option value="@item.ValueGuid">@item.Text</option>
@@ -81,9 +81,18 @@
                             </div>
                         </div>
                         <div class="col-6 col-sm-3 mb-2">
-                            <button class="btn btn-primary w-100" id="searchButton">
-                                <i class="fas fa-search"></i> ค้นหา
-                            </button>
+                            <div class="row">
+                                <div class="col-6">
+                                    <button class="btn btn-primary w-100" id="searchButton">
+                                        <i class="fas fa-search"></i> ค้นหา
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-success w-100" id="Export">
+                                        <i class="fa-solid fa-file-excel"></i> Export
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
