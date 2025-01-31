@@ -36,6 +36,11 @@ namespace Project.ConstructionTracking.Web.Controllers
                         relativePath = Path.Combine("wwwroot", "FileUserManual", fileName);
                         break;
 
+                    case "AdminOnlineBilling":
+                        fileName = "คู่มือ_Admin_การส่งข้อมูล_QCT _ไป_Online_Billing.pdf";
+                        relativePath = Path.Combine("wwwroot", "FileUserManual", fileName);
+                        break;
+
                     case "PESEPMusermanual":
                         fileName = "คู่มือ_PE_SE_PM_ระบบ_CQT.pdf";
                         relativePath = Path.Combine("wwwroot", "FileUserManual", fileName);
