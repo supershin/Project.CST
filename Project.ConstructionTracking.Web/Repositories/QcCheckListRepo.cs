@@ -188,7 +188,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             //};
 
             tr_QC_UnitCheckList? transQc = _context.tr_QC_UnitCheckList
-                .Where(o => o.ProjectID == model.ProjectID && o.UnitID == model.UnitID
+                .Where(o => o.ProjectID == model.ProjectID && o.UnitID == model.UnitID && o.FlagActive == true
                 && o.CheckListID == model.QcCheckListID && o.QCTypeID == model.QcTypeID).OrderByDescending(o => o.Seq).FirstOrDefault();
 
             if( transQc == null)
