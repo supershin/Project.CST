@@ -1402,38 +1402,56 @@ namespace Project.ConstructionTracking.Web.Repositories
             //var projectID = new Guid("0cc60da9-9ac5-4df6-871e-b10fb0257b4b");
             //var unitID = new Guid("00fc3828-dc71-4cd2-9041-9f4bc8eec06d");
 
+            var subquery = (from t1 in _context.tr_UnitForm
+                            join t2 in _context.tr_Form_QCCheckList on t1.FormID equals t2.FormID into t2Group
+                            from t2Joined in t2Group.DefaultIfEmpty()
+                            join t3 in _context.tm_UnitFormStatus on t1.StatusID equals t3.ID into t3Group
+                            from t3Joined in t3Group.DefaultIfEmpty()
+                            join t4 in _context.tm_Form on t1.FormID equals t4.ID into t4Group
+                            from t4Joined in t4Group.DefaultIfEmpty()
+                            where t1.ProjectID == filter.ProjectID
+                                  && t1.UnitID == filter.UnitID
+                                  && t2Joined.CheckListID == filter.ChecklistID
+                            select new
+                            {
+                                t1.ID,
+                                t1.ProjectID,
+                                t1.UnitID,
+                                t1.FormID,
+                                FormName = t4Joined.Name,
+                                t2Joined.CheckListID,
+                                t1.StatusID,
+                                StatusName = t3Joined.Name,
+                                t1.FlagActive
+                            }).FirstOrDefault(); 
 
             var query = (from t1 in _context.tm_Unit
-                        join t2 in _context.tm_Project
-                            on t1.ProjectID equals t2.ProjectID into t2Group
-                        from t2Joined in t2Group.DefaultIfEmpty() // LEFT JOIN
-                        join t3 in _context.tr_ProjectModelForm
-                            on new { t1.ModelTypeID, t1.ProjectID } equals new { t3.ModelTypeID, t3.ProjectID } into t3Group
-                        from t3Joined in t3Group.DefaultIfEmpty() // LEFT JOIN
-                        join t4 in _context.tm_Form
-                            on t3Joined.FormTypeID equals t4.FormTypeID into t4Group
-                        from t4Joined in t4Group.DefaultIfEmpty() // LEFT JOIN
-                        join t5 in _context.tr_UnitForm on new { FormID = (int?)t4Joined.ID, UnitID = (Guid?)t1.UnitID } equals new {t5.FormID, t5.UnitID } into t5Group
-                        from t5Joined in t5Group.DefaultIfEmpty() // LEFT JOIN
-                        join t6 in _context.tr_Form_QCCheckList
-                            on t4Joined.ID equals t6.FormID into t6Group
-                        from t6Joined in t6Group.DefaultIfEmpty() // LEFT JOIN
-                        join t7 in _context.tm_UnitFormStatus
-                            on t5Joined.StatusID equals t7.ID into t7Group
-                        from t7Joined in t7Group.DefaultIfEmpty() // LEFT JOIN
-                        join t8 in _context.tr_PE_Unit on t1.UnitID equals t8.UnitID into PEUNITGroup
-                        from t8 in PEUNITGroup.DefaultIfEmpty()
+                         join t2 in _context.tm_Project on t1.ProjectID equals t2.ProjectID into t2Group
+                         from t2Joined in t2Group.DefaultIfEmpty()
+                         join t3 in _context.tr_ProjectModelForm
+                             on new { t1.ModelTypeID, t1.ProjectID } equals new { t3.ModelTypeID, t3.ProjectID } into t3Group
+                         from t3Joined in t3Group.DefaultIfEmpty()
+                         join t4 in _context.tm_Form on t3Joined.FormTypeID equals t4.FormTypeID into t4Group
+                         from t4Joined in t4Group.DefaultIfEmpty()
+                         join t5 in _context.tr_UnitForm on new { FormID = (int?)t4Joined.ID, UnitID = (Guid?)t1.UnitID } equals new { t5.FormID, t5.UnitID } into t5Group
+                         from t5Joined in t5Group.DefaultIfEmpty()
+                         join t6 in _context.tr_Form_QCCheckList on t4Joined.ID equals t6.FormID into t6Group
+                         from t6Joined in t6Group.DefaultIfEmpty()
+                         join t7 in _context.tm_UnitFormStatus on t5Joined.StatusID equals t7.ID into t7Group
+                         from t7Joined in t7Group.DefaultIfEmpty()
+                         join t8 in _context.tr_PE_Unit on t1.UnitID equals t8.UnitID into t8Group
+                         from t8Joined in t8Group.DefaultIfEmpty()
                          where t1.ProjectID == filter.ProjectID
-                           && t1.UnitID == filter.UnitID
-                           && t6Joined.CheckListID == filter.ChecklistID
+                               && t1.UnitID == filter.UnitID
+                               && t6Joined.CheckListID == filter.ChecklistID
                          select new
-                        {
-                            FormID = t4Joined.ID,
-                            FormName = t4Joined.Name,
-                            StatusID = t5Joined.StatusID,
-                            StatusName = t7Joined.Name,
-                            CompanyVender = t1.CompanyVendorID,
-                            PEUnitID = t8.UserID
+                         {
+                             FormID = subquery != null ? subquery.FormID : t4Joined.ID,
+                             FormName = subquery != null ? subquery.FormName : t4Joined.Name,
+                             StatusID = subquery != null ? subquery.StatusID : t5Joined.StatusID,
+                             StatusName = subquery != null ? subquery.StatusName : t7Joined.Name,
+                             CompanyVender = t1.CompanyVendorID,
+                             PEUnitID = t8Joined.UserID
                          }).FirstOrDefault();
 
             // Combine results into UnitFormDetailModel
