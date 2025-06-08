@@ -20,6 +20,8 @@ using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using Microsoft.AspNetCore.Mvc;
+using Project.ConstructionTracking.Web.Models.SendMail;
+using static Project.ConstructionTracking.Web.Models.SendMail.NotificationQC5InspectionHasStartedModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -65,7 +67,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return result;
         }
-
 
         public QC5DetailModel GetQC5CheckDetail(QC5DetailModel filterData)
         {
@@ -1466,6 +1467,34 @@ namespace Project.ConstructionTracking.Web.Repositories
             };
 
             return result;  
+        }
+
+        public NotificationQC5InspectionHasStartedModel GetNotificationQC5InspectionHasStartedSendEmailData(Guid userId, Guid unitId)
+        {
+            //var unitId = Guid.Parse("DED2FE9B-B1F3-43C6-A786-00B3836E012F");
+            //var userId = Guid.Parse("F82CCBF6-88F5-48D9-AEBA-AC794D460D1B");
+
+            var result = (from u in _context.tm_Unit
+                          join p in _context.tm_Project on u.ProjectID equals p.ProjectID into projGroup
+                          from p in projGroup.DefaultIfEmpty()
+                          join user in _context.tm_User.Where(x => x.ID == userId) on 1 equals 1 into userGroup
+                          from user in userGroup.DefaultIfEmpty()
+                          where u.UnitID == unitId
+                          select new NotificationQC5InspectionHasStartedModel
+                          {
+                              ProjectName = p.ProjectName,
+                              UnitCode = u.UnitCode,
+                              QCInspectionName = user.FirstName + " " + user.LastName,
+                              ListNotiAccount = (from user in _context.tm_User
+                                                 where user.RoleID == SystemConstant.UserRole.Noti_QC5_Inspection_Started && user.FlagActive == true
+                                                select new NotificationQC5InspectionHasStartedAccount
+                                                {
+                                                    Name = user.FirstName + " " + user.LastName,
+                                                    Email = user.Email,
+                                                }).ToList()
+                          }).FirstOrDefault();
+
+            return result;
         }
 
 

@@ -1,5 +1,6 @@
 ﻿using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
+using Project.ConstructionTracking.Web.Models.SendMail;
 
 namespace Project.ConstructionTracking.Web.Services
 {
@@ -19,5 +20,6 @@ namespace Project.ConstructionTracking.Web.Services
         (string filePath, string currentDate) SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID);
         SummaryQCPdfData GetSummaryQC5(Guid QCUnitCheckListID);
         UnitFormDetailModel GetUnitFormDetail(UnitFormDetailModel filter);
+        NotificationQC5InspectionHasStartedModel GetNotificationQC5InspectionHasStartedSendEmailData(Guid userId, Guid unitId);
     }
 }
