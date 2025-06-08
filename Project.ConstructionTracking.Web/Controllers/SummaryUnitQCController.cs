@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Project.ConstructionTracking.Web.Commons;
+using Project.ConstructionTracking.Web.Infras.Services;
+using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Models.QCModel;
+using Project.ConstructionTracking.Web.Models.SendMail;
 using Project.ConstructionTracking.Web.Services;
 using QuestPDF.Infrastructure;
 using static Project.ConstructionTracking.Web.Commons.SystemConstant;
@@ -13,10 +16,12 @@ namespace Project.ConstructionTracking.Web.Controllers
     {
         private readonly IQcSummaryService _qcSummaryService;
         private readonly IQC5CheckService _QC5CheckService;
-        public SummaryUnitQCController(IQcSummaryService qcSummaryService, IQC5CheckService qC5CheckService)
+        private readonly IConfiguration _config;
+        public SummaryUnitQCController(IQcSummaryService qcSummaryService, IQC5CheckService qC5CheckService, IConfiguration config)
         {
             _qcSummaryService = qcSummaryService;
             _QC5CheckService = qC5CheckService;
+            _config = config;
         }
 
         public IActionResult Index(Guid projectId, string projectName, Guid unitId)
@@ -110,6 +115,35 @@ namespace Project.ConstructionTracking.Web.Controllers
                     int? NewSeq = 1;
 
                     // Return success with NewSeq = 1 for new sequence redirection
+
+                    Guid UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                    NotificationQC5InspectionHasStartedModel NotificationQC5InspectionHasStartedSendEmailData = _QC5CheckService.GetNotificationQC5InspectionHasStartedSendEmailData(UserID , Unit_ID);
+                    string template = RenderRazorViewtoString(this, "Template_Notification_QC5_Inspection_Has_Started", NotificationQC5InspectionHasStartedSendEmailData);
+
+                    var recipients = NotificationQC5InspectionHasStartedSendEmailData.ListNotiAccount?
+                                        .Where(x => !string.IsNullOrEmpty(x.Email))
+                                        .Select(x => x.Email)
+                                        .ToList();
+
+                    // ✅ Only send if there's at least one recipient
+                    if (recipients != null && recipients.Any())
+                    {
+                        var email = new EmailModel
+                        {
+                            Host = _config["Email:HOST"],
+                            From = _config["Email:FROM"],
+                            Sender = _config["Email:SENDER"],
+                            Username = _config["Email:USER_NAME"],
+                            Password = _config["Email:PASSWORD"],
+                            PORT = Convert.ToInt32(_config["Email:PORT"]),
+                            To = recipients,
+                            Subject = _config["Email:Subject:HEADER_TEXT"],
+                            Body = template
+                        };
+
+                        (new MailService()).SendMail(email);
+                    }
+
                     return Json(new { success = true, NewSeq = NewSeq });
                 }
 

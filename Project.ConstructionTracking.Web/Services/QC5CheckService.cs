@@ -1,6 +1,7 @@
 ﻿using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
+using Project.ConstructionTracking.Web.Models.SendMail;
 using Project.ConstructionTracking.Web.Repositories;
 
 namespace Project.ConstructionTracking.Web.Services
@@ -145,6 +146,12 @@ namespace Project.ConstructionTracking.Web.Services
         {
             var UnitFormDetail = _IQC5CheckRepo.GetUnitFormDetail(filter);
             return UnitFormDetail;
+        }
+
+        public NotificationQC5InspectionHasStartedModel GetNotificationQC5InspectionHasStartedSendEmailData(Guid userId, Guid unitId)
+        {
+            var NotificationQC5InspectionHasStartedSendEmailData = _IQC5CheckRepo.GetNotificationQC5InspectionHasStartedSendEmailData(userId , unitId);
+            return NotificationQC5InspectionHasStartedSendEmailData;
         }
 
     }
