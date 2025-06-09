@@ -1472,7 +1472,7 @@ namespace Project.ConstructionTracking.Web.Repositories
         public NotificationQC5InspectionHasStartedModel GetNotificationQC5InspectionHasStartedSendEmailData(Guid userId, Guid unitId)
         {
             //var unitId = Guid.Parse("DED2FE9B-B1F3-43C6-A786-00B3836E012F");
-            //var userId = Guid.Parse("F82CCBF6-88F5-48D9-AEBA-AC794D460D1B");
+            //var userId = Guid.Parse("F82CCBF6-88F5-48D9-AEBA-AC794D460D1B"); 
 
             var result = (from u in _context.tm_Unit
                           join p in _context.tm_Project on u.ProjectID equals p.ProjectID into projGroup
@@ -1485,8 +1485,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                               ProjectName = p.ProjectName,
                               UnitCode = u.UnitCode,
                               QCInspectionName = user.FirstName + " " + user.LastName,
+                              DateInspection = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now),
                               ListNotiAccount = (from user in _context.tm_User
-                                                 where user.RoleID == SystemConstant.UserRole.Noti_QC5_Inspection_Started && user.FlagActive == true
+                                                 where user.RoleID == SystemConstant.UserRole.Procurement_Department && user.FlagActive == true
                                                 select new NotificationQC5InspectionHasStartedAccount
                                                 {
                                                     Name = user.FirstName + " " + user.LastName,

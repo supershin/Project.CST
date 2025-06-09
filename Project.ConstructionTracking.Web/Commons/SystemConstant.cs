@@ -38,7 +38,7 @@
             public const int PJM = 3;
             public const int QC = 4;
             public const int ADMIN = 5;
-            public const int Noti_QC5_Inspection_Started = 6;
+            public const int Procurement_Department = 6;
         }
 
         public static class UserRole_Desc
@@ -48,6 +48,7 @@
             public const string PJM = "PJM-Head";
             public const string QC = "Quality Control";
             public const string ADMIN = "Administrator";
+            public const string Procurement_Department = "Procurement Department";
         }
 
         public static class QcStatus
