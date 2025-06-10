@@ -92,7 +92,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                     SqlCmd.Parameters.Add(new SqlParameter("@build_status", SqlDbType.NVarChar)).Value = en.build_status ?? (object)DBNull.Value;
                     switch (en.act)
                     {
-                        case "GetlistUnitStatusByProject":
+                        case "GetlistUnitStatusByProjectNEW":
                             return sp_get_unitstatus_ListReader(ExecuteReader(SqlCmd));
 
                         default:

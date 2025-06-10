@@ -125,10 +125,9 @@ namespace Project.ConstructionTracking.Web.Library.DAL
 
             Entity.index = index;
             Entity.unit_id = Commons.FormatExtension.NullToString(reader["UnitID"]);
-            Entity.project_id = Commons.FormatExtension.NullToString(reader["ProjectID"]);
             Entity.unit_code = Commons.FormatExtension.NullToString(reader["UnitCode"]);
+            Entity.project_id = Commons.FormatExtension.NullToString(reader["ProjectID"]);    
             Entity.model_type_str = Commons.FormatExtension.NullToString(reader["model_type_str"]);
-            Entity.unit_type_str = Commons.FormatExtension.NullToString(reader["unit_type_str"]);
             Entity.unit_status_str = Commons.FormatExtension.NullToString(reader["unit_status_str"]);
             Entity.date_start_plan_str = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["date_start_plan_str"]);
             Entity.date_end_plan_str = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["date_end_plan_str"]);
@@ -140,7 +139,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.realday_use_str = Commons.FormatExtension.NullToString(reader["AllDayActual"]);
             Entity.delay_ahead_str = Commons.FormatExtension.NullToString(reader["DelayAhead"]);
             Entity.unit_build_status_str = Commons.FormatExtension.NullToString(reader["unit_build_status_str"]);
-            Entity.Latestwithdrawal = Commons.FormatExtension.NullToString(reader["Latestwithdrawal"]);
+            Entity.LastFormTransfer = Commons.FormatExtension.NullToString(reader["LastFormTransfer"]);
+            Entity.QC5PassDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["QC5PassDate"]);
             return Entity;
         }
 

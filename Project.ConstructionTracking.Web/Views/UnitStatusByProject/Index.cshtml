@@ -26,102 +26,7 @@
         </div>
     </div>
     <div class="page-body">
-        <div class="container mt-3">
-            <div class="col-12">
-                <div class="card-body">
-                    <form id="form-search" method="post">
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <label class="form-label"><h3>โครงการ</h3></label>
-                                    <select class="form-select" name="selectedProject">
-                                        @foreach (var item in ListProject)
-                                        {
-                                            <option value="@item.ValueGuid">@item.Text</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="mb-3">
-                                    <label class="form-label"><h3>สถานะขาย</h3></label>
-                                    <select class="form-select" name="selectedUnitStatus">
-                                        <option value="">ทั้งหมด</option>
-                                        @foreach (var item in ddlListUnitStatus)
-                                        {
-                                            <option value="@item.Value">@item.Text</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="mb-3">
-                                    <label class="form-label"><h3>สถานะก่อสร้าง</h3></label>
-                                    <div class="row g-2">
-                                        <div class="col">
-                                            <select class="form-select" name="selectedBuildStatus">
-                                                <option value="">ทั้งหมด</option>
-                                                <option value="ยังไม่เริ่มก่อสร้าง">ยังไม่เริ่มก่อสร้าง</option>
-                                                <option value="อยู่ระหว่างก่อสร้าง">อยู่ระหว่างก่อสร้าง</option>
-                                                <option value="บ้านเสร็จ">บ้านเสร็จ</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-auto">
-                                            <button type="submit" class="btn btn-icon" aria-label="Button">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
-                                                    <path d="M21 21l-6 -6" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                    <div class="collapse" id="collapseExample">
-                      <div class="card card-body">
-                            <div class="row">
-                                <div class="col-3">
-                                    <div class="mb-3">
-                                        <label class="form-label">ตัวอย่างค้นหา</label>
-                                        <select class="form-select">
-                                            <option value="1">ค้นหา 1 </option>
-                                            <option value="2">ค้นหา 2</option>
-                                            <option value="3">ค้นหา 3</option>
-                                            <option value="4">ค้นหา 4</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="mb-3">
-                                        <label class="form-label">ตัวอย่างค้นหา</label>
-                                        <select class="form-select">
-                                            <option value="1">ว่าง</option>
-                                            <option value="2">จอง</option>
-                                            <option value="3">สัญญา</option>
-                                            <option value="4">โอน</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">ตัวอย่างค้นหา</label>
-                                        <div class="row g-2">
-                                            <div class="col">
-                                                <input type="text" name="Search" class="form-control" placeholder="Search for…">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                      </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container mt-3" id="PartialTable">
+        <div id="PartialTable">
             <partial name="PartialTable" model="Model" />
         </div>
     </div>
@@ -171,8 +76,8 @@
 
         });
 
-        function setDatatable() { 
-            $('#example').DataTable({
+        function setDatatable() {
+            $('#Tb_unitstatus_by_Project').DataTable({
                 "paging": true,
                 "lengthChange": true,
                 "searching": true,
