@@ -1,118 +1,112 @@
 ﻿@{
     Layout = null;
-    var ListProject = ViewBag.ListProject;
-    var ddlListUnitStatus = ViewBag.DDLList;
 }
 @model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.UnitStatusModel>
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Project Progress</h3>
-    </div>
-    <div class="table-responsive">
-        <table class="table table-vcenter card-table" id="Tb_unitstatus_by_Project">
-            <thead>
-                <tr>
-                    <th>Unit & Type</th>
-                    <th>สถานะขาย</th>
-                    <th>สถานะก่อสร้าง</th>
-                    <th>แผน เริ่ม/เสร็จ</th>
-                    <th>งวดงาน</th>
-                    <th>% Progress</th>
-                    <th>Delay/Ahead ณ ปัจจุบัน</th>
-                    <th>จำนวนวันก่อสร้าง</th>
-                    <th>งวดที่เบิกล่าสุด</th>
-                    <th class="text-end">QC5 ผ่าน ณ วันที่</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
+<div class="table-responsive">
+    <table class="table table-vcenter card-table" id="Tb_unitstatus_by_Project">
+        <thead>
+            <tr>
+                <th>Unit & Type</th>
+                <th>สถานะขาย</th>
+                <th>สถานะก่อสร้าง</th>
+                <th>แผน เริ่ม/เสร็จ</th>
+                <th>งวดงาน</th>
+                <th>% Progress</th>
+                <th>Delay/Ahead ณ ปัจจุบัน</th>
+                <th>จำนวนวันก่อสร้าง</th>
+                <th>งวดที่เบิกล่าสุด</th>
+                <th class="text-end">QC5 ผ่าน ณ วันที่</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                var saleStatus = item.unit_status_str;
+                string saleClass = saleStatus switch
                 {
-                    var saleStatus = item.unit_status_str;
-                    string saleClass = saleStatus switch
-                    {
-                        "ว่าง"   => "badge bg-secondary text-white", // grey
-                        "จอง" => "badge bg-yellow text-white",    // yellow
-                        "สัญญา" => "badge bg-blue text-white",      // blue
-                        "โอน" => "badge bg-green text-white",     // green
-                             _ => "badge bg-muted text-white"      // fallback
-                    };
+                    "ว่าง"   => "badge bg-secondary text-white", // grey
+                    "จอง" => "badge bg-yellow text-white",    // yellow
+                    "สัญญา" => "badge bg-blue text-white",      // blue
+                    "โอน" => "badge bg-green text-white",     // green
+                            _ => "badge bg-muted text-white"      // fallback
+                };
 
-                    var buildStatus = item.unit_build_status_str;
-                    string buildClass = buildStatus switch
-                    {
-                        "ยังไม่เริ่มก่อสร้าง" => "badge bg-secondary text-white", // grey
-                        "อยู่ระหว่างก่อสร้าง" => "badge bg-yellow text-white",    // yellow
-                        "บ้านเสร็จ" => "badge bg-green text-white",     // green
-                        _ => "badge bg-muted text-white"      // fallback
-                    };
+                var buildStatus = item.unit_build_status_str;
+                string buildClass = buildStatus switch
+                {
+                    "ยังไม่เริ่มก่อสร้าง" => "badge bg-secondary text-white", // grey
+                    "อยู่ระหว่างก่อสร้าง" => "badge bg-yellow text-white",    // yellow
+                    "บ้านเสร็จ" => "badge bg-green text-white",     // green
+                    _ => "badge bg-muted text-white"      // fallback
+                };
 
-                    <tr>
-                        <td><strong>@item.unit_code</strong><br><small class="text-muted">Type: @item.model_type_str</small></td>
-                        <td><span class="@saleClass">@saleStatus</span></td>
-                        <td><span class="@buildClass">@buildStatus</span></td>
-                        <td><strong>เริ่ม: </strong>@item.date_start_plan_str<br><strong>เสร็จ: </strong>@item.date_end_plan_str</td>
-                        <td><strong>Plan: </strong>@item.formname_plan_str<br><strong>Actual: </strong>@item.formname_true_str</td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(item.process_plan_str))
-                            {
-                                <text><strong>Plan: </strong>@item.process_plan_str %<br/></text>
-                            }
-                            else
-                            {
-                                <text><strong>Plan: </strong> - <br/></text>
-                            }
+                <tr>
+                    <td><strong>@item.unit_code</strong><br><small class="text-muted">Type: @item.model_type_str</small></td>
+                    <td><span class="@saleClass">@saleStatus</span></td>
+                    <td><span class="@buildClass">@buildStatus</span></td>
+                    <td><strong>เริ่ม: </strong>@item.date_start_plan_str<br><strong>เสร็จ: </strong>@item.date_end_plan_str</td>
+                    <td><strong>Plan: </strong>@item.formname_plan_str<br><strong>Actual: </strong>@item.formname_true_str</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.process_plan_str))
+                        {
+                            <text><strong>Plan: </strong>@item.process_plan_str %<br/></text>
+                        }
+                        else
+                        {
+                            <text><strong>Plan: </strong> - <br/></text>
+                        }
 
-                            @if (!string.IsNullOrEmpty(item.process_true_str))
-                            {
-                                <text><strong>Actual: </strong>@item.process_true_str %</text>
-                            }
-                            else
-                            {
-                                <text><strong>Actual: </strong> - </text>
-                            }
-                        </td>
-                        <td>
-                            @if (item.delay_ahead_str == "0.00")
-                            {
-                                <span class="text-muted">
-                                    <i class="fas fa-minus me-1"></i> @item.delay_ahead_str%
-                                </span>
-                            }
-                            else if (item.delay_ahead_str.StartsWith("-"))
-                            {
-                                <span class="text-danger">
-                                    <i class="fas fa-arrow-down me-1"></i> @item.delay_ahead_str%
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="text-success">
-                                    <i class="fas fa-arrow-up me-1"></i> @item.delay_ahead_str%
-                                </span>
-                            }
-                        </td>
-                        <td><strong>All: </strong>@item.allday_str<br><strong>Actual: </strong>@item.realday_use_str</td>
-                        <td>@item.LastFormTransfer</td>
-                        <td class="text-end">
-                            @if (!string.IsNullOrEmpty(item.QC5PassDate))
-                            {
-                                <a href="#" class="btn btn-outline-success btn-sm">
-                                    <i class="fa-solid fa-circle-check me-1"></i> @item.QC5PassDate
-                                </a>
-                            }
-                            else
-                            {
-                                <span class="text-muted">
-                                    <i class="fa-regular fa-circle-xmark"></i>
-                                </span>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                        @if (!string.IsNullOrEmpty(item.process_true_str))
+                        {
+                            <text><strong>Actual: </strong>@item.process_true_str %</text>
+                        }
+                        else
+                        {
+                            <text><strong>Actual: </strong> - </text>
+                        }
+                    </td>
+                    <td>
+                        @if (item.delay_ahead_str == "0.00")
+                        {
+                            <span class="text-muted">
+                                <i class="fas fa-minus me-1"></i> @item.delay_ahead_str%
+                            </span>
+                        }
+                        else if (item.delay_ahead_str.StartsWith("-"))
+                        {
+                            <span class="text-danger">
+                                <i class="fas fa-arrow-down me-1"></i> @item.delay_ahead_str%
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-success">
+                                <i class="fas fa-arrow-up me-1"></i> @item.delay_ahead_str%
+                            </span>
+                        }
+                    </td>
+                    <td><strong>All: </strong>@item.allday_str<br><strong>Actual: </strong>@item.realday_use_str</td>
+                    <td>@item.LastFormTransfer</td>
+                    <td class="text-end">
+                        @if (!string.IsNullOrEmpty(item.QC5PassDate))
+                        {
+                            <a href="#" class="btn btn-outline-success btn-sm">
+                                <i class="fa-solid fa-circle-check me-1"></i> @item.QC5PassDate
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">
+                                <i class="fa-regular fa-circle-xmark"></i>
+                            </span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
+
 
 
 
