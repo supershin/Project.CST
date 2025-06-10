@@ -55,7 +55,7 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             var en = new UnitStatusModel
             {
-                act = "GetlistUnitStatusByProject",
+                act = "GetlistUnitStatusByProjectNEW",
                 project_id = projectId,
                 unit_status = unitStatus,
                 build_status = buildStatus
