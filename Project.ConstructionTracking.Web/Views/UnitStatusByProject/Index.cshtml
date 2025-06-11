@@ -28,7 +28,7 @@
             <div class="card-body border-bottom py-3">          
                 <form id="form-search" method="post">
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-6 col-md-6">
                             <div class="mb-3">
                                 <label class="form-label"><h3>โครงการ</h3></label>
                                 <select class="form-select" name="selectedProject">
@@ -39,7 +39,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div class="col-6 col-md-3">
                             <div class="mb-3">
                                 <label class="form-label"><h3>สถานะขาย</h3></label>
                                 <select class="form-select" name="selectedUnitStatus">
@@ -51,7 +51,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div class="col-12 col-md-3">
                             <div class="mb-3">
                                 <label class="form-label"><h3>สถานะก่อสร้าง</h3></label>
                                 <div class="row g-2">
@@ -82,6 +82,68 @@
                 <partial name="PartialTable" model="Model" />
             </div>
         </div>
+
+        <div class="modal fade" id="modalSync" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Sync QC to CRM</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formSync">
+                            <div class="mb-2">
+                                <strong>โครงการ : </strong><span id="projectName"></span><br>
+                                <strong>รหัสยูนิต Code : </strong><span id="unitCode"></span>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">วันที่นัดตรวจ :*</label>
+                                <input type="date" class="form-control" name="inspectDate" required>
+                            </div>
+                            <div class="mb-2 row">
+                                <div class="col">
+                                    <label class="form-label">เวลาที่นัดตรวจ :*</label>
+                                    <input type="time" class="form-control" name="inspectStartTime" value="09:00" required>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">ถึง :</label>
+                                    <input type="time" class="form-control" name="inspectEndTime" value="17:00">
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">วันที่ QC5 :*</label>
+                                <input type="date" class="form-control" name="qc5Date" id="qc5Date" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">รายละเอียด :</label>
+                                <textarea class="form-control" name="details" rows="2"></textarea>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">ประเภทการ sync :*</label><br>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="syncType" value="1" checked>
+                                    <label class="form-check-label">Sync ปกติ</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="syncType" value="2">
+                                    <label class="form-check-label">Sync เพื่อโอนก่อนตรวจ</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="syncType" value="3">
+                                    <label class="form-check-label">Sync ตรวจห้องก่อน QC5 Pass</label>
+                                </div>
+                                <textarea class="form-control mt-2" name="syncMemo" placeholder="รายละเอียด memo"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -92,8 +154,8 @@
     <script>
         $(document).ready(function () {
             setDatatable();
-            console.log('test');
             $('#form-search').on('submit', function (event) {
+                showLoadingScreen();
                 event.preventDefault();
                 var projectId = $('#form-search select[name="selectedProject"]').val() || "";
                 var unitStatus = $('#form-search select[name="selectedUnitStatus"]').val() || "";
@@ -110,8 +172,10 @@
                     success: function (response) {
                         $('#PartialTable').html(response);
                         setDatatable();
+                        Swal.close();
                     },
                     error: function () {
+                        Swal.close();
                         console.error('Error fetching data');
                     }
                 });
@@ -157,6 +221,19 @@
                 console.warn("❌ #tbl_1 not found in DOM");
             }
         }
+
+        $(document).on('click', '.open-sync-modal', function () {
+            const unitId = $(this).data('unitid');
+            const unitCode = $(this).data('unitcode');
+            const project = $(this).data('project');
+            const qc5Date = $(this).data('qc5date');
+
+            $('#projectName').text(project);
+            $('#unitCode').text(unitCode);
+            $('#qc5Date').val(qc5Date);
+
+            $('#modalSync').modal('show');
+        });
 
     </script>
 }

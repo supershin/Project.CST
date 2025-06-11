@@ -9,6 +9,7 @@
         public string? unit_status { get; set; }
         public string? build_status { get; set; }
         public string? unit_code { get; set; }
+        public string? project_name { get; set; }
         public string? model_type_str { get; set; }
         public string? unit_type_str { get; set; }
         public string? unit_status_str { get; set; }

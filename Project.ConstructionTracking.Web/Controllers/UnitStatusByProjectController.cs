@@ -33,8 +33,8 @@ namespace Project.ConstructionTracking.Web.Controllers
             var en = new UnitStatusModel
             {
                 act = "GetlistUnitStatusByProjectNEW",
-                //project_id = (ListProject != null && ListProject.Count > 0) ? ListProject[0].ValueGuid.ToString() : string.Empty,
-                project_id = "19AD1044-63CC-43D0-9CA2-548AACE6A935",
+                project_id = (ListProject != null && ListProject.Count > 0) ? ListProject[0].ValueGuid.ToString() : string.Empty,
+                //project_id = "19AD1044-63CC-43D0-9CA2-548AACE6A935",
                 unit_id = "",
                 unit_status = "",
                 build_status = "-1"

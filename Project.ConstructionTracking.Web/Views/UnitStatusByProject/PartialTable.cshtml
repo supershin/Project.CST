@@ -12,8 +12,8 @@
                 <th>แผน เริ่ม/เสร็จ</th>
                 <th>งวดงาน</th>
                 <th>% Progress</th>
-                <th>Delay/Ahead ณ ปัจจุบัน</th>
-                <th>จำนวนวันก่อสร้าง</th>
+                <th>Delay/Ahead <br/>ณ ปัจจุบัน</th>
+                <th>จำนวนวัน<br/>ก่อสร้าง</th>
                 <th>งวดที่เบิกล่าสุด</th>
                 <th class="text-end">QC5 ผ่าน ณ วันที่</th>
             </tr>
@@ -90,7 +90,12 @@
                     <td class="text-end">
                         @if (!string.IsNullOrEmpty(item.QC5PassDate))
                         {
-                            <a href="#" class="btn btn-outline-success btn-sm">
+                            <a href="#modalSync"
+                               class="btn btn-outline-success btn-sm open-sync-modal"
+                               data-unitid="@item.unit_id"
+                               data-unitcode="@item.unit_code"
+                               data-project="@item.project_name"
+                               data-qc5date="@item.QC5PassDate">
                                 <i class="fa-solid fa-circle-check me-1"></i> @item.QC5PassDate
                             </a>
                         }

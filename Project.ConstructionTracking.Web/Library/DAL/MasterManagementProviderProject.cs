@@ -126,7 +126,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.index = index;
             Entity.unit_id = Commons.FormatExtension.NullToString(reader["UnitID"]);
             Entity.unit_code = Commons.FormatExtension.NullToString(reader["UnitCode"]);
-            Entity.project_id = Commons.FormatExtension.NullToString(reader["ProjectID"]);    
+            Entity.project_id = Commons.FormatExtension.NullToString(reader["ProjectID"]);
+            Entity.project_name = Commons.FormatExtension.NullToString(reader["project_name"]);
             Entity.model_type_str = Commons.FormatExtension.NullToString(reader["model_type_str"]);
             Entity.unit_status_str = Commons.FormatExtension.NullToString(reader["unit_status_str"]);
             Entity.date_start_plan_str = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["date_start_plan_str"]);
