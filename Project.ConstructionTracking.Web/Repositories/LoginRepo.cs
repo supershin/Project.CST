@@ -44,7 +44,8 @@ namespace Project.ConstructionTracking.Web.Repositories
 						Password = user.Password,
 						Name = user.FirstName + " " + user.LastName,
 						RoleID = (int)user.RoleID,
-						IsMappingProject = true
+						Email = user.Email,
+                        IsMappingProject = true
 					};
 				}
 				else
@@ -56,7 +57,8 @@ namespace Project.ConstructionTracking.Web.Repositories
 						Password = user.Password,
 						Name = user.FirstName + " " + user.LastName,
 						RoleID = (int)user.RoleID,
-						IsMappingProject = false
+						Email = user.Email,
+                        IsMappingProject = false
                     };
                 }
             }

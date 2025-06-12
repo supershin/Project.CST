@@ -20,9 +20,9 @@ namespace Project.ConstructionTracking.Web.Repositories
 
         private readonly ContructionTrackingDbContext _context;
         private readonly IGetDDLService _getDDLService;
-        private readonly IGRVenderrportalService _VenderrportalService;
+        private readonly IWebAPIRestService _VenderrportalService;
 
-        public UnitFormPaymentRepo(ContructionTrackingDbContext context, IGetDDLService getDDLService , IGRVenderrportalService VenderrportalService)
+        public UnitFormPaymentRepo(ContructionTrackingDbContext context, IGetDDLService getDDLService , IWebAPIRestService VenderrportalService)
         {
             _context = context;
             _getDDLService = getDDLService;

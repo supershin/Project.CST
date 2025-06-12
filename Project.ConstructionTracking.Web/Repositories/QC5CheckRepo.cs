@@ -1,27 +1,29 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Humanizer.Localisation;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Project.ConstructionTracking.Web.Commons;
 using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Models;
-using Project.ConstructionTracking.Web.Models.QC5CheckModel;
-using System.Text.RegularExpressions;
-using System.Transactions;
-using System.Drawing;
-using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static Project.ConstructionTracking.Web.Models.FormGroupModel;
-using System.Reflection;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore;
-using Humanizer.Localisation;
-using System.Linq;
-using QuestPDF.Infrastructure;
-using static Project.ConstructionTracking.Web.Commons.SystemConstant;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
+using Project.ConstructionTracking.Web.Models.QC5CheckModel;
+using Project.ConstructionTracking.Web.Models.SendMail;
+using Project.ConstructionTracking.Web.Models.WebAPIRest;
 using QuestPDF.Drawing;
 using QuestPDF.Fluent;
-using Microsoft.AspNetCore.Mvc;
-using Project.ConstructionTracking.Web.Models.SendMail;
+using QuestPDF.Infrastructure;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Transactions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Project.ConstructionTracking.Web.Commons.SystemConstant;
+using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
+using static Project.ConstructionTracking.Web.Models.FormGroupModel;
 using static Project.ConstructionTracking.Web.Models.SendMail.NotificationQC5InspectionHasStartedModel;
+using static Project.ConstructionTracking.Web.Models.WebAPIRest.RequestPostModel;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -35,7 +37,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             _context = context;
             _generatePDFRepo = generatePDFRepo;
         }
-
 
         public QC5MaxSeqStatusChecklistModel CheckQC5MaxSeqStatusChecklist(QC5MaxSeqStatusChecklistModel filterData)
         {
@@ -335,7 +336,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             _context.tr_QC_UnitCheckList_Resource.AddRange(recordsToInsert);
             _context.SaveChanges(); // Commit the transaction
         }
-
 
         public List<QC5ChecklistModel> GetQCUnitCheckListDefects(QC5ChecklistModel filterData)
         {
@@ -1200,7 +1200,6 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
-
         public (string filePath, string currentDate) SaveSignature(SignatureQC5 signData, string? appPath, Guid? QCUnitCheckListID, Guid? userID)
         {
             var resource = new ResourcesSignatureQC5
@@ -1226,6 +1225,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             string currentDate = FormatExtension.FormatDateToDayMonthNameYearTime(DateTime.Now);
             return (resource.ResourceStoragePath, currentDate);
         }
+
         private void ConvertByteToImage(ResourcesSignatureQC5 item)
         {
             byte[] binaryData;
@@ -1261,6 +1261,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 throw exp;
             }
         }
+
         public void InsertResource(Guid guidId, string fileName, string filePath, string mimeType, Guid? userID)
         {
             var newResource = new tm_Resource
@@ -1279,6 +1280,7 @@ namespace Project.ConstructionTracking.Web.Repositories
             _context.tm_Resource.Add(newResource);
             _context.SaveChanges();
         }
+
         public bool InsertOrUpdateQCUnitCheckListResource(Guid ResourceID, Guid? QCUnitCheckListID, Guid? userID)
         {
 
@@ -1324,6 +1326,7 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return true;
         }
+
         public SummaryQCPdfData GetSummaryQC5(Guid QCUnitCheckListID)
         {
             var QC5Detail = _context.tr_QC_UnitCheckList
@@ -1368,41 +1371,9 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return resultSummary;
         }
+
         public UnitFormDetailModel GetUnitFormDetail(UnitFormDetailModel filter)
         {
-            // Query to get FormName
-            //var formNameQuery = (from t1 in _context.tr_QC_UnitCheckList
-            //                     join t2 in _context.tr_Form_QCCheckList
-            //                        on t1.CheckListID equals t2.CheckListID into t2Group
-            //                     from t2Joined in t2Group.DefaultIfEmpty()
-            //                     join t3 in _context.tm_Form
-            //                        on t2Joined.FormID equals t3.ID into t3Group
-            //                     from t3Joined in t3Group.DefaultIfEmpty()
-            //                     where t1.ID == filter.ID
-            //                     select t3Joined.Name)
-            //                    .FirstOrDefault(); 
-
-            // Query to get StatusName (returning an object with Name property)
-            //var statusNameQuery = (from t1 in _context.tr_QC_UnitCheckList
-            //                       join t2 in _context.tr_Form_QCCheckList
-            //                          on t1.CheckListID equals t2.CheckListID into t2Group
-            //                       from t2Joined in t2Group.DefaultIfEmpty()
-            //                       join t3 in _context.tr_UnitForm on new { t2Joined.FormID, t1.ProjectID, t1.UnitID } equals new { t3.FormID, t3.ProjectID, t3.UnitID } into t3Group
-            //                       from t3Joined in t3Group.DefaultIfEmpty()
-            //                       join t4 in _context.tm_UnitFormStatus
-            //                          on t3Joined.StatusID equals t4.ID into t4Group
-            //                       from t4Joined in t4Group.DefaultIfEmpty()
-            //                       where t1.ID == filter.ID
-            //                          && t3Joined.ProjectID == filter.ProjectID
-            //                          && t3Joined.UnitID == filter.UnitID
-            //                       select new { StatusName = t4Joined.Name 
-            //                                   ,FormID = t3Joined.FormID
-            //                                   ,StatusID = t3Joined.StatusID
-            //                       }).FirstOrDefault(); 
-
-            //var projectID = new Guid("0cc60da9-9ac5-4df6-871e-b10fb0257b4b");
-            //var unitID = new Guid("00fc3828-dc71-4cd2-9041-9f4bc8eec06d");
-
             var subquery = (from t1 in _context.tr_UnitForm
                             join t2 in _context.tr_Form_QCCheckList on t1.FormID equals t2.FormID into t2Group
                             from t2Joined in t2Group.DefaultIfEmpty()
@@ -1498,6 +1469,27 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
+        public bool InsertQCSync(RequestPostModel.QC_Status_Update_QC5.Sends Model)
+        {
 
+            var newData = new tr_QC_Sync
+            {
+                ProjectID = Model.project_id,
+                UnitID = Model.unit_id,
+                QCTypeID = SystemConstant.QcTypeID.QC5,
+                QCAppointDate = FormatExtension.ToDate(Model.contractor_appointment_date),
+                QCAppointTimeFrom = Model.contractor_appointment_timeStart,
+                QCAppointTimeTo = Model.contractor_appointment_timeEnd,
+                //QCResponseUserID = Model.CQTUserID,
+                QCResponseDate = FormatExtension.ToDate(Model.qc_response_date),
+                QCRemark = Model.qc_remark,
+            };
+
+            _context.tr_QC_Sync.Add(newData);
+
+            _context.SaveChanges();
+
+            return true;
+        }
     }
 }

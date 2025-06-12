@@ -93,51 +93,58 @@
                     <div class="modal-body">
                         <form id="formSync">
                             <div class="mb-2">
-                                <strong>โครงการ : </strong><span id="projectName"></span><br>
+                                <strong>โครงการ : </strong><span id="projectName"></span><br>                         
                                 <strong>รหัสยูนิต Code : </strong><span id="unitCode"></span>
+                                <input type="hidden" name="hd_project_id" id="hd_project_id" />
+                                <input type="hidden" name="hd_unit_code" id="hd_unit_code" />
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">วันที่นัดตรวจ :*</label>
-                                <input type="date" class="form-control" name="inspectDate" required>
+                                <label class="form-label">
+                                    วันที่นัดตรวจ :<span class="text-danger">*</span>
+                                </label>
+                                <input type="date" 
+                                       class="form-control" 
+                                       name="txt_contractor_appointment_date" 
+                                       id="txt_contractor_appointment_date" 
+                                       required>
                             </div>
                             <div class="mb-2 row">
                                 <div class="col">
-                                    <label class="form-label">เวลาที่นัดตรวจ :*</label>
-                                    <input type="time" class="form-control" name="inspectStartTime" value="09:00" required>
+                                    <label class="form-label">เวลาที่นัดตรวจ :<span class="text-danger">*</span></label>
+                                    <input type="time" 
+                                           class="form-control" 
+                                           name="txt_contractor_appointment_timeStart"  
+                                           id="txt_contractor_appointment_timeStart" 
+                                           required>
                                 </div>
                                 <div class="col">
                                     <label class="form-label">ถึง :</label>
-                                    <input type="time" class="form-control" name="inspectEndTime" value="17:00">
+                                    <input type="time" 
+                                           class="form-control" 
+                                           name="txt_contractor_appointment_timeEnd" 
+                                           id="txt_contractor_appointment_timeEnd">
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">วันที่ QC5 :*</label>
-                                <input type="date" class="form-control" name="qc5Date" id="qc5Date" required>
+                                <label class="form-label">วันที่ QC5 :<span class="text-danger">*</span></label>
+                                <input type="date" 
+                                       class="form-control" 
+                                       name="txt_qc_response_date"
+                                       id="txt_qc_response_date"
+                                       required>
                             </div>
                             <div class="mb-2">
                                 <label class="form-label">รายละเอียด :</label>
-                                <textarea class="form-control" name="details" rows="2"></textarea>
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label">ประเภทการ sync :*</label><br>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="syncType" value="1" checked>
-                                    <label class="form-check-label">Sync ปกติ</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="syncType" value="2">
-                                    <label class="form-check-label">Sync เพื่อโอนก่อนตรวจ</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="syncType" value="3">
-                                    <label class="form-check-label">Sync ตรวจห้องก่อน QC5 Pass</label>
-                                </div>
-                                <textarea class="form-control mt-2" name="syncMemo" placeholder="รายละเอียด memo"></textarea>
+                                <textarea class="form-control" 
+                                          name="txt_qc_remark"
+                                          id="txt_qc_remark"
+                                          rows="2">
+                                </textarea>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-primary" id="btnSyncSubmit">Submit</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -226,14 +233,49 @@
             const unitId = $(this).data('unitid');
             const unitCode = $(this).data('unitcode');
             const project = $(this).data('project');
+            const project_id = $(this).data('project_id');
             const qc5Date = $(this).data('qc5date');
-
+            $('#hd_unit_code').text(unitId);
+            $('#hd_project_id').val(project_id);
+            $('#projectName').text(project);
             $('#projectName').text(project);
             $('#unitCode').text(unitCode);
             $('#qc5Date').val(qc5Date);
-
             $('#modalSync').modal('show');
         });
+
+
+       $(document).on('click', '#btnSyncSubmit', function () {
+            const data = {
+                project_id: $('#hd_project_id').val(),
+                unit_number: $('#hd_unit_code').val(),
+                contractor_appointment_date: $('#txt_contractor_appointment_date').val(),
+                contractor_appointment_timeStart: $('#txt_contractor_appointment_timeStart').val(),
+                contractor_appointment_timeEnd: $('#txt_contractor_appointment_timeEnd').val(),
+                qc_response_date: $('#txt_qc_response_date').val(),
+                qc_remark: $('#txt_qc_remark').val()
+                // qc_type: $("input[name='syncType']:checked").val() ?? "1",
+                // qc_response_user_id: userID_login // <- replace this with session or hidden field if needed
+            };
+
+            $.ajax({
+                url: baseUrl + 'UnitStatusByProject/SubmitSyncQC5',
+                type: 'POST',
+                data: data,
+                success: function (res) {
+                    if (res.status === 1) {
+                        alert('✅ บันทึกสำเร็จ');
+                        $('#modalSync').modal('hide');
+                    } else {
+                        alert('❌ บันทึกไม่สำเร็จ: ' + res.message);
+                    }
+                },
+                error: function () {
+                    alert('❌ เกิดข้อผิดพลาดในการส่งข้อมูล');
+                }
+            });
+        });
+
 
     </script>
 }

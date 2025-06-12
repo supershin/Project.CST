@@ -12,6 +12,7 @@ namespace Project.ConstructionTracking.Web.Data
         {
             tr_PE_Unit = new HashSet<tr_PE_Unit>();
             tr_ProjectBluePrint = new HashSet<tr_ProjectBluePrint>();
+            tr_QC_Sync = new HashSet<tr_QC_Sync>();
             tr_QC_UnitCheckList = new HashSet<tr_QC_UnitCheckList>();
             tr_UnitForm = new HashSet<tr_UnitForm>();
             tr_UnitFormPayment = new HashSet<tr_UnitFormPayment>();
@@ -89,6 +90,8 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual ICollection<tr_PE_Unit> tr_PE_Unit { get; set; }
         [InverseProperty("Unit")]
         public virtual ICollection<tr_ProjectBluePrint> tr_ProjectBluePrint { get; set; }
+        [InverseProperty("Unit")]
+        public virtual ICollection<tr_QC_Sync> tr_QC_Sync { get; set; }
         [InverseProperty("Unit")]
         public virtual ICollection<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; }
         [InverseProperty("Unit")]

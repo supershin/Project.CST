@@ -99,8 +99,8 @@ builder.Services.AddScoped<IUnitFormPaymentRepo, UnitFormPaymentRepo>();
 // Add the new services for SQL and data access
 builder.Services.AddScoped<MasterManagementProviderProject, SqlMasterManagementProject>();
 
-builder.Services.AddScoped<IGRVenderrportalService, GRVenderrportalService>();
-builder.Services.AddScoped<IGRVenderrportalRepo, GRVenderrportalRepo>();
+builder.Services.AddScoped<IWebAPIRestService, _WebAPIRestService>();
+builder.Services.AddScoped<IWebAPIRestRepo, _WebAPIRestRepo>();
 
 builder.Services.AddScoped<IProjectBluePrintService, ProjectBluePrintService>();
 builder.Services.AddScoped<IProjectBluePrintRepo, ProjectBluePrintRepo>();

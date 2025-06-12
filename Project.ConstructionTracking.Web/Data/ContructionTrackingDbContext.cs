@@ -55,6 +55,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tr_ProjectFloorPlan> tr_ProjectFloorPlan { get; set; } = null!;
         public virtual DbSet<tr_ProjectModelForm> tr_ProjectModelForm { get; set; } = null!;
         public virtual DbSet<tr_ProjectPermission> tr_ProjectPermission { get; set; } = null!;
+        public virtual DbSet<tr_QC_Sync> tr_QC_Sync { get; set; } = null!;
         public virtual DbSet<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; } = null!;
         public virtual DbSet<tr_QC_UnitCheckList_Action> tr_QC_UnitCheckList_Action { get; set; } = null!;
         public virtual DbSet<tr_QC_UnitCheckList_Defect> tr_QC_UnitCheckList_Defect { get; set; } = null!;
@@ -74,6 +75,14 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tr_UserResource> tr_UserResource { get; set; } = null!;
         public virtual DbSet<vw_UnitForm_Action> vw_UnitForm_Action { get; set; } = null!;
         public virtual DbSet<vw_UnitQC_Action> vw_UnitQC_Action { get; set; } = null!;
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Data Source=10.0.10.8;Initial Catalog=ConstructionTracking;User ID=constructiontracking;Password=constructiontracking@2024;TrustServerCertificate=True;");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -527,6 +536,26 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tr_ProjectPermission)
                     .HasForeignKey(d => d.UserID)
                     .HasConstraintName("FK_tr_ProjectPermission_tm_User");
+            });
+
+            modelBuilder.Entity<tr_QC_Sync>(entity =>
+            {
+                entity.Property(e => e.ID).ValueGeneratedNever();
+
+                entity.HasOne(d => d.Project)
+                    .WithMany(p => p.tr_QC_Sync)
+                    .HasForeignKey(d => d.ProjectID)
+                    .HasConstraintName("FK_tr_QC_Sync_tr_QC_Sync");
+
+                entity.HasOne(d => d.QCType)
+                    .WithMany(p => p.tr_QC_Sync)
+                    .HasForeignKey(d => d.QCTypeID)
+                    .HasConstraintName("FK_tr_QC_Sync_tm_Ext");
+
+                entity.HasOne(d => d.Unit)
+                    .WithMany(p => p.tr_QC_Sync)
+                    .HasForeignKey(d => d.UnitID)
+                    .HasConstraintName("FK_tr_QC_Sync_tm_Unit");
             });
 
             modelBuilder.Entity<tr_QC_UnitCheckList>(entity =>

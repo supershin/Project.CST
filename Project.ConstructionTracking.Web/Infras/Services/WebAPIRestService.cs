@@ -10,22 +10,34 @@ namespace Project.ConstructionTracking.Web.Infras.Services
 {
     public class WebAPIRestService
     {
-        public interface IGRVenderrportalService
+        public interface IWebAPIRestService
         {
             Task<RequestPostModel.GRVenderrportal.Responds> UploadFileAsync(RequestPostModel.GRVenderrportal.Sends request);
+            Task<RequestPostModel.Get_User_CRM.Responds> CentralizeGetUserCRM(RequestPostModel.Get_User_CRM.Sends request);
+            Task<RequestPostModel.QC_Status_Update_QC5.Responds> QcStatusUpdateQc5(RequestPostModel.QC_Status_Update_QC5.Sends request);
         }
-        public class GRVenderrportalService : IGRVenderrportalService
+        public class _WebAPIRestService : IWebAPIRestService
         {
-            private readonly IGRVenderrportalRepo _GRVenderrportalRepo;
+            private readonly IWebAPIRestRepo _WebAPIRestRepositorys;
 
-            public GRVenderrportalService(IGRVenderrportalRepo GRVenderrportalRepo)
+            public _WebAPIRestService(IWebAPIRestRepo WebAPIRestRepositorys)
             {
-                _GRVenderrportalRepo = GRVenderrportalRepo;
+                _WebAPIRestRepositorys = WebAPIRestRepositorys;
             }
 
             public async Task<RequestPostModel.GRVenderrportal.Responds> UploadFileAsync(RequestPostModel.GRVenderrportal.Sends request)
             {
-                var responds = await _GRVenderrportalRepo.UploadFileAsync(request);
+                var responds = await _WebAPIRestRepositorys.UploadFileAsync(request);
+                return responds;
+            }
+            public async Task<RequestPostModel.Get_User_CRM.Responds> CentralizeGetUserCRM(RequestPostModel.Get_User_CRM.Sends request)
+            {
+                var responds = await _WebAPIRestRepositorys.CentralizeGetUserCRM(request);
+                return responds;
+            }
+            public async Task<RequestPostModel.QC_Status_Update_QC5.Responds> QcStatusUpdateQc5(RequestPostModel.QC_Status_Update_QC5.Sends request)
+            {
+                var responds = await _WebAPIRestRepositorys.QcStatusUpdateQc5(request);
                 return responds;
             }
         }

@@ -69,6 +69,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 Response.Cookies.Append("CST.UserName", userProfile.Username, option);
                 Response.Cookies.Append("CST.Name", userProfile.Name, option);
                 Response.Cookies.Append("CST.Role", userProfile.RoleID.ToString(), option);
+                Response.Cookies.Append("CST.Email", FormatExtension.NullToString(userProfile.Email), option);
 
                 // Create a session ID and store it in cookies
                 var sessionId = Guid.NewGuid().ToString();
