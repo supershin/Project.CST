@@ -16,12 +16,14 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly MasterManagementProviderProject _unitstatusProvider;
         private readonly IGetDDLService _getDDLService;
         private readonly IWebAPIRestService _WebAPIRestService;
+        private readonly IQC5CheckService _QC5CheckService;
 
-        public UnitStatusByProjectController(MasterManagementProviderProject unitstatusProvider, IGetDDLService getDDLService, IWebAPIRestService WebAPIRestService)
+        public UnitStatusByProjectController(MasterManagementProviderProject unitstatusProvider, IGetDDLService getDDLService, IWebAPIRestService WebAPIRestService, IQC5CheckService qC5CheckService)
         {
             _unitstatusProvider = unitstatusProvider;
             _getDDLService = getDDLService;
             _WebAPIRestService = WebAPIRestService;
+            _QC5CheckService = qC5CheckService;
         }
 
         public IActionResult Index()
@@ -43,7 +45,8 @@ namespace Project.ConstructionTracking.Web.Controllers
                 //project_id = "19AD1044-63CC-43D0-9CA2-548AACE6A935",
                 unit_id = "",
                 unit_status = "",
-                build_status = "-1"
+                build_status = "-1",
+                sync_qc_status = "-1"
 
             };
             List<UnitStatusModel> unitstatuslists = _unitstatusProvider.sp_get_unitstatus(en);
@@ -52,19 +55,21 @@ namespace Project.ConstructionTracking.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult SearchUnitStatusByProject(string projectId, string unitStatus, string buildStatus)
+        public IActionResult SearchUnitStatusByProject(string projectId, string unitStatus, string buildStatus, string syncQCStatus)
         {
             // If any of the parameters are null or empty, handle them accordingly
             projectId = string.IsNullOrEmpty(projectId) ? "" : projectId;
             unitStatus = string.IsNullOrEmpty(unitStatus) ? "" : unitStatus;
             buildStatus = string.IsNullOrEmpty(buildStatus) ? "" : buildStatus;
+            syncQCStatus = string.IsNullOrEmpty(syncQCStatus) ? "-1" : syncQCStatus;
 
             var en = new UnitStatusModel
             {
                 act = "GetlistUnitStatusByProjectNEW",
                 project_id = projectId,
                 unit_status = unitStatus,
-                build_status = buildStatus
+                build_status = buildStatus,
+                sync_qc_status= syncQCStatus
             };
 
             // Call the provider to get the filtered data
@@ -85,18 +90,14 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             try
             {
-                // Validate required fields
-                //if (string.IsNullOrEmpty(request.project_id) ||
-                //    string.IsNullOrEmpty(request.unit_number) ||
-                //    string.IsNullOrEmpty(request.contractor_appointment_date) ||
-                //    string.IsNullOrEmpty(request.contractor_appointment_timeStart) ||
-                //    string.IsNullOrEmpty(request.qc_response_user_id) ||
-                //    string.IsNullOrEmpty(request.qc_response_date) 
-                //)
-                //{
-                //    response.message = "Missing required fields";
-                //    return Json(response);
-                //}
+                if (string.IsNullOrEmpty(request.contractor_appointment_date) ||
+                    string.IsNullOrEmpty(request.contractor_appointment_timeStart) ||
+                    string.IsNullOrEmpty(request.qc_response_date)
+                )
+                {
+                    response.message = "Missing required fields";
+                    return Json(response);
+                }
 
                 var requestCrmUser = new RequestPostModel.Get_User_CRM.Sends
                 {
@@ -105,20 +106,28 @@ namespace Project.ConstructionTracking.Web.Controllers
                 };
 
                 var apiResponse = _WebAPIRestService.CentralizeGetUserCRM(requestCrmUser).GetAwaiter().GetResult();
-
-
-                if (apiResponse.status == null || apiResponse.status == 0)
+                if (apiResponse.status != 1)
                 {
                     response.message = "User not found in CRM";
                     return Json(response);
                 }
 
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
                 request.qc_response_user_id = apiResponse.UserID;
-                var apiQcStatusUpdateQc5Response = _WebAPIRestService.QcStatusUpdateQc5(request).GetAwaiter().GetResult();
+                request.qc_type = "qc5_pass";
+                request.CQTUserID = userid;
 
-                if (apiQcStatusUpdateQc5Response.Status == null || apiQcStatusUpdateQc5Response.Status == 0)
+                var apiQcStatusUpdateQc5Response = _WebAPIRestService.QcStatusUpdateQc5(request).GetAwaiter().GetResult();
+                if (apiQcStatusUpdateQc5Response.Status != 1)
                 {
                     response.message = "Failed to update QC status: " + apiQcStatusUpdateQc5Response.message;
+                    return Json(response);
+                }
+              
+                bool Results = _QC5CheckService.InsertQCSync(request);
+                if (!Results)
+                {
+                    response.message = "Failed to insert QC sync data";
                     return Json(response);
                 }
 

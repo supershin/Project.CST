@@ -1,8 +1,11 @@
-﻿using Project.ConstructionTracking.Web.Models;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Models.SendMail;
+using Project.ConstructionTracking.Web.Models.WebAPIRest;
 using Project.ConstructionTracking.Web.Repositories;
+using QuestPDF.Infrastructure;
 
 namespace Project.ConstructionTracking.Web.Services
 {
@@ -154,5 +157,10 @@ namespace Project.ConstructionTracking.Web.Services
             return NotificationQC5InspectionHasStartedSendEmailData;
         }
 
+        public bool InsertQCSync(RequestPostModel.QC_Status_Update_QC5.Sends Model)
+        {
+            var result = _IQC5CheckRepo.InsertQCSync(Model);
+            return result;
+        }
     }
 }

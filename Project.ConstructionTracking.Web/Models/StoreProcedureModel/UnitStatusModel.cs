@@ -6,8 +6,10 @@
         public string? act { get; set; }
         public string? unit_id { get; set; }
         public string? project_id { get; set; }
+        public string? project_code { get; set; }
         public string? unit_status { get; set; }
         public string? build_status { get; set; }
+        public string? sync_qc_status { get; set; }
         public string? unit_code { get; set; }
         public string? project_name { get; set; }
         public string? model_type_str { get; set; }
@@ -25,5 +27,6 @@
         public string? realday_use_str { get; set; }
         public string? LastFormTransfer { get; set; }
         public string? QC5PassDate { get; set; }
+        public string? QCSyncID { get; set; }
     }
 }

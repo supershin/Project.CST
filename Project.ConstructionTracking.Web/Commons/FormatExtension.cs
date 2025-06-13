@@ -57,6 +57,34 @@ namespace Project.ConstructionTracking.Web.Commons
             }
             return null;
         }
+
+        public static DateTime? ToDateFromddmmyyy(this string str)
+        {
+            if (!string.IsNullOrEmpty(str.ToStringNullable()))
+            {
+                DateTime result;
+
+                // ลอง parse แบบกำหนด format ตรง ๆ
+                if (DateTime.TryParseExact(
+                    str.Trim(),
+                    "dd/MM/yyyy",                          // ✅ รูปแบบวัน/เดือน/ปี
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None,
+                    out result))
+                {
+                    return result;
+                }
+
+                // fallback: ลอง parse แบบปกติ (สำหรับกรณีอื่น ๆ)
+                if (DateTime.TryParse(str, out result))
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Converts a string in DD/MM/YYYY format to a string in YYYY-MM-DD format.
         /// </summary>

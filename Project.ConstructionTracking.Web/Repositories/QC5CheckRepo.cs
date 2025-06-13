@@ -1474,14 +1474,15 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             var newData = new tr_QC_Sync
             {
+                ID = Guid.NewGuid(),
                 ProjectID = Model.project_id,
                 UnitID = Model.unit_id,
                 QCTypeID = SystemConstant.QcTypeID.QC5,
-                QCAppointDate = FormatExtension.ToDate(Model.contractor_appointment_date),
+                QCAppointDate = FormatExtension.ToDateFromddmmyyy(Model.contractor_appointment_date),
                 QCAppointTimeFrom = Model.contractor_appointment_timeStart,
                 QCAppointTimeTo = Model.contractor_appointment_timeEnd,
-                //QCResponseUserID = Model.CQTUserID,
-                QCResponseDate = FormatExtension.ToDate(Model.qc_response_date),
+                QCResponseUserID = Model.CQTUserID,
+                QCResponseDate = FormatExtension.ToDateFromddmmyyy(Model.qc_response_date),
                 QCRemark = Model.qc_remark,
             };
 
@@ -1491,5 +1492,6 @@ namespace Project.ConstructionTracking.Web.Repositories
 
             return true;
         }
+
     }
 }

@@ -2,6 +2,7 @@
 using Project.ConstructionTracking.Web.Models.GeneratePDFModel;
 using Project.ConstructionTracking.Web.Models.QC5CheckModel;
 using Project.ConstructionTracking.Web.Models.SendMail;
+using Project.ConstructionTracking.Web.Models.WebAPIRest;
 
 namespace Project.ConstructionTracking.Web.Repositories
 {
@@ -22,5 +23,7 @@ namespace Project.ConstructionTracking.Web.Repositories
         SummaryQCPdfData GetSummaryQC5(Guid QCUnitCheckListID);
         UnitFormDetailModel GetUnitFormDetail(UnitFormDetailModel filter);
         NotificationQC5InspectionHasStartedModel GetNotificationQC5InspectionHasStartedSendEmailData(Guid userId, Guid unitId);
+        bool InsertQCSync(RequestPostModel.QC_Status_Update_QC5.Sends Model);
+
     }
 }

@@ -88,7 +88,7 @@
                     <td><strong>All: </strong>@item.allday_str<br><strong>Actual: </strong>@item.realday_use_str</td>
                     <td>@item.LastFormTransfer</td>
                     <td class="text-end">
-                        @if (!string.IsNullOrEmpty(item.QC5PassDate))
+                        @if (!string.IsNullOrEmpty(item.QC5PassDate) && !string.IsNullOrEmpty(item.QC5PassDate))
                         {
                             <a href="#modalSync"
                                class="btn btn-outline-success btn-sm open-sync-modal"
@@ -96,8 +96,22 @@
                                data-unitcode="@item.unit_code"
                                data-project="@item.project_name"
                                data-project_id="@item.project_id"
+                               data-project_code="@item.project_code"
                                data-qc5date="@item.QC5PassDate">
                                 <i class="fa-solid fa-circle-check me-1"></i> @item.QC5PassDate
+                            </a>
+                        }
+                        else if (!string.IsNullOrEmpty(item.QC5PassDate) && item.QC5PassDate == "")
+                        {
+                            <a href="#modalSync"
+                               class="btn btn-outline-secondary btn-sm text-secondary border-secondary open-sync-modal"
+                               data-unitid="@item.unit_id"
+                               data-unitcode="@item.unit_code"
+                               data-project="@item.project_name"
+                               data-project_id="@item.project_id"
+                               data-project_code="@item.project_code"
+                               data-qc5date="@item.QC5PassDate">
+                                xxxx
                             </a>
                         }
                         else
@@ -106,6 +120,7 @@
                                 <i class="fa-regular fa-circle-xmark"></i>
                             </span>
                         }
+                    
                     </td>
                 </tr>
             }

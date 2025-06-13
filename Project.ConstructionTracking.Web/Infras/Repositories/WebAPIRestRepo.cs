@@ -188,8 +188,6 @@ namespace Project.ConstructionTracking.Web.Infras.Repositories
 
             public async Task<RequestPostModel.QC_Status_Update_QC5.Responds> QcStatusUpdateQc5(RequestPostModel.QC_Status_Update_QC5.Sends request)
             {
-
-                // Prepare the response model
                 var responds = new RequestPostModel.QC_Status_Update_QC5.Responds
                 {
                     Status = 0,
@@ -204,51 +202,48 @@ namespace Project.ConstructionTracking.Web.Infras.Repositories
                         client.DefaultRequestHeaders.Add("rem-api-password", _rem_api_password);
                         client.DefaultRequestHeaders.Add("rem-api-secretkey", _rem_api_secretkey);
 
-                        using (var form = new MultipartFormDataContent())
+                        // Validate required fields
+                        if (string.IsNullOrEmpty(request.project_code) ||
+                            string.IsNullOrEmpty(request.unit_number) ||
+                            string.IsNullOrEmpty(request.contractor_appointment_date) ||
+                            string.IsNullOrEmpty(request.contractor_appointment_timeStart) ||
+                            string.IsNullOrEmpty(request.qc_response_user_id) ||
+                            string.IsNullOrEmpty(request.qc_response_date))
                         {
-
-                            // 1) Validate required fields
-                            if (string.IsNullOrEmpty(request.project_code) ||
-                                string.IsNullOrEmpty(request.unit_number) ||
-                                string.IsNullOrEmpty(request.contractor_appointment_date) ||
-                                string.IsNullOrEmpty(request.contractor_appointment_timeStart) ||
-                                string.IsNullOrEmpty(request.qc_response_user_id) ||
-                                string.IsNullOrEmpty(request.qc_response_date)
-                            )
-                            {
-                                responds.Status = 0;
-                                responds.message = "Some Parameter is missing";
-                                return responds;
-                            }
-
-                            // 2) Add other required form fields
-                            form.Add(new StringContent(request.project_code ?? ""), "project_id");
-                            form.Add(new StringContent(request.unit_number ?? ""), "unit_number");
-                            form.Add(new StringContent(request.contractor_appointment_date ?? ""), "contractor_appointment_date");
-                            form.Add(new StringContent(request.contractor_appointment_timeStart ?? ""), "contractor_appointment_timeStart");
-                            form.Add(new StringContent(request.contractor_appointment_timeEnd ?? ""), "contractor_appointment_timeEnd");
-                            form.Add(new StringContent(request.qc_response_user_id ?? ""), "qc_response_user_id");
-                            form.Add(new StringContent(request.qc_response_date ?? ""), "qc_response_date");
-                            form.Add(new StringContent(request.qc_remark ?? ""), "qc_remark");
-                            form.Add(new StringContent(request.qc_type ?? ""), "qc_type");
-
-                            // 3) Send POST
-                            var response = await client.PostAsync(_api_QC_CRM_QC_Status_Update_QC5_Url, form);
-                            var responseContent = await response.Content.ReadAsStringAsync();
-
-                            // Final) Response handling
-                            if (response.IsSuccessStatusCode)
-                            {
-                                responds.Status = 1;
-                                responds.message = "Send data success";
-                            }
-                            else
-                            {
-                                responds.Status = (int)response.StatusCode;
-                                responds.message = "API Error: " + responseContent;
-                            }
+                            responds.Status = 0;
+                            responds.message = "Some Parameter is missing";
+                            return responds;
                         }
 
+                        // Prepare JSON content
+                        var jsonBody = JsonConvert.SerializeObject(new
+                        {
+                            project_id = request.project_code,
+                            unit_number = request.unit_number,
+                            contractor_appointment_date = request.contractor_appointment_date,
+                            contractor_appointment_timeStart = request.contractor_appointment_timeStart,
+                            contractor_appointment_timeEnd = request.contractor_appointment_timeEnd,
+                            qc_response_user_id = request.qc_response_user_id,
+                            qc_response_date = request.qc_response_date,
+                            qc_remark = request.qc_remark,
+                            qc_type = request.qc_type
+                        });
+
+                        var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                        var response = await client.PostAsync(_api_QC_CRM_QC_Status_Update_QC5_Url, content);
+                        var responseContent = await response.Content.ReadAsStringAsync();
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            responds.Status = 1;
+                            responds.message = "Send data success";
+                        }
+                        else
+                        {
+                            responds.Status = (int)response.StatusCode;
+                            responds.message = "API Error: " + responseContent;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -259,6 +254,8 @@ namespace Project.ConstructionTracking.Web.Infras.Repositories
 
                 return responds;
             }
+
+
         }
     }
 }

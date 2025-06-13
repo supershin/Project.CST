@@ -90,6 +90,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                     SqlCmd.Parameters.Add(new SqlParameter("@unit_id", SqlDbType.NVarChar)).Value = en.unit_id ?? (object)DBNull.Value;
                     SqlCmd.Parameters.Add(new SqlParameter("@unit_status", SqlDbType.NVarChar)).Value = en.unit_status ?? (object)DBNull.Value;
                     SqlCmd.Parameters.Add(new SqlParameter("@build_status", SqlDbType.NVarChar)).Value = en.build_status ?? (object)DBNull.Value;
+                    SqlCmd.Parameters.Add(new SqlParameter("@QCSync_status", SqlDbType.NVarChar)).Value = en.sync_qc_status ?? (object)DBNull.Value;
                     switch (en.act)
                     {
                         case "GetlistUnitStatusByProjectNEW":
@@ -107,6 +108,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL.SQL
                     Log.Error("SEND pram3 project_id (nvarchar) : {Project_id}", en.project_id);
                     Log.Error("SEND pram4 unit_status (nvarchar) : {Unit_status}", en.unit_status);
                     Log.Error("SEND pram5 build_status (nvarchar) : {build_status}", en.build_status);
+                    Log.Error("SEND pram6 QCSync_status (nvarchar) : {sync_qc_status}", en.sync_qc_status);
                     Log.Error(ex.ToString());
                     Log.Error("=========== END ===========");
 

@@ -127,6 +127,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.unit_id = Commons.FormatExtension.NullToString(reader["UnitID"]);
             Entity.unit_code = Commons.FormatExtension.NullToString(reader["UnitCode"]);
             Entity.project_id = Commons.FormatExtension.NullToString(reader["ProjectID"]);
+            Entity.project_code = Commons.FormatExtension.NullToString(reader["ProjectCode"]);
             Entity.project_name = Commons.FormatExtension.NullToString(reader["project_name"]);
             Entity.model_type_str = Commons.FormatExtension.NullToString(reader["model_type_str"]);
             Entity.unit_status_str = Commons.FormatExtension.NullToString(reader["unit_status_str"]);
@@ -142,6 +143,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.unit_build_status_str = Commons.FormatExtension.NullToString(reader["unit_build_status_str"]);
             Entity.LastFormTransfer = Commons.FormatExtension.NullToString(reader["LastFormTransfer"]);
             Entity.QC5PassDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["QC5PassDate"]);
+            Entity.QCSyncID = Commons.FormatExtension.NullToString(reader["QCSyncID"]);
             return Entity;
         }
 

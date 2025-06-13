@@ -21,9 +21,7 @@ namespace Project.ConstructionTracking.Web.Data
         [StringLength(5)]
         [Unicode(false)]
         public string? QCAppointTimeTo { get; set; }
-        [StringLength(50)]
-        [Unicode(false)]
-        public string? QCResponseUserID { get; set; }
+        public Guid? QCResponseUserID { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? QCResponseDate { get; set; }
         public string? QCRemark { get; set; }

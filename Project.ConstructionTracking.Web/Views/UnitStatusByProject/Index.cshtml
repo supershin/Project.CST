@@ -28,7 +28,7 @@
             <div class="card-body border-bottom py-3">          
                 <form id="form-search" method="post">
                     <div class="row">
-                        <div class="col-6 col-md-6">
+                        <div class="col-6 col-md-3">
                             <div class="mb-3">
                                 <label class="form-label"><h3>โครงการ</h3></label>
                                 <select class="form-select" name="selectedProject">
@@ -36,6 +36,16 @@
                                     {
                                         <option value="@item.ValueGuid">@item.Text</option>
                                     }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label"><h3>สถานะ QC Sync CRM</h3></label>
+                                <select class="form-select" name="selectedQCSyncStatus">
+                                    <option value="-1">ทั้งหมด</option>
+                                    <option value="1">Sync แล้ว</option>
+                                    <option value="2">ยังไม่ได้ Sync</option>
                                 </select>
                             </div>
                         </div>
@@ -95,8 +105,10 @@
                             <div class="mb-2">
                                 <strong>โครงการ : </strong><span id="projectName"></span><br>                         
                                 <strong>รหัสยูนิต Code : </strong><span id="unitCode"></span>
+                                <strong>รหัสยูนิต Code : </strong><span id="unitCode"></span>
+                                <input type="hidden" name="hd_project_code" id="hd_project_code" />
                                 <input type="hidden" name="hd_project_id" id="hd_project_id" />
-                                <input type="hidden" name="hd_unit_code" id="hd_unit_code" />
+                                <input type="hidden" name="hd_unit_id" id="hd_unit_id" />
                             </div>
                             <div class="mb-2">
                                 <label class="form-label">
@@ -111,17 +123,17 @@
                             <div class="mb-2 row">
                                 <div class="col">
                                     <label class="form-label">เวลาที่นัดตรวจ :<span class="text-danger">*</span></label>
-                                    <input type="time" 
-                                           class="form-control" 
-                                           name="txt_contractor_appointment_timeStart"  
-                                           id="txt_contractor_appointment_timeStart" 
+                                    <input type="text"
+                                           class="form-control"
+                                           name="txt_contractor_appointment_timeStart"
+                                           id="txt_contractor_appointment_timeStart"
                                            required>
                                 </div>
                                 <div class="col">
                                     <label class="form-label">ถึง :</label>
-                                    <input type="time" 
-                                           class="form-control" 
-                                           name="txt_contractor_appointment_timeEnd" 
+                                    <input type="text"
+                                           class="form-control"
+                                           name="txt_contractor_appointment_timeEnd"
                                            id="txt_contractor_appointment_timeEnd">
                                 </div>
                             </div>
@@ -155,9 +167,13 @@
 </div>
 
 @section scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
+
     <script>
         $(document).ready(function () {
             setDatatable();
@@ -167,6 +183,7 @@
                 var projectId = $('#form-search select[name="selectedProject"]').val() || "";
                 var unitStatus = $('#form-search select[name="selectedUnitStatus"]').val() || "";
                 var buildStatus = $('#form-search select[name="selectedBuildStatus"]').val() || "";
+                var syncQCStatus = $('#form-search select[name="selectedQCSyncStatus"]').val() || "";
 
                 $.ajax({
                     url: baseUrl + 'UnitStatusByProject/SearchUnitStatusByProject', // Use the base URL dynamically
@@ -174,7 +191,8 @@
                     data: {
                         projectId: projectId,
                         unitStatus: unitStatus,
-                        buildStatus: buildStatus
+                        buildStatus: buildStatus,
+                        syncQCStatus: syncQCStatus
                     },
                     success: function (response) {
                         $('#PartialTable').html(response);
@@ -189,8 +207,6 @@
                 return false;
             });
 
-
-            // Navbar Active Class Logic
             const desktopNavItem = document.getElementById('nav-Desktop');
             const unitPaymentNavItem = document.getElementById('nav-UnitStatus');
 
@@ -205,7 +221,6 @@
 
         function setDatatable() {
             var table = $('#tbl_1');
-            console.log(table);
             if (table.length > 0) {
                 table.DataTable({
                     "paging": true,
@@ -229,33 +244,61 @@
             }
         }
 
+        flatpickr("#txt_contractor_appointment_date", {
+            dateFormat: "d/m/Y",
+            allowInput: true
+        });
+
+        flatpickr("#txt_qc_response_date", {
+            dateFormat: "d/m/Y",
+            allowInput: true
+        });
+
+        flatpickr("#txt_contractor_appointment_timeStart", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            minuteIncrement: 1
+        });
+
+        flatpickr("#txt_contractor_appointment_timeEnd", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            minuteIncrement: 1
+        });
+
         $(document).on('click', '.open-sync-modal', function () {
-            const unitId = $(this).data('unitid');
+            const unitID = $(this).data('unitid');
             const unitCode = $(this).data('unitcode');
             const project = $(this).data('project');
-            const project_id = $(this).data('project_id');
+            const projectID = $(this).data('project_id');
+            const project_code = $(this).data('project_code');
             const qc5Date = $(this).data('qc5date');
-            $('#hd_unit_code').text(unitId);
-            $('#hd_project_id').val(project_id);
+            $('#hd_project_code').val(project_code);
+            $('#hd_project_id').val(projectID);
             $('#projectName').text(project);
-            $('#projectName').text(project);
+            $('#hd_unit_id').val(unitID);
             $('#unitCode').text(unitCode);
             $('#qc5Date').val(qc5Date);
             $('#modalSync').modal('show');
         });
 
+        $(document).on('click', '#btnSyncSubmit', function () {
+            showLoadingAlert();
 
-       $(document).on('click', '#btnSyncSubmit', function () {
             const data = {
+                project_code: $('#hd_project_code').val(),
                 project_id: $('#hd_project_id').val(),
-                unit_number: $('#hd_unit_code').val(),
+                unit_id: $('#hd_unit_id').val(),
+                unit_number: $('#unitCode').text(),
                 contractor_appointment_date: $('#txt_contractor_appointment_date').val(),
                 contractor_appointment_timeStart: $('#txt_contractor_appointment_timeStart').val(),
                 contractor_appointment_timeEnd: $('#txt_contractor_appointment_timeEnd').val(),
                 qc_response_date: $('#txt_qc_response_date').val(),
-                qc_remark: $('#txt_qc_remark').val()
-                // qc_type: $("input[name='syncType']:checked").val() ?? "1",
-                // qc_response_user_id: userID_login // <- replace this with session or hidden field if needed
+                qc_remark: $('#txt_qc_remark').val().trim()
             };
 
             $.ajax({
@@ -263,19 +306,21 @@
                 type: 'POST',
                 data: data,
                 success: function (res) {
-                    if (res.status === 1) {
-                        alert('✅ บันทึกสำเร็จ');
+                    if (res.Status === 1) {
+                        Swal.close();
+                        showSuccessAlert('สำเร็จ!', res.message);
                         $('#modalSync').modal('hide');
                     } else {
-                        alert('❌ บันทึกไม่สำเร็จ: ' + res.message);
+                        Swal.close();
+                        showErrorAlert('ผิดพลาด!', res.message);
                     }
                 },
                 error: function () {
-                    alert('❌ เกิดข้อผิดพลาดในการส่งข้อมูล');
+                    Swal.close();
+                    showErrorAlert('ผิดพลาด!', 'เกิดข้อผิดพลาดในการส่งข้อมูล');
                 }
             });
         });
-
 
     </script>
 }
