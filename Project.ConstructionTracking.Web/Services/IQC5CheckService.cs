@@ -23,5 +23,6 @@ namespace Project.ConstructionTracking.Web.Services
         UnitFormDetailModel GetUnitFormDetail(UnitFormDetailModel filter);
         NotificationQC5InspectionHasStartedModel GetNotificationQC5InspectionHasStartedSendEmailData(Guid userId, Guid unitId);
         bool InsertQCSync(RequestPostModel.QC_Status_Update_QC5.Sends Model);
+        RequestPostModel.QC_Status_Update_QC5.Getdetail GetQCSyncDetail(RequestPostModel.QC_Status_Update_QC5.Getdetail Fiter);
     }
 }

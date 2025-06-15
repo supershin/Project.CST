@@ -162,5 +162,11 @@ namespace Project.ConstructionTracking.Web.Services
             var result = _IQC5CheckRepo.InsertQCSync(Model);
             return result;
         }
+
+        public RequestPostModel.QC_Status_Update_QC5.Getdetail GetQCSyncDetail(RequestPostModel.QC_Status_Update_QC5.Getdetail Fiter)
+        {
+            var result = _IQC5CheckRepo.GetQCSyncDetail(Fiter);
+            return result;
+        }
     }
 }

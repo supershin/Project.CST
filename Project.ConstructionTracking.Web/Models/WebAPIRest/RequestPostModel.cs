@@ -74,6 +74,16 @@ namespace Project.ConstructionTracking.Web.Models.WebAPIRest
                 public int? Status { get; set; }
                 public string? message { get; set; }
             }
+            public class Getdetail
+            {
+                public Guid? UnitID { get; set; }
+                public int? QCTypeID { get; set; }
+                public string? QCAppointDate { get; set; }
+                public string? QCAppointTimeFrom { get; set; }
+                public string? QCAppointTimeTo { get; set; }
+                public string? QCResponseDate { get; set; }
+                public string? QCRemark { get; set; }
+            }
         }
     }
 }

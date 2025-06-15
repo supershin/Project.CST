@@ -90,14 +90,22 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             try
             {
-                if (string.IsNullOrEmpty(request.contractor_appointment_date) ||
-                    string.IsNullOrEmpty(request.contractor_appointment_timeStart) ||
-                    string.IsNullOrEmpty(request.qc_response_date)
-                )
+                if (string.IsNullOrEmpty(request.contractor_appointment_date))
                 {
-                    response.message = "Missing required fields";
+                    response.message = "กรุณาระบุวันที่นัดตรวจ";
                     return Json(response);
                 }
+                if (string.IsNullOrEmpty(request.contractor_appointment_timeStart))
+                {
+                    response.message = "กรุณาระบุเวลาที่นัดตรวจ";
+                    return Json(response);
+                }
+                if (string.IsNullOrEmpty(request.qc_response_date))
+                {
+                    response.message = "กรุณาระบุวันที่ QC5";
+                    return Json(response);
+                }
+
 
                 var requestCrmUser = new RequestPostModel.Get_User_CRM.Sends
                 {
@@ -108,7 +116,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 var apiResponse = _WebAPIRestService.CentralizeGetUserCRM(requestCrmUser).GetAwaiter().GetResult();
                 if (apiResponse.status != 1)
                 {
-                    response.message = "User not found in CRM";
+                    response.message = "ไม่พบ User ใน CRM";
                     return Json(response);
                 }
 
@@ -120,14 +128,14 @@ namespace Project.ConstructionTracking.Web.Controllers
                 var apiQcStatusUpdateQc5Response = _WebAPIRestService.QcStatusUpdateQc5(request).GetAwaiter().GetResult();
                 if (apiQcStatusUpdateQc5Response.Status != 1)
                 {
-                    response.message = "Failed to update QC status: " + apiQcStatusUpdateQc5Response.message;
+                    response.message = "Sync CRM ไม่สำเร็จ: " + apiQcStatusUpdateQc5Response.message;
                     return Json(response);
                 }
               
                 bool Results = _QC5CheckService.InsertQCSync(request);
                 if (!Results)
                 {
-                    response.message = "Failed to insert QC sync data";
+                    response.message = "Sync CRM สำเร็จแต่บันทึกข้อมูลลงฐานข้อมูลไม่สำเร็จกรุณาติดต่อทีม IT";
                     return Json(response);
                 }
 
@@ -142,6 +150,30 @@ namespace Project.ConstructionTracking.Web.Controllers
 
             return Json(response);
         }
+
+        [HttpPost]
+        public IActionResult GetSyncQCDetail([FromForm] QC_Status_Update_QC5.Getdetail request)
+        {
+            var data = _QC5CheckService.GetQCSyncDetail(request);
+
+            if (data != null)
+            {
+                return Json(new
+                {
+                    success = true,
+                    data = data
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "ไม่พบข้อมูล"
+                });
+            }
+        }
+
 
     }
 }

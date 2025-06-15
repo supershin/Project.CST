@@ -5,6 +5,31 @@
     var ddlListUnitStatus = ViewBag.DDLList;
 }
 @model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.UnitStatusModel>
+<style>
+    .big-text-modal .modal-content {
+        font-size: 1.25rem; /* Base size */
+    }
+
+    .big-text-modal .modal-title {
+        font-size: 1.75rem;
+    }
+
+    .big-text-modal .form-control-plaintext,
+    .big-text-modal .fw-semibold,
+    .big-text-modal .fw-bold {
+        font-size: 1.5rem !important;
+    }
+
+    .big-text-modal .text-muted {
+        font-size: 1.25rem !important;
+    }
+
+    .big-text-modal .btn {
+        font-size: 1.25rem;
+    }
+</style>
+
+
 <div class="page-wrapper">
     <div class="page-header d-print-none">
         <div class="card bg-primary text-primary-fg">
@@ -102,14 +127,21 @@
                     </div>
                     <div class="modal-body">
                         <form id="formSync">
-                            <div class="mb-2">
-                                <strong>โครงการ : </strong><span id="projectName"></span><br>                         
-                                <strong>รหัสยูนิต Code : </strong><span id="unitCode"></span>
-                                <strong>รหัสยูนิต Code : </strong><span id="unitCode"></span>
+                            <div class="mb-3 px-3 py-2 rounded bg-light border d-flex justify-content-start align-items-center gap-4">
+                                <div>
+                                    <div class="text-muted small mb-1">โครงการ :</div>
+                                    <div class="fw-semibold text-dark fs-22" id="projectName"></div>
+                                </div>
+                                <div>
+                                    <div class="text-muted small mb-1">รหัสยูนิต Code :</div>
+                                    <div class="fw-semibold text-dark fs-20" id="unitCode"></div>
+                                </div>
+
                                 <input type="hidden" name="hd_project_code" id="hd_project_code" />
                                 <input type="hidden" name="hd_project_id" id="hd_project_id" />
                                 <input type="hidden" name="hd_unit_id" id="hd_unit_id" />
                             </div>
+
                             <div class="mb-2">
                                 <label class="form-label">
                                     วันที่นัดตรวจ :<span class="text-danger">*</span>
@@ -163,12 +195,74 @@
             </div>
         </div>
 
+        <div class="modal fade" id="modalViewSync" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content border-success shadow-lg big-text-modal">
+                    <div class="modal-header bg-success text-white">
+                        <h4 class="modal-title fw-bold">
+                            QC Sync Detail
+                        </h4>
+                        <button type="button" class="btn-close btn-close-white fs-4" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body px-5 py-4">
+
+                        <div class="bg-light border border-success rounded p-3 mb-4 d-flex justify-content-start align-items-center gap-2 flex-wrap">
+                            <div class="me-4">
+                                <div class="text-muted fs-5 mb-1">โครงการ</div>
+                                <div class="fw-bold text-success fs-4" id="view_projectName"></div>
+                            </div>
+                            <div>
+                                <div class="text-muted fs-5 mb-1">รหัสยูนิต Code</div>
+                                <div class="fw-bold text-success fs-4" id="view_unitCode"></div>
+                            </div>
+                        </div>
+
+
+                        <div class="mb-4">
+                            <div class="text-muted fs-5 mb-1">📅 วันที่นัดตรวจ</div>
+                            <div class="fw-semibold fs-4" id="view_appointmentDate"></div>
+                        </div>
+
+                        <div class="mb-4 row">
+                            <div class="col">
+                                <div class="text-muted fs-5 mb-1">⏱️ เวลาที่นัดตรวจ</div>
+                                <div class="fw-semibold fs-4" id="view_timeStart"></div>
+                            </div>
+                            <div class="col">
+                                <div class="text-muted fs-5 mb-1">ถึง</div>
+                                <div class="fw-semibold fs-4" id="view_timeEnd"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="text-muted fs-5 mb-1">🧾 วันที่ QC5</div>
+                            <div class="fw-semibold fs-4" id="view_qc5Date"></div>
+                        </div>
+
+                        <div class="mb-2">
+                            <div class="text-muted fs-5 mb-1">📝 รายละเอียด</div>
+                            <div class="fw-semibold text-dark fs-4" id="view_remark"></div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer bg-light border-top-0 justify-content-center">
+                        <button type="button" class="btn btn-success btn-lg px-5 py-2 fs-5" data-bs-dismiss="modal">
+                           เข้าใจแล้ว
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
     </div>
 </div>
 
 @section scripts {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -321,6 +415,44 @@
                 }
             });
         });
+
+        $(document).on('click', '.open-sync-view-modal', function () {
+            showLoadingAlert();
+            const unitId = $(this).data('unitid');
+           const unitCode = $(this).data('unitcode');
+            const project = $(this).data('project');
+
+            $.ajax({
+                url:  baseUrl + 'UnitStatusByProject/GetSyncQCDetail', // ✅ แก้ให้ตรงกับ Controller ของคุณ
+                method: 'POST',
+                data: { UnitID: unitId }, 
+                success: function (res) {
+                    if (res.success) {
+                        const d = res.data;
+
+                        $('#view_projectName').text(project); 
+                        $('#view_unitCode').text(unitCode);
+
+                        $('#view_appointmentDate').text(d.QCAppointDate ?? "-");
+                        $('#view_timeStart').text(d.QCAppointTimeFrom ?? "-");
+                        $('#view_timeEnd').text(d.QCAppointTimeTo ?? "-");
+                        $('#view_qc5Date').text(d.QCResponseDate ?? "-");
+                        $('#view_remark').text(d.QCRemark ?? "-");
+
+                        $('#modalViewSync').modal('show');
+                        Swal.close();
+                    } else {
+                        Swal.close();
+                        showErrorAlert('ผิดพลาด!', "ดึงข้อมูลไม่สำเร็จ");
+                    }
+                },
+                error: function () {
+                    Swal.close();
+                    showErrorAlert('ผิดพลาด!',"เกิดข้อผิดพลาดในการเรียกข้อมูล");
+                }
+            });
+        });
+
 
     </script>
 }

@@ -203,17 +203,43 @@ namespace Project.ConstructionTracking.Web.Infras.Repositories
                         client.DefaultRequestHeaders.Add("rem-api-secretkey", _rem_api_secretkey);
 
                         // Validate required fields
-                        if (string.IsNullOrEmpty(request.project_code) ||
-                            string.IsNullOrEmpty(request.unit_number) ||
-                            string.IsNullOrEmpty(request.contractor_appointment_date) ||
-                            string.IsNullOrEmpty(request.contractor_appointment_timeStart) ||
-                            string.IsNullOrEmpty(request.qc_response_user_id) ||
-                            string.IsNullOrEmpty(request.qc_response_date))
+                        if (string.IsNullOrEmpty(request.project_code))
                         {
                             responds.Status = 0;
-                            responds.message = "Some Parameter is missing";
+                            responds.message = "ไม่พบรหัสโครงการ (Project Code)";
                             return responds;
                         }
+                        if (string.IsNullOrEmpty(request.unit_number))
+                        {
+                            responds.Status = 0;
+                            responds.message = "ไม่พบรหัสยูนิต (Unit Number)";
+                            return responds;
+                        }
+                        if (string.IsNullOrEmpty(request.contractor_appointment_date))
+                        {
+                            responds.Status = 0;
+                            responds.message = "ไม่พบวันที่นัดตรวจ";
+                            return responds;
+                        }
+                        if (string.IsNullOrEmpty(request.contractor_appointment_timeStart))
+                        {
+                            responds.Status = 0;
+                            responds.message = "ไม่พบเวลาที่นัดตรวจ";
+                            return responds;
+                        }
+                        if (string.IsNullOrEmpty(request.qc_response_user_id))
+                        {
+                            responds.Status = 0;
+                            responds.message = "ไม่พบผู้ตรวจ QC5";
+                            return responds;
+                        }
+                        if (string.IsNullOrEmpty(request.qc_response_date))
+                        {
+                            responds.Status = 0;
+                            responds.message = "ไม่พบวันที่ QC5";
+                            return responds;
+                        }
+
 
                         // Prepare JSON content
                         var jsonBody = JsonConvert.SerializeObject(new

@@ -2,6 +2,14 @@
     Layout = null;
 }
 @model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.UnitStatusModel>
+<style>
+    .custom-hover-white:hover {
+        color: #fff !important;
+        background-color: #6c757d !important; /* keep same as border-secondary */
+        border-color: #6c757d !important;
+    }
+</style>
+
 <div class="table-responsive p-4">
     <table id="tbl_1" class="table table-vcenter card-table">
         <thead>
@@ -88,31 +96,29 @@
                     <td><strong>All: </strong>@item.allday_str<br><strong>Actual: </strong>@item.realday_use_str</td>
                     <td>@item.LastFormTransfer</td>
                     <td class="text-end">
-                        @if (!string.IsNullOrEmpty(item.QC5PassDate) && !string.IsNullOrEmpty(item.QC5PassDate))
+                        @if (!string.IsNullOrEmpty(item.QCSyncID) && !string.IsNullOrEmpty(item.QC5PassDate))
                         {
-                            <a href="#modalSync"
-                               class="btn btn-outline-success btn-sm open-sync-modal"
+                            <a href="#modalViewSync"
+                               class="btn btn-outline-success btn-sm open-sync-view-modal"
                                data-unitid="@item.unit_id"
                                data-unitcode="@item.unit_code"
-                               data-project="@item.project_name"
-                               data-project_id="@item.project_id"
-                               data-project_code="@item.project_code"
-                               data-qc5date="@item.QC5PassDate">
+                               data-project="@item.project_name">
                                 <i class="fa-solid fa-circle-check me-1"></i> @item.QC5PassDate
                             </a>
                         }
-                        else if (!string.IsNullOrEmpty(item.QC5PassDate) && item.QC5PassDate == "")
+                        else if (!string.IsNullOrEmpty(item.QC5PassDate) && item.QCSyncID == "")
                         {
                             <a href="#modalSync"
-                               class="btn btn-outline-secondary btn-sm text-secondary border-secondary open-sync-modal"
+                               class="btn btn-outline-secondary btn-sm open-sync-modal custom-hover-white"
                                data-unitid="@item.unit_id"
                                data-unitcode="@item.unit_code"
                                data-project="@item.project_name"
                                data-project_id="@item.project_id"
                                data-project_code="@item.project_code"
                                data-qc5date="@item.QC5PassDate">
-                                xxxx
+                                @item.QC5PassDate
                             </a>
+
                         }
                         else
                         {

@@ -1493,5 +1493,22 @@ namespace Project.ConstructionTracking.Web.Repositories
             return true;
         }
 
+        public RequestPostModel.QC_Status_Update_QC5.Getdetail GetQCSyncDetail(RequestPostModel.QC_Status_Update_QC5.Getdetail Fiter)
+        {
+
+            var result = (from tb in _context.tr_QC_Sync
+                          where tb.UnitID == Fiter.UnitID && tb.QCTypeID == SystemConstant.QcTypeID.QC5
+                          select new RequestPostModel.QC_Status_Update_QC5.Getdetail
+                          {
+                              QCAppointTimeFrom = tb.QCAppointTimeFrom,
+                              QCAppointTimeTo = tb.QCAppointTimeTo,
+                              QCRemark = tb.QCRemark,
+                              QCAppointDate = FormatExtension.FormatDateToDayMonthNameYear(tb.QCAppointDate),
+                              QCResponseDate = FormatExtension.FormatDateToDayMonthNameYear(tb.QCResponseDate),
+                          }).FirstOrDefault();
+
+            return result;
+        }
+
     }
 }
