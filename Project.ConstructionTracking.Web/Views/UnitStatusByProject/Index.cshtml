@@ -315,28 +315,32 @@
 
         function setDatatable() {
             var table = $('#tbl_1');
-            if (table.length > 0) {
-                table.DataTable({
-                    "paging": true,
-                    "lengthChange": true,
-                    "searching": true,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": false,
-                    "responsive": true,
-                    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-                    "language": {
-                        "lengthMenu": "Show _MENU_ rows per page",
-                        "zeroRecords": "No matching records found",
-                        "info": "Showing page _PAGE_ of _PAGES_",
-                        "infoEmpty": "No records available",
-                        "infoFiltered": "(filtered from _MAX_ total records)"
-                    }
-                });
-            } else {
-                console.warn("❌ #tbl_1 not found in DOM");
+
+            // ล้าง DataTable เดิมก่อน
+            if ($.fn.DataTable.isDataTable(table)) {
+                table.DataTable().destroy();
+                table.empty(); // เคลียร์ DOM table ด้วย
             }
+
+            table.DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "language": {
+                    "lengthMenu": "Show _MENU_ rows per page",
+                    "zeroRecords": "ไม่พบข้อมูล",
+                    "info": "Showing page _PAGE_ of _PAGES_",
+                    "infoEmpty": "No records available",
+                    "infoFiltered": "(filtered from _MAX_ total records)"
+                }
+            });
         }
+
 
         flatpickr("#txt_contractor_appointment_date", {
             dateFormat: "d/m/Y",
@@ -380,7 +384,8 @@
             $('#modalSync').modal('show');
         });
 
-        $(document).on('click', '#btnSyncSubmit', function () {
+        $(document).on('click', '#btnSyncSubmit', function (e) {
+            e.preventDefault();
             showLoadingAlert();
 
             const data = {
@@ -395,15 +400,21 @@
                 qc_remark: $('#txt_qc_remark').val().trim()
             };
 
+            // 🔥 1. จำหน้าปัจจุบันก่อน trigger submit
+            let savedPage = 0;
+            if ($.fn.DataTable.isDataTable('#tbl_1')) {
+                savedPage = $('#tbl_1').DataTable().page();
+            }
+
             $.ajax({
                 url: baseUrl + 'UnitStatusByProject/SubmitSyncQC5',
                 type: 'POST',
                 data: data,
                 success: function (res) {
                     if (res.Status === 1) {
-                        Swal.close();
-                        showSuccessAlert('สำเร็จ!', res.message);
-                        $('#modalSync').modal('hide');
+                        reloadTablePreservePage(savedPage, function () {
+                            showSuccessAlert('สำเร็จ!', res.message);
+                        });
                     } else {
                         Swal.close();
                         showErrorAlert('ผิดพลาด!', res.message);
@@ -416,10 +427,68 @@
             });
         });
 
+        function reloadTablePreservePage(savedPage, callback) {
+            var projectId = $('#form-search select[name="selectedProject"]').val() || "";
+            var unitStatus = $('#form-search select[name="selectedUnitStatus"]').val() || "";
+            var buildStatus = $('#form-search select[name="selectedBuildStatus"]').val() || "";
+            var syncQCStatus = $('#form-search select[name="selectedQCSyncStatus"]').val() || "";
+
+            $.ajax({
+                url: baseUrl + 'UnitStatusByProject/SearchUnitStatusByProject',
+                type: 'POST',
+                data: {
+                    projectId: projectId,
+                    unitStatus: unitStatus,
+                    buildStatus: buildStatus,
+                    syncQCStatus: syncQCStatus
+                },
+                success: function (response) {
+                    $('#PartialTable').html(response);
+
+                    setTimeout(function () {
+                        var table = $('#tbl_1').DataTable({
+                            paging: true,
+                            lengthChange: true,
+                            searching: true,
+                            ordering: true,
+                            info: true,
+                            autoWidth: false,
+                            responsive: true,
+                            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                            language: {
+                                lengthMenu: "Show _MENU_ rows per page",
+                                zeroRecords: "ไม่พบข้อมูล",
+                                info: "Showing page _PAGE_ of _PAGES_",
+                                infoEmpty: "No records available",
+                                infoFiltered: "(filtered from _MAX_ total records)"
+                            }
+                        });
+
+                        table.page(savedPage).draw(false);
+
+                        // ✅ เรียก callback ถ้ามี
+                        if (typeof callback === 'function') {
+                            callback();
+                        }
+
+                    }, 0);
+
+                    Swal.close();
+                    $('#modalSync').modal('hide');
+                },
+                error: function () {
+                    Swal.close();
+                    console.error('Error fetching data');
+                }
+            });
+        }
+
+
+
         $(document).on('click', '.open-sync-view-modal', function () {
             showLoadingAlert();
             const unitId = $(this).data('unitid');
-           const unitCode = $(this).data('unitcode');
+            const unitCode = $(this).data('unitcode');
             const project = $(this).data('project');
 
             $.ajax({
@@ -452,6 +521,8 @@
                 }
             });
         });
+
+        
 
 
     </script>
