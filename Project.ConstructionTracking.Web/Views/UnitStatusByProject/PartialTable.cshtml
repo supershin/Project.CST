@@ -46,7 +46,16 @@
                 };
 
                 <tr>
-                    <td><strong>@item.unit_code</strong><br><small class="text-muted">Type: @item.model_type_str</small></td>
+                    <td>
+                        <strong>
+                            @item.unit_code
+                            <a asp-controller="UnitStatusByUnit" asp-action="Index" asp-route-ProjectID="@item.project_id" asp-route-UnitID="@item.unit_id">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </a>
+                        </strong>
+                        <br>
+                        <small class="text-muted">Type: @item.model_type_str</small>
+                    </td>
                     <td><span class="@saleClass">@saleStatus</span></td>
                     <td><span class="@buildClass">@buildStatus</span></td>
                     <td><strong>เริ่ม: </strong>@item.date_start_plan_str<br><strong>เสร็จ: </strong>@item.date_end_plan_str</td>
