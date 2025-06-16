@@ -5,29 +5,6 @@
     var ddlListUnitStatus = ViewBag.DDLList;
 }
 @model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.UnitStatusModel>
-<style>
-    .big-text-modal .modal-content {
-        font-size: 1.25rem; /* Base size */
-    }
-
-    .big-text-modal .modal-title {
-        font-size: 1.75rem;
-    }
-
-    .big-text-modal .form-control-plaintext,
-    .big-text-modal .fw-semibold,
-    .big-text-modal .fw-bold {
-        font-size: 1.5rem !important;
-    }
-
-    .big-text-modal .text-muted {
-        font-size: 1.25rem !important;
-    }
-
-    .big-text-modal .btn {
-        font-size: 1.25rem;
-    }
-</style>
 
 
 <div class="page-wrapper">
@@ -128,54 +105,66 @@
                     <div class="modal-body">
                         <form id="formSync">
                             <div class="mb-3 px-3 py-2 rounded bg-light border d-flex justify-content-start align-items-center gap-4">
-                                <div>
-                                    <div class="text-muted small mb-1">โครงการ :</div>
-                                    <div class="fw-semibold text-dark fs-22" id="projectName"></div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="text-muted small fs-22">โครงการ :</div>
+                                    <div class="text-dark fs-22" id="projectName"></div>
                                 </div>
-                                <div>
-                                    <div class="text-muted small mb-1">รหัสยูนิต Code :</div>
-                                    <div class="fw-semibold text-dark fs-20" id="unitCode"></div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="text-muted small fs-22">รหัสยูนิต Code :</div>
+                                    <div class="text-dark fs-22" id="unitCode"></div>
                                 </div>
 
                                 <input type="hidden" name="hd_project_code" id="hd_project_code" />
                                 <input type="hidden" name="hd_project_id" id="hd_project_id" />
                                 <input type="hidden" name="hd_unit_id" id="hd_unit_id" />
                             </div>
-
-                            <div class="mb-2">
-                                <label class="form-label">
-                                    วันที่นัดตรวจ :<span class="text-danger">*</span>
-                                </label>
-                                <input type="date" 
-                                       class="form-control" 
-                                       name="txt_contractor_appointment_date" 
-                                       id="txt_contractor_appointment_date" 
-                                       required>
-                            </div>
                             <div class="mb-2 row">
-                                <div class="col">
-                                    <label class="form-label">เวลาที่นัดตรวจ :<span class="text-danger">*</span></label>
-                                    <input type="text"
+                                <div class="col-4">
+                                    <label class="form-label">
+                                        วันที่นัดตรวจ <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="date"
                                            class="form-control"
-                                           name="txt_contractor_appointment_timeStart"
-                                           id="txt_contractor_appointment_timeStart"
+                                           name="txt_contractor_appointment_date"
+                                           id="txt_contractor_appointment_date"
                                            required>
                                 </div>
-                                <div class="col">
-                                    <label class="form-label">ถึง :</label>
-                                    <input type="text"
-                                           class="form-control"
-                                           name="txt_contractor_appointment_timeEnd"
-                                           id="txt_contractor_appointment_timeEnd">
+                                <div class="col-8">
+                                    <label class="form-label">เวลาที่นัดตรวจ <span class="text-danger">*</span></label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input type="text"
+                                               class="form-control"
+                                               name="txt_contractor_appointment_timeStart"
+                                               id="txt_contractor_appointment_timeStart"
+                                               required>
+
+                                        <span>-</span>
+
+                                        <input type="text"
+                                               class="form-control"
+                                               name="txt_contractor_appointment_timeEnd"
+                                               id="txt_contractor_appointment_timeEnd">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="mb-2">
-                                <label class="form-label">วันที่ QC5 :<span class="text-danger">*</span></label>
-                                <input type="date" 
-                                       class="form-control" 
-                                       name="txt_qc_response_date"
-                                       id="txt_qc_response_date"
-                                       required>
+                            <div class="mb-2 row">
+                                <div class="col-4">
+                                    <label class="form-label">วันที่ QC5 <span class="text-danger">*</span></label>
+                                    <input type="date"
+                                           class="form-control"
+                                           name="txt_qc_response_date"
+                                           id="txt_qc_response_date"
+                                           required>
+                                    </div>
+                                <div class="col-8">
+                                    <label class="form-label">บันทึกโดย</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           name="txt_submit_by"
+                                           id="txt_submit_by"
+                                           disabled
+                                           >                         
+                                </div>
                             </div>
                             <div class="mb-2">
                                 <label class="form-label">รายละเอียด :</label>
@@ -188,81 +177,105 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="btnSyncSubmit">Submit</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="btnSyncSubmit">บันทึก</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="modal fade" id="modalViewSync" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content border-success shadow-lg big-text-modal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
                     <div class="modal-header bg-success text-white">
-                        <h4 class="modal-title fw-bold">
+                        <h5 class="modal-title">
                             QC Sync Detail
-                        </h4>
-                        <button type="button" class="btn-close btn-close-white fs-4" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body px-5 py-4">
-
-                        <div class="bg-light border border-success rounded p-3 mb-4 d-flex justify-content-start align-items-center gap-2 flex-wrap">
-                            <div class="me-4">
-                                <div class="text-muted fs-5 mb-1">โครงการ</div>
-                                <div class="fw-bold text-success fs-4" id="view_projectName"></div>
+                    <div class="modal-body">
+                        <form id="formSync">
+                            <div class="mb-3 px-3 py-2 rounded bg-light border d-flex justify-content-start align-items-center gap-4">
+                                <div>
+                                    <div class="text-muted small mb-1">โครงการ :</div>
+                                    <div class="fw-semibold text-dark fs-22" id="view_projectName"></div>
+                                </div>
+                                <div>
+                                    <div class="text-muted small mb-1">รหัสยูนิต Code :</div>
+                                    <div class="fw-semibold text-dark fs-20" id="view_unitCode"></div>
+                                </div>
                             </div>
-                            <div>
-                                <div class="text-muted fs-5 mb-1">รหัสยูนิต Code</div>
-                                <div class="fw-bold text-success fs-4" id="view_unitCode"></div>
+                            <div class="mb-2 row">
+                                <div class="col-4">
+                                    <label class="form-label">
+                                        📅 วันที่นัดตรวจ
+                                    </label>
+                                    <input type="text"
+                                           class="form-control"
+                                           name="view_appointmentDate"
+                                           id="view_appointmentDate"
+                                           disabled>
+                                </div>
+                                <div class="col-8">
+                                    <label class="form-label">⏱️ เวลาที่นัดตรวจ</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input type="text"
+                                               class="form-control"
+                                               name="view_timeStart"
+                                               id="view_timeStart"
+                                               disabled>
+
+                                        <span>-</span>
+
+                                        <input type="text"
+                                               class="form-control"
+                                               name="view_timeEnd"
+                                               id="view_timeEnd"
+                                               disabled>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-
-
-                        <div class="mb-4">
-                            <div class="text-muted fs-5 mb-1">📅 วันที่นัดตรวจ</div>
-                            <div class="fw-semibold fs-4" id="view_appointmentDate"></div>
-                        </div>
-
-                        <div class="mb-4 row">
-                            <div class="col">
-                                <div class="text-muted fs-5 mb-1">⏱️ เวลาที่นัดตรวจ</div>
-                                <div class="fw-semibold fs-4" id="view_timeStart"></div>
+                            <div class="mb-2 row">
+                                <div class="col-4">
+                                    <label class="form-label">🧾 วันที่ QC5</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           name="view_qc5Date"
+                                           id="view_qc5Date"
+                                           disabled>
+                                </div>
+                                <div class="col-8">
+                                    <label class="form-label">👤 บันทึกโดย</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           name="view_submit_by"
+                                           id="view_submit_by"
+                                           disabled>
+                                </div>
                             </div>
-                            <div class="col">
-                                <div class="text-muted fs-5 mb-1">ถึง</div>
-                                <div class="fw-semibold fs-4" id="view_timeEnd"></div>
+                            <div class="mb-2">
+                                <label class="form-label">📝 รายละเอียด :</label>
+                                <textarea class="form-control"
+                                          name="view_remark"
+                                          id="view_remark"
+                                          rows="2"
+                                          disabled>
+                                </textarea>
                             </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <div class="text-muted fs-5 mb-1">🧾 วันที่ QC5</div>
-                            <div class="fw-semibold fs-4" id="view_qc5Date"></div>
-                        </div>
-
-                        <div class="mb-2">
-                            <div class="text-muted fs-5 mb-1">📝 รายละเอียด</div>
-                            <div class="fw-semibold text-dark fs-4" id="view_remark"></div>
-                        </div>
-
+                        </form>
                     </div>
-                    <div class="modal-footer bg-light border-top-0 justify-content-center">
-                        <button type="button" class="btn btn-success btn-lg px-5 py-2 fs-5" data-bs-dismiss="modal">
-                           เข้าใจแล้ว
-                        </button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
     </div>
 </div>
 
 @section scripts {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -341,7 +354,6 @@
             });
         }
 
-
         flatpickr("#txt_contractor_appointment_date", {
             dateFormat: "d/m/Y",
             allowInput: true
@@ -357,7 +369,7 @@
             noCalendar: true,
             dateFormat: "H:i",
             time_24hr: true,
-            minuteIncrement: 1
+            minuteIncrement: 5,
         });
 
         flatpickr("#txt_contractor_appointment_timeEnd", {
@@ -365,10 +377,25 @@
             noCalendar: true,
             dateFormat: "H:i",
             time_24hr: true,
-            minuteIncrement: 1
+            minuteIncrement: 5,
         });
 
         $(document).on('click', '.open-sync-modal', function () {
+            // ✅ Clear values
+            $('#projectName').text('');
+            $('#unitCode').text('');
+
+            $('#hd_project_code').val('');
+            $('#hd_project_id').val('');
+            $('#hd_unit_id').val('');
+
+            $('#txt_contractor_appointment_date').val('');
+            $('#txt_contractor_appointment_timeStart').val('');
+            $('#txt_contractor_appointment_timeEnd').val('');
+            $('#txt_qc_response_date').val('');
+            $('#txt_submit_by').val('');
+            $('#txt_qc_remark').val('');
+
             const unitID = $(this).data('unitid');
             const unitCode = $(this).data('unitcode');
             const project = $(this).data('project');
@@ -483,8 +510,6 @@
             });
         }
 
-
-
         $(document).on('click', '.open-sync-view-modal', function () {
             showLoadingAlert();
             const unitId = $(this).data('unitid');
@@ -499,14 +524,17 @@
                     if (res.success) {
                         const d = res.data;
 
-                        $('#view_projectName').text(project); 
-                        $('#view_unitCode').text(unitCode);
+                       $('#view_projectName').text(project);
+                       $('#view_unitCode').text(unitCode);
 
-                        $('#view_appointmentDate').text(d.QCAppointDate ?? "-");
-                        $('#view_timeStart').text(d.QCAppointTimeFrom ?? "-");
-                        $('#view_timeEnd').text(d.QCAppointTimeTo ?? "-");
-                        $('#view_qc5Date').text(d.QCResponseDate ?? "-");
-                        $('#view_remark').text(d.QCRemark ?? "-");
+                       // ✅ Set values for inputs and textarea
+                       $('#view_appointmentDate').val(d.QCAppointDate ?? "");
+                       $('#view_timeStart').val(d.QCAppointTimeFrom ?? "");
+                       $('#view_timeEnd').val(d.QCAppointTimeTo ?? "");
+                       $('#view_qc5Date').val(d.QCResponseDate ?? "");
+                       $('#view_submit_by').val(d.SubmitBy ?? "");
+                       $('#view_remark').val(d.QCRemark ?? "");
+
 
                         $('#modalViewSync').modal('show');
                         Swal.close();

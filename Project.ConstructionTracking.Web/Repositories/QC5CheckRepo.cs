@@ -1,4 +1,5 @@
-﻿using Humanizer.Localisation;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Humanizer.Localisation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -1497,12 +1498,15 @@ namespace Project.ConstructionTracking.Web.Repositories
         {
 
             var result = (from tb in _context.tr_QC_Sync
+                          join t2 in _context.tm_User on tb.QCResponseUserID equals t2.ID into t2Group
+                          from t2Joined in t2Group.DefaultIfEmpty()
                           where tb.UnitID == Fiter.UnitID && tb.QCTypeID == SystemConstant.QcTypeID.QC5
                           select new RequestPostModel.QC_Status_Update_QC5.Getdetail
                           {
                               QCAppointTimeFrom = tb.QCAppointTimeFrom,
                               QCAppointTimeTo = tb.QCAppointTimeTo,
                               QCRemark = tb.QCRemark,
+                              SubmitBy = t2Joined != null ? t2Joined.FirstName + " " + t2Joined.LastName + FormatExtension.FormatDateToDayMonthNameYearTime(tb.SubmitDate) : null,
                               QCAppointDate = FormatExtension.FormatDateToDayMonthNameYear(tb.QCAppointDate),
                               QCResponseDate = FormatExtension.FormatDateToDayMonthNameYear(tb.QCResponseDate),
                           }).FirstOrDefault();

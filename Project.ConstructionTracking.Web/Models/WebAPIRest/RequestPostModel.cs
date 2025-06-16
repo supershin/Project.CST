@@ -82,6 +82,7 @@ namespace Project.ConstructionTracking.Web.Models.WebAPIRest
                 public string? QCAppointTimeFrom { get; set; }
                 public string? QCAppointTimeTo { get; set; }
                 public string? QCResponseDate { get; set; }
+                public string? SubmitBy { get; set; }
                 public string? QCRemark { get; set; }
             }
         }

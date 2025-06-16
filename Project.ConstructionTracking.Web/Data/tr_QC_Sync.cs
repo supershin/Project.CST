@@ -25,6 +25,8 @@ namespace Project.ConstructionTracking.Web.Data
         [Column(TypeName = "datetime")]
         public DateTime? QCResponseDate { get; set; }
         public string? QCRemark { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? SubmitDate { get; set; }
 
         [ForeignKey("ProjectID")]
         [InverseProperty("tr_QC_Sync")]
