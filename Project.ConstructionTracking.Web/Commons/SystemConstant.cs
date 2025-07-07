@@ -11,6 +11,10 @@
             public const int QC5DefectStatusNotPass = 28;
             public const int SyncSuccess = 31;
             public const int SyncFail = 32;
+
+            public const int SyncCrmNormal = 41;
+            public const int SyncCrmBeforeTranfer = 42;
+            public const int SyncCrmBeforeQC5Pass = 43;
         }
 
         public static class Ext_Type

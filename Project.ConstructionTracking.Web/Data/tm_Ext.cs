@@ -19,7 +19,8 @@ namespace Project.ConstructionTracking.Web.Data
             tm_UnitUnitType = new HashSet<tm_Unit>();
             tm_User = new HashSet<tm_User>();
             tr_ProjectBluePrint = new HashSet<tr_ProjectBluePrint>();
-            tr_QC_Sync = new HashSet<tr_QC_Sync>();
+            tr_QC_SyncQCType = new HashSet<tr_QC_Sync>();
+            tr_QC_SyncSyncTypeNavigation = new HashSet<tr_QC_Sync>();
             tr_QC_UnitCheckList = new HashSet<tr_QC_UnitCheckList>();
             tr_UnitForm = new HashSet<tr_UnitForm>();
             tr_UnitFormCheckList = new HashSet<tr_UnitFormCheckList>();
@@ -67,7 +68,9 @@ namespace Project.ConstructionTracking.Web.Data
         [InverseProperty("ElementTypeNavigation")]
         public virtual ICollection<tr_ProjectBluePrint> tr_ProjectBluePrint { get; set; }
         [InverseProperty("QCType")]
-        public virtual ICollection<tr_QC_Sync> tr_QC_Sync { get; set; }
+        public virtual ICollection<tr_QC_Sync> tr_QC_SyncQCType { get; set; }
+        [InverseProperty("SyncTypeNavigation")]
+        public virtual ICollection<tr_QC_Sync> tr_QC_SyncSyncTypeNavigation { get; set; }
         [InverseProperty("QCType")]
         public virtual ICollection<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; }
         [InverseProperty("Status")]

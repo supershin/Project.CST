@@ -155,8 +155,17 @@
                                            name="txt_qc_response_date"
                                            id="txt_qc_response_date"
                                            required>
-                                    </div>
-                                <div class="col-8">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label">ประเภทการ Sync<span class="text-danger">*</span></label>
+                                    <select class="form-select" name="ddl_sync_type" id="ddl_sync_type">
+                                        <option value="-1">กรุณาเลือก</option>
+                                        <option value="41">Sync ปกติ</option>
+                                        <option value="42">Sync เพื่อโอนก่อนตรวจ</option>
+                                        <option value="43">Sync ตรวจห้องก่อน QC5 Pass</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
                                     <label class="form-label">บันทึกโดย</label>
                                     <input type="text"
                                            class="form-control"
@@ -244,7 +253,17 @@
                                            id="view_qc5Date"
                                            disabled>
                                 </div>
-                                <div class="col-8">
+                                <div class="col-4">
+                                    <label class="form-label">
+                                        🔄 ประเภทการ Sync
+                                    </label>
+                                    <select class="form-select" name="view_ddl_sync_type" id="view_ddl_sync_type" disabled>
+                                        <option value="41">Sync ปกติ</option>
+                                        <option value="42">Sync เพื่อโอนก่อนตรวจ</option>
+                                        <option value="43">Sync ตรวจห้องก่อน QC5 Pass</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
                                     <label class="form-label">👤 บันทึกโดย</label>
                                     <input type="text"
                                            class="form-control"
@@ -392,6 +411,7 @@
             $('#txt_contractor_appointment_date').val('');
             $('#txt_contractor_appointment_timeStart').val('');
             $('#txt_contractor_appointment_timeEnd').val('');
+            $('#ddl_sync_type').val('-1');
             $('#txt_qc_response_date').val('');
             $('#txt_submit_by').val('');
             $('#txt_qc_remark').val('');
@@ -420,6 +440,7 @@
                 project_id: $('#hd_project_id').val(),
                 unit_id: $('#hd_unit_id').val(),
                 unit_number: $('#unitCode').text(),
+                sync_type:$('#ddl_sync_type').val(),
                 contractor_appointment_date: $('#txt_contractor_appointment_date').val(),
                 contractor_appointment_timeStart: $('#txt_contractor_appointment_timeStart').val(),
                 contractor_appointment_timeEnd: $('#txt_contractor_appointment_timeEnd').val(),
@@ -534,7 +555,7 @@
                        $('#view_qc5Date').val(d.QCResponseDate ?? "");
                        $('#view_submit_by').val(d.SubmitBy ?? "");
                        $('#view_remark').val(d.QCRemark ?? "");
-
+                       $('#view_ddl_sync_type').val(d.SyncType ?? "");
 
                         $('#modalViewSync').modal('show');
                         Swal.close();

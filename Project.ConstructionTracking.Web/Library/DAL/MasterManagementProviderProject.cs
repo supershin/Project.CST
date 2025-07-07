@@ -143,6 +143,7 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.unit_build_status_str = Commons.FormatExtension.NullToString(reader["unit_build_status_str"]);
             Entity.LastFormTransfer = Commons.FormatExtension.NullToString(reader["LastFormTransfer"]);
             Entity.QC5PassDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["QC5PassDate"]);
+            Entity.SyncCrmDate = Commons.FormatExtension.FormatDateToDayMonthNameYearTime(reader["SyncCrmDate"]);
             Entity.QCSyncID = Commons.FormatExtension.NullToString(reader["QCSyncID"]);
             return Entity;
         }

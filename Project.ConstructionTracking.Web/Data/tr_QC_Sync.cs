@@ -12,6 +12,7 @@ namespace Project.ConstructionTracking.Web.Data
         public Guid ID { get; set; }
         public Guid? ProjectID { get; set; }
         public Guid? UnitID { get; set; }
+        public int? SyncType { get; set; }
         public int? QCTypeID { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? QCAppointDate { get; set; }
@@ -32,8 +33,11 @@ namespace Project.ConstructionTracking.Web.Data
         [InverseProperty("tr_QC_Sync")]
         public virtual tm_Project? Project { get; set; }
         [ForeignKey("QCTypeID")]
-        [InverseProperty("tr_QC_Sync")]
+        [InverseProperty("tr_QC_SyncQCType")]
         public virtual tm_Ext? QCType { get; set; }
+        [ForeignKey("SyncType")]
+        [InverseProperty("tr_QC_SyncSyncTypeNavigation")]
+        public virtual tm_Ext? SyncTypeNavigation { get; set; }
         [ForeignKey("UnitID")]
         [InverseProperty("tr_QC_Sync")]
         public virtual tm_Unit? Unit { get; set; }

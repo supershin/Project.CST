@@ -548,9 +548,14 @@ namespace Project.ConstructionTracking.Web.Data
                     .HasConstraintName("FK_tr_QC_Sync_tr_QC_Sync");
 
                 entity.HasOne(d => d.QCType)
-                    .WithMany(p => p.tr_QC_Sync)
+                    .WithMany(p => p.tr_QC_SyncQCType)
                     .HasForeignKey(d => d.QCTypeID)
                     .HasConstraintName("FK_tr_QC_Sync_tm_Ext");
+
+                entity.HasOne(d => d.SyncTypeNavigation)
+                    .WithMany(p => p.tr_QC_SyncSyncTypeNavigation)
+                    .HasForeignKey(d => d.SyncType)
+                    .HasConstraintName("FK_tr_QC_Sync_Type_tm_Ext");
 
                 entity.HasOne(d => d.Unit)
                     .WithMany(p => p.tr_QC_Sync)

@@ -1,14 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Office2016.Excel;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient.Server;
 using Newtonsoft.Json;
 using Project.ConstructionTracking.Web.Commons;
+using Project.ConstructionTracking.Web.Data;
 using Project.ConstructionTracking.Web.Infras.Services;
 using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.SendMail;
+using Project.ConstructionTracking.Web.Models.WebAPIRest;
 using Project.ConstructionTracking.Web.Services;
+using QuestPDF.Infrastructure;
 using static Project.ConstructionTracking.Web.Commons.SystemConstant;
+using static Project.ConstructionTracking.Web.Infras.Services.WebAPIRestService;
 using static Project.ConstructionTracking.Web.Models.ApproveFormcheckIUDModel;
-using static Project.ConstructionTracking.Web.Models.FormGroupModel;
+using static Project.ConstructionTracking.Web.Models.WebAPIRest.RequestPostModel;
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
@@ -18,14 +24,18 @@ namespace Project.ConstructionTracking.Web.Controllers
         private readonly IHostEnvironment _hosting;
         private readonly IGetDDLService _getDDLService;
         private readonly IConfiguration _config;
+        private readonly IWebAPIRestService _WebAPIRestService;
+        private readonly IQC5CheckService _QC5CheckService;
         private readonly string _ConstructionQualityTracking;
-        public PMApproveController(IPMApproveService PMApproveService, IHostEnvironment hosting, IGetDDLService getDDLService, IConfiguration config)
+        public PMApproveController(IPMApproveService PMApproveService, IHostEnvironment hosting, IGetDDLService getDDLService, IConfiguration config, IWebAPIRestService webAPIRestService, IQC5CheckService qC5CheckService)
         {
             _PMApproveService = PMApproveService;
             _hosting = hosting;
             _getDDLService = getDDLService;
             _config = config;
             _ConstructionQualityTracking = config["ConstructionQualityTracking:Url"];
+            _WebAPIRestService = webAPIRestService;
+            _QC5CheckService = qC5CheckService;
         }
 
         public IActionResult Index(Guid unitId, int formId ,string comeFrom)
@@ -121,6 +131,8 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             try
             {
+                string Message = "บันทึกข้อมูลสำเร็จ";
+
                 var param = Request.Form["PassConditionsIUD"];
                 if (!string.IsNullOrEmpty(param))
                 {
@@ -130,8 +142,10 @@ namespace Project.ConstructionTracking.Web.Controllers
                 model.UserID = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
                 model.RoleID = int.TryParse(Request.Cookies["CST.Role"], out var tempRoleInt) ? tempRoleInt : -1;
                 string returnUrlDoc = _PMApproveService.SaveOrUpdateUnitFormAction(model);
-                if (model.ActionType == "save") 
+                if (model.ActionType == "submit") 
                 {
+                    Message = "บันทึกข้อมูลสำเร็จและสร้าง PDF สำเร็จ";
+
                     ViewBag.ConstructionQualityTrackingUrl = _ConstructionQualityTracking;
 
                     PMRespond PMRespondData = _PMApproveService.GetPMRespondSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));
@@ -145,7 +159,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                     email.Password = _config["Email:PASSWORD"];
                     email.PORT = Convert.ToInt32(_config["Email:PORT"]);
                     if (!string.IsNullOrEmpty(PMRespondData.PEEmail))
-                        email.To = new List<string> { PMRespondData.PEEmail};
+                        email.To = new List<string> { PMRespondData.PEEmail };
                     email.Subject = _config["Email:Subject:HEADER_TEXT"];
                     email.Body = template;
 
@@ -192,14 +206,119 @@ namespace Project.ConstructionTracking.Web.Controllers
                             (new MailService()).SendMail(email);
                         }
                     }
+
+                    int cnt = model.UnitID.HasValue ? _PMApproveService.CheckQCSync(model.UnitID.Value) : 0;
+
+                    if (model.UnitFormStatus == 4 && cnt == 0)
+                    {
+                        int QCID = _PMApproveService.CheckQCbyFormID(model.FormID ?? -1);
+                        if (QCID == SystemConstant.QcTypeID.QC5)
+                        {
+                            Message = "บันทึกข้อมูลสำเร็จแต่ Syn CRM ไม่สำเร็จ";
+                            var modelsynccrm = new QC_Status_Update_QC5.Sends
+                            {
+                                project_code = model.ProjectID.HasValue ? _PMApproveService.GetProjectcodeByID(model.ProjectID.Value) : ""
+                               ,project_id = model.ProjectID
+                               ,unit_id = model.UnitID
+                               ,sync_type = Commons.SystemConstant.Ext.SyncCrmNormal
+                               ,unit_number = model.UnitCode
+                               ,contractor_appointment_date = DateTime.Now.ToString("yyyy-MM-dd") // 🔧 หรือใส่ "dd/MM/yyyy" ตาม format ที่ระบบต้องการ
+                               ,contractor_appointment_timeStart = DateTime.Now.ToString("HH:mm") // ✅ เวลา เช่น 18:36
+                               ,contractor_appointment_timeEnd = DateTime.Now.ToString("HH:mm")
+                               ,qc_response_date = DateTime.Now.ToString("yyyy-MM-dd")
+                               ,qc_remark = "Sync Auto"
+                               ,submit_date = DateTime.Now.Date
+                            };
+                            var response = InsertUnitFormActionLog(modelsynccrm);
+                            if (response.Status == 1)
+                            {
+                                Message = "บันทึกข้อมูลสำเร็จและ Sync CRM สำเร็จ";
+                            }
+                            else
+                            {
+                                Message = "บันทึกข้อมูลสำเร็จ " + response.message;
+                            }
+                        }
+                    }
                 }
-                return Ok(new { success = true, pdfPath = returnUrlDoc });
+                return Ok(new { success = true, message = Message, pdfPath = returnUrlDoc });
             }
             catch (Exception ex)
             {
                 return BadRequest(new { success = false, message = ex.Message });
             }
         }
+
+        private QC_Status_Update_QC5.Responds InsertUnitFormActionLog(QC_Status_Update_QC5.Sends request)
+        {
+            var response = new QC_Status_Update_QC5.Responds
+            {
+                Status = 0,
+                message = "Unknown"
+            };
+
+            try
+            {
+                if (string.IsNullOrEmpty(request.contractor_appointment_date))
+                {
+                    response.message = "กรุณาระบุวันที่นัดตรวจ";
+                    return response;
+                }
+                if (string.IsNullOrEmpty(request.contractor_appointment_timeStart))
+                {
+                    response.message = "กรุณาระบุเวลาที่นัดตรวจ";
+                    return response;
+                }
+                if (string.IsNullOrEmpty(request.qc_response_date))
+                {
+                    response.message = "กรุณาระบุวันที่ QC5";
+                    return response;
+                }
+
+                var requestCrmUser = new RequestPostModel.Get_User_CRM.Sends
+                {
+                    email = FormatExtension.NullToString(Request.Cookies["CST.Email"])
+                    //email = "aukkaraded@assetwise.co.th"
+                };
+
+                var apiResponse = _WebAPIRestService.CentralizeGetUserCRM(requestCrmUser).GetAwaiter().GetResult();
+                if (apiResponse.status != 1)
+                {
+                    response.message = "ไม่พบ User ใน CRM";
+                    return response;
+                }
+
+                Guid userid = Guid.TryParse(Request.Cookies["CST.ID"], out var tempUserGuid) ? tempUserGuid : Guid.Empty;
+                request.qc_response_user_id = apiResponse.UserID;
+                request.qc_type = "qc5_pass";
+                request.CQTUserID = userid;
+
+                var apiQcStatusUpdateQc5Response = _WebAPIRestService.QcStatusUpdateQc5(request).GetAwaiter().GetResult();
+                if (apiQcStatusUpdateQc5Response.Status != 1)
+                {
+                    response.message = "Sync CRM ไม่สำเร็จ: " + apiQcStatusUpdateQc5Response.message;
+                    return response;
+                }
+
+                bool Results = _QC5CheckService.InsertQCSync(request);
+                if (!Results)
+                {
+                    response.message = "Sync CRM สำเร็จแต่บันทึกข้อมูลลงฐานข้อมูลไม่สำเร็จ กรุณาติดต่อทีม IT";
+                    return response;
+                }
+
+                response.Status = 1;
+                response.message = "Saved successfully";
+            }
+            catch (Exception ex)
+            {
+                response.Status = 0;
+                response.message = "Error: " + ex.Message;
+            }
+
+            return response;
+        }
+
 
         [HttpGet]
         public JsonResult GetImages(Guid UnitFormID, int GroupID, int FormID, int RoleID)

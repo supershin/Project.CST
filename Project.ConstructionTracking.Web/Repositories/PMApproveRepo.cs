@@ -840,6 +840,31 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
+        public int CheckQCbyFormID(int FormID)
+        {
+            var result = (from t1 in _context.tr_Form_QCCheckList
+                          join t2 in _context.tm_QC_CheckList on t1.CheckListID equals t2.ID into t2Group
+                          from t2 in t2Group.DefaultIfEmpty()
+                          where t1.FormID == FormID
+                          select t2.QCTypeID).FirstOrDefault();
 
+            return result.HasValue ? result.Value : -1;
+        }
+        public string GetProjectcodeByID(Guid ProjectID)
+        {
+            var result = (from t1 in _context.tm_Project
+                          where t1.ProjectID == ProjectID
+                          select t1.ProjectCode).FirstOrDefault();
+
+            return result ?? ""; 
+        }
+        public int CheckQCSync(Guid UnitID)
+        {
+            var result = (from t1 in _context.tr_QC_Sync
+                          where t1.UnitID == UnitID
+                          select t1.ID).Count();
+
+            return result;
+        }
     }
 }
