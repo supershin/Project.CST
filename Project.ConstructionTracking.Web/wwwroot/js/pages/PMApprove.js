@@ -271,12 +271,12 @@ function performAjaxRequest(actionType) {
                 if (mainStatus && mainStatus.value === "4" && actionType === "submit") {
                     const pdfPath = res.pdfPath;
                     window.open(baseUrl + pdfPath, '_blank');
-                    showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จและสร้าง PDF สำเร็จ', () => {
+                    showSuccessAlert('สำเร็จ!', res.message , () => {
                         window.location.reload(); // Reload the page after success
                     });
                 } else {
                     Swal.close();
-                    showSuccessAlert('สำเร็จ!', 'บันทึกข้อมูลสำเร็จ', () => {
+                    showSuccessAlert('สำเร็จ!', res.message , () => {
                         window.location.reload();
                     });
                 }

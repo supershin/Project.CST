@@ -1,4 +1,5 @@
-﻿using Project.ConstructionTracking.Web.Models;
+﻿using Microsoft.CodeAnalysis;
+using Project.ConstructionTracking.Web.Models;
 using Project.ConstructionTracking.Web.Models.SendMail;
 using Project.ConstructionTracking.Web.Repositories;
 
@@ -58,6 +59,24 @@ namespace Project.ConstructionTracking.Web.Services
         {
             var ListQCnotifyPMSubmitData = _IPMApprovelistRepo.GetListQCnotifyPMSubmitlData(FormID , UnitID , ProjectID);
             return ListQCnotifyPMSubmitData;
+        }
+
+        public int CheckQCbyFormID(int FormID)
+        {
+            var QCID = _IPMApprovelistRepo.CheckQCbyFormID(FormID);
+            return QCID;
+        }
+
+        public string GetProjectcodeByID(Guid ProjectID)
+        {
+            var Projectcode = _IPMApprovelistRepo.GetProjectcodeByID(ProjectID);
+            return Projectcode;
+        }
+
+        public int CheckQCSync(Guid UnitID)
+        {
+            var cntQCSync = _IPMApprovelistRepo.CheckQCSync(UnitID);
+            return cntQCSync;
         }
     }
 }

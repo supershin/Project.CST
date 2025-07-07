@@ -27,6 +27,7 @@
         public string? realday_use_str { get; set; }
         public string? LastFormTransfer { get; set; }
         public string? QC5PassDate { get; set; }
+        public string? SyncCrmDate { get; set; }
         public string? QCSyncID { get; set; }
     }
 }

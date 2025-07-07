@@ -60,6 +60,8 @@ namespace Project.ConstructionTracking.Web.Models.WebAPIRest
                 public Guid? project_id { get; set; }
                 public string? unit_number { get; set; }
                 public Guid? unit_id { get; set; }
+                public int? sync_type { get; set; }
+                public DateTime? submit_date { get; set; }
                 public string? contractor_appointment_date { get; set; }
                 public string? contractor_appointment_timeStart { get; set; }
                 public string? contractor_appointment_timeEnd { get; set; }
@@ -82,6 +84,7 @@ namespace Project.ConstructionTracking.Web.Models.WebAPIRest
                 public string? QCAppointTimeFrom { get; set; }
                 public string? QCAppointTimeTo { get; set; }
                 public string? QCResponseDate { get; set; }
+                public int? SyncType { get; set; }
                 public string? SubmitBy { get; set; }
                 public string? QCRemark { get; set; }
             }

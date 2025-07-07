@@ -18,6 +18,9 @@ namespace Project.ConstructionTracking.Web.Data
         public int ID { get; set; }
         [StringLength(200)]
         public string? Name { get; set; }
+        [StringLength(1000)]
+        [Unicode(false)]
+        public string? CashFlowUrl { get; set; }
         public bool? FlagActive { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }

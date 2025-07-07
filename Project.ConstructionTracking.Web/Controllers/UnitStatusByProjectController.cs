@@ -105,6 +105,11 @@ namespace Project.ConstructionTracking.Web.Controllers
                     response.message = "กรุณาระบุวันที่ QC5";
                     return Json(response);
                 }
+                if (request.sync_type == -1)
+                {
+                    response.message = "กรุณาระบุประเภทการ Sync";
+                    return Json(response);
+                }
 
 
                 var requestCrmUser = new RequestPostModel.Get_User_CRM.Sends
@@ -124,6 +129,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 request.qc_response_user_id = apiResponse.UserID;
                 request.qc_type = "qc5_pass";
                 request.CQTUserID = userid;
+                request.submit_date = DateTime.Now;
 
                 var apiQcStatusUpdateQc5Response = _WebAPIRestService.QcStatusUpdateQc5(request).GetAwaiter().GetResult();
                 if (apiQcStatusUpdateQc5Response.Status != 1)

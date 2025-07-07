@@ -1478,6 +1478,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 ID = Guid.NewGuid(),
                 ProjectID = Model.project_id,
                 UnitID = Model.unit_id,
+                SyncType = Model.sync_type,
                 QCTypeID = SystemConstant.QcTypeID.QC5,
                 QCAppointDate = FormatExtension.ToDateFromddmmyyy(Model.contractor_appointment_date),
                 QCAppointTimeFrom = Model.contractor_appointment_timeStart,
@@ -1485,6 +1486,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                 QCResponseUserID = Model.CQTUserID,
                 QCResponseDate = FormatExtension.ToDateFromddmmyyy(Model.qc_response_date),
                 QCRemark = Model.qc_remark,
+                SubmitDate = Model.submit_date,
             };
 
             _context.tr_QC_Sync.Add(newData);
@@ -1509,6 +1511,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               SubmitBy = t2Joined != null ? t2Joined.FirstName + " " + t2Joined.LastName + FormatExtension.FormatDateToDayMonthNameYearTime(tb.SubmitDate) : null,
                               QCAppointDate = FormatExtension.FormatDateToDayMonthNameYear(tb.QCAppointDate),
                               QCResponseDate = FormatExtension.FormatDateToDayMonthNameYear(tb.QCResponseDate),
+                              SyncType = tb.SyncType,
                           }).FirstOrDefault();
 
             return result;

@@ -12,5 +12,8 @@ namespace Project.ConstructionTracking.Web.Repositories
         List<UnitFormResourceModel> GetImage(UnitFormResourceModel model);
         PMRespond GetPMRespondSendEmailData(Guid unitFormId);
         string SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model);
+        public int CheckQCbyFormID(int FormID);
+        public string GetProjectcodeByID(Guid ProjectID);
+        public int CheckQCSync(Guid UnitID);
     }
 }

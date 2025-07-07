@@ -12,5 +12,8 @@ namespace Project.ConstructionTracking.Web.Services
         List<PMRequestModel> GetListPMRequesSendEmailData(Guid unitFormId);
         List<QCnotifyPMSubmit> GetListQCnotifyPMSubmitlData(int FormID, Guid UnitID, Guid ProjectID);
         string SaveOrUpdateUnitFormAction(ApproveFormcheckIUDModel model);
+        public int CheckQCbyFormID(int FormID);
+        public string GetProjectcodeByID(Guid ProjectID);
+        public int CheckQCSync(Guid UnitID);
     }
 }
