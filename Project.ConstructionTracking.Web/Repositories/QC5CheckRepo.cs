@@ -1508,7 +1508,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                               QCAppointTimeFrom = tb.QCAppointTimeFrom,
                               QCAppointTimeTo = tb.QCAppointTimeTo,
                               QCRemark = tb.QCRemark,
-                              SubmitBy = t2Joined != null ? t2Joined.FirstName + " " + t2Joined.LastName + FormatExtension.FormatDateToDayMonthNameYearTime(tb.SubmitDate) : null,
+                              SubmitBy = t2Joined != null ? t2Joined.FirstName + " " + t2Joined.LastName : null,
                               QCAppointDate = FormatExtension.FormatDateToDayMonthNameYear(tb.QCAppointDate),
                               QCResponseDate = FormatExtension.FormatDateToDayMonthNameYear(tb.QCResponseDate),
                               SyncType = tb.SyncType,
