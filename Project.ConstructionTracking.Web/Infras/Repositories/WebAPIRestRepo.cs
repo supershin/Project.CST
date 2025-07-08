@@ -34,7 +34,7 @@ namespace Project.ConstructionTracking.Web.Infras.Repositories
                 _apiCentralizeGet_User_CRMUrl = configuration["ThirdPartyApis:Centralize_API:Get_User_CRMApiUrl"];
                 _apiCentralizeGet_AuthorizationApiKey = configuration["ThirdPartyApis:Centralize_API:AuthorizationApiKey"];
 
-                _api_QC_CRM_QC_Status_Update_QC5_Url = configuration["ThirdPartyApis:QC_API_CRM:QC_Status_Update_QC5_PRD_ApiUrl"];
+                _api_QC_CRM_QC_Status_Update_QC5_Url = configuration["ThirdPartyApis:QC_API_CRM:QC_Status_Update_QC5_ApiUrl"];
                 _rem_api_username = configuration["ThirdPartyApis:QC_API_CRM:rem-api-username"];
                 _rem_api_password = configuration["ThirdPartyApis:QC_API_CRM:rem-api-password"];
                 _rem_api_secretkey = configuration["ThirdPartyApis:QC_API_CRM:rem-api-secretkey"];
