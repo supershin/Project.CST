@@ -262,8 +262,21 @@ namespace Project.ConstructionTracking.Web.Infras.Repositories
 
                         if (response.IsSuccessStatusCode)
                         {
-                            responds.Status = 1;
-                            responds.message = "Send data success";
+                            var apiResult = JsonConvert.DeserializeObject<dynamic>(responseContent);
+
+                            // Access the `status` field (0 or 1)
+                            int status = (int)apiResult.status;
+
+                            if (status == 1)
+                            {
+                                responds.Status = 1;
+                                responds.message = "Send data success";
+                            }
+                            else
+                            {
+                                responds.Status = 0;
+                                responds.message = $"API Response Error: {apiResult.message}";
+                            }
                         }
                         else
                         {

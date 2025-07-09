@@ -222,14 +222,14 @@ namespace Project.ConstructionTracking.Web.Controllers
                                ,unit_id = model.UnitID
                                ,sync_type = Commons.SystemConstant.Ext.SyncCrmNormal
                                ,unit_number = model.UnitCode
-                               ,contractor_appointment_date = DateTime.Now.ToString("yyyy-MM-dd") // 🔧 หรือใส่ "dd/MM/yyyy" ตาม format ที่ระบบต้องการ
+                               ,contractor_appointment_date = DateTime.Now.ToString("dd/MM/yyyy") // 🔧 หรือใส่ "dd/MM/yyyy" ตาม format ที่ระบบต้องการ
                                ,contractor_appointment_timeStart = DateTime.Now.ToString("HH:mm") // ✅ เวลา เช่น 18:36
                                ,contractor_appointment_timeEnd = DateTime.Now.ToString("HH:mm")
-                               ,qc_response_date = DateTime.Now.ToString("yyyy-MM-dd")
+                               ,qc_response_date = DateTime.Now.ToString("dd/MM/yyyy")
                                ,qc_remark = "Sync Auto"
                                ,submit_date = DateTime.Now.Date
                             };
-                            var response = InsertUnitFormActionLog(modelsynccrm);
+                            var response = InsertUnitFormSyncCrm(modelsynccrm);
                             if (response.Status == 1)
                             {
                                 Message = "บันทึกข้อมูลสำเร็จและ Sync CRM สำเร็จ";
@@ -249,7 +249,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             }
         }
 
-        private QC_Status_Update_QC5.Responds InsertUnitFormActionLog(QC_Status_Update_QC5.Sends request)
+        private QC_Status_Update_QC5.Responds InsertUnitFormSyncCrm(QC_Status_Update_QC5.Sends request)
         {
             var response = new QC_Status_Update_QC5.Responds
             {
@@ -299,13 +299,16 @@ namespace Project.ConstructionTracking.Web.Controllers
                     response.message = "Sync CRM ไม่สำเร็จ: " + apiQcStatusUpdateQc5Response.message;
                     return response;
                 }
-
-                bool Results = _QC5CheckService.InsertQCSync(request);
-                if (!Results)
+                else
                 {
-                    response.message = "Sync CRM สำเร็จแต่บันทึกข้อมูลลงฐานข้อมูลไม่สำเร็จ กรุณาติดต่อทีม IT";
-                    return response;
+                    bool Results = _QC5CheckService.InsertQCSync(request);
+                    if (!Results)
+                    {
+                        response.message = "Sync CRM สำเร็จแต่บันทึกข้อมูลลงฐานข้อมูลไม่สำเร็จ กรุณาติดต่อทีม IT";
+                        return response;
+                    }
                 }
+                
 
                 response.Status = 1;
                 response.message = "Saved successfully";
