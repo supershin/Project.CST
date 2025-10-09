@@ -45,5 +45,10 @@ namespace Project.ConstructionTracking.Web.Services
             }
         }
 
+        public AdminRespond GetAdminPJMRespond(Guid unitFormId)
+        {
+            var Result = _IPJMApproveRepo.GetAdminPJMRespond(unitFormId);
+            return Result;
+        }
     }
 }

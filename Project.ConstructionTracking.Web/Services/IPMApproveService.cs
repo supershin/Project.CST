@@ -15,5 +15,6 @@ namespace Project.ConstructionTracking.Web.Services
         public int CheckQCbyFormID(int FormID);
         public string GetProjectcodeByID(Guid ProjectID);
         public int CheckQCSync(Guid UnitID);
+        public AdminRespond GetAdminRespond(Guid unitFormId);
     }
 }

@@ -103,54 +103,54 @@ namespace Project.ConstructionTracking.Web.Controllers
                 model.ApplicationPath = _hosting.ContentRootPath;
                 _FormGroupService.SubmitSaveFormGroup(model);
 
-                //if (model.Act == "submit")
-                //{
-                //    ViewBag.ConstructionQualityTrackingUrl = _ConstructionQualityTracking;
-                //    // Retrieve the data list
-                //    List<PERequesModel> listPERequesData = _FormGroupService.GetListPERequesSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));
+                if (model.Act == "submit")
+                {
+                    ViewBag.ConstructionQualityTrackingUrl = _ConstructionQualityTracking;
+                    // Retrieve the data list
+                    List<PERequesModel> listPERequesData = _FormGroupService.GetListPERequesSendEmailData(FormatExtension.ConvertStringToGuid(model.UnitFormID));
 
-                //    // Configure email settings
-                //    var emailConfig = new EmailModel
-                //    {
-                //        Host = _config["Email:HOST"],
-                //        From = _config["Email:FROM"],
-                //        Sender = _config["Email:SENDER"],
-                //        Username = _config["Email:USER_NAME"],
-                //        Password = _config["Email:PASSWORD"],
-                //        PORT = Convert.ToInt32(_config["Email:PORT"]),
-                //        Subject = _config["Email:Subject:HEADER_TEXT"]
-                //    };
+                    // Configure email settings
+                    var emailConfig = new EmailModel
+                    {
+                        Host = _config["Email:HOST"],
+                        From = _config["Email:FROM"],
+                        Sender = _config["Email:SENDER"],
+                        Username = _config["Email:USER_NAME"],
+                        Password = _config["Email:PASSWORD"],
+                        PORT = Convert.ToInt32(_config["Email:PORT"]),
+                        Subject = _config["Email:Subject:HEADER_TEXT"]
+                    };
 
-                //    foreach (var request in listPERequesData)
-                //    {
-                //        if (!string.IsNullOrEmpty(request.PMEmail))
-                //        {
-                //            // Render template for the current PM
-                //            string template = RenderRazorViewtoString(this, "Template_PE_Request_SendMail", request);
-                //            emailConfig.To = new List<string> { request.PMEmail };
-                //            emailConfig.Body = template;
+                    foreach (var request in listPERequesData)
+                    {
+                        if (!string.IsNullOrEmpty(request.PMEmail))
+                        {
+                            // Render template for the current PM
+                            string template = RenderRazorViewtoString(this, "Template_PE_Request_SendMail", request);
+                            emailConfig.To = new List<string> { request.PMEmail };
+                            emailConfig.Body = template;
 
-                //            (new MailService()).SendMail(emailConfig);
-                //        }
-                //    }
+                            (new MailService()).SendMail(emailConfig);
+                        }
+                    }
 
-                //    List<QCnotifyPESubmit> listQCnotifyPESubmitData = _FormGroupService.GetListQCnotifyPESubmitlData(FormatExtension.Nulltoint(model.FormID) , FormatExtension.ConvertStringToGuid(model.UnitID), FormatExtension.ConvertStringToGuid(model.ProjectID));
+                    List<QCnotifyPESubmit> listQCnotifyPESubmitData = _FormGroupService.GetListQCnotifyPESubmitlData(FormatExtension.Nulltoint(model.FormID), FormatExtension.ConvertStringToGuid(model.UnitID), FormatExtension.ConvertStringToGuid(model.ProjectID));
 
-                //    foreach (var request in listQCnotifyPESubmitData)
-                //    {
-                //        if (!string.IsNullOrEmpty(request.Email))
-                //        {
-                //            // Render template for the current PM
-                //            string template = RenderRazorViewtoString(this, "Template_QC_Notify_PESubmit", request);
-                //            emailConfig.To = new List<string> { request.Email };
-                //            emailConfig.Body = template;
+                    foreach (var request in listQCnotifyPESubmitData)
+                    {
+                        if (!string.IsNullOrEmpty(request.Email))
+                        {
+                            // Render template for the current PM
+                            string template = RenderRazorViewtoString(this, "Template_QC_Notify_PESubmit", request);
+                            emailConfig.To = new List<string> { request.Email };
+                            emailConfig.Body = template;
 
-                //            (new MailService()).SendMail(emailConfig);
-                //        }
-                //    }
+                            (new MailService()).SendMail(emailConfig);
+                        }
+                    }
 
-                //    return Ok(new { success = true, message = model.FormGrade });
-                //}
+                    return Ok(new { success = true, message = model.FormGrade });
+                }
                 return Ok(new { success = true, message = model.FormGrade });
             }
             catch (Exception ex)

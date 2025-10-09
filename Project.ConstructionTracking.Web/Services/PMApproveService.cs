@@ -78,5 +78,11 @@ namespace Project.ConstructionTracking.Web.Services
             var cntQCSync = _IPMApprovelistRepo.CheckQCSync(UnitID);
             return cntQCSync;
         }
+
+        public AdminRespond GetAdminRespond(Guid unitFormId)
+        {
+            var Result = _IPMApprovelistRepo.GetAdminRespond(unitFormId);
+            return Result;
+        }
     }
 }

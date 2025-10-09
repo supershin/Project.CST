@@ -125,9 +125,38 @@ namespace Project.ConstructionTracking.Web.Controllers
                             (new MailService()).SendMail(emailConfig);
                         }
                     }
+                    int? statusToUpdate = model.ListPCIC != null && model.ListPCIC.Any(pc => pc.StatusID == 9 && pc.PC_FlagActive != 0) ? 9 : 8;
+                    int? statusForm = (statusToUpdate == 8) ? 7 : 8;
+                    if (statusForm == 7)
+                    {
+                        AdminRespond listPJMRequesData = _PJMApproveService.GetAdminPJMRespond(model.UnitFormID.AsGuid());
 
+                        var adminEmailConfig = new EmailModel 
+                        {
+                            Host = _config["Email:HOST"],
+                            From = _config["Email:FROM"],
+                            Sender = _config["Email:SENDER"],
+                            Username = _config["Email:USER_NAME"],
+                            Password = _config["Email:PASSWORD"],
+                            PORT = Convert.ToInt32(_config["Email:PORT"]),
+                            Subject = _config["Email:Subject:HEADER_TEXT"]
+                        };
+
+                        if (listPJMRequesData.ListSendEmailAdmin != null)
+                        {
+                            foreach (var request in listPJMRequesData.ListSendEmailAdmin)
+                            {
+                                if (!string.IsNullOrEmpty(request.AdminEmail))
+                                {
+                                    string templateAdmin = RenderRazorViewtoString(this, "Template_Noti_Admin_Respond_With_Pass_Condition_SendMail", listPJMRequesData);
+                                    adminEmailConfig.To = new List<string> { request.AdminEmail };
+                                    adminEmailConfig.Body = templateAdmin;
+                                    (new MailService()).SendMail(adminEmailConfig);
+                                }
+                            }
+                        }
+                    }
                 }
-
 
                 return Ok(new { success = true, pdfPath = returnUrlDoc });
             }

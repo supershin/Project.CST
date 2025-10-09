@@ -10,5 +10,6 @@ namespace Project.ConstructionTracking.Web.Services
         List<PJMApproveModel.GetImageUnlock> GetImageUnlock(PJMApproveModel.GetImageUnlock filterData);
         List<PJMRespondModel> GetPJMRespondSendEmailData(Guid unitFormId);
         string SaveOrUpdateUnitFormAction(PJMApproveModel.PJMApproveIU model);
+        public AdminRespond GetAdminPJMRespond(Guid unitFormId);
     }
 }

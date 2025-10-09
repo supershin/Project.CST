@@ -1,0 +1,156 @@
+﻿@model Project.ConstructionTracking.Web.Models.SendMail.AdminRespond
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .email-header {
+            background-color: #1d0e71;
+            color: white;
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .email-body {
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+            .email-body p {
+                margin: 0 0 10px;
+            }
+
+        .email-footer {
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            color: #777;
+        }
+
+            .email-footer a {
+                color: #4caf50;
+                text-decoration: none;
+            }
+
+        .button {
+            display: inline-block;
+            background-color: #4caf50;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .statusInfo {
+            background-color: #4caf50;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .remark {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            color: #2e7d32;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .pcdetail {
+            background-color: #f9f9f9;
+            padding: 1px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h1>Construction Quality Tracking</h1>
+        </div>
+        <div class="email-body">
+            <div class="statusInfo">
+                <h2>แจ้งเตือนถึง Admin</h2>
+                <p>เพื่อดำเนินการเตรียมตั้งเบิกจ่ายงวดงาน</p>
+            </div>
+
+            <p>เรียน (Admin)</p>
+            <p>ระบบขอแจ้งให้ทราบว่ามีงวดงานที่ผ่านการตรวจสอบเรียบร้อยแล้ว โดยมีรายละเอียดดังนี้:</p>
+
+            <ul>
+                <li><strong>ชื่องวดงาน:</strong> @Model.FormName</li>
+                <li><strong>PM ตรวจ:</strong> @Model.PMFullname</li>
+                <li><strong>วันที่ตรวจ:</strong> @Model.ActionDate</li>
+                <li><strong>โครงการ:</strong> @Model.ProjectName</li>
+                <li><strong>เลขที่แปลง:</strong> @Model.UnitCode</li>
+            </ul>
+
+            @if (!string.IsNullOrEmpty(Model.PMRemark))
+            {
+                <div class="remark">
+                    <strong>หมายเหตุจาก PM:</strong> @Model.PMRemark
+                </div>
+            }
+
+            @if (Model.ListAdminRespondPassCondition.Count > 0)
+            {
+                <p>รายการงานที่ผ่านแบบมีเงื่อนไข:</p>
+                foreach (var item in Model.ListAdminRespondPassCondition)
+                {
+                    <div class="pcdetail">
+                        <ul>
+                            <li><strong>ชื่องาน:</strong> @item.FormGroupName</li>
+                            <li><strong>สถานะ:</strong> @item.PCStatusName</li>
+                            <li><strong>เหตุผล(PE):</strong> @item.RemarkPEPassCodition</li>
+                            <li><strong>เหตุผล(PM):</strong> @item.RemarkPMPassCodition</li>
+                        </ul>
+                    </div>
+                }
+            }
+
+            <p>
+                กรุณาเข้าสู่ระบบ <a href="@ViewBag.ConstructionQualityTrackingUrl">Construction Quality Tracking</a>
+                <div style="background-color:#ffebee; color:#d32f2f; padding:10px; border-radius:5px; margin-top:10px; font-weight:bold;">
+                    สามารถดำเนินการ sync ข้อมูลเอกสารไปที่ ระบบ online billing ได้หลังจากที่มีการอนุมัติ PO/GR บน SAP เรียบร้อยแล้ว
+                </div>
+            </p>
+        </div>
+
+        <div class="email-footer">
+            <p>Best Regards,</p>
+            <p>Construction Quality Tracking System</p>
+        </div>
+    </div>
+</body>
+</html>

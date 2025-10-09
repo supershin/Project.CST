@@ -191,6 +191,36 @@ namespace Project.ConstructionTracking.Web.Controllers
                             }
                         }
                     }
+     
+                    if (model.UnitFormStatus == SystemConstant.Unit_Form_Status.PM_Approve)
+                    {
+                        AdminRespond listPMRequesData = _PMApproveService.GetAdminRespond(model.UnitFormID.AsGuid());
+
+                        var emailConfig = new EmailModel
+                        {
+                            Host = _config["Email:HOST"],
+                            From = _config["Email:FROM"],
+                            Sender = _config["Email:SENDER"],
+                            Username = _config["Email:USER_NAME"],
+                            Password = _config["Email:PASSWORD"],
+                            PORT = Convert.ToInt32(_config["Email:PORT"]),
+                            Subject = _config["Email:Subject:HEADER_TEXT"]
+                        };
+
+                        if (listPMRequesData.ListSendEmailAdmin != null)
+                        {
+                            foreach (var request in listPMRequesData.ListSendEmailAdmin)
+                            {
+                                if (!string.IsNullOrEmpty(request.AdminEmail))
+                                {
+                                    string templateAdmin = RenderRazorViewtoString(this, "Template_Noti_Admin_Respond_SendMail", listPMRequesData);
+                                    emailConfig.To = new List<string> { request.AdminEmail };
+                                    emailConfig.Body = templateAdmin;
+                                    (new MailService()).SendMail(emailConfig);
+                                }
+                            }
+                        }
+                    }
 
                     List<QCnotifyPMSubmit> listQCnotifyPMSubmitData = _PMApproveService.GetListQCnotifyPMSubmitlData(FormatExtension.Nulltoint(model.FormID), FormatExtension.ConvertStringToGuid(model.UnitID), FormatExtension.ConvertStringToGuid(model.ProjectID));
 

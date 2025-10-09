@@ -431,7 +431,121 @@ namespace Project.ConstructionTracking.Web.Repositories
             }
         }
 
+        public AdminRespond GetAdminPJMRespond(Guid unitFormId)
+        {
+            int ROLE_PE = (int)SystemConstant.UserRole.PE;
+            int ROLE_PM = (int)SystemConstant.UserRole.PM;
+            int ROLE_PJM = (int)SystemConstant.UserRole.PJM;
+            int ROLE_ADMIN = (int)SystemConstant.UserRole.ADMIN;
 
+            // ===== 1) ดึงรายละเอียด UnitForm =====
+            var uf = (from t1 in _context.tr_UnitForm
+                      join t2 in _context.tr_UnitFormAction
+                          on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)ROLE_PE }
+                          equals new { t2.UnitFormID, t2.RoleID } into t2Group
+                      from t2 in t2Group.DefaultIfEmpty()
+
+                      join t3 in _context.tm_User on t2.UpdateBy equals t3.ID into t3Group
+                      from t3 in t3Group.DefaultIfEmpty()
+
+                      join t4 in _context.tr_UnitFormAction
+                          on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)ROLE_PM }
+                          equals new { t4.UnitFormID, t4.RoleID } into t4Group
+                      from t4 in t4Group.DefaultIfEmpty()
+
+                      join t4Pjm in _context.tr_UnitFormAction
+                          on new { UnitFormID = (Guid?)t1.ID, RoleID = (int?)ROLE_PJM }
+                          equals new { t4Pjm.UnitFormID, t4Pjm.RoleID } into t4PjmGroup
+                      from t4Pjm in t4PjmGroup.DefaultIfEmpty()
+
+                      join t5 in _context.tm_User on t4.UpdateBy equals t5.ID into t5Group
+                      from t5 in t5Group.DefaultIfEmpty()
+
+                      join t5Pjm in _context.tm_User on t4Pjm.UpdateBy equals t5Pjm.ID into t5PjmGroup
+                      from t5Pjm in t5Group.DefaultIfEmpty()
+
+                      join t6 in _context.tm_UnitFormStatus on t1.StatusID equals t6.ID into t6Group
+                      from t6 in t6Group.DefaultIfEmpty()
+
+                      join t7 in _context.tm_Project on t1.ProjectID equals t7.ProjectID into t7Group
+                      from t7 in t7Group.DefaultIfEmpty()
+
+                      join t8 in _context.tm_Unit on t1.UnitID equals t8.UnitID into t8Group
+                      from t8 in t8Group.DefaultIfEmpty()
+
+                      join t9 in _context.tm_Form on t1.FormID equals t9.ID into t9Group
+                      from t9 in t9Group.DefaultIfEmpty()
+
+                      where t1.ID == unitFormId
+                      select new
+                      {
+                          ProjectID = t1.ProjectID,
+                          StatusName = t6 != null ? t6.Name : "",
+                          StatusID = t1.StatusID,
+                          FormName = t9 != null ? (t9.Name ?? "") + " " + (t9.Description ?? "") : "",
+                          PMFullname = t5 != null ? (t5.FirstName ?? "") + " " + (t5.LastName ?? "") : "",
+                          ActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(t4.ActionDate),
+                          PJMFullname = t5Pjm != null ? (t5Pjm.FirstName ?? "") + " " + (t5Pjm.LastName ?? "") : "",
+                          PJMActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(t4Pjm.ActionDate),
+                          ProjectName = t7 != null ? t7.ProjectName : "",
+                          UnitCode = t8 != null ? t8.UnitCode : "",
+                          PMRemark = t4 != null ? t4.Remark : "",
+                          PJMRemark = t4 != null ? t4Pjm.Remark : ""
+                      }).FirstOrDefault();
+
+            if (uf == null) return null;
+
+            var response = new AdminRespond
+            {
+                StatusName = uf.StatusName,
+                StatusID = uf.StatusID,
+                FormName = uf.FormName,
+                PMFullname = uf.PMFullname,
+                ActionDate = uf.ActionDate,
+                PJMFullName = uf.PJMFullname,
+                PJMActionDate = uf.PJMActionDate,
+                ProjectName = uf.ProjectName,
+                UnitCode = uf.UnitCode,
+                PMRemark = uf.PMRemark,
+                PJMRemark = uf.PJMRemark
+            };
+
+            // ===== 2) ดึงรายชื่อ Admin ตาม Project =====
+            var adminList = (from u in _context.tm_User
+                             join pp in _context.tr_ProjectPermission on u.ID equals pp.UserID
+                             where u.RoleID == ROLE_ADMIN
+                                   && u.FlagActive == true
+                                   && pp.ProjectID == uf.ProjectID
+                             select new ListSendEmailAdmin
+                             {
+                                 AdminFullname = (u.FirstName ?? "") + " " + (u.LastName ?? ""),
+                                 AdminEmail = u.Email ?? ""
+                                 //AdminEmail = "sittikron.p@assetwise.co.th"
+                             })
+                             .Distinct()
+                             .ToList();
+
+            response.ListSendEmailAdmin = adminList;
+
+            // ===== 3) ดึงรายการ Pass Condition สำหรับ Admin =====
+            var passConds = (from pc in _context.tr_UnitFormPassCondition
+                             join gn in _context.tm_FormGroup on pc.GroupID equals gn.ID into gnGroup
+                             from gn in gnGroup.DefaultIfEmpty()
+                             where pc.UnitFormID == unitFormId && pc.FlagActive == true
+                             select new AdminRespondPassConditionModel
+                             {
+                                 FormGroupName = gn != null ? gn.Name : "",
+                                 PCStatusID = pc.StatusID,
+                                 PCStatusName = null, // ใส่ชื่อได้ถ้ามีตารางสถานะ
+                                 RemarkPEPassCodition = pc.PE_Remark,
+                                 RemarkPMPassCodition = pc.PM_Remark,
+                                 RemarkPJMPassCodition = pc.PJM_Remark,
+                             }).ToList();
+
+            response.ListAdminRespondPassCondition = passConds;
+
+            return response;
+        }
     }
 }
 
