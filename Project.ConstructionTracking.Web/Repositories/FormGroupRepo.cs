@@ -228,7 +228,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                             where t1.ID == unitFormId
                             && t1.FlagActive == true 
                             && (t2 == null || t2.FlagActive == true)
-                            && (t3 == null || t3.RoleID == SystemConstant.UserRole.PM)
+                            && (t3 == null || (t3.FlagActive == true && t3.RoleID == SystemConstant.UserRole.PM))
                             select new PERequesModel
                             {
                                 PMFullName = t3 != null ? t3.FirstName + " " + t3.LastName : null,
