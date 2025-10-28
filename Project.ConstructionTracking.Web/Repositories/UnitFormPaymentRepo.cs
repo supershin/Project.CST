@@ -208,16 +208,23 @@ namespace Project.ConstructionTracking.Web.Repositories
                     }
 
 
-                    // 1) Call the GRVenderrportal API
+                    // 1) Call API
                     var apiResponse = _VenderrportalService.UploadFileAsync(request).GetAwaiter().GetResult();
 
                     // 2) Decide syncStatusID (31=success, 32=fail) based on API response
                     int syncStatusID;
+                    var msg = apiResponse?.message ?? string.Empty;
 
-                    if (apiResponse.status == 200)
+                    // Retrospective success keywords (Thai)
+                    bool isRetrospectiveSuccess =
+                        msg.Contains("ตั้งหนี้", StringComparison.Ordinal) ||
+                        msg.Contains("อนุมัติ", StringComparison.Ordinal);
+
+                    // Final decision:
+                    if ((apiResponse?.status == 200) || isRetrospectiveSuccess)
                     {
                         syncStatusID = 31; // success
-                    }                  
+                    }
                     else
                     {
                         syncStatusID = 32; // failure
@@ -235,7 +242,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         Remark = Model.Remark,
                         PercentPayment = Model.PercentPayment,
                         SyncStatusID = syncStatusID,
-                        SyncMessage = apiResponse?.message,
+                        SyncMessage = msg,                       // keep original message
                         FlagActive = true,
                         CreateBy = Model.UserID,
                         CreateDate = DateTime.Now,
