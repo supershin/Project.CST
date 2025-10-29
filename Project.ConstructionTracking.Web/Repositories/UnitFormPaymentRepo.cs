@@ -397,15 +397,19 @@ namespace Project.ConstructionTracking.Web.Repositories
                         var apiResponse = _VenderrportalService.UploadFileAsync(request).GetAwaiter().GetResult();
 
                         int syncStatusID;
+                        var msg = apiResponse?.message ?? string.Empty;
 
-                        if (apiResponse.status == 200)
+                        bool isRetrospectiveSuccess =
+                            msg.Contains("ตั้งหนี้", StringComparison.Ordinal) ||
+                            msg.Contains("อนุมัติ", StringComparison.Ordinal);
+
+                        if ((apiResponse?.status == 200) || isRetrospectiveSuccess)
                         {
-                            syncStatusID = 31; // success
+                            syncStatusID = 31;
                         }
                         else
                         {
-                            syncStatusID = 32; // failure
-
+                            syncStatusID = 32;
                         }
 
                         tbUnitFormPayment.SyncStatusID = syncStatusID;
