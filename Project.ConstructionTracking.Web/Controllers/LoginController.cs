@@ -61,21 +61,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                     throw new Exception("ไม่มีสิทธิ์ในการจัดการโครงการ"); // Custom exception message
                 }
 
-                // If login is successful, store user details in cookies
-                CookieOptions option = new CookieOptions
-                {
-                    Expires = DateTime.Now.AddDays(1) // Set the expiration date for the cookies
-                };
-
-                Response.Cookies.Append("CST.ID", userProfile.ID.ToString(), option);
-                Response.Cookies.Append("CST.UserName", userProfile.Username, option);
-                Response.Cookies.Append("CST.Name", userProfile.Name, option);
-                Response.Cookies.Append("CST.Role", userProfile.RoleID.ToString(), option);
-                Response.Cookies.Append("CST.Email", FormatExtension.NullToString(userProfile.Email), option);
-
-                // Create a session ID and store it in cookies
-                var sessionId = Guid.NewGuid().ToString();
-                Response.Cookies.Append("CST.SessionID", sessionId, option);
+                SetUserCookies(userProfile);
 
                 // Retrieve the user's role from cookies
                 var userRole = Request.Cookies["CST.Role"];
@@ -140,21 +126,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                     throw new Exception("ไม่มีสิทธิ์ในการจัดการโครงการ"); // Custom exception message
                 }
 
-                // If login is successful, store user details in cookies
-                CookieOptions option = new CookieOptions
-                {
-                    Expires = DateTime.Now.AddDays(1) // Set the expiration date for the cookies
-                };
-
-                Response.Cookies.Append("CST.ID", userProfile.ID.ToString(), option);
-                Response.Cookies.Append("CST.UserName", userProfile.Username, option);
-                Response.Cookies.Append("CST.Name", userProfile.Name, option);
-                Response.Cookies.Append("CST.Role", userProfile.RoleID.ToString(), option);
-                Response.Cookies.Append("CST.Email", FormatExtension.NullToString(userProfile.Email), option);
-
-                // Create a session ID and store it in cookies
-                var sessionId = Guid.NewGuid().ToString();
-                Response.Cookies.Append("CST.SessionID", sessionId, option);
+                SetUserCookies(userProfile);
 
                 // Retrieve the user's role from cookies
                 var userRole = Request.Cookies["CST.Role"];
@@ -185,6 +157,53 @@ namespace Project.ConstructionTracking.Web.Controllers
                 TempData["ErrorMessage"] = ex.Message;
                 return View("Index");                
             }           
+        }
+
+        public IActionResult Logout()
+        {
+            ClearUserCookies();
+            return RedirectToAction("Index", "Login");
+        }
+
+        private void SetUserCookies(LoginResp userProfile)
+        {
+            ClearUserCookies();
+
+            var option = CreateAuthCookieOptions();
+            Response.Cookies.Append("CST.ID", userProfile.ID.ToString(), option);
+            Response.Cookies.Append("CST.UserName", userProfile.Username, option);
+            Response.Cookies.Append("CST.Name", userProfile.Name, option);
+            Response.Cookies.Append("CST.Role", userProfile.RoleID.ToString(), option);
+            Response.Cookies.Append("CST.Email", FormatExtension.NullToString(userProfile.Email), option);
+            Response.Cookies.Append("CST.SessionID", Guid.NewGuid().ToString(), option);
+        }
+
+        private CookieOptions CreateAuthCookieOptions()
+        {
+            return new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddDays(1),
+                HttpOnly = true,
+                IsEssential = true,
+                Path = "/",
+                SameSite = SameSiteMode.Lax,
+                Secure = Request.IsHttps
+            };
+        }
+
+        private void ClearUserCookies()
+        {
+            var deleteOptions = new CookieOptions
+            {
+                Path = "/",
+                SameSite = SameSiteMode.Lax,
+                Secure = Request.IsHttps
+            };
+
+            foreach (var cookieName in new[] { "CST.ID", "CST.UserName", "CST.Name", "CST.Role", "CST.Email", "CST.SessionID" })
+            {
+                Response.Cookies.Delete(cookieName, deleteOptions);
+            }
         }
 
 

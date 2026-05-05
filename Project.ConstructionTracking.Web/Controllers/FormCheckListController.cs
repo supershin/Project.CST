@@ -28,6 +28,10 @@ namespace Project.ConstructionTracking.Web.Controllers
             var filterunitData = new FormCheckListModel.Form_getUnitFormData { UnitID = unitId , FormID = FormID, GroupID = GroupID };
 
             FormCheckListModel.Form_getUnitFormData UnitFormData = _FormChecklistService.GetUnitFormData(filterunitData);
+            if (UnitFormData == null)
+            {
+                return NotFound("ไม่พบข้อมูลรายการตรวจของยูนิตนี้");
+            }
 
 
             ViewBag.ProjectId = UnitFormData.ProjectID;
@@ -61,7 +65,7 @@ namespace Project.ConstructionTracking.Web.Controllers
             {
                 var ddlModel = new GetDDL { Act = "UserName", ValueGuid = listChecklist[0].UpDateby };
                 List<GetDDL> ListVender = _getDDLService.GetDDLList(ddlModel);
-                ViewBag.StatusUpdateBy = ListVender[0].Text;
+                ViewBag.StatusUpdateBy = ListVender?.FirstOrDefault()?.Text ?? string.Empty;
             }
             else
             {

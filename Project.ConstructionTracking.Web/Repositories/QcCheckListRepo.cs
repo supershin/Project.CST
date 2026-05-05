@@ -60,6 +60,10 @@ namespace Project.ConstructionTracking.Web.Repositories
             if (model.Seq != null)
             {
                 var query = checkQcUnit.Where(o => o.qc.Seq == model.Seq).FirstOrDefault();
+                if (query == null)
+                {
+                    throw new Exception("ไม่พบรายการตรวจ QC");
+                }
 
                 // get value follow seq
                 resp = new QcCheckListResp()
@@ -93,7 +97,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         Seq = query.qc.Seq.GetValueOrDefault(),
 
                         QcStatusID = query.qc.QCStatusID.GetValueOrDefault(),
-                        QcActionType = action.ActionType,
+                        QcActionType = action?.ActionType,
                     };  
                 }
                 else

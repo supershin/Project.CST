@@ -46,6 +46,10 @@ namespace Project.ConstructionTracking.Web.Controllers
             var filterunitData = new FormCheckListModel.Form_getUnitFormData { UnitID = unitId, FormID = FormID};
 
             FormCheckListModel.Form_getUnitFormData UnitFormData = _FormChecklistService.GetUnitFormData(filterunitData);
+            if (UnitFormData == null)
+            {
+                return NotFound("ไม่พบข้อมูลฟอร์มของยูนิตนี้");
+            }
 
             ViewBag.ProjectId = UnitFormData.ProjectID;
             ViewBag.ProjectName = UnitFormData.ProjectName;
@@ -70,7 +74,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 ViewBag.FilePathPDF = FormGroupDetail?.FilePathPDF;
                 var Filter = new GetDDL { Act = "UserName", ValueGuid = FormGroupDetail.PE_ActionBy };
                 List<GetDDL> ListUser = _getDDLService.GetDDLList(Filter);
-                ViewBag.PEActionBy = ListUser[0].Text;
+                ViewBag.PEActionBy = ListUser?.FirstOrDefault()?.Text ?? string.Empty;
 
             }
 

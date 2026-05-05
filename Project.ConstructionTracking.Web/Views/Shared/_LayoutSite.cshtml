@@ -409,7 +409,7 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                             <a href="@($"{ViewBag.baseUrl}user/detail?param={Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(ViewBag.ID.ToString()))}")" class="dropdown-item">Profile</a>
-                            <a href="@ViewBag.BaseUrl" class="dropdown-item">Logout</a>
+                            <a asp-controller="Login" asp-action="Logout" class="dropdown-item">Logout</a>
                         </div>
                     </div>
                 </div>

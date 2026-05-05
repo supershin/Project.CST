@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using Project.ConstructionTracking.Web.Models;
 using System.Diagnostics;
 
@@ -26,6 +27,12 @@ namespace Project.ConstructionTracking.Web.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
+            var exception = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+            if (exception?.Error != null)
+            {
+                _logger.LogError(exception.Error, "Unhandled exception on path {Path}", exception.Path);
+            }
+
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }

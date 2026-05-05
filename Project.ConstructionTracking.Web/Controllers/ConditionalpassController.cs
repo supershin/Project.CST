@@ -2,7 +2,7 @@
 
 namespace Project.ConstructionTracking.Web.Controllers
 {
-    public class ConditionalpassController : Controller
+    public class ConditionalpassController : BaseController
     {
         public IActionResult Index()
         {

@@ -44,40 +44,41 @@ namespace Project.ConstructionTracking.Web.Controllers
             var model = new ApproveFormcheckModel { UnitID = unitId, FormID = formId };
             var resultModel = _PMApproveService.GetApproveFormcheck(model);
             ViewBag.comeFrom = comeFrom;
-
-            if (resultModel != null)
+            if (resultModel == null)
             {
-                // Set ViewBag properties based on the result
-                ViewBag.PCAll = resultModel.PCAllcount;
-                ViewBag.ProjectID = resultModel.ProjectID;
-                ViewBag.ProjectName = resultModel.ProjectName;
-                ViewBag.UnitID = resultModel.UnitID;
-                ViewBag.UnitFormID = resultModel.UnitFormID;
-                ViewBag.UnitCode = resultModel.UnitCode;
-                ViewBag.FormID = resultModel.FormID;
-                ViewBag.FormName = resultModel.FormName;             
-                ViewBag.UnitFormStatusID = resultModel.UnitFormStatusID;
-                ViewBag.Actiondate = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.Actiondate);
-                ViewBag.ActiondatePm = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.ActiondatePm);
-                ViewBag.ActiondatePJm = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.ActiondatePJm);
-                ViewBag.Grade = resultModel.Grade;
-                ViewBag.LockStatusID = resultModel.PM_getListgroup?.Any(l => l.LockStatusID != null) == true ? "NotNull" : null;
-                ViewBag.VenderName = resultModel.VenderName;
-                ViewBag.CompanyName = resultModel.CompanyName;
-                ViewBag.PM_Remarkaction = resultModel.PM_Remarkaction;
-                ViewBag.PE_Actiontype = resultModel.PE_Actiontype;
-                ViewBag.PM_Actiontype = resultModel.PM_Actiontype;
-                ViewBag.PJM_Remarkaction = resultModel.PJM_Remarkaction;
-                ViewBag.PJM_Actiontype = resultModel.PJM_Actiontype;
-                ViewBag.FilePathPDF = resultModel.FilePathPDF;
-                var Filter = new GetDDL { Act = "UserName", ValueGuid = resultModel.ActionByPE };
-                List<GetDDL> ListUser = _getDDLService.GetDDLList(Filter);
-                ViewBag.PEActionBy = ListUser[0].Text;
-
-                var FindvenderSign = new GetDDL { Act = "GetVenderSign", GuID = resultModel.UnitFormID , ID = resultModel.FormID};
-                List<GetDDL> venderSign = _getDDLService.GetDDLList(FindvenderSign);
-                ViewBag.PathvenderSign = (venderSign != null && venderSign.Count > 0) ? venderSign[0].Text : null;
+                return NotFound("ไม่พบข้อมูลอนุมัติฟอร์มนี้");
             }
+
+            // Set ViewBag properties based on the result
+            ViewBag.PCAll = resultModel.PCAllcount;
+            ViewBag.ProjectID = resultModel.ProjectID;
+            ViewBag.ProjectName = resultModel.ProjectName;
+            ViewBag.UnitID = resultModel.UnitID;
+            ViewBag.UnitFormID = resultModel.UnitFormID;
+            ViewBag.UnitCode = resultModel.UnitCode;
+            ViewBag.FormID = resultModel.FormID;
+            ViewBag.FormName = resultModel.FormName;             
+            ViewBag.UnitFormStatusID = resultModel.UnitFormStatusID;
+            ViewBag.Actiondate = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.Actiondate);
+            ViewBag.ActiondatePm = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.ActiondatePm);
+            ViewBag.ActiondatePJm = FormatExtension.FormatDateToDayMonthNameYearTime(resultModel.ActiondatePJm);
+            ViewBag.Grade = resultModel.Grade;
+            ViewBag.LockStatusID = resultModel.PM_getListgroup?.Any(l => l.LockStatusID != null) == true ? "NotNull" : null;
+            ViewBag.VenderName = resultModel.VenderName;
+            ViewBag.CompanyName = resultModel.CompanyName;
+            ViewBag.PM_Remarkaction = resultModel.PM_Remarkaction;
+            ViewBag.PE_Actiontype = resultModel.PE_Actiontype;
+            ViewBag.PM_Actiontype = resultModel.PM_Actiontype;
+            ViewBag.PJM_Remarkaction = resultModel.PJM_Remarkaction;
+            ViewBag.PJM_Actiontype = resultModel.PJM_Actiontype;
+            ViewBag.FilePathPDF = resultModel.FilePathPDF;
+            var Filter = new GetDDL { Act = "UserName", ValueGuid = resultModel.ActionByPE };
+            List<GetDDL> ListUser = _getDDLService.GetDDLList(Filter);
+            ViewBag.PEActionBy = ListUser?.FirstOrDefault()?.Text ?? string.Empty;
+
+            var FindvenderSign = new GetDDL { Act = "GetVenderSign", GuID = resultModel.UnitFormID , ID = resultModel.FormID};
+            List<GetDDL> venderSign = _getDDLService.GetDDLList(FindvenderSign);
+            ViewBag.PathvenderSign = (venderSign != null && venderSign.Count > 0) ? venderSign[0].Text : null;
             var listpass = resultModel?.PM_getListgroup;
             if (listpass != null)
             {

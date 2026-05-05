@@ -14,8 +14,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+var constructionTrackingConnectionString = builder.Configuration.GetConnectionString("ContructionTrackingStrings");
+if (string.IsNullOrWhiteSpace(constructionTrackingConnectionString))
+{
+    throw new InvalidOperationException("Missing connection string: ConnectionStrings:ContructionTrackingStrings");
+}
+
 builder.Services.AddDbContext<ContructionTrackingDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("ContructionTrackingStrings")));
+options.UseSqlServer(constructionTrackingConnectionString));
 
 // Add Config appsetting.json
 builder.Services.AddOptions();
@@ -122,10 +128,12 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+var uploadPath = Path.Combine(builder.Environment.ContentRootPath, "Upload");
+Directory.CreateDirectory(uploadPath);
+
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(
-           Path.Combine(builder.Environment.ContentRootPath, "Upload")),
+    FileProvider = new PhysicalFileProvider(uploadPath),
     RequestPath = "/Upload"
 });
 

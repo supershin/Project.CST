@@ -21,7 +21,7 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             var ddlModel = new GetDDL { Act = "ProjectAdmin" , GuID = FormatExtension.ConvertStringToGuid(ProjectID) };
             List<GetDDL> ListProject = _getDDLService.GetDDLList(ddlModel);
-            ViewBag.ProjectName = ListProject?[0]?.Text ?? "";
+            ViewBag.ProjectName = ListProject?.FirstOrDefault()?.Text ?? "";
 
             var en = new UnitFormStatusModel
             {

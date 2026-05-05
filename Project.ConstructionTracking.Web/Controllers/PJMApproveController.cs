@@ -35,27 +35,28 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             var filterData = new PJMApproveModel.GetlistChecklistPC { UnitFormID = UnitFormID };
             List<PJMApproveModel.GetlistChecklistPC> ListChecklistPJMApprove = _PJMApproveService.GetChecklistPJMApprove(filterData);
+            if (ListChecklistPJMApprove == null || ListChecklistPJMApprove.Count == 0)
+            {
+                return NotFound("ไม่พบข้อมูลอนุมัติ PJM");
+            }
 
             int? _FormID = 0;
 
-            if (ListChecklistPJMApprove != null && ListChecklistPJMApprove.Count > 0)
-            {
-                var listPJMApprove = ListChecklistPJMApprove[0]; // Assuming there is only one row in listStatus
-                ViewBag.ProjectID = listPJMApprove.ProjectID;
-                ViewBag.ProjectName = listPJMApprove.ProjectName;
-                ViewBag.UnitID = listPJMApprove.UnitID;
-                ViewBag.UnitCode = listPJMApprove.UnitCode;
-                ViewBag.UnitFormID = listPJMApprove.UnitFormID;
-                ViewBag.UnitFormStatus = listPJMApprove?.UnitFormStatus?.ToString() ?? "";
-                ViewBag.FormID = listPJMApprove?.FormID;
-                ViewBag.PJM_ActionBy = listPJMApprove?.PJM_ActionBy;
-                ViewBag.FormName = listPJMApprove?.FormName;
-                ViewBag.PJM_Actiontype = listPJMApprove?.PJM_Actiontype ?? string.Empty;
-                ViewBag.PJM_ActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(listPJMApprove?.PJM_ActionDate);
-                ViewBag.PJM_StatusID = listPJMApprove?.PJM_StatusID ?? (int?)null;
-                ViewBag.PJMUnitFormRemark = listPJMApprove?.PJMUnitFormRemark ?? string.Empty;
-                _FormID = listPJMApprove?.FormID;
-            }
+            var listPJMApprove = ListChecklistPJMApprove[0]; // Assuming there is only one row in listStatus
+            ViewBag.ProjectID = listPJMApprove.ProjectID;
+            ViewBag.ProjectName = listPJMApprove.ProjectName;
+            ViewBag.UnitID = listPJMApprove.UnitID;
+            ViewBag.UnitCode = listPJMApprove.UnitCode;
+            ViewBag.UnitFormID = listPJMApprove.UnitFormID;
+            ViewBag.UnitFormStatus = listPJMApprove?.UnitFormStatus?.ToString() ?? "";
+            ViewBag.FormID = listPJMApprove?.FormID;
+            ViewBag.PJM_ActionBy = listPJMApprove?.PJM_ActionBy;
+            ViewBag.FormName = listPJMApprove?.FormName;
+            ViewBag.PJM_Actiontype = listPJMApprove?.PJM_Actiontype ?? string.Empty;
+            ViewBag.PJM_ActionDate = FormatExtension.FormatDateToDayMonthNameYearTime(listPJMApprove?.PJM_ActionDate);
+            ViewBag.PJM_StatusID = listPJMApprove?.PJM_StatusID ?? (int?)null;
+            ViewBag.PJMUnitFormRemark = listPJMApprove?.PJMUnitFormRemark ?? string.Empty;
+            _FormID = listPJMApprove?.FormID;
             ViewBag.ListChecklistPJMApprove = ListChecklistPJMApprove;
 
 

@@ -43,6 +43,11 @@ namespace Project.ConstructionTracking.Web.Controllers
 
         public IActionResult CheckListDetail(Guid? id, int qcchecklistid, int seq, int qctypeid, Guid projectid, Guid unitid, bool? iscreate)
         {
+            if (projectid == Guid.Empty || unitid == Guid.Empty || qcchecklistid <= 0 || qctypeid <= 0 || seq <= 0)
+            {
+                return BadRequest("ข้อมูลรายการตรวจ QC ไม่ครบถ้วน");
+            }
+
             DuplicateModelResp resp = new DuplicateModelResp();
             if (iscreate == true && id != Guid.Empty )
             {
@@ -70,6 +75,11 @@ namespace Project.ConstructionTracking.Web.Controllers
             };
 
             QcCheckListDetailResp dataModel = _qcCheckListService.GetQcCheckListDetail(model);
+            if (dataModel?.MasterQcCheckListDetail?.CheckListDetails == null)
+            {
+                return NotFound("ไม่พบข้อมูลรายการตรวจ QC");
+            }
+
             ViewBag.QcID = dataModel.QcCheckList != null ? dataModel.QcCheckList.ID : Guid.Empty;
 
             var filterData = new UnitFormDetailModel { ID = id, ProjectID = projectid, UnitID = unitid , ChecklistID = qcchecklistid };
@@ -168,14 +178,19 @@ namespace Project.ConstructionTracking.Web.Controllers
                 {
                     var filterModel = new GetDDL { Act = "GetdataQCUnitCheckList", GuID = qcID};
                     List<GetDDL> DataQCUnitChecklist = _getDDLService.GetDDLList(filterModel);
+                    var checklist = DataQCUnitChecklist?.FirstOrDefault();
+                    if (checklist == null)
+                    {
+                        return BadRequest(new { success = false, message = "Image deleted, but checklist data was not found." });
+                    }
 
                     return Ok(new { success = true
                                   , message = "Image deleted successfully."
-                                  , qcchecklistid = DataQCUnitChecklist[0].Value
-                                  , seq = DataQCUnitChecklist[0].Value2
-                                  , qctypeid = DataQCUnitChecklist[0].Value3
-                                  , projectid = DataQCUnitChecklist[0].ValueGuid
-                                  , unitid = DataQCUnitChecklist[0].ValueGuid2
+                                  , qcchecklistid = checklist.Value
+                                  , seq = checklist.Value2
+                                  , qctypeid = checklist.Value3
+                                  , projectid = checklist.ValueGuid
+                                  , unitid = checklist.ValueGuid2
                     });
                 }
                 else

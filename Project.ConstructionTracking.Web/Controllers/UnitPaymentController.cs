@@ -252,7 +252,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                     var Filters = new GetDDL { Act = "GetUnitFormPayment", GuID = Model.ID };
                     List<GetDDL> CheckPercentPayment = _getDDLService.GetDDLList(Filters);
 
-                    if (CheckPercentPayment.Count > 0)
+                    if (CheckPercentPayment?.Count > 0)
                     {
                         if (CheckPercentPayment[0].Value == SystemConstant.Ext.SyncFail)
                         {
@@ -300,7 +300,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                     var Filters = new GetDDL { Act = "GetUnitFormPayment", GuID = Model.ID };
                     List<GetDDL> CheckPercentPayment = _getDDLService.GetDDLList(Filters);
 
-                    if (CheckPercentPayment.Count > 0)
+                    if (CheckPercentPayment?.Count > 0)
                     {
                         if (CheckPercentPayment[0].Value == SystemConstant.Ext.SyncFail)
                         {
