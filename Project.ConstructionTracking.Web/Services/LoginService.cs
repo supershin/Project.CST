@@ -7,6 +7,7 @@ namespace Project.ConstructionTracking.Web.Services
 	public interface ILoginService
 	{
 		LoginResp VerifyLogin(string username, string password, string key);
+		LoginResp VerifyLoginByEmail(string email);
     }
 	public class LoginService : ILoginService
 	{
@@ -21,6 +22,12 @@ namespace Project.ConstructionTracking.Web.Services
 			var resp = _loginRepo.VerifyLogin(username, password, key);
 			return resp;
 		}
-	}
+
+        public LoginResp VerifyLoginByEmail(string email)
+        {
+            var resp = _loginRepo.VerifyLoginByEmail(email);
+            return resp;
+        }
+    }
 }
 
