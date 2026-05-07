@@ -262,16 +262,18 @@ namespace Project.ConstructionTracking.Web.Repositories
             var defectIDMapping = new Dictionary<int?, int?>();
 
             // Map the old DefectIDs to new ones
+            var existingDefectIDs = _context.tr_QC_UnitCheckList_Defect
+                                        .Where(d => d.QCUnitCheckListID == qcUnitCheckListID_where
+                                                 && d.FlagActive == true)
+                                        .Select(d => d.ID)
+                                        .ToList();
+
             for (int i = 0; i < defectsToInsert.Count; i++)
             {
-                var oldDefectID = _context.tr_QC_UnitCheckList_Defect
-                                 .Where(d => d.QCUnitCheckListID == qcUnitCheckListID_where
-                                          && d.FlagActive == true
-                                        //&& d.StatusID == 28
-                                        )
-                                 .Select(d => d.ID).Skip(i).First();
+                if (i >= existingDefectIDs.Count)
+                    break;
 
-                defectIDMapping[oldDefectID] = defectsToInsert[i].ID;
+                defectIDMapping[existingDefectIDs[i]] = defectsToInsert[i].ID;
             }
 
             return defectIDMapping;

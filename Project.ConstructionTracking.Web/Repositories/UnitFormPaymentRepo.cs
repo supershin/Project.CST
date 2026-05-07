@@ -413,7 +413,7 @@ namespace Project.ConstructionTracking.Web.Repositories
                         }
 
                         tbUnitFormPayment.SyncStatusID = syncStatusID;
-                        tbUnitFormPayment.SyncMessage = apiResponse.message;
+                        tbUnitFormPayment.SyncMessage = apiResponse?.message;
                         tbUnitFormPayment.UpdateDate = DateTime.Now;
                         tbUnitFormPayment.UpdateBy = Model.UserID;
                         _context.tr_UnitFormPayment.Update(tbUnitFormPayment);

@@ -78,10 +78,7 @@ namespace Project.ConstructionTracking.Web.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Data Source=10.0.10.8;Initial Catalog=ConstructionTracking;User ID=constructiontracking;Password=constructiontracking@2024;TrustServerCertificate=True;");
-            }
+            // Connection string is configured via DI in Program.cs from appsettings.json
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
