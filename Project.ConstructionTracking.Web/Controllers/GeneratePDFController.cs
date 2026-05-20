@@ -341,15 +341,23 @@ namespace Project.ConstructionTracking.Web.Controllers
                     page.Footer().Table(table2 =>
                     {
                         string pathVendor = Directory.GetCurrentDirectory() + "/wwwroot/" + dataGenerate.FooterData.VendorData.VendorImageSignUrl;
+                        if (!System.IO.File.Exists(pathVendor))
+                            throw new FileNotFoundException($"ไม่พบไฟล์ลายเซ็น Vendor: {pathVendor}");
                         var signVendor = new FileStream(pathVendor, FileMode.Open);
 
                         string pathPe = _hosting.ContentRootPath + "/" + dataGenerate.FooterData.PEData.PEImageSignUrl;
+                        if (!System.IO.File.Exists(pathPe))
+                            throw new FileNotFoundException($"ไม่พบไฟล์ลายเซ็น PE: {pathPe}");
                         var signPe = new FileStream(pathPe, FileMode.Open);
 
                         string pathPm = _hosting.ContentRootPath + "/" + dataGenerate.FooterData.PMData.PMImageSignUrl;
+                        if (!System.IO.File.Exists(pathPm))
+                            throw new FileNotFoundException($"ไม่พบไฟล์ลายเซ็น PM: {pathPm}");
                         var signPm = new FileStream(pathPm, FileMode.Open);
 
-                        var signQc = dataGenerate.FooterData.QCData?.QCImageSignUrl != "" ? new FileStream(_hosting.ContentRootPath + "/" + dataGenerate.FooterData.QCData.QCImageSignUrl, FileMode.Open) : null;
+                        string? qcSignUrl = dataGenerate.FooterData.QCData?.QCImageSignUrl;
+                        string? pathQc = !string.IsNullOrEmpty(qcSignUrl) ? (_hosting.ContentRootPath + "/" + qcSignUrl) : null;
+                        var signQc = (pathQc != null && System.IO.File.Exists(pathQc)) ? new FileStream(pathQc, FileMode.Open) : null;
 
                         // Set up columns for the table
                         table2.ColumnsDefinition(columns =>

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Project.ConstructionTracking.Web.Data;
@@ -11,11 +12,27 @@ using static Project.ConstructionTracking.Web.Infras.Repositories.WebAPIRestRepo
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Required for running behind nginx reverse proxy
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
+// Validate connection string at startup — fail fast with a clear message instead of 500 at runtime
+var connectionString = builder.Configuration.GetConnectionString("ContructionTrackingStrings");
+if (string.IsNullOrEmpty(connectionString))
+    throw new InvalidOperationException(
+        $"[Startup] ไม่พบ ConnectionStrings:ContructionTrackingStrings ใน appsettings.json\n" +
+        $"ASPNETCORE_ENVIRONMENT = '{builder.Environment.EnvironmentName}'\n" +
+        "กรุณาตรวจสอบว่า appsettings.json หรือ Environment Variable มีค่า ConnectionStrings ครบถ้วน");
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ContructionTrackingDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("ContructionTrackingStrings")));
+    options.UseSqlServer(connectionString));
 
 // Add Config appsetting.json
 builder.Services.AddOptions();
@@ -107,12 +124,18 @@ builder.Services.AddScoped<IProjectBluePrintRepo, ProjectBluePrintRepo>();
 
 var app = builder.Build();
 
+// Must be first — reads X-Forwarded-For / X-Forwarded-Proto from nginx
+app.UseForwardedHeaders();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else
+{
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
