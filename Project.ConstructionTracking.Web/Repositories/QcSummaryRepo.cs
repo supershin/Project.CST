@@ -24,40 +24,67 @@ namespace Project.ConstructionTracking.Web.Repositories
 			_context = context;
 		}
 
-		public dynamic GetQcSummaryList(Guid projectID, Guid unitID)
-		{
-			var query = (from u in _context.tm_Unit
-						 join pmf in _context.tr_ProjectModelForm on u.ModelTypeID equals pmf.ModelTypeID
-						 join ft in _context.tm_FormType on pmf.FormTypeID equals ft.ID
-						 join e in _context.tm_Ext on u.UnitStatusID equals e.ID
-						 where u.ProjectID == projectID && u.UnitID == unitID && u.FlagActive == true
-						 select new
-						 {
-							 ProjectID = u.ProjectID,
-							 UnitID = u.UnitID,
-							 ModelType = u.ModelTypeID,
-							 UnitCode = u.UnitCode,
-							 UnitStatus = u.UnitStatusID,
-							 UnitStatusDesc = e.Name,
-							 FormTypeID = ft.ID,
-							 FormTypeName = ft.Name,
-							 ListQcSummary = (from f in _context.tm_Form
-											  join fql in _context.tr_Form_QCCheckList on f.ID equals fql.FormID into tfqlGroup
-											  from fql in tfqlGroup.DefaultIfEmpty()
-											  join qcl in _context.tm_QC_CheckList on fql.CheckListID equals qcl.ID
-											  join e in _context.tm_Ext on qcl.QCTypeID equals e.ID
-											  where f.FormTypeID == ft.ID
-											  select new
-											  {
-												  QcCheckListID = qcl.ID,
-												  QcTypeID = qcl.QCTypeID,
-												  QcTypeName = e.Name,
-                                                  FormQcCheckList = fql.ID,
-                                                  FormID = fql.FormID,
-                                              }).ToList()
-						 }).FirstOrDefault();
+        public dynamic GetQcSummaryList(Guid projectID, Guid unitID)
+        {
+            var query =
+                (from u in _context.tm_Unit.AsNoTracking()
 
-			return query;
+                 join pmf in _context.tr_ProjectModelForm.AsNoTracking()
+                        .Where(x => x.FlagActive == true)
+                     on u.ModelTypeID equals pmf.ModelTypeID
+
+                 join ft in _context.tm_FormType.AsNoTracking()
+                        .Where(x => x.FlagActive == true)
+                     on pmf.FormTypeID equals ft.ID
+
+                 join extUnit in _context.tm_Ext.AsNoTracking()
+                     on u.UnitStatusID equals extUnit.ID
+
+                 where u.ProjectID == projectID
+                    && u.UnitID == unitID
+                    && u.FlagActive == true
+
+                 select new
+                 {
+                     ProjectID = u.ProjectID,
+                     UnitID = u.UnitID,
+                     ModelType = u.ModelTypeID,
+                     UnitCode = u.UnitCode,
+                     UnitStatus = u.UnitStatusID,
+                     UnitStatusDesc = extUnit.Name,
+                     FormTypeID = ft.ID,
+                     FormTypeName = ft.Name,
+
+                     ListQcSummary =
+                         (from f in _context.tm_Form.AsNoTracking()
+                                .Where(x => x.FlagActive == true)
+
+                          join fqlJoin in _context.tr_Form_QCCheckList.AsNoTracking()
+                                 .Where(x => x.FlagActive == true)
+                              on f.ID equals fqlJoin.FormID into tfqlGroup
+
+                          from fql in tfqlGroup.DefaultIfEmpty()
+
+                          join qcl in _context.tm_QC_CheckList.AsNoTracking()
+                                 .Where(x => x.FlagActive == true)
+                              on fql.CheckListID equals qcl.ID
+
+                          join extQcType in _context.tm_Ext.AsNoTracking()
+                              on qcl.QCTypeID equals extQcType.ID
+
+                          where f.FormTypeID == ft.ID
+
+                          select new
+                          {
+                              QcCheckListID = qcl.ID,
+                              QcTypeID = qcl.QCTypeID,
+                              QcTypeName = extQcType.Name,
+                              FormQcCheckList = fql.ID,
+                              FormID = fql.FormID
+                          }).ToList()
+                 }).FirstOrDefault();
+
+            return query;
         }
 
         public QcStatusListSummaryResp VerifyStatusQc(Guid projectID, Guid unitID, int checkListID)
