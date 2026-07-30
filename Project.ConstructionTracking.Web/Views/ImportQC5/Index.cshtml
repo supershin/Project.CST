@@ -63,7 +63,7 @@
 
         <div class="container-xl mb-2" id="summaryCards" style="display:none;">
             <div class="row">
-                <div class="col-6 col-sm-2 mb-2">
+                <div class="col-6 col-sm-3 mb-2">
                     <div class="card text-center">
                         <div class="card-body p-2">
                             <div class="summary-number" id="sumTotal">0</div>
@@ -71,31 +71,47 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-sm-2 mb-2">
+                <div class="col-6 col-sm-3 mb-2">
                     <div class="card text-center">
                         <div class="card-body p-2">
                             <div class="summary-number text-success" id="sumValid">0</div>
-                            <div class="text-muted">พร้อมนำเข้า</div>
+                            <div class="text-muted">พร้อมนำเข้า QC5</div>
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-sm-2 mb-2">
+                <div class="col-6 col-sm-3 mb-2">
                     <div class="card text-center">
                         <div class="card-body p-2">
-                            <div class="summary-number text-teal" id="sumImported">0</div>
-                            <div class="text-muted">นำเข้าสำเร็จ</div>
+                            <div class="summary-number text-azure" id="sumSyncOnly">0</div>
+                            <div class="text-muted">เพิ่มเฉพาะ QC Sync</div>
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-sm-2 mb-2">
+                <div class="col-6 col-sm-3 mb-2">
                     <div class="card text-center">
                         <div class="card-body p-2">
                             <div class="summary-number text-warning" id="sumDuplicate">0</div>
-                            <div class="text-muted">มีในระบบแล้ว</div>
+                            <div class="text-muted">มีข้อมูลครบแล้ว</div>
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-sm-2 mb-2">
+                <div class="col-6 col-sm-3 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body p-2">
+                            <div class="summary-number text-teal" id="sumImported">0</div>
+                            <div class="text-muted">นำเข้า QC5 สำเร็จ</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-3 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body p-2">
+                            <div class="summary-number text-teal" id="sumImportedSync">0</div>
+                            <div class="text-muted">บันทึก QC Sync สำเร็จ</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-3 mb-2">
                     <div class="card text-center">
                         <div class="card-body p-2">
                             <div class="summary-number text-secondary" id="sumNoDate">0</div>
@@ -103,7 +119,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-sm-2 mb-2">
+                <div class="col-6 col-sm-3 mb-2">
                     <div class="card text-center">
                         <div class="card-body p-2">
                             <div class="summary-number text-danger" id="sumError">0</div>
@@ -147,17 +163,21 @@
         if (navImportQC5) { navImportQC5.classList.add('active'); }
 
         var statusBadge = {
-            "valid":     { css: "bg-success",   text: "พร้อมนำเข้า" },
-            "imported":  { css: "bg-teal",      text: "นำเข้าสำเร็จ" },
-            "duplicate": { css: "bg-warning",   text: "มีในระบบแล้ว" },
-            "no_date":   { css: "bg-secondary", text: "ไม่มีวันที่" },
-            "error":     { css: "bg-danger",    text: "ผิดพลาด" }
+            "valid":         { css: "bg-success",   text: "พร้อมนำเข้า QC5" },
+            "sync_only":     { css: "bg-azure",     text: "เพิ่มเฉพาะ QC Sync" },
+            "imported":      { css: "bg-teal",      text: "นำเข้า QC5 สำเร็จ" },
+            "sync_imported": { css: "bg-teal",      text: "เพิ่ม QC Sync สำเร็จ" },
+            "duplicate":     { css: "bg-warning",   text: "มีข้อมูลครบแล้ว" },
+            "no_date":       { css: "bg-secondary", text: "ไม่มีวันที่" },
+            "error":         { css: "bg-danger",    text: "ผิดพลาด" }
         };
 
         function renderResult(data) {
             $('#sumTotal').text(data.TotalRows);
             $('#sumValid').text(data.ValidRows);
+            $('#sumSyncOnly').text(data.SyncOnlyRows);
             $('#sumImported').text(data.ImportedRows);
+            $('#sumImportedSync').text(data.ImportedSyncRows);
             $('#sumDuplicate').text(data.DuplicateRows);
             $('#sumNoDate').text(data.NoDateRows);
             $('#sumError').text(data.ErrorRows);
@@ -209,7 +229,7 @@
                     $('#btnPreview').prop('disabled', false);
                     if (response.success) {
                         renderResult(response.data);
-                        if (response.data.ValidRows > 0) {
+                        if (response.data.ValidRows + response.data.SyncOnlyRows > 0) {
                             $('#btnImport').prop('disabled', false);
                         } else {
                             Swal.fire({ icon: 'info', title: 'ไม่มีรายการที่พร้อมนำเข้า', text: 'กรุณาตรวจสอบข้อมูลในไฟล์ Excel' });
@@ -230,11 +250,13 @@
             if (!formData) return;
 
             var validCount = $('#sumValid').text();
+            var syncOnlyCount = $('#sumSyncOnly').text();
 
             Swal.fire({
                 icon: 'question',
                 title: 'ยืนยันการนำเข้าข้อมูล QC5 ?',
-                text: 'จะนำเข้าข้อมูลจำนวน ' + validCount + ' รายการ (บันทึกเป็นสถานะยืนยันแล้ว)',
+                text: 'จะนำเข้าข้อมูล QC5 ใหม่ ' + validCount + ' รายการ (บันทึกเป็นสถานะยืนยันแล้ว) '
+                    + 'และเพิ่มเฉพาะข้อมูล QC Sync อีก ' + syncOnlyCount + ' รายการ',
                 showCancelButton: true,
                 confirmButtonText: 'ยืนยันนำเข้า',
                 cancelButtonText: 'ยกเลิก'

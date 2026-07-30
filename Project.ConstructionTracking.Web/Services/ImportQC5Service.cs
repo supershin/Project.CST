@@ -26,20 +26,33 @@ namespace Project.ConstructionTracking.Web.Services
             var rows = ParseExcel(fileExcel);
             _IImportQC5Repo.ValidateRows(rows);
 
-            var validRows = rows.Where(o => o.Status == ImportQC5RowStatus.Valid).ToList();
-            int imported = 0;
-            if (validRows.Count > 0)
+            // นำเข้าทั้งแถวที่ยังไม่มี QC5 และแถวที่มี QC5 แล้วแต่ยังขาด QC Sync
+            var rowsToImport = rows
+                .Where(o => o.Status == ImportQC5RowStatus.Valid || o.Status == ImportQC5RowStatus.SyncOnly)
+                .ToList();
+
+            var commitResult = new ImportQC5CommitResult();
+            if (rowsToImport.Count > 0)
             {
-                imported = _IImportQC5Repo.ImportRows(validRows, userID);
-                foreach (var row in validRows)
+                commitResult = _IImportQC5Repo.ImportRows(rowsToImport, userID);
+                foreach (var row in rowsToImport)
                 {
-                    row.Status = ImportQC5RowStatus.Imported;
-                    row.Message = "นำเข้าสำเร็จ";
+                    if (row.NeedCheckList)
+                    {
+                        row.Status = ImportQC5RowStatus.Imported;
+                        row.Message = "นำเข้าข้อมูล QC5 สำเร็จ";
+                    }
+                    else
+                    {
+                        row.Status = ImportQC5RowStatus.SyncImported;
+                        row.Message = "เพิ่มข้อมูล QC Sync สำเร็จ";
+                    }
                 }
             }
 
             var result = BuildResult(rows);
-            result.ImportedRows = imported;
+            result.ImportedRows = commitResult.CheckListInserted;
+            result.ImportedSyncRows = commitResult.SyncInserted + commitResult.SyncUpdated;
             return result;
         }
 
@@ -164,6 +177,7 @@ namespace Project.ConstructionTracking.Web.Services
             {
                 TotalRows = rows.Count,
                 ValidRows = rows.Count(o => o.Status == ImportQC5RowStatus.Valid),
+                SyncOnlyRows = rows.Count(o => o.Status == ImportQC5RowStatus.SyncOnly),
                 DuplicateRows = rows.Count(o => o.Status == ImportQC5RowStatus.Duplicate),
                 NoDateRows = rows.Count(o => o.Status == ImportQC5RowStatus.NoDate),
                 ErrorRows = rows.Count(o => o.Status == ImportQC5RowStatus.Error),

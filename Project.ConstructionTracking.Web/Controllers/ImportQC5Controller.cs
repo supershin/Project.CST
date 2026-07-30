@@ -47,7 +47,12 @@ namespace Project.ConstructionTracking.Web.Controllers
                 }
 
                 var result = _ImportQC5Service.ImportExcel(fileExcel, CurrentUserID);
-                return Json(new { success = true, message = $"นำเข้าข้อมูลสำเร็จ {result.ImportedRows} รายการ", data = result });
+                return Json(new
+                {
+                    success = true,
+                    message = $"นำเข้าข้อมูล QC5 {result.ImportedRows} รายการ และบันทึกข้อมูล QC Sync {result.ImportedSyncRows} รายการ",
+                    data = result
+                });
             }
             catch (Exception ex)
             {

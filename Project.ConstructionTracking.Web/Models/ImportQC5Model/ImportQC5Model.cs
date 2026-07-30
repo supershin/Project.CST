@@ -5,11 +5,13 @@ namespace Project.ConstructionTracking.Web.Models.ImportQC5Model
 {
     public static class ImportQC5RowStatus
     {
-        public const string Valid = "valid";         // พร้อมนำเข้า
-        public const string Imported = "imported";   // นำเข้าสำเร็จ
-        public const string Duplicate = "duplicate"; // มีข้อมูล QC5 ในระบบแล้ว → ข้าม
-        public const string NoDate = "no_date";      // ไม่มี QC5 Date → ข้าม
-        public const string Error = "error";         // ไม่พบโครงการ/ยูนิต หรือวันที่ผิดรูปแบบ
+        public const string Valid = "valid";                 // พร้อมนำเข้า QC5 (ยังไม่มีข้อมูลในระบบ)
+        public const string SyncOnly = "sync_only";          // มี QC5 แล้ว แต่ยังไม่มี QC Sync → เพิ่มเฉพาะ Sync
+        public const string Imported = "imported";           // นำเข้า QC5 สำเร็จ
+        public const string SyncImported = "sync_imported";  // เพิ่ม QC Sync สำเร็จ
+        public const string Duplicate = "duplicate";         // มีข้อมูลครบแล้ว → ข้าม
+        public const string NoDate = "no_date";              // ไม่มี QC5 Date → ข้าม
+        public const string Error = "error";                 // ไม่พบโครงการ/ยูนิต หรือวันที่ผิดรูปแบบ
     }
 
     public class ImportQC5RowModel
@@ -24,13 +26,27 @@ namespace Project.ConstructionTracking.Web.Models.ImportQC5Model
         public Guid? UnitID { get; set; }
         public string Status { get; set; } = ImportQC5RowStatus.Valid;
         public string? Message { get; set; }
+
+        // ต้องเพิ่ม tr_QC_UnitCheckList + tr_QC_UnitCheckList_Action หรือไม่
+        public bool NeedCheckList { get; set; }
+        // ต้องเพิ่ม/อัปเดต tr_QC_Sync หรือไม่
+        public bool NeedSync { get; set; }
+    }
+
+    public class ImportQC5CommitResult
+    {
+        public int CheckListInserted { get; set; }
+        public int SyncInserted { get; set; }
+        public int SyncUpdated { get; set; }
     }
 
     public class ImportQC5ResultModel
     {
         public int TotalRows { get; set; }
         public int ValidRows { get; set; }
+        public int SyncOnlyRows { get; set; }
         public int ImportedRows { get; set; }
+        public int ImportedSyncRows { get; set; }
         public int DuplicateRows { get; set; }
         public int NoDateRows { get; set; }
         public int ErrorRows { get; set; }

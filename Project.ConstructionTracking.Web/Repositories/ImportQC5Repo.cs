@@ -14,6 +14,8 @@ namespace Project.ConstructionTracking.Web.Repositories
         private const int QC5QCStatusID = 1;
         private const int QC5ActionRoleID = 4;
         private const string QC5ActionType = "submit";
+        private const int QC5SyncType = 41;
+        private const string QC5SyncAppointTime = "12:00";
 
         public ImportQC5Repo(ContructionTrackingDbContext context)
         {
@@ -55,16 +57,9 @@ namespace Project.ConstructionTracking.Web.Repositories
                 }
             }
 
-            var unitIDs = unitDict.Values.ToList();
-
-            var existingQC5UnitIDs = _context.tr_QC_UnitCheckList
-                .Where(o => o.UnitID != null && unitIDs.Contains(o.UnitID.Value)
-                         && o.QCTypeID == QC5QCTypeID && o.Seq == QC5Seq && o.FlagActive == true)
-                .Select(o => o.UnitID!.Value)
-                .ToList()
-                .ToHashSet();
-
+            // รอบที่ 1 : จับคู่โครงการ/ยูนิต และตรวจวันที่ เพื่อให้ได้รายการ Unit ที่ต้องไปตรวจสอบในฐานข้อมูล
             var seenInFile = new HashSet<Guid>();
+            var resolvedRows = new List<ImportQC5RowModel>();
 
             foreach (var row in rows)
             {
@@ -107,13 +102,6 @@ namespace Project.ConstructionTracking.Web.Repositories
                     continue;
                 }
 
-                if (existingQC5UnitIDs.Contains(unitID))
-                {
-                    row.Status = ImportQC5RowStatus.Duplicate;
-                    row.Message = "Unit นี้มีข้อมูล QC5 ในระบบแล้ว (ข้ามการนำเข้า)";
-                    continue;
-                }
-
                 if (!seenInFile.Add(unitID))
                 {
                     row.Status = ImportQC5RowStatus.Duplicate;
@@ -121,56 +109,159 @@ namespace Project.ConstructionTracking.Web.Repositories
                     continue;
                 }
 
+                resolvedRows.Add(row);
+            }
+
+            if (resolvedRows.Count == 0) return;
+
+            // ตรวจสอบข้อมูลเดิมเฉพาะ Unit ที่อยู่ในไฟล์ Excel เท่านั้น
+            var targetUnitIDs = resolvedRows.Select(o => o.UnitID!.Value).ToList();
+
+            var existingQC5UnitIDs = _context.tr_QC_UnitCheckList
+                .Where(o => o.UnitID != null && targetUnitIDs.Contains(o.UnitID.Value)
+                         && o.QCTypeID == QC5QCTypeID && o.Seq == QC5Seq && o.FlagActive == true)
+                .Select(o => o.UnitID!.Value)
+                .ToList()
+                .ToHashSet();
+
+            var existingSyncUnitIDs = _context.tr_QC_Sync
+                .Where(o => o.UnitID != null && targetUnitIDs.Contains(o.UnitID.Value) && o.QCTypeID == QC5QCTypeID)
+                .Select(o => o.UnitID!.Value)
+                .ToList()
+                .ToHashSet();
+
+            // รอบที่ 2 : ตัดสินว่าแต่ละแถวต้องเพิ่มอะไรบ้าง
+            foreach (var row in resolvedRows)
+            {
+                Guid unitID = row.UnitID!.Value;
+
+                // Unit ที่มี QC5 อยู่แล้วจะไม่แตะ tr_QC_UnitCheckList / _Action อีก
+                // แต่ถ้ายังไม่มี tr_QC_Sync ให้เพิ่มเฉพาะ Sync ให้ครบ
+                if (existingQC5UnitIDs.Contains(unitID))
+                {
+                    if (existingSyncUnitIDs.Contains(unitID))
+                    {
+                        row.Status = ImportQC5RowStatus.Duplicate;
+                        row.Message = "Unit นี้มีข้อมูล QC5 และ QC Sync ในระบบแล้ว (ข้ามการนำเข้า)";
+                    }
+                    else
+                    {
+                        row.Status = ImportQC5RowStatus.SyncOnly;
+                        row.NeedSync = true;
+                        row.Message = "มีข้อมูล QC5 แล้ว จะเพิ่มเฉพาะข้อมูล QC Sync";
+                    }
+                    continue;
+                }
+
                 row.Status = ImportQC5RowStatus.Valid;
+                row.NeedCheckList = true;
+                row.NeedSync = true;
                 row.Message = "พร้อมนำเข้า";
             }
         }
 
-        public int ImportRows(List<ImportQC5RowModel> validRows, Guid userID)
+        public ImportQC5CommitResult ImportRows(List<ImportQC5RowModel> rowsToImport, Guid userID)
         {
             DateTime now = DateTime.Now;
+            var commitResult = new ImportQC5CommitResult();
 
-            foreach (var row in validRows)
+            // โหลด tr_QC_Sync เดิมของทุก Unit ในชุดนี้ไว้ก่อน (คีย์ = UnitID + QCTypeID ตามที่ระบบใช้ค้นหา)
+            var importUnitIDs = rowsToImport
+                .Where(o => o.UnitID != null)
+                .Select(o => o.UnitID!.Value)
+                .ToList();
+
+            var existingSyncs = _context.tr_QC_Sync
+                .Where(o => o.UnitID != null && importUnitIDs.Contains(o.UnitID.Value) && o.QCTypeID == QC5QCTypeID)
+                .ToList()
+                .GroupBy(o => o.UnitID!.Value)
+                .ToDictionary(g => g.Key, g => g.First());
+
+            foreach (var row in rowsToImport)
             {
-                var newQCUnitCheckList = new tr_QC_UnitCheckList
+                if (row.NeedCheckList)
                 {
-                    ID = Guid.NewGuid(),
-                    ProjectID = row.ProjectID,
-                    UnitID = row.UnitID,
-                    CheckListID = QC5CheckListID,
-                    QCTypeID = QC5QCTypeID,
-                    Seq = QC5Seq,
-                    CheckListDate = row.QC5Date,
-                    QCStatusID = QC5QCStatusID,
-                    PESignResourceID = null,
-                    FlagActive = true,
-                    CreateDate = now,
-                    CreateBy = userID,
-                    UpdateDate = now,
-                    UpdateBy = userID
-                };
-                _context.tr_QC_UnitCheckList.Add(newQCUnitCheckList);
+                    var newQCUnitCheckList = new tr_QC_UnitCheckList
+                    {
+                        ID = Guid.NewGuid(),
+                        ProjectID = row.ProjectID,
+                        UnitID = row.UnitID,
+                        CheckListID = QC5CheckListID,
+                        QCTypeID = QC5QCTypeID,
+                        Seq = QC5Seq,
+                        CheckListDate = row.QC5Date,
+                        QCStatusID = QC5QCStatusID,
+                        PESignResourceID = null,
+                        FlagActive = true,
+                        CreateDate = now,
+                        CreateBy = userID,
+                        UpdateDate = now,
+                        UpdateBy = userID
+                    };
+                    _context.tr_QC_UnitCheckList.Add(newQCUnitCheckList);
 
-                var newQCUnitCheckListAction = new tr_QC_UnitCheckList_Action
+                    var newQCUnitCheckListAction = new tr_QC_UnitCheckList_Action
+                    {
+                        QCUnitCheckListID = newQCUnitCheckList.ID,
+                        RoleID = QC5ActionRoleID,
+                        ActionType = QC5ActionType,
+                        StatusID = null,
+                        Remark = null,
+                        ActionDate = row.QC5Date,
+                        CreateDate = now,
+                        CreateBy = userID,
+                        UpdateDate = now,
+                        UpdateBy = userID
+                    };
+                    _context.tr_QC_UnitCheckList_Action.Add(newQCUnitCheckListAction);
+
+                    commitResult.CheckListInserted++;
+                }
+
+                if (!row.NeedSync || row.UnitID == null) continue;
+
+                // Upsert tr_QC_Sync : ถ้ามีแถวของ Unit นี้ (QCTypeID = 17) อยู่แล้วให้อัปเดต ถ้าไม่มีให้เพิ่มใหม่
+                if (existingSyncs.TryGetValue(row.UnitID.Value, out tr_QC_Sync? existingSync))
                 {
-                    QCUnitCheckListID = newQCUnitCheckList.ID,
-                    RoleID = QC5ActionRoleID,
-                    ActionType = QC5ActionType,
-                    StatusID = null,
-                    Remark = null,
-                    ActionDate = row.QC5Date,
-                    CreateDate = now,
-                    CreateBy = userID,
-                    UpdateDate = now,
-                    UpdateBy = userID
-                };
-                _context.tr_QC_UnitCheckList_Action.Add(newQCUnitCheckListAction);
+                    existingSync.SyncType = QC5SyncType;
+                    existingSync.QCAppointDate = row.QC5Date;
+                    existingSync.QCAppointTimeFrom = QC5SyncAppointTime;
+                    existingSync.QCAppointTimeTo = QC5SyncAppointTime;
+                    existingSync.QCResponseUserID = null;
+                    existingSync.QCResponseDate = row.QC5Date;
+                    existingSync.QCRemark = null;
+                    existingSync.SubmitDate = row.QC5Date;
+                    _context.tr_QC_Sync.Update(existingSync);
+
+                    commitResult.SyncUpdated++;
+                }
+                else
+                {
+                    var newSync = new tr_QC_Sync
+                    {
+                        ID = Guid.NewGuid(),
+                        ProjectID = row.ProjectID,
+                        UnitID = row.UnitID,
+                        SyncType = QC5SyncType,
+                        QCTypeID = QC5QCTypeID,
+                        QCAppointDate = row.QC5Date,
+                        QCAppointTimeFrom = QC5SyncAppointTime,
+                        QCAppointTimeTo = QC5SyncAppointTime,
+                        QCResponseUserID = null,
+                        QCResponseDate = row.QC5Date,
+                        QCRemark = null,
+                        SubmitDate = row.QC5Date
+                    };
+                    _context.tr_QC_Sync.Add(newSync);
+
+                    commitResult.SyncInserted++;
+                }
             }
 
             // SaveChanges ครั้งเดียว = ทั้งชุดอยู่ใน transaction เดียว ถ้าพลาดจะ rollback ทั้งหมด
             _context.SaveChanges();
 
-            return validRows.Count;
+            return commitResult;
         }
     }
 }
