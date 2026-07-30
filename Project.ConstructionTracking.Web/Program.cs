@@ -104,6 +104,9 @@ builder.Services.AddScoped<IGeneratePDFRepo, GeneratePDFRepo>();
 builder.Services.AddScoped<IQC5CheckService, QC5CheckService>();
 builder.Services.AddScoped<IQC5CheckRepo, QC5CheckRepo>();
 
+builder.Services.AddScoped<IImportQC5Service, ImportQC5Service>();
+builder.Services.AddScoped<IImportQC5Repo, ImportQC5Repo>();
+
 builder.Services.AddScoped<IQcSummaryService, QcSummaryService>();
 builder.Services.AddScoped<IQcSummaryRepo, QcSummaryRepo>();
 

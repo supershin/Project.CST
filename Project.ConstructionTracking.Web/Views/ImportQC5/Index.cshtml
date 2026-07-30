@@ -1,0 +1,279 @@
+@{
+    ViewData["Title"] = "Import QC5";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+}
+<title>นำเข้าข้อมูล QC5 ย้อนหลัง</title>
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    #tableResultWrapper {
+        overflow-x: auto;
+    }
+
+    .summary-number {
+        font-size: 1.6rem;
+        font-weight: bold;
+    }
+</style>
+
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-file-import">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                        <path d="M5 13v-8a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-5.5m-9.5 -2h7m-3 -3l3 3l-3 3" />
+                    </svg>
+                </div>
+            </div>
+            <div class="card-body">
+                <h1>นำเข้าข้อมูล QC5 ย้อนหลัง (Import QC5 Historical Data)</h1>
+            </div>
+        </div>
+    </div>
+    <div class="page-body">
+        <div class="container-xl mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-end">
+                        <div class="col-12 col-sm-6 mb-2">
+                            <label for="fileExcel" class="form-label">ไฟล์ Excel (.xlsx) <span style="color: red;">*</span></label>
+                            <input type="file" id="fileExcel" class="form-control" accept=".xlsx" />
+                            <small class="text-muted">ต้องมีคอลัมน์ REM Unit Code, Project ID และ QC5 Date (รูปแบบวันที่ เดือน/วัน/ปี ค.ศ.)</small>
+                        </div>
+                        <div class="col-6 col-sm-3 mb-2">
+                            <button class="btn btn-primary w-100" id="btnPreview">
+                                <i class="fas fa-search"></i> ตรวจสอบไฟล์
+                            </button>
+                        </div>
+                        <div class="col-6 col-sm-3 mb-2">
+                            <button class="btn btn-success w-100" id="btnImport" disabled>
+                                <i class="fas fa-file-import"></i> นำเข้าข้อมูล
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-xl mb-2" id="summaryCards" style="display:none;">
+            <div class="row">
+                <div class="col-6 col-sm-2 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body p-2">
+                            <div class="summary-number" id="sumTotal">0</div>
+                            <div class="text-muted">ทั้งหมด</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-2 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body p-2">
+                            <div class="summary-number text-success" id="sumValid">0</div>
+                            <div class="text-muted">พร้อมนำเข้า</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-2 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body p-2">
+                            <div class="summary-number text-teal" id="sumImported">0</div>
+                            <div class="text-muted">นำเข้าสำเร็จ</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-2 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body p-2">
+                            <div class="summary-number text-warning" id="sumDuplicate">0</div>
+                            <div class="text-muted">มีในระบบแล้ว</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-2 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body p-2">
+                            <div class="summary-number text-secondary" id="sumNoDate">0</div>
+                            <div class="text-muted">ไม่มีวันที่</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-2 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body p-2">
+                            <div class="summary-number text-danger" id="sumError">0</div>
+                            <div class="text-muted">ผิดพลาด</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-xl mb-2" id="resultCard" style="display:none;">
+            <div class="card">
+                <div class="card-body">
+                    <div id="tableResultWrapper">
+                        <table class="table table-vcenter table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width:80px;">แถวที่</th>
+                                    <th>Project ID</th>
+                                    <th>REM Unit Code</th>
+                                    <th>QC5 Date</th>
+                                    <th>สถานะ</th>
+                                    <th>หมายเหตุ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableResultBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var navSetting = document.getElementById('nav-Setting');
+        if (navSetting) { navSetting.classList.add('active'); }
+        var navImportQC5 = document.getElementById('nav-Setting-Import-QC5');
+        if (navImportQC5) { navImportQC5.classList.add('active'); }
+
+        var statusBadge = {
+            "valid":     { css: "bg-success",   text: "พร้อมนำเข้า" },
+            "imported":  { css: "bg-teal",      text: "นำเข้าสำเร็จ" },
+            "duplicate": { css: "bg-warning",   text: "มีในระบบแล้ว" },
+            "no_date":   { css: "bg-secondary", text: "ไม่มีวันที่" },
+            "error":     { css: "bg-danger",    text: "ผิดพลาด" }
+        };
+
+        function renderResult(data) {
+            $('#sumTotal').text(data.TotalRows);
+            $('#sumValid').text(data.ValidRows);
+            $('#sumImported').text(data.ImportedRows);
+            $('#sumDuplicate').text(data.DuplicateRows);
+            $('#sumNoDate').text(data.NoDateRows);
+            $('#sumError').text(data.ErrorRows);
+
+            var body = $('#tableResultBody');
+            body.empty();
+
+            $.each(data.Rows, function (i, row) {
+                var badge = statusBadge[row.Status] || { css: "bg-secondary", text: row.Status };
+                var tr = $('<tr>');
+                tr.append($('<td>').text(row.RowNumber));
+                tr.append($('<td>').text(row.ProjectCode || '-'));
+                tr.append($('<td>').text(row.UnitCode || '-'));
+                tr.append($('<td>').text(row.QC5DateDisplay || (row.QC5DateText || '-')));
+                tr.append($('<td>').append($('<span>').addClass('badge ' + badge.css).text(badge.text)));
+                tr.append($('<td>').text(row.Message || ''));
+                body.append(tr);
+            });
+
+            $('#summaryCards').show();
+            $('#resultCard').show();
+        }
+
+        function getFormData() {
+            var fileInput = document.getElementById('fileExcel');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                Swal.fire({ icon: 'warning', title: 'กรุณาเลือกไฟล์ Excel (.xlsx)' });
+                return null;
+            }
+            var formData = new FormData();
+            formData.append('fileExcel', fileInput.files[0]);
+            return formData;
+        }
+
+        $('#btnPreview').on('click', function () {
+            var formData = getFormData();
+            if (!formData) return;
+
+            $('#btnPreview').prop('disabled', true);
+            $('#btnImport').prop('disabled', true);
+
+            $.ajax({
+                url: '@Url.Action("Preview", "ImportQC5")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    $('#btnPreview').prop('disabled', false);
+                    if (response.success) {
+                        renderResult(response.data);
+                        if (response.data.ValidRows > 0) {
+                            $('#btnImport').prop('disabled', false);
+                        } else {
+                            Swal.fire({ icon: 'info', title: 'ไม่มีรายการที่พร้อมนำเข้า', text: 'กรุณาตรวจสอบข้อมูลในไฟล์ Excel' });
+                        }
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: response.message });
+                    }
+                },
+                error: function () {
+                    $('#btnPreview').prop('disabled', false);
+                    Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: 'ไม่สามารถตรวจสอบไฟล์ได้' });
+                }
+            });
+        });
+
+        $('#btnImport').on('click', function () {
+            var formData = getFormData();
+            if (!formData) return;
+
+            var validCount = $('#sumValid').text();
+
+            Swal.fire({
+                icon: 'question',
+                title: 'ยืนยันการนำเข้าข้อมูล QC5 ?',
+                text: 'จะนำเข้าข้อมูลจำนวน ' + validCount + ' รายการ (บันทึกเป็นสถานะยืนยันแล้ว)',
+                showCancelButton: true,
+                confirmButtonText: 'ยืนยันนำเข้า',
+                cancelButtonText: 'ยกเลิก'
+            }).then(function (result) {
+                if (!result.isConfirmed) return;
+
+                $('#btnPreview').prop('disabled', true);
+                $('#btnImport').prop('disabled', true);
+
+                $.ajax({
+                    url: '@Url.Action("Import", "ImportQC5")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        $('#btnPreview').prop('disabled', false);
+                        if (response.success) {
+                            renderResult(response.data);
+                            Swal.fire({ icon: 'success', title: 'สำเร็จ', text: response.message });
+                        } else {
+                            $('#btnImport').prop('disabled', false);
+                            Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: response.message });
+                        }
+                    },
+                    error: function () {
+                        $('#btnPreview').prop('disabled', false);
+                        $('#btnImport').prop('disabled', false);
+                        Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: 'ไม่สามารถนำเข้าข้อมูลได้' });
+                    }
+                });
+            });
+        });
+
+        // เปลี่ยนไฟล์ใหม่ → ต้องตรวจสอบก่อนถึงจะนำเข้าได้
+        $('#fileExcel').on('change', function () {
+            $('#btnImport').prop('disabled', true);
+            $('#summaryCards').hide();
+            $('#resultCard').hide();
+        });
+    });
+</script>
