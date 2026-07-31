@@ -636,6 +636,8 @@ namespace Project.ConstructionTracking.Web.Library.DAL
             Entity.DatePass = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["DatePass"]);
             Entity.CNTMajorDefect = Commons.FormatExtension.NullToString(reader["CNTMajorDefect"]);
             Entity.CNTDefect = Commons.FormatExtension.NullToString(reader["CNTDefect"]);
+            Entity.QCSyncID = Commons.FormatExtension.Nulltoint(reader["QCSyncID"]);
+            Entity.SyncCrmDate = Commons.FormatExtension.FormatDateToDayMonthNameYear(reader["SyncCrmDate"]);
             return Entity;
         }
 

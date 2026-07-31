@@ -24,5 +24,7 @@
         public string? DatePass { get; set; }             // Date Pass
         public string? CNTMajorDefect { get; set; }          // Count of Major Defects
         public string? CNTDefect { get; set; }               // Count of Defects
+        public int QCSyncID { get; set; }
+        public string? SyncCrmDate { get; set; }
     }
 }
