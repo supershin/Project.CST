@@ -79,6 +79,12 @@ namespace Project.ConstructionTracking.Web.Services
             return cntQCSync;
         }
 
+        public DateTime? GetQC5CheckListUpdateDate(Guid ProjectID, Guid UnitID)
+        {
+            var qc5UpdateDate = _IPMApprovelistRepo.GetQC5CheckListUpdateDate(ProjectID, UnitID);
+            return qc5UpdateDate;
+        }
+
         public AdminRespond GetAdminRespond(Guid unitFormId)
         {
             var Result = _IPMApprovelistRepo.GetAdminRespond(unitFormId);

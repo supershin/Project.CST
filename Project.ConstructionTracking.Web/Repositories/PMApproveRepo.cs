@@ -867,6 +867,25 @@ namespace Project.ConstructionTracking.Web.Repositories
             return result;
         }
 
+        // ดึงวันที่ตรวจ QC5 (UpdateDate ของ tr_QC_UnitCheckList) ที่ PE submit แล้ว เพื่อใช้ส่ง Sync CRM
+        public DateTime? GetQC5CheckListUpdateDate(Guid ProjectID, Guid UnitID)
+        {
+            var result = (from t1 in _context.tr_QC_UnitCheckList
+                          join t2 in _context.tr_QC_UnitCheckList_Action on t1.ID equals t2.QCUnitCheckListID into t2Group
+                          from t2 in t2Group.DefaultIfEmpty()
+                          where t1.FlagActive == true
+                                && t1.ProjectID == ProjectID
+                                && t1.UnitID == UnitID
+                                && t1.QCTypeID == SystemConstant.QcTypeID.QC5
+                                && t1.CheckListID == SystemConstant.Qc_CheckList_ID.QC5
+                                && t1.QCStatusID == 1
+                                && t2.ActionType == "submit"
+                          orderby t1.UpdateDate descending
+                          select t1.UpdateDate).FirstOrDefault();
+
+            return result;
+        }
+
         public AdminRespond GetAdminRespond(Guid unitFormId)
         {
             int ROLE_PE = (int)SystemConstant.UserRole.PE;

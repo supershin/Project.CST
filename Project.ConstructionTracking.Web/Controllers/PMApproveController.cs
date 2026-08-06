@@ -245,28 +245,44 @@ namespace Project.ConstructionTracking.Web.Controllers
                         if (QCID == SystemConstant.QcTypeID.QC5)
                         {
                             Message = "บันทึกข้อมูลสำเร็จแต่ Syn CRM ไม่สำเร็จ";
-                            var modelsynccrm = new QC_Status_Update_QC5.Sends
+
+                            // วันที่ตรวจ QC5 = UpdateDate ของ tr_QC_UnitCheckList ที่ PE submit แล้ว
+                            DateTime? qc5CheckListDate = (model.ProjectID.HasValue && model.UnitID.HasValue)
+                                ? _PMApproveService.GetQC5CheckListUpdateDate(model.ProjectID.Value, model.UnitID.Value)
+                                : null;
+
+                            if (!qc5CheckListDate.HasValue)
                             {
-                                project_code = model.ProjectID.HasValue ? _PMApproveService.GetProjectcodeByID(model.ProjectID.Value) : ""
-                               ,project_id = model.ProjectID
-                               ,unit_id = model.UnitID
-                               ,sync_type = Commons.SystemConstant.Ext.SyncCrmNormal
-                               ,unit_number = model.UnitCode
-                               ,contractor_appointment_date = DateTime.Now.ToString("dd/MM/yyyy") // 🔧 หรือใส่ "dd/MM/yyyy" ตาม format ที่ระบบต้องการ
-                               ,contractor_appointment_timeStart = DateTime.Now.ToString("HH:mm") // ✅ เวลา เช่น 18:36
-                               ,contractor_appointment_timeEnd = DateTime.Now.ToString("HH:mm")
-                               ,qc_response_date = DateTime.Now.ToString("dd/MM/yyyy")
-                               ,qc_remark = "Sync Auto"
-                               ,submit_date = DateTime.Now.Date
-                            };
-                            var response = InsertUnitFormSyncCrm(modelsynccrm);
-                            if (response.Status == 1)
-                            {
-                                Message = "บันทึกข้อมูลสำเร็จและ Sync CRM สำเร็จ";
+                                // ไม่พบรายการตรวจผ่านใน QC5 จึงไม่ Sync CRM
+                                Message = "บันทึกข้อมูลสำเร็จ ไม่พบการตรวจผ่านใน QC5";
                             }
                             else
                             {
-                                Message = "บันทึกข้อมูลสำเร็จ " + response.message;
+                                DateTime qc5Date = qc5CheckListDate.Value;
+
+                                var modelsynccrm = new QC_Status_Update_QC5.Sends
+                                {
+                                    project_code = model.ProjectID.HasValue ? _PMApproveService.GetProjectcodeByID(model.ProjectID.Value) : ""
+                                   ,project_id = model.ProjectID
+                                   ,unit_id = model.UnitID
+                                   ,sync_type = Commons.SystemConstant.Ext.SyncCrmNormal
+                                   ,unit_number = model.UnitCode
+                                   ,contractor_appointment_date = qc5Date.ToString("dd/MM/yyyy")
+                                   ,contractor_appointment_timeStart = qc5Date.ToString("HH:mm") // ✅ เวลา เช่น 18:36
+                                   ,contractor_appointment_timeEnd = qc5Date.ToString("HH:mm")
+                                   ,qc_response_date = qc5Date.ToString("dd/MM/yyyy")
+                                   ,qc_remark = "Sync Auto"
+                                   ,submit_date = DateTime.Now.Date
+                                };
+                                var response = InsertUnitFormSyncCrm(modelsynccrm);
+                                if (response.Status == 1)
+                                {
+                                    Message = "บันทึกข้อมูลสำเร็จและ Sync CRM สำเร็จ";
+                                }
+                                else
+                                {
+                                    Message = "บันทึกข้อมูลสำเร็จ " + response.message;
+                                }
                             }
                         }
                     }

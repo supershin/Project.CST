@@ -15,6 +15,7 @@ namespace Project.ConstructionTracking.Web.Repositories
         public int CheckQCbyFormID(int FormID);
         public string GetProjectcodeByID(Guid ProjectID);
         public int CheckQCSync(Guid UnitID);
+        public DateTime? GetQC5CheckListUpdateDate(Guid ProjectID, Guid UnitID);
         public AdminRespond GetAdminRespond(Guid unitFormId);
     }
 }
