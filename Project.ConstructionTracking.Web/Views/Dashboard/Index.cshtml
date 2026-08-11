@@ -206,7 +206,9 @@
             activeItem.classList.add('active');
         }
 
-      	window.ApexCharts && (new ApexCharts(document.getElementById('chart-demo-pie'), {
+        const chartDemoPie = document.getElementById('chart-demo-pie');
+        if (window.ApexCharts && chartDemoPie) {
+          new ApexCharts(chartDemoPie, {
       		chart: {
       			type: "donut",
       			fontFamily: 'inherit',
@@ -247,11 +249,14 @@
       		tooltip: {
       			fillSeriesColor: false
       		},
-      	})).render();
+		}).render();
+        }
       });
 
       document.addEventListener("DOMContentLoaded", function () {
-      	window.ApexCharts && (new ApexCharts(document.getElementById('chart-completion-tasks'), {
+        const chartCompletionTasks = document.getElementById('chart-completion-tasks');
+        if (window.ApexCharts && chartCompletionTasks) {
+          new ApexCharts(chartCompletionTasks, {
       		chart: {
       			type: "bar",
       			fontFamily: 'inherit',
@@ -315,11 +320,14 @@
       		legend: {
       			show: false,
       		},
-      	})).render();
+		}).render();
+        }
       });
 
       document.addEventListener("DOMContentLoaded", function () {
-      	window.ApexCharts && (new ApexCharts(document.getElementById('chart-completion-tasks-2'), {
+        const chartCompletionTasks2 = document.getElementById('chart-completion-tasks-2');
+        if (window.ApexCharts && chartCompletionTasks2) {
+          new ApexCharts(chartCompletionTasks2, {
       		chart: {
       			type: "line",
       			fontFamily: 'inherit',
@@ -377,7 +385,8 @@
       		legend: {
       			show: false,
       		},
-      	})).render();
+		}).render();
+        }
       });
 
 
