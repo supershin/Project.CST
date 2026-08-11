@@ -27,7 +27,24 @@ namespace Project.ConstructionTracking.Web.Controllers
             List<GetDDL> ListProject = _getDDLService.GetDDLList(ddlModel);
             ViewBag.DDLProject = ListProject;
 
-            string projectId = Request.Cookies.ContainsKey("ReportinspectionQC5selectedProjectId") ? Request.Cookies["ReportinspectionQC5selectedProjectId"] : null;
+            string? projectId = Request.Cookies.ContainsKey("ReportinspectionQC5selectedProjectId")
+                ? Request.Cookies["ReportinspectionQC5selectedProjectId"]
+                : null;
+
+            // Default to the first available project so the initial report and dropdown
+            // use the same project when there is no valid saved selection.
+            bool hasValidSelectedProject = !string.IsNullOrWhiteSpace(projectId)
+                && ListProject.Any(project => string.Equals(
+                    project.ValueGuid?.ToString(),
+                    projectId,
+                    StringComparison.OrdinalIgnoreCase));
+
+            if (!hasValidSelectedProject)
+            {
+                projectId = ListProject.FirstOrDefault(project => project.ValueGuid.HasValue)
+                    ?.ValueGuid
+                    ?.ToString();
+            }
 
             List<ReportinspectionQC5Model> ReportinspectionQC5 = new List<ReportinspectionQC5Model>();
 
@@ -128,11 +145,12 @@ namespace Project.ConstructionTracking.Web.Controllers
                 worksheet.Cell(6, 6).Value = "จำนวนครั้งที่ตรวจถึงปัจจุบัน";
                 worksheet.Cell(6, 7).Value = "วันที่ตรวจ QC5 ครั้งแรก";
                 worksheet.Cell(6, 8).Value = "วันที่ QC5 ผ่าน";
-                worksheet.Cell(6, 9).Value = "จำนวนรายการที่เป็น major";
-                worksheet.Cell(6, 10).Value = "จำนวนรายการ Defect ทั้งหมด";
+                worksheet.Cell(6, 9).Value = "วันที่ QC5 (CRM)";
+                worksheet.Cell(6, 10).Value = "จำนวนรายการที่เป็น major";
+                worksheet.Cell(6, 11).Value = "จำนวนรายการ Defect ทั้งหมด";
 
                 // Define the header range properly
-                var headerRange = worksheet.Range(6, 1, 6, 10); // Corrected to include all columns in the range
+                var headerRange = worksheet.Range(6, 1, 6, 11);
 
                 // Style the header row
                 headerRange.Style.Font.Bold = true;
@@ -165,9 +183,9 @@ namespace Project.ConstructionTracking.Web.Controllers
                 {
                     // Handle the case with no data
                     worksheet.Cell(7, 1).Value = "ไม่มีข้อมูล";
-                    worksheet.Range("A7:M7").Merge(); // Adjusted for 13 columns
-                    worksheet.Cell(8, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                    worksheet.Cell(8, 1).Style.Font.Bold = true;
+                    worksheet.Range("A7:K7").Merge();
+                    worksheet.Cell(7, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                    worksheet.Cell(7, 1).Style.Font.Bold = true;
                 }
                 else
                 {
@@ -183,12 +201,13 @@ namespace Project.ConstructionTracking.Web.Controllers
                         worksheet.Cell(row, 6).Value = item.MAXSeq;
                         worksheet.Cell(row, 7).Value = item.FirstDateCheck;
                         worksheet.Cell(row, 8).Value = item.DatePass;
-                        worksheet.Cell(row, 9).Value = item.CNTMajorDefect;
-                        worksheet.Cell(row, 10).Value = item.CNTDefect;
+                        worksheet.Cell(row, 9).Value = item.SyncCrmDate;
+                        worksheet.Cell(row, 10).Value = item.CNTMajorDefect;
+                        worksheet.Cell(row, 11).Value = item.CNTDefect;
 
                         // Style the row
-                        worksheet.Range(row, 1, row, 10).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                        worksheet.Range(row, 1, row, 10).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        worksheet.Range(row, 1, row, 11).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                        worksheet.Range(row, 1, row, 11).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
 
                         row++;
                     }
