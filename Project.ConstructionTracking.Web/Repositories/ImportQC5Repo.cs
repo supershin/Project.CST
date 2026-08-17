@@ -117,12 +117,23 @@ namespace Project.ConstructionTracking.Web.Repositories
             // ตรวจสอบข้อมูลเดิมเฉพาะ Unit ที่อยู่ในไฟล์ Excel เท่านั้น
             var targetUnitIDs = resolvedRows.Select(o => o.UnitID!.Value).ToList();
 
-            var existingQC5UnitIDs = _context.tr_QC_UnitCheckList
+            var existingQC5s = _context.tr_QC_UnitCheckList
                 .Where(o => o.UnitID != null && targetUnitIDs.Contains(o.UnitID.Value)
-                         && o.QCTypeID == QC5QCTypeID && o.Seq == QC5Seq && o.FlagActive == true)
-                .Select(o => o.UnitID!.Value)
+                         && o.QCTypeID == QC5QCTypeID && o.FlagActive == true)
                 .ToList()
-                .ToHashSet();
+                .GroupBy(o => o.UnitID!.Value)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.OrderByDescending(o => o.Seq)
+                          .ThenByDescending(o => o.UpdateDate ?? o.CreateDate)
+                          .First());
+
+            var existingQC5IDs = existingQC5s.Values.Select(o => o.ID).ToList();
+            var existingQC5Actions = _context.tr_QC_UnitCheckList_Action
+                .Where(o => o.QCUnitCheckListID != null && existingQC5IDs.Contains(o.QCUnitCheckListID.Value))
+                .ToList()
+                .GroupBy(o => o.QCUnitCheckListID!.Value)
+                .ToDictionary(g => g.Key, g => g.OrderByDescending(o => o.ID).First());
 
             var existingSyncUnitIDs = _context.tr_QC_Sync
                 .Where(o => o.UnitID != null && targetUnitIDs.Contains(o.UnitID.Value) && o.QCTypeID == QC5QCTypeID)
@@ -135,10 +146,25 @@ namespace Project.ConstructionTracking.Web.Repositories
             {
                 Guid unitID = row.UnitID!.Value;
 
-                // Unit ที่มี QC5 อยู่แล้วจะไม่แตะ tr_QC_UnitCheckList / _Action อีก
-                // แต่ถ้ายังไม่มี tr_QC_Sync ให้เพิ่มเฉพาะ Sync ให้ครบ
-                if (existingQC5UnitIDs.Contains(unitID))
+                // ถ้า QC5 ล่าสุดยังไม่ผ่านหรือยังไม่ submit ให้ Import ปิดรายการเดิมเป็นผ่าน
+                // โดยไม่แก้ไขหรือลบ Defect ที่ผูกกับรายการนั้น
+                if (existingQC5s.TryGetValue(unitID, out tr_QC_UnitCheckList? existingQC5))
                 {
+                    row.ExistingQCUnitCheckListID = existingQC5.ID;
+
+                    bool hasSubmittedAction = existingQC5Actions.TryGetValue(existingQC5.ID, out tr_QC_UnitCheckList_Action? existingAction)
+                        && string.Equals(existingAction.ActionType, QC5ActionType, StringComparison.OrdinalIgnoreCase);
+                    bool isCompleted = existingQC5.QCStatusID == QC5QCStatusID && hasSubmittedAction;
+
+                    if (!isCompleted)
+                    {
+                        row.Status = ImportQC5RowStatus.CompleteExisting;
+                        row.NeedCompleteCheckList = true;
+                        row.NeedSync = true;
+                        row.Message = "QC5 เดิมยังไม่เสร็จ จะปิดเป็นผ่านและบันทึกวันที่จาก Excel";
+                        continue;
+                    }
+
                     if (existingSyncUnitIDs.Contains(unitID))
                     {
                         row.Status = ImportQC5RowStatus.Duplicate;
@@ -176,6 +202,22 @@ namespace Project.ConstructionTracking.Web.Repositories
                 .ToList()
                 .GroupBy(o => o.UnitID!.Value)
                 .ToDictionary(g => g.Key, g => g.First());
+
+            var checklistIDsToComplete = rowsToImport
+                .Where(o => o.NeedCompleteCheckList && o.ExistingQCUnitCheckListID != null)
+                .Select(o => o.ExistingQCUnitCheckListID!.Value)
+                .Distinct()
+                .ToList();
+
+            var checklistsToComplete = _context.tr_QC_UnitCheckList
+                .Where(o => checklistIDsToComplete.Contains(o.ID))
+                .ToDictionary(o => o.ID);
+
+            var actionsToComplete = _context.tr_QC_UnitCheckList_Action
+                .Where(o => o.QCUnitCheckListID != null && checklistIDsToComplete.Contains(o.QCUnitCheckListID.Value))
+                .ToList()
+                .GroupBy(o => o.QCUnitCheckListID!.Value)
+                .ToDictionary(g => g.Key, g => g.OrderByDescending(o => o.ID).First());
 
             foreach (var row in rowsToImport)
             {
@@ -216,6 +258,49 @@ namespace Project.ConstructionTracking.Web.Repositories
                     _context.tr_QC_UnitCheckList_Action.Add(newQCUnitCheckListAction);
 
                     commitResult.CheckListInserted++;
+                }
+
+                if (row.NeedCompleteCheckList && row.ExistingQCUnitCheckListID != null)
+                {
+                    Guid checklistID = row.ExistingQCUnitCheckListID.Value;
+                    if (!checklistsToComplete.TryGetValue(checklistID, out tr_QC_UnitCheckList? existingChecklist))
+                    {
+                        throw new Exception($"ไม่พบข้อมูล QC5 เดิมของ Unit {row.UnitCode}");
+                    }
+
+                    existingChecklist.CheckListDate = row.QC5Date;
+                    existingChecklist.QCStatusID = QC5QCStatusID;
+                    existingChecklist.UpdateDate = now;
+                    existingChecklist.UpdateBy = userID;
+                    _context.tr_QC_UnitCheckList.Update(existingChecklist);
+
+                    if (actionsToComplete.TryGetValue(checklistID, out tr_QC_UnitCheckList_Action? existingAction))
+                    {
+                        existingAction.ActionType = QC5ActionType;
+                        existingAction.ActionDate = row.QC5Date;
+                        existingAction.UpdateDate = now;
+                        existingAction.UpdateBy = userID;
+                        _context.tr_QC_UnitCheckList_Action.Update(existingAction);
+                    }
+                    else
+                    {
+                        var newAction = new tr_QC_UnitCheckList_Action
+                        {
+                            QCUnitCheckListID = checklistID,
+                            RoleID = QC5ActionRoleID,
+                            ActionType = QC5ActionType,
+                            StatusID = null,
+                            Remark = null,
+                            ActionDate = row.QC5Date,
+                            CreateDate = now,
+                            CreateBy = userID,
+                            UpdateDate = now,
+                            UpdateBy = userID
+                        };
+                        _context.tr_QC_UnitCheckList_Action.Add(newAction);
+                    }
+
+                    commitResult.CheckListUpdated++;
                 }
 
                 if (!row.NeedSync || row.UnitID == null) continue;

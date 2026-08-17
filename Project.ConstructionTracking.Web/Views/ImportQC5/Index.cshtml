@@ -82,6 +82,14 @@
                 <div class="col-6 col-sm-3 mb-2">
                     <div class="card text-center">
                         <div class="card-body p-2">
+                            <div class="summary-number text-orange" id="sumCompleteExisting">0</div>
+                            <div class="text-muted">รอปิด QC5 เดิมเป็นผ่าน</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-3 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body p-2">
                             <div class="summary-number text-azure" id="sumSyncOnly">0</div>
                             <div class="text-muted">เพิ่มเฉพาะ QC Sync</div>
                         </div>
@@ -100,6 +108,14 @@
                         <div class="card-body p-2">
                             <div class="summary-number text-teal" id="sumImported">0</div>
                             <div class="text-muted">นำเข้า QC5 สำเร็จ</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-3 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body p-2">
+                            <div class="summary-number text-teal" id="sumExistingCompleted">0</div>
+                            <div class="text-muted">ปิด QC5 เดิมสำเร็จ</div>
                         </div>
                     </div>
                 </div>
@@ -164,8 +180,10 @@
 
         var statusBadge = {
             "valid":         { css: "bg-success",   text: "พร้อมนำเข้า QC5" },
+            "complete_existing": { css: "bg-orange", text: "ปิด QC5 เดิมเป็นผ่าน" },
             "sync_only":     { css: "bg-azure",     text: "เพิ่มเฉพาะ QC Sync" },
             "imported":      { css: "bg-teal",      text: "นำเข้า QC5 สำเร็จ" },
+            "existing_completed": { css: "bg-teal", text: "ปิด QC5 เดิมสำเร็จ" },
             "sync_imported": { css: "bg-teal",      text: "เพิ่ม QC Sync สำเร็จ" },
             "duplicate":     { css: "bg-warning",   text: "มีข้อมูลครบแล้ว" },
             "no_date":       { css: "bg-secondary", text: "ไม่มีวันที่" },
@@ -175,8 +193,10 @@
         function renderResult(data) {
             $('#sumTotal').text(data.TotalRows);
             $('#sumValid').text(data.ValidRows);
+            $('#sumCompleteExisting').text(data.CompleteExistingRows);
             $('#sumSyncOnly').text(data.SyncOnlyRows);
             $('#sumImported').text(data.ImportedRows);
+            $('#sumExistingCompleted').text(data.ExistingCompletedRows);
             $('#sumImportedSync').text(data.ImportedSyncRows);
             $('#sumDuplicate').text(data.DuplicateRows);
             $('#sumNoDate').text(data.NoDateRows);
@@ -229,7 +249,7 @@
                     $('#btnPreview').prop('disabled', false);
                     if (response.success) {
                         renderResult(response.data);
-                        if (response.data.ValidRows + response.data.SyncOnlyRows > 0) {
+                        if (response.data.ValidRows + response.data.CompleteExistingRows + response.data.SyncOnlyRows > 0) {
                             $('#btnImport').prop('disabled', false);
                         } else {
                             Swal.fire({ icon: 'info', title: 'ไม่มีรายการที่พร้อมนำเข้า', text: 'กรุณาตรวจสอบข้อมูลในไฟล์ Excel' });
@@ -250,12 +270,14 @@
             if (!formData) return;
 
             var validCount = $('#sumValid').text();
+            var completeExistingCount = $('#sumCompleteExisting').text();
             var syncOnlyCount = $('#sumSyncOnly').text();
 
             Swal.fire({
                 icon: 'question',
                 title: 'ยืนยันการนำเข้าข้อมูล QC5 ?',
                 text: 'จะนำเข้าข้อมูล QC5 ใหม่ ' + validCount + ' รายการ (บันทึกเป็นสถานะยืนยันแล้ว) '
+                    + 'ปิด QC5 เดิมเป็นผ่าน ' + completeExistingCount + ' รายการ '
                     + 'และเพิ่มเฉพาะข้อมูล QC Sync อีก ' + syncOnlyCount + ' รายการ',
                 showCancelButton: true,
                 confirmButtonText: 'ยืนยันนำเข้า',

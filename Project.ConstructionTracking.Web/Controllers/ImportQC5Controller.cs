@@ -50,7 +50,7 @@ namespace Project.ConstructionTracking.Web.Controllers
                 return Json(new
                 {
                     success = true,
-                    message = $"นำเข้าข้อมูล QC5 {result.ImportedRows} รายการ และบันทึกข้อมูล QC Sync {result.ImportedSyncRows} รายการ",
+                    message = $"นำเข้าข้อมูล QC5 ใหม่ {result.ImportedRows} รายการ ปิด QC5 เดิมเป็นผ่าน {result.ExistingCompletedRows} รายการ และบันทึกข้อมูล QC Sync {result.ImportedSyncRows} รายการ",
                     data = result
                 });
             }
