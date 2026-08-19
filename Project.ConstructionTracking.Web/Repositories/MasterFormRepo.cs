@@ -30,6 +30,8 @@ namespace Project.ConstructionTracking.Web.Repositories
         dynamic GetPackageDetail(int packageID);
         dynamic GetCheckListDetail(int checkID);
 
+        ExportFormStructureModel GetFormStructure(int formTypeID);
+
         // using for check condition in repo
         //bool VerifyFormTypeUsing(int formTypeID);
 
@@ -409,6 +411,152 @@ namespace Project.ConstructionTracking.Web.Repositories
                          }).FirstOrDefault();
 
             return query;
+        }
+
+        public ExportFormStructureModel GetFormStructure(int formTypeID)
+        {
+            var formType = (from ft in _context.tm_FormType
+                            join ext in _context.tm_Ext on ft.ProjectTypeID equals ext.ID
+                            where ft.ID == formTypeID
+                            select new
+                            {
+                                ft.ID,
+                                ft.Name,
+                                ft.Description,
+                                ProjectTypeName = ext.Name
+                            }).FirstOrDefault();
+
+            if (formType == null) throw new Exception("ไม่พบข้อมูลประเภทฟอร์ม");
+
+            // Lv.1 - Form
+            var forms = (from f in _context.tm_Form
+                         where f.FormTypeID == formTypeID && f.FlagActive == true
+                         orderby f.Sort, f.ID
+                         select new
+                         {
+                             f.ID,
+                             f.Name,
+                             f.Description,
+                             f.Progress,
+                             f.DurationDay
+                         }).ToList();
+
+            List<int> formIDs = forms.Select(o => o.ID).ToList();
+
+            // QC ที่ผูกกับ Lv.1
+            var qcLists = (from fq in _context.tr_Form_QCCheckList
+                           join qc in _context.tm_QC_CheckList on fq.CheckListID equals qc.ID
+                           join ext in _context.tm_Ext on qc.QCTypeID equals ext.ID
+                           where fq.FormID != null && formIDs.Contains(fq.FormID.Value)
+                                 && fq.FlagActive == true
+                           select new
+                           {
+                               FormID = fq.FormID.Value,
+                               ext.Name
+                           }).ToList();
+
+            // Lv.2 - FormGroup
+            var groups = (from g in _context.tm_FormGroup
+                          where g.FormID != null && formIDs.Contains(g.FormID.Value)
+                                && g.FlagActive == true
+                          orderby g.Sort, g.ID
+                          select new
+                          {
+                              g.ID,
+                              FormID = g.FormID.Value,
+                              g.Name
+                          }).ToList();
+
+            List<int> groupIDs = groups.Select(o => o.ID).ToList();
+
+            // Lv.3 - FormPackage
+            var packages = (from p in _context.tm_FormPackage
+                            where p.GroupID != null && groupIDs.Contains(p.GroupID.Value)
+                                  && p.FlagActive == true
+                            orderby p.Sort, p.ID
+                            select new
+                            {
+                                p.ID,
+                                GroupID = p.GroupID.Value,
+                                p.Name
+                            }).ToList();
+
+            List<int> packageIDs = packages.Select(o => o.ID).ToList();
+
+            // Lv.4 - FormCheckList
+            var checkLists = (from c in _context.tm_FormCheckList
+                              where c.PackageID != null && packageIDs.Contains(c.PackageID.Value)
+                                    && c.FlagActive == true
+                              orderby c.Sort, c.ID
+                              select new
+                              {
+                                  c.ID,
+                                  PackageID = c.PackageID.Value,
+                                  c.Name
+                              }).ToList();
+
+            // ประกอบข้อมูลเป็นโครงสร้าง 4 ระดับ
+            // ILookup คืนค่าเป็นลิสต์ว่างเมื่อไม่พบ key จึงไม่ต้องเช็ค null ในลูป
+            var qcByForm = qcLists.ToLookup(o => o.FormID);
+            var groupByForm = groups.ToLookup(o => o.FormID);
+            var packageByGroup = packages.ToLookup(o => o.GroupID);
+            var checkByPackage = checkLists.ToLookup(o => o.PackageID);
+
+            ExportFormStructureModel structure = new ExportFormStructureModel()
+            {
+                FormTypeID = formType.ID,
+                FormTypeName = formType.Name,
+                FormTypeDesc = formType.Description,
+                ProjectTypeName = formType.ProjectTypeName
+            };
+
+            foreach (var f in forms)
+            {
+                ExportFormLevel formLevel = new ExportFormLevel()
+                {
+                    ID = f.ID,
+                    Name = f.Name,
+                    Description = f.Description,
+                    Progress = f.Progress,
+                    DurationDay = f.DurationDay,
+                    QcList = qcByForm[f.ID].Select(o => o.Name ?? string.Empty).Distinct().ToList()
+                };
+
+                foreach (var g in groupByForm[f.ID])
+                {
+                    ExportGroupLevel groupLevel = new ExportGroupLevel()
+                    {
+                        ID = g.ID,
+                        Name = g.Name
+                    };
+
+                    foreach (var p in packageByGroup[g.ID])
+                    {
+                        ExportPackageLevel packageLevel = new ExportPackageLevel()
+                        {
+                            ID = p.ID,
+                            Name = p.Name
+                        };
+
+                        foreach (var c in checkByPackage[p.ID])
+                        {
+                            packageLevel.CheckLists.Add(new ExportCheckListLevel()
+                            {
+                                ID = c.ID,
+                                Name = c.Name
+                            });
+                        }
+
+                        groupLevel.Packages.Add(packageLevel);
+                    }
+
+                    formLevel.Groups.Add(groupLevel);
+                }
+
+                structure.Forms.Add(formLevel);
+            }
+
+            return structure;
         }
 
         private bool VerifyFormTypeUsing(int formTypeID)

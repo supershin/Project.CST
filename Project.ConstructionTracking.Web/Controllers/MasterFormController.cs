@@ -612,6 +612,31 @@ namespace Project.ConstructionTracking.Web.Controllers
         }
 
 
+        /// <summary>
+        /// Export แบบฟอร์มการตรวจงวดงานทั้ง 4 ระดับ เป็นไฟล์ Excel
+        /// </summary>
+        [HttpGet]
+        public IActionResult ExportFormStructure(int formTypeID)
+        {
+            try
+            {
+                ExportFormStructureModel structure = _masterForm.GetFormStructure(formTypeID);
+
+                byte[] file = MasterFormExcelExporter.Build(structure);
+                string fileName = MasterFormExcelExporter.BuildFileName(structure);
+
+                return File(
+                    file,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    fileName
+                );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         public JsonResult CloningMasterForm(int FormTypeID)
         {

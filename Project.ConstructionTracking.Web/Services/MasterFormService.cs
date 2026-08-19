@@ -35,6 +35,8 @@ namespace Project.ConstructionTracking.Web.Services
 		PackageResp ActionFormPackage(PackageModel model);
 		CheckListResp ActionFormCheckList(CheckListModel model);
 
+		ExportFormStructureModel GetFormStructure(int formTypeID);
+
     }
 
 	public class MasterFormService : IMasterFormService
@@ -146,6 +148,11 @@ namespace Project.ConstructionTracking.Web.Services
 
             return query;
         }
+
+		public ExportFormStructureModel GetFormStructure(int formTypeID)
+		{
+			return _masterForm.GetFormStructure(formTypeID);
+		}
 
 		public List<QcList> GetQcList(int formTypeID)
 		{

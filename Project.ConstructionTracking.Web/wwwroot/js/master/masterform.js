@@ -198,6 +198,13 @@
                         $('#partial-confirm-clone-FT').modal('show');
 
                     });
+                    $(document).on('click', "button[data-action='form-export']", function (e) {
+                        e.preventDefault();
+
+                        var formTypeId = $(e.currentTarget).attr('data-id');
+
+                        form.ExportExcel(formTypeId);
+                    });
 
                 }
             },
@@ -225,6 +232,11 @@
                         html += '<span>';
                         html += '<button  data-action="form-clone" data-id="' + data.ID + '" class="btn bg-yellow-lt btn-icon btn-rounded" style="margin-right:10px;">';
                         html += '<i class="fa-regular fa-copy"></i>';
+                        html += '</button>';
+                        html += '</span>';
+                        html += '<span>';
+                        html += '<button  data-action="form-export" data-id="' + data.ID + '" title="Export Excel" class="btn bg-green-lt btn-icon btn-rounded" style="margin-right:10px;">';
+                        html += '<i class="fa-solid fa-file-excel"></i>';
                         html += '</button>';
                         html += '</span>';
                         html += '<span>';
@@ -311,6 +323,10 @@
                 alert(" Coding Error ")
             },
         });
+        return false;
+    },
+    ExportExcel: function (FormTypeID) {
+        window.location.href = baseUrl + 'MasterForm/ExportFormStructure?formTypeID=' + FormTypeID;
         return false;
     },
     CloneFormType: function (FormTypeID) {

@@ -26,6 +26,12 @@
                             ฟอร์ม - แสดงแบบฟอร์ม
                         </h2>
                     </div>
+                    <div class="col-auto">
+                        <a href="@Url.Action("ExportFormStructure", "MasterForm", new { formTypeID = ViewBag.ID })"
+                           class="btn btn-success" id="btn-export-excel">
+                            <i class="fa-solid fa-file-excel" style="margin-right:5px"></i> Export Excel
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
