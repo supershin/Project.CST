@@ -14,6 +14,7 @@ namespace Project.ConstructionTracking.Web.Data
             tm_Unit = new HashSet<tm_Unit>();
             tr_CompanyVendorProject = new HashSet<tr_CompanyVendorProject>();
             tr_ProjectFloorPlan = new HashSet<tr_ProjectFloorPlan>();
+            tr_ProjectImage = new HashSet<tr_ProjectImage>();
             tr_ProjectPermission = new HashSet<tr_ProjectPermission>();
             tr_QC_Sync = new HashSet<tr_QC_Sync>();
             tr_QC_UnitCheckList = new HashSet<tr_QC_UnitCheckList>();
@@ -52,6 +53,8 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual ICollection<tr_CompanyVendorProject> tr_CompanyVendorProject { get; set; }
         [InverseProperty("Project")]
         public virtual ICollection<tr_ProjectFloorPlan> tr_ProjectFloorPlan { get; set; }
+        [InverseProperty("Project")]
+        public virtual ICollection<tr_ProjectImage> tr_ProjectImage { get; set; }
         [InverseProperty("Project")]
         public virtual ICollection<tr_ProjectPermission> tr_ProjectPermission { get; set; }
         [InverseProperty("Project")]

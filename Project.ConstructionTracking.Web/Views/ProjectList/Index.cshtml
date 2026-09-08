@@ -37,6 +37,13 @@
         border-radius: 6px;
     }
 
+    /* รูปโครงการที่ตั้งค่าจากหน้า Setting > Project Image มีขนาดไม่เท่ากัน — ครอปให้การ์ดสูงเท่ากัน */
+    .product_item .cp_img img.project-img {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+    }
+
     .product_item .product_details {
         text-align: center;
         margin-top: auto; /* Pushes the content to the bottom */
@@ -150,7 +157,12 @@
                                 <div class="body">
                                     <div class="cp_img" onclick="document.getElementById('form-@project.ProjectID').submit();">
                                         <!-- รูปภาพของสินค้า -->
-                                        <img src="~/img/img23.jpg" alt="รูปภาพโครงการ" class="img-fluid">
+                                        @{
+                                            string projectImagePath = string.IsNullOrEmpty((string)project.ImagePath)
+                                                ? "img/img23.jpg"
+                                                : (string)project.ImagePath;
+                                        }
+                                        <img src="~/@projectImagePath" alt="รูปภาพโครงการ" class="img-fluid project-img">
                                     </div>
                                     <form id="form-@project.ProjectID" method="post" asp-controller="ProjectList" asp-action="GoToUnitlist" style="display: none;">
                                         <input type="hidden" name="projectId" value="@project.ProjectID" />

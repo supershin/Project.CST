@@ -1,0 +1,168 @@
+@{
+    ViewData["Title"] = "Project Image";
+    Layout = "~/Views/Shared/_LayoutSite.cshtml";
+}
+<title>ตั้งค่ารูปภาพโครงการ</title>
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .project-image-thumb {
+        height: 170px;
+        background-color: #f1f3f5;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .project-image-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .project-image-empty {
+        color: #adb5bd;
+        text-align: center;
+        font-size: 0.85rem;
+    }
+
+    .project-image-empty i {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .project-image-name {
+        line-height: 1.3;
+    }
+
+    .drop-zone {
+        border: 2px dashed #007bff;
+        border-radius: 5px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .drop-zone.dragover {
+        background-color: #e7f1ff;
+    }
+
+    .drop-zone-input {
+        display: none;
+    }
+
+    #preview-wrapper img {
+        max-width: 100%;
+        max-height: 220px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+</style>
+
+<div class="page-wrapper">
+    <div class="page-header d-print-none">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp">
+                <div class="card-stamp-icon bg-white text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-photo">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M15 8h.01" />
+                        <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z" />
+                        <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5" />
+                        <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3" />
+                    </svg>
+                </div>
+            </div>
+            <div class="card-body">
+                <h1>ตั้งค่ารูปภาพโครงการ (Project Image)</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="card mb-3">
+                <div class="card-body border-bottom py-3">
+                    <div class="row d-flex align-items-center">
+                        <div class="col-md-6 col-lg-4">
+                            <form id="form-search-project-image" onsubmit="return false;">
+                                <div class="input-group">
+                                    <input type="text" id="strSearch" name="strSearch" class="form-control"
+                                           placeholder="ค้นหารหัส / ชื่อโครงการ..." autocomplete="off">
+                                    <span class="input-group-text">
+                                        <button id="btn-search-project-image" class="btn btn-search bg-transparent border-0" type="submit">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-6 col-lg-8 text-muted mt-2 mt-md-0">
+                            รูปภาพที่ตั้งค่าไว้จะถูกนำไปแสดงบนหน้า <b>ค้นหาโครงการ</b> และ <b>ค้นหา Unit</b> (1 โครงการ : 1 รูป)
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="project-image-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal อัปโหลดรูปภาพ -->
+    <div class="modal fade" id="modal-upload-project-image" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">รูปภาพโครงการ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="upload-project-id" />
+                    <div class="mb-2">
+                        <label class="form-label">โครงการ</label>
+                        <div id="upload-project-name" class="fw-bold"></div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">เลือกรูปภาพ <span style="color:red;">*</span></label>
+                        <div id="drop-zone" class="drop-zone">
+                            <i class="fa-solid fa-camera" style="font-size:24px; color:#007bff;"></i>
+                            <div class="text-muted mt-2">คลิกหรือลากไฟล์รูปภาพมาวางที่นี่</div>
+                            <input type="file" id="file-input" class="drop-zone-input" accept=".jpg,.jpeg,.png,.webp" />
+                        </div>
+                        <small class="text-muted">รองรับ .jpg .jpeg .png .webp ขนาดไม่เกิน 5 MB</small>
+                    </div>
+                    <div id="preview-wrapper" class="text-center mt-3" style="display:none;">
+                        <img id="preview-image" src="" alt="preview" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    <button type="button" class="btn btn-primary" id="btn-save-project-image">บันทึก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/pages/projectimage.js?ver=@DateTime.Now.Ticks"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var navSetting = document.getElementById('nav-Setting');
+            if (navSetting) { navSetting.classList.add('active'); }
+            var navProjectImage = document.getElementById('nav-Setting-Project-Image');
+            if (navProjectImage) { navProjectImage.classList.add('active'); }
+
+            projectImage.init();
+        });
+    </script>
+}

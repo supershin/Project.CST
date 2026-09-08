@@ -125,6 +125,9 @@ builder.Services.AddScoped<IWebAPIRestRepo, _WebAPIRestRepo>();
 builder.Services.AddScoped<IProjectBluePrintService, ProjectBluePrintService>();
 builder.Services.AddScoped<IProjectBluePrintRepo, ProjectBluePrintRepo>();
 
+builder.Services.AddScoped<IProjectImageService, ProjectImageService>();
+builder.Services.AddScoped<IProjectImageRepo, ProjectImageRepo>();
+
 var app = builder.Build();
 
 // Must be first — reads X-Forwarded-For / X-Forwarded-Proto from nginx

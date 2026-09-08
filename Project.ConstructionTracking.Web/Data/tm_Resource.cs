@@ -11,6 +11,7 @@ namespace Project.ConstructionTracking.Web.Data
         public tm_Resource()
         {
             tr_ProjectFloorPlan = new HashSet<tr_ProjectFloorPlan>();
+            tr_ProjectImage = new HashSet<tr_ProjectImage>();
             tr_QC_UnitCheckList = new HashSet<tr_QC_UnitCheckList>();
             tr_QC_UnitCheckList_Resource = new HashSet<tr_QC_UnitCheckList_Resource>();
             tr_UnitForm = new HashSet<tr_UnitForm>();
@@ -36,6 +37,8 @@ namespace Project.ConstructionTracking.Web.Data
 
         [InverseProperty("Resource")]
         public virtual ICollection<tr_ProjectFloorPlan> tr_ProjectFloorPlan { get; set; }
+        [InverseProperty("Resource")]
+        public virtual ICollection<tr_ProjectImage> tr_ProjectImage { get; set; }
         [InverseProperty("PESignResource")]
         public virtual ICollection<tr_QC_UnitCheckList> tr_QC_UnitCheckList { get; set; }
         [InverseProperty("Resource")]

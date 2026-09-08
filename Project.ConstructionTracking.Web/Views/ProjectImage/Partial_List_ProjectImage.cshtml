@@ -1,0 +1,58 @@
+@model List<Project.ConstructionTracking.Web.Models.ProjectImage.ProjectImageModel.ListProjectImageModel>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-3">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card project-image-card h-100">
+                    <div class="project-image-thumb">
+                        @if (!string.IsNullOrEmpty(item.FilePath))
+                        {
+                            <img src="~/@item.FilePath" alt="@item.ProjectName" />
+                        }
+                        else
+                        {
+                            <div class="project-image-empty">
+                                <i class="fa-regular fa-image"></i>
+                                <div>ยังไม่มีรูปภาพ</div>
+                            </div>
+                        }
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="text-muted small">@item.ProjectCode</div>
+                        <div class="fw-bold project-image-name">@item.ProjectName</div>
+                    </div>
+                    <div class="card-footer p-2 d-flex gap-2">
+                        <button type="button"
+                                class="btn btn-primary btn-sm flex-fill"
+                                data-action="upload-project-image"
+                                data-id="@item.ProjectID"
+                                data-name="@item.ProjectName"
+                                data-code="@item.ProjectCode">
+                            <i class="fa-solid fa-upload" style="margin-right:5px"></i>
+                            @(string.IsNullOrEmpty(item.FilePath) ? "เพิ่มรูปภาพ" : "เปลี่ยนรูปภาพ")
+                        </button>
+                        @if (!string.IsNullOrEmpty(item.FilePath))
+                        {
+                            <button type="button"
+                                    class="btn bg-red-lt btn-sm btn-icon"
+                                    data-action="remove-project-image"
+                                    data-id="@item.ProjectID"
+                                    data-name="@item.ProjectName">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="text-center text-muted py-5">
+        ไม่พบข้อมูลโครงการ
+    </div>
+}

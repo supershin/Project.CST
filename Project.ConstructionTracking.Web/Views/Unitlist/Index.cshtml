@@ -4,7 +4,11 @@
     var projectId = ViewBag.ProjectId;
     var projectName = ViewBag.ProjectName;
     var ddlListUnit = ViewBag.DDLListUnit;
-    var ddlListUnitStatus = ViewBag.DDLList; 
+    var ddlListUnitStatus = ViewBag.DDLList;
+    // รูปโครงการจากหน้า Setting > Project Image — ไม่มีรูปให้ใช้รูป default เดิม
+    string projectImagePath = string.IsNullOrEmpty((string)ViewBag.ProjectImagePath)
+        ? "img/img23.jpg"
+        : (string)ViewBag.ProjectImagePath;
 }
 @model List<Project.ConstructionTracking.Web.Models.StoreProcedureModel.UnitListModel>
 
@@ -158,7 +162,7 @@
                                     <input type="hidden" name="UnitCode" value="@unit.UnitCode" />
                                     <input type="hidden" name="UnitStatusName" value="@unit.UnitStatusName" />
                                     <div class="card" id="card-unit">
-                                        <img src="~/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                        <img src="~/@projectImagePath" class="card-img-top profile-img" alt="รูปภาพโครงการ">
                                         <div class="card-body text-center">
                                             <h5 class="card-title">@unit.UnitCode</h5>
                                             <p class="card-text">สถานะ : @unit.UnitStatusName</p>
@@ -192,6 +196,7 @@
         $(document).ready(function () {
             // Define baseUrl for the project
             var baseUrl = '@ViewBag.baseUrl'; // Ensure you pass baseUrl from the server-side
+            var projectImagePath = '@projectImagePath'; // รูปโครงการจากหน้า Setting > Project Image
 
             // Initialize Choices.js for the dropdowns
             const unitDropdown = new Choices('#ddlListUnit', {
@@ -247,7 +252,7 @@
                                         <input type="hidden" name="UnitCode" value="${unit.UnitCode}" />
                                         <input type="hidden" name="UnitStatusName" value="${unit.UnitStatusName}" />
                                         <div class="card" id="card-unit">
-                                                   <img src="${baseUrl}/img/img23.jpg" class="card-img-top profile-img" alt="Profile Picture">
+                                                   <img src="${baseUrl}${projectImagePath}" class="card-img-top profile-img" alt="รูปภาพโครงการ">
                                             <div class="card-body text-center">
                                                 <h5 class="card-title">${unit.UnitCode}</h5>
                                                 <p class="card-text">สถานะ : ${unit.UnitStatusName}</p>

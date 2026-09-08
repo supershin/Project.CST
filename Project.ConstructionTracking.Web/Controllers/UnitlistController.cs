@@ -12,12 +12,14 @@ namespace Project.ConstructionTracking.Web.Controllers
     {
         private readonly IUnitService _unitService;
         private readonly IGetDDLService _getDDLService;
+        private readonly IProjectImageService _projectImageService;
         private readonly MasterManagementProviderProject _unitstatusProvider;
 
-        public UnitlistController(MasterManagementProviderProject unitstatusProvider, IUnitService unitService, IGetDDLService getDDLService)
+        public UnitlistController(MasterManagementProviderProject unitstatusProvider, IUnitService unitService, IGetDDLService getDDLService, IProjectImageService projectImageService)
         {
             _unitService = unitService;
             _getDDLService = getDDLService;
+            _projectImageService = projectImageService;
             _unitstatusProvider = unitstatusProvider;
         }
 
@@ -25,6 +27,11 @@ namespace Project.ConstructionTracking.Web.Controllers
         {
             ViewBag.ProjectId = projectId;
             ViewBag.ProjectName = projectName;
+
+            // รูปโครงการที่ตั้งค่าจากหน้า Setting > Project Image (ไม่มีรูป = ใช้รูป default)
+            ViewBag.ProjectImagePath = Guid.TryParse(projectId, out var projectGuid)
+                ? _projectImageService.GetProjectImagePath(projectGuid)
+                : null;
 
             var en = new UnitListModel
             {

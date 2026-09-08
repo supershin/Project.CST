@@ -53,6 +53,7 @@ namespace Project.ConstructionTracking.Web.Data
         public virtual DbSet<tr_PE_Unit> tr_PE_Unit { get; set; } = null!;
         public virtual DbSet<tr_ProjectBluePrint> tr_ProjectBluePrint { get; set; } = null!;
         public virtual DbSet<tr_ProjectFloorPlan> tr_ProjectFloorPlan { get; set; } = null!;
+        public virtual DbSet<tr_ProjectImage> tr_ProjectImage { get; set; } = null!;
         public virtual DbSet<tr_ProjectModelForm> tr_ProjectModelForm { get; set; } = null!;
         public virtual DbSet<tr_ProjectPermission> tr_ProjectPermission { get; set; } = null!;
         public virtual DbSet<tr_QC_Sync> tr_QC_Sync { get; set; } = null!;
@@ -513,6 +514,27 @@ namespace Project.ConstructionTracking.Web.Data
                     .WithMany(p => p.tr_ProjectFloorPlan)
                     .HasForeignKey(d => d.ResourceID)
                     .HasConstraintName("FK_tr_ProjectFloorPlan_tm_Resource");
+            });
+
+            modelBuilder.Entity<tr_ProjectImage>(entity =>
+            {
+                entity.Property(e => e.ID).ValueGeneratedNever();
+
+                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FlagActive).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.Project)
+                    .WithMany(p => p.tr_ProjectImage)
+                    .HasForeignKey(d => d.ProjectID)
+                    .HasConstraintName("FK_tr_ProjectImage_tm_Project");
+
+                entity.HasOne(d => d.Resource)
+                    .WithMany(p => p.tr_ProjectImage)
+                    .HasForeignKey(d => d.ResourceID)
+                    .HasConstraintName("FK_tr_ProjectImage_tm_Resource");
             });
 
             modelBuilder.Entity<tr_ProjectModelForm>(entity =>
